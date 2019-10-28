@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  myfooddoc.application.api:
+    image: ${DOCKER_REGISTRY-}myfooddocapplicationapi
+    build:
+      context: .
+      dockerfile: src/MyFoodDoc.Application.Api/Dockerfile
+
+  myfooddoc.auth.api:
+    image: ${DOCKER_REGISTRY-}myfooddocauthapi
+    build:
+      context: .
+      dockerfile: src/MyFoodDoc.Auth.Api/Dockerfile
+

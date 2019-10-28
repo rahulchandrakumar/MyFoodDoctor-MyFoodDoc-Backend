@@ -1,0 +1,7 @@
+{
+  "IdentityServer": {
+    "Address": "{IDENTITY_SERVER_ADDRESS}",
+    "ClientId": "{IDENTITY_SERVER_CLIENT}",
+    "Scope": "{IDENTITY_SERVER_SCOPE}"
+  }
+}
