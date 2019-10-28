@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  myfooddoc.auth.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8000:80"
+  myfooddoc.application.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "8080:80"
