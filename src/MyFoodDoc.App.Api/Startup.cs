@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Linq;
 
 namespace MyFoodDoc.Application.Api
 {
@@ -76,7 +77,7 @@ namespace MyFoodDoc.Application.Api
                 })
                 .AddFluentValidation(options =>
                 {
-                    options.RegisterValidatorsFromAssemblyContaining<IApplicationContext>();
+                    options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.Contains("MyFoodDoc.App.Application")));
                     options.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
         }
