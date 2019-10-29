@@ -9,7 +9,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Profiles", "User");
-            builder.HasKey(x => x.UserId);
+            builder.HasKey(x => x.Id);
             builder.Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(x => x.Birthday).HasMaxLength(10);
             builder.Property(x => x.Gender).HasConversion<string>();

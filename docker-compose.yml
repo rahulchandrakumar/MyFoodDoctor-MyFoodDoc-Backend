@@ -5,11 +5,21 @@ services:
     image: ${DOCKER_REGISTRY-}myfooddocapplicationapi
     build:
       context: .
-      dockerfile: src/MyFoodDoc.Application.Api/Dockerfile
+      dockerfile: src/MyFoodDoc.App.Api/Dockerfile
 
   myfooddoc.auth.api:
     image: ${DOCKER_REGISTRY-}myfooddocauthapi
     build:
       context: .
-      dockerfile: src/MyFoodDoc.Auth.Api/Dockerfile
+      dockerfile: src/MyFoodDoc.App.Auth/Dockerfile
 
+  myfooddoc.application.cms.api:
+    image: ${DOCKER_REGISTRY-}myfooddocapplicationcmsapi
+    build:
+      context: .
+      dockerfile: cms/MyFoodDoc.CMS.Api/Dockerfile
+  
+  myfooddoc.application.cms.web:
+    image: ${DOCKER_REGISTRY-}myfooddocapplicationcmsweb
+    build:
+      context: cms/MyFoodDoc.CMS.Api/app/
