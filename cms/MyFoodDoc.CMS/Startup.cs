@@ -10,6 +10,15 @@ namespace MyFoodDoc.CMS
     {
         public void ConfigureServices(IServiceCollection services)
         {
+            #region CORS
+            services.AddCors(o => o.AddPolicy("AllPolicy", builder =>
+            {
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
+            }));
+            #endregion
+
             #region dotnetify
             services.AddMemoryCache();
             services.AddSignalR();
@@ -23,6 +32,10 @@ namespace MyFoodDoc.CMS
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            #region CORS
+            app.UseCors("AllPolicy");
+            #endregion
 
             app.UseRouting();
 
