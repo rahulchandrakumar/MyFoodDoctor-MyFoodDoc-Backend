@@ -191,34 +191,34 @@ color="green">
                     Sign contract for "What are conference organized afraid of?"
                   </v-list-item-title>
                   <div class="d-flex">
-                    <v-tooltip
-top
-content-class="top">
-                      <v-btn
-                        slot="activator"
-                        class="v-btn--simple"
-                        color="success"
-                        icon
-                      >
-                        <v-icon color="primary">
-                          mdi-pencil
-                        </v-icon>
-                      </v-btn>
+                    <v-tooltip top content-class="top">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-on="on"
+                          class="v-btn--simple"
+                          color="success"
+                          icon
+                        >
+                          <v-icon color="primary">
+                            mdi-pencil
+                          </v-icon>
+                        </v-btn>                        
+                      </template>
                       <span>Edit</span>
                     </v-tooltip>
-                    <v-tooltip
-top
-content-class="top">
-                      <v-btn
-                        slot="activator"
-                        class="v-btn--simple"
-                        color="danger"
-                        icon
-                      >
-                        <v-icon color="error">
-                          mdi-close
-                        </v-icon>
-                      </v-btn>
+                    <v-tooltip top content-class="top">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-on="on"
+                          class="v-btn--simple"
+                          color="danger"
+                          icon
+                        >
+                          <v-icon color="error">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>                        
+                      </template>
                       <span>Close</span>
                     </v-tooltip>
                   </div>
@@ -233,35 +233,35 @@ content-class="top">
                     Boss?
                   </v-list-item-title>
                   <div class="d-flex">
-                    <v-tooltip
-top
-content-class="top">
-                      <v-btn
-                        slot="activator"
-                        class="v-btn--simple"
-                        color="success"
-                        icon
-                      >
-                        <v-icon color="primary">
-                          mdi-pencil
-                        </v-icon>
-                      </v-btn>
+                    <v-tooltip top content-class="top">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-on="on"
+                          class="v-btn--simple"
+                          color="success"
+                          icon
+                        >
+                          <v-icon color="primary">
+                            mdi-pencil
+                          </v-icon>
+                        </v-btn>                        
+                      </template>
                       <span>Edit</span>
                     </v-tooltip>
 
-                    <v-tooltip
-top
-content-class="top">
-                      <v-btn
-                        slot="activator"
-                        class="v-btn--simple"
-                        color="danger"
-                        icon
-                      >
-                        <v-icon color="error">
-                          mdi-close
-                        </v-icon>
-                      </v-btn>
+                    <v-tooltip top content-class="top">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-on="on"
+                          class="v-btn--simple"
+                          color="danger"
+                          icon
+                        >
+                          <v-icon color="error">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>                        
+                      </template>
                       <span>Close</span>
                     </v-tooltip>
                   </div>
@@ -276,34 +276,34 @@ content-class="top">
                     was found when a ravaging rain swept through metro Detroit
                   </v-list-item-title>
                   <div class="d-flex">
-                    <v-tooltip
-top
-content-class="top">
-                      <v-btn
-                        slot="activator"
-                        class="v-btn--simple"
-                        color="success"
-                        icon
-                      >
-                        <v-icon color="primary">
-                          mdi-pencil
-                        </v-icon>
-                      </v-btn>
+                    <v-tooltip top content-class="top">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-on="on"
+                          class="v-btn--simple"
+                          color="success"
+                          icon
+                        >
+                          <v-icon color="primary">
+                            mdi-pencil
+                          </v-icon>
+                        </v-btn>                        
+                      </template>
                       <span>Edit</span>
                     </v-tooltip>
-                    <v-tooltip
-top
-content-class="top">
-                      <v-btn
-                        slot="activator"
-                        class="v-btn--simple"
-                        color="danger"
-                        icon
-                      >
-                        <v-icon color="error">
-                          mdi-close
-                        </v-icon>
-                      </v-btn>
+                    <v-tooltip top content-class="top">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          v-on="on"
+                          class="v-btn--simple"
+                          color="danger"
+                          icon
+                        >
+                          <v-icon color="error">
+                            mdi-close
+                          </v-icon>
+                        </v-btn>                        
+                      </template>
                       <span>Close</span>
                     </v-tooltip>
                   </div>

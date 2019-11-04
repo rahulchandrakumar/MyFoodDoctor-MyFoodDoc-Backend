@@ -19,12 +19,12 @@
 
       <v-layout align-center justify-center wrap>
         <v-flex v-for="icon in icons" :key="icon" ma-2>
-          <v-tooltip
-top
-content-class="top">
-            <v-icon slot="activator">
-              {{ icon }}
-            </v-icon>
+          <v-tooltip top content-class="top">
+            <template v-slot:activator="{ on }">
+              <v-icon v-on="on">
+                {{ icon }}
+              </v-icon>              
+            </template>
             <span>{{ icon }}</span>
           </v-tooltip>
         </v-flex>
