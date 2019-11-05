@@ -1,11 +1,11 @@
 <template>
-  <v-app>
+  <v-app v-if="$route.matched.some(({ path }) => path === '/login')">
+    <core-view />
+  </v-app>
+  <v-app v-else>
     <core-filter />
-
     <core-toolbar />
-
     <core-drawer />
-
     <core-view />
   </v-app>
 </template>

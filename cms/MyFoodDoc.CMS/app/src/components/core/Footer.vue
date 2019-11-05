@@ -11,7 +11,7 @@
     <span class="font-weight-light copyright">
       &copy;
       {{ new Date().getFullYear() }}
-      MyFoodDoc
+      Medicum
     </span>
   </v-footer>
 </template>

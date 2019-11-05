@@ -7,5 +7,6 @@ namespace MyFoodDoc.CMS.Models
         public string DisplayName { get; set; }
         public string Username { get; set; }
         public IEnumerable<string> Roles { get; set; }
+        public string Token { get; set; }
     }
 }

@@ -15,11 +15,14 @@ import Meta from "vue-meta";
 // Routes
 import paths from "./paths";
 
-function route(path, view, name) {
+import store from "@/store";
+
+function route(path, view, name, meta) {
   return {
     name: name || view,
     path,
-    component: resovle => import(`@/views/${view}.vue`).then(resovle)
+    component: resovle => import(`@/views/${view}.vue`).then(resovle),
+    meta: meta
   };
 }
 
@@ -29,7 +32,7 @@ Vue.use(Router);
 const router = new Router({
   mode: "history",
   routes: paths
-    .map(path => route(path.path, path.view, path.name))
+    .map(path => route(path.path, path.view, path.name, path.meta))
     .concat([{ path: "*", redirect: "/" }]),
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
@@ -40,6 +43,20 @@ const router = new Router({
     }
     return { x: 0, y: 0 };
   }
+});
+
+router.beforeEach(async (to, from, next) => {
+  if (to.path === "/logout") {
+    await store.dispatch("user/logout")
+  }
+  if (to.meta.requiresAuth != false) {
+    let loggedIn = store.state.user.userInfo.isAuthenticated;
+    if (!loggedIn) {
+      next("/login");
+      return;
+    }
+  }
+  next();
 });
 
 Vue.use(Meta);

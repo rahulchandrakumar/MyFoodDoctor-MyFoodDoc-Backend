@@ -29,7 +29,9 @@ import dotnetify from 'dotnetify/vue';
 
 export default {
   created() {
-    this.vm = dotnetify.vue.connect("TableViewModel", this);
+    let token = this.$store.state.user.token
+    let headers = { Authorization: "Bearer " + token } 
+    this.vm = dotnetify.vue.connect("TableViewModel", this, { headers });
     this.dispatch = state => this.vm.$dispatch(state);
   },
   destroyed() {

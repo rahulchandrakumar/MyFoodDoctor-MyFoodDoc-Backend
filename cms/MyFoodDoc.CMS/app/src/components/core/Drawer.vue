@@ -35,13 +35,13 @@
         <v-list-item
           active-class="success"
           class="v-list-item v-list-item--buy"
-          to="/table-list"
+          to="/logout"
         >
           <v-list-item-action>
             <v-icon>mdi-package-up</v-icon>
           </v-list-item-action>
           <v-list-item-title class="font-weight-light">
-            TEST
+            Logout
           </v-list-item-title>
         </v-list-item>
       </v-layout>

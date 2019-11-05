@@ -1,4 +1,5 @@
 ﻿using DotNetify;
+using DotNetify.Security;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace MyFoodDoc.CMS.ViewModels
         public decimal Amount { get; set; }
     }
 
+    [Authorize]
     public class TableViewModel: MulticastVM
     {
         public string IngredientSizes_itemKey => nameof(IngredientSize.Id);

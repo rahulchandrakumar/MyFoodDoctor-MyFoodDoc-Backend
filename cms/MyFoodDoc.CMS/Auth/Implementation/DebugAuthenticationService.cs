@@ -1,15 +1,34 @@
-﻿using MyFoodDoc.CMS.Models;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using MyFoodDoc.CMS.Models;
 using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
 
 namespace MyFoodDoc.CMS.Auth.Implementation
 {
     public class DebugAuthenticationService : ICustomAuthenticationService
     {
+        private readonly IConfiguration _configuration;
+
+        public DebugAuthenticationService(IConfiguration configuration)
+        {
+            this._configuration = configuration;
+        }
+
         public AppUser Login(string username, string password)
         {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["AuthSecret"]);
+            
+            AppUser user = null;
+
             if (username == "admin")
             {
-                return new AppUser
+                user = new AppUser
                 {
                     DisplayName = "admin",
                     Username = "admin",
@@ -18,7 +37,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             }
             else if (username == "editor")
             {
-                return new AppUser
+                user = new AppUser
                 {
                     DisplayName = "editor",
                     Username = "editor",
@@ -27,7 +46,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             }
             else if (username == "editor2")
             {
-                return new AppUser
+                user = new AppUser
                 {
                     DisplayName = "editor2",
                     Username = "editor2",
@@ -36,7 +55,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             }
             else if (username == "approver")
             {
-                return new AppUser
+                user = new AppUser
                 {
                     DisplayName = "approver",
                     Username = "admapproverin",
@@ -44,7 +63,29 @@ namespace MyFoodDoc.CMS.Auth.Implementation
                 };
             }
 
-            throw new Exception("Login failed.");
+            var userClaims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.GivenName, user.DisplayName),
+                        new Claim(ClaimTypes.Name, user.Username)
+                    };
+
+            if (user.Roles != null)
+                userClaims.AddRange(user.Roles?.Select(role => new Claim(ClaimTypes.Role, role)).ToList());
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(userClaims),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+
+            user.Token = tokenHandler.WriteToken(token);
+
+            if (user == null)
+                throw new Exception("Login failed.");
+
+            return user;
         }
     }
 }

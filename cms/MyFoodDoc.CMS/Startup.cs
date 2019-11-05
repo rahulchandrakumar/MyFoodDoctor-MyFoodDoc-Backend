@@ -1,15 +1,34 @@
 using DotNetify;
+using DotNetify.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using MyFoodDoc.CMS.Auth;
+using MyFoodDoc.CMS.Auth.Implementation;
+using System.Text;
 
 namespace MyFoodDoc.CMS
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
+        private TokenValidationParameters _tokenValidationParameters;
+
+        public Startup(IConfiguration configuration)
+        {
+            this.Configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvc(o => o.EnableEndpointRouting = false);
+            services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
+
             #region CORS
             services.AddCors(o => o.AddPolicy("AllPolicy", builder =>
             {
@@ -21,8 +40,30 @@ namespace MyFoodDoc.CMS
 
             #region dotnetify
             services.AddMemoryCache();
-            services.AddSignalR();
+            services.AddSignalR().AddNewtonsoftJsonProtocol();
             services.AddDotNetify();
+            #endregion
+
+            #region Auth
+            // configure jwt authentication
+            var key = Encoding.ASCII.GetBytes(Configuration["AuthSecret"]);
+            _tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ValidateIssuer = false,
+                ValidateAudience = false
+            };
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.SaveToken = true;
+                x.TokenValidationParameters = _tokenValidationParameters;
+            });
             #endregion
         }
 
@@ -38,13 +79,19 @@ namespace MyFoodDoc.CMS
             #endregion
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseMvc();
 
             #region dotnetify
             app.UseWebSockets();
 #pragma warning disable CS0618 // Type or member is obsolete
             app.UseSignalR(routes => routes.MapDotNetifyHub());
 #pragma warning restore CS0618 // Type or member is obsolete
-            app.UseDotNetify();
+            app.UseDotNetify(config => {
+                config.UseFilter<AuthorizeFilter>();
+                config.UseJwtBearerAuthentication(_tokenValidationParameters);
+            });
             #endregion
 
             #region SPA-debug

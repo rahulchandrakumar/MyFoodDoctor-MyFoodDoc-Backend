@@ -5,6 +5,14 @@
  */
 export default [
   {
+    path: "/login",
+    name: "Login",
+    view: "Login",
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
     path: "",
     // Relative to /src/views
     view: "Dashboard"
@@ -34,5 +42,8 @@ export default [
   {
     path: "/notifications",
     view: "Notifications"
+  },
+  {
+    path: "/logout"
   }
 ];
