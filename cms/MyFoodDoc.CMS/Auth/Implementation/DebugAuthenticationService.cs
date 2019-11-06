@@ -58,7 +58,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
                 user = new AppUser
                 {
                     DisplayName = "approver",
-                    Username = "admapproverin",
+                    Username = "approver",
                     Roles = new string[] { "Approver" }
                 };
             }

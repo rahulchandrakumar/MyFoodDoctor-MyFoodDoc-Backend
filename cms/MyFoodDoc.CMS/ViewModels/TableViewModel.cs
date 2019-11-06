@@ -2,6 +2,7 @@
 using DotNetify.Security;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
@@ -11,6 +12,8 @@ namespace MyFoodDoc.CMS.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public decimal Amount { get; set; }
+        public string Editor { get; set; }
+        public long? LockDate { get; set; }
     }
 
     [Authorize]
@@ -45,8 +48,25 @@ namespace MyFoodDoc.CMS.ViewModels
             });
         }
 
-        public Action<IngredientSize> Add => (IngredientSize ingredientSize) => this.AddList(nameof(IngredientSizes), ingredientSize);
-        public Action<IngredientSize> Update => (IngredientSize ingredientSize) => this.UpdateList(nameof(IngredientSizes), ingredientSize);
-        public Action<IngredientSize> Remove => (IngredientSize ingredientSize) => this.RemoveList(nameof(IngredientSizes), ingredientSize.Id);
+        public Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
+        {
+            ingredientSize.Id = IngredientSizes.Count == 0 ? 0 : IngredientSizes.Max(i => i.Id) + 1;
+            IngredientSizes.Add(ingredientSize);
+
+            this.AddList(nameof(IngredientSizes), ingredientSize);
+        };
+        public Action<IngredientSize> Update => (IngredientSize ingredientSize) =>
+        {
+            IngredientSizes.Remove(IngredientSizes.First(i => i.Id == ingredientSize.Id));
+            IngredientSizes.Add(ingredientSize);
+
+            this.UpdateList(nameof(IngredientSizes), ingredientSize);
+        };
+        public Action<int> Remove => (int Id) =>
+        {
+            IngredientSizes.Remove(IngredientSizes.First(i => i.Id == Id));
+
+            this.RemoveList(nameof(IngredientSizes), Id);
+        };
     }
 }

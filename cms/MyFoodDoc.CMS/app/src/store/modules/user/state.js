@@ -1,11 +1,11 @@
 const getDefaultState = function() {
   return {
     userInfo: {
-      isAuthenticated: sessionStorage.getItem("access_token") ? true : false,
-      username: sessionStorage.getItem("vonoviaCMS_username") || "",
-      roles: (sessionStorage.getItem("vonoviaCMS_roles") || "").split(",")
+      isAuthenticated: localStorage.access_token ? true : false,
+      username: localStorage.MyFoodDoc_username || "",
+      roles: (localStorage.MyFoodDoc_roles || "").split(",")
     },
-    token: sessionStorage.getItem("access_token")
+    token: localStorage.access_token
   };
 };
 
