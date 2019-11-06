@@ -30,12 +30,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
 
             #region CORS
-            services.AddCors(o => o.AddPolicy("AllPolicy", builder =>
-            {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
-            }));
+            services.AddCors();
             #endregion
 
             #region dotnetify
@@ -75,7 +70,12 @@ namespace MyFoodDoc.CMS
             }
 
             #region CORS
-            app.UseCors("AllPolicy");
+            app.UseCors(builder =>
+                builder.WithOrigins(Configuration["Cors"])
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+            );
             #endregion
 
             app.UseRouting();

@@ -7,7 +7,7 @@ const contentTypes = {
 };
 
 let axiosInstance = axios.create({
-  //baseURL: process.env.VUE_APP_WEB_API_URL,
+  baseURL: process.env.VUE_APP_WEB_API_URL,
   timeout: 100000
 });
 
