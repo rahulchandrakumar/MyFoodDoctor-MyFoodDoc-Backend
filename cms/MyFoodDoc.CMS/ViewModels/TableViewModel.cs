@@ -1,6 +1,6 @@
 ﻿using DotNetify;
 using DotNetify.Security;
-using MyFoodDoc.CMS.Controllers;
+using MyFoodDoc.CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

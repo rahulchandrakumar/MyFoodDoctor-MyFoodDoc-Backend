@@ -11,12 +11,15 @@
   >
     <v-img :src="image" height="100%">
       <v-layout class="fill-height" tag="v-list" column>
-        <v-list-item>
-          <v-list-item-avatar color="white">
-            <v-img :src="logo" height="34" contain />
+        <v-list-item
+          active-class="success"
+          class="v-list-item"
+          to="/user-profile">
+          <v-list-item-avatar>
+            <v-icon>mdi-account-circle</v-icon>
           </v-list-item-avatar>
           <v-list-item-title class="title">
-            My Food Doc
+            {{ username }}
           </v-list-item-title>
         </v-list-item>
         <v-divider />
@@ -60,6 +63,9 @@ export default {
       default: false
     }
   },
+  created() {
+    this.username = this.$store.state.user.userInfo.displayname
+  },
   data: () => ({
     logo: "favicon.ico",
     links: [
@@ -67,11 +73,6 @@ export default {
         to: "/",
         icon: "mdi-view-dashboard",
         text: "Dashboard"
-      },
-      {
-        to: "/user-profile",
-        icon: "mdi-account",
-        text: "User Profile"
       },
       {
         to: "/table-list",
@@ -98,7 +99,8 @@ export default {
         icon: "mdi-bell",
         text: "Notifications"
       }
-    ]
+    ],
+    username: ''
   }),
   computed: {
     ...mapState("app", ["image", "color"]),

@@ -30,7 +30,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             {
                 user = new AppUser
                 {
-                    DisplayName = "admin",
+                    Displayname = "Admin Admin",
                     Username = "admin",
                     Roles = new string[] { "Admin", "Editor", "Approver" }
                 };
@@ -39,7 +39,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             {
                 user = new AppUser
                 {
-                    DisplayName = "editor",
+                    Displayname = "editor",
                     Username = "editor",
                     Roles = new string[] { "Editor" }
                 };
@@ -48,7 +48,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             {
                 user = new AppUser
                 {
-                    DisplayName = "editor2",
+                    Displayname = "editor2",
                     Username = "editor2",
                     Roles = new string[] { "Editor" }
                 };
@@ -57,7 +57,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             {
                 user = new AppUser
                 {
-                    DisplayName = "approver",
+                    Displayname = "approver",
                     Username = "approver",
                     Roles = new string[] { "Approver" }
                 };
@@ -65,7 +65,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
 
             var userClaims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.GivenName, user.DisplayName),
+                        new Claim(ClaimTypes.GivenName, user.Displayname),
                         new Claim(ClaimTypes.Name, user.Username)
                     };
 

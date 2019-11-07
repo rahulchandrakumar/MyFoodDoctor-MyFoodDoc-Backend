@@ -1,4 +1,4 @@
-﻿namespace MyFoodDoc.CMS.Controllers
+﻿namespace MyFoodDoc.CMS.Models
 {
     public class ColabDataTableBaseModel
     {

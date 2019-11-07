@@ -33,7 +33,7 @@
           </v-col>
         </v-row>
 
-          <v-data-table :headers="mainHeaders" :items="Items" sort-by="Id" hide-default-footer>
+          <v-data-table :headers="mainHeaders" :items="Items" sort-by="Id" hide-default-footer disable-pagination>
             <template slot="item" slot-scope="{ item }">
               <tr>
                 <td>{{ item.Id }}</td>

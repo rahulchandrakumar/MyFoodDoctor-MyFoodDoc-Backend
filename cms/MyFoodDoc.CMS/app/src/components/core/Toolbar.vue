@@ -11,7 +11,7 @@
         >
           <v-icon>mdi-view-list</v-icon>
         </v-btn>
-        {{ title }}
+        My Food Doc CMS - {{ title }}
       </v-toolbar-title>
     </div>
 
@@ -58,11 +58,6 @@
               </v-list-item>
             </v-list>
         </v-menu>
-        <router-link v-ripple class="toolbar-items" to="/user-profile">
-          <v-icon color="tertiary">
-            mdi-account
-          </v-icon>
-        </router-link>
       </v-flex>
     </v-toolbar-items>
   </v-app-bar>
