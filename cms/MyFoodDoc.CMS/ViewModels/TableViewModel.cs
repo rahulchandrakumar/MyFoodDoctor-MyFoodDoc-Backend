@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    public class IngredientSize: ColabDataTableBaseModel
-    {
-        public string Name { get; set; }
-        public decimal Amount { get; set; }
-    }
-
     [Authorize]
     public class TableViewModel: MulticastVM
     {
+        public class IngredientSize : ColabDataTableBaseModel
+        {
+            public string Name { get; set; }
+            public decimal Amount { get; set; }
+        }
+
         public string Items_itemKey => nameof(IngredientSize.Id);
         public IList<IngredientSize> Items = null;
 

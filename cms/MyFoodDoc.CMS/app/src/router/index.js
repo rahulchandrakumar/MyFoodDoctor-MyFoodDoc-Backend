@@ -51,8 +51,13 @@ router.beforeEach(async (to, from, next) => {
   }
   if (to.meta.requiresAuth != false) {
     let loggedIn = store.state.user.userInfo.isAuthenticated;
+    let roles = store.state.user.userInfo.roles;
     if (!loggedIn) {
       next("/login");
+      return;
+    }
+    if (!roles.includes(to.meta.role)) {
+      next("/");
       return;
     }
   }

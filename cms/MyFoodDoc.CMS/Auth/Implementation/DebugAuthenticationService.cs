@@ -14,9 +14,43 @@ namespace MyFoodDoc.CMS.Auth.Implementation
     {
         private readonly IConfiguration _configuration;
 
+        private readonly IList<AppUser> _users = new List<AppUser>
+        {
+            new AppUser
+            {
+                Displayname = "Admin Admin",
+                Username = "admin",
+                Roles = new string[] { "Admin", "Editor", "Viewer" }
+            },
+            new AppUser
+            {
+                Displayname = "editor",
+                Username = "editor",
+                Roles = new string[] { "Editor", "Viewer" }
+            },
+            new AppUser
+            {
+                Displayname = "editor2",
+                Username = "editor2",
+                Roles = new string[] { "Editor", "Viewer" }
+            },
+            new AppUser
+            {
+                Displayname = "Viewer",
+                Username = "viewer",
+                Roles = new string[] { "Viewer" }
+            }
+        };
+
         public DebugAuthenticationService(IConfiguration configuration)
         {
             this._configuration = configuration;
+            this._users.Add(new AppUser()
+            {
+                Displayname = _configuration["SuperAdmin:Displayname"],
+                Username = _configuration["SuperAdmin:Username"],
+                Roles = new string[] { "Admin", "Editor", "Viewer" }
+            });
         }
 
         public AppUser Login(string username, string password)
@@ -24,44 +58,10 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["AuthSecret"]);
             
-            AppUser user = null;
+            AppUser user = _users.FirstOrDefault(u => u.Username == username);
 
-            if (username == "admin")
-            {
-                user = new AppUser
-                {
-                    Displayname = "Admin Admin",
-                    Username = "admin",
-                    Roles = new string[] { "Admin", "Editor", "Approver" }
-                };
-            }
-            else if (username == "editor")
-            {
-                user = new AppUser
-                {
-                    Displayname = "editor",
-                    Username = "editor",
-                    Roles = new string[] { "Editor" }
-                };
-            }
-            else if (username == "editor2")
-            {
-                user = new AppUser
-                {
-                    Displayname = "editor2",
-                    Username = "editor2",
-                    Roles = new string[] { "Editor" }
-                };
-            }
-            else if (username == "approver")
-            {
-                user = new AppUser
-                {
-                    Displayname = "approver",
-                    Username = "approver",
-                    Roles = new string[] { "Approver" }
-                };
-            }
+            if (user == null)
+                throw new Exception("Login failed.");
 
             var userClaims = new List<Claim>
                     {
@@ -81,9 +81,6 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             user.Token = tokenHandler.WriteToken(token);
-
-            if (user == null)
-                throw new Exception("Login failed.");
 
             return user;
         }

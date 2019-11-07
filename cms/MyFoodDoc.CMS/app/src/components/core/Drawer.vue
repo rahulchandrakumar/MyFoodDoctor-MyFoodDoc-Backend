@@ -55,6 +55,7 @@
 <script>
 // Utilities
 import { mapMutations, mapState } from "vuex";
+import UserRoles from "@/enums/UserRoles"
 
 export default {
   props: {
@@ -65,41 +66,56 @@ export default {
   },
   created() {
     this.username = this.$store.state.user.userInfo.displayname
+
+    let userRoles = this.$store.state.user.userInfo.roles
+    let links = []
+    if (userRoles.includes(UserRoles.VIEWER))
+      links.push({
+          to: "/",
+          icon: "mdi-view-dashboard",
+          text: "Dashboard"
+      })
+    
+    if (userRoles.includes(UserRoles.EDITOR))
+      links.push({
+          to: "/table-list",
+          icon: "mdi-clipboard-outline",
+          text: "Table List"
+        })
+
+    if (userRoles.includes(UserRoles.ADMIN)) {
+      links.push({
+          to: "/users",
+          icon: "mdi-account-multiple",
+          text: "Users"
+        },
+        {
+          to: "/typography",
+          icon: "mdi-format-font",
+          text: "Typography"
+        },
+        {
+          to: "/icons",
+          icon: "mdi-chart-bubble",
+          text: "Icons"
+        },
+        {
+          to: "/maps",
+          icon: "mdi-map-marker",
+          text: "Maps"
+        },
+        {
+          to: "/notifications",
+          icon: "mdi-bell",
+          text: "Notifications"
+        })
+    }
+
+    this.links = links
   },
   data: () => ({
     logo: "favicon.ico",
-    links: [
-      {
-        to: "/",
-        icon: "mdi-view-dashboard",
-        text: "Dashboard"
-      },
-      {
-        to: "/table-list",
-        icon: "mdi-clipboard-outline",
-        text: "Table List"
-      },
-      {
-        to: "/typography",
-        icon: "mdi-format-font",
-        text: "Typography"
-      },
-      {
-        to: "/icons",
-        icon: "mdi-chart-bubble",
-        text: "Icons"
-      },
-      {
-        to: "/maps",
-        icon: "mdi-map-marker",
-        text: "Maps"
-      },
-      {
-        to: "/notifications",
-        icon: "mdi-bell",
-        text: "Notifications"
-      }
-    ],
+    links: [],
     username: ''
   }),
   computed: {
