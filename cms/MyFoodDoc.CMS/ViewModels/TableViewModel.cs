@@ -1,5 +1,6 @@
 ﻿using DotNetify;
 using DotNetify.Security;
+using MyFoodDoc.CMS.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +8,17 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    public class IngredientSize
+    public class IngredientSize: ColabDataTableBaseModel
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public decimal Amount { get; set; }
-        public string Editor { get; set; }
-        public long? LockDate { get; set; }
     }
 
     [Authorize]
     public class TableViewModel: MulticastVM
     {
-        public string IngredientSizes_itemKey => nameof(IngredientSize.Id);
-        public IList<IngredientSize> IngredientSizes = null;
+        public string Items_itemKey => nameof(IngredientSize.Id);
+        public IList<IngredientSize> Items = null;
 
         public TableViewModel()
         {
@@ -29,7 +27,7 @@ namespace MyFoodDoc.CMS.ViewModels
             {
                 await Task.Factory.StartNew(() =>
                 {
-                    IngredientSizes = new List<IngredientSize>()
+                    Items = new List<IngredientSize>()
                     {
                         new IngredientSize()
                         {
@@ -50,23 +48,23 @@ namespace MyFoodDoc.CMS.ViewModels
 
         public Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
         {
-            ingredientSize.Id = IngredientSizes.Count == 0 ? 0 : IngredientSizes.Max(i => i.Id) + 1;
-            IngredientSizes.Add(ingredientSize);
+            ingredientSize.Id = Items.Count == 0 ? 0 : Items.Max(i => i.Id) + 1;
+            Items.Add(ingredientSize);
 
-            this.AddList(nameof(IngredientSizes), ingredientSize);
+            this.AddList(nameof(Items), ingredientSize);
         };
         public Action<IngredientSize> Update => (IngredientSize ingredientSize) =>
         {
-            IngredientSizes.Remove(IngredientSizes.First(i => i.Id == ingredientSize.Id));
-            IngredientSizes.Add(ingredientSize);
+            Items.Remove(Items.First(i => i.Id == ingredientSize.Id));
+            Items.Add(ingredientSize);
 
-            this.UpdateList(nameof(IngredientSizes), ingredientSize);
+            this.UpdateList(nameof(Items), ingredientSize);
         };
         public Action<int> Remove => (int Id) =>
         {
-            IngredientSizes.Remove(IngredientSizes.First(i => i.Id == Id));
+            Items.Remove(Items.First(i => i.Id == Id));
 
-            this.RemoveList(nameof(IngredientSizes), Id);
+            this.RemoveList(nameof(Items), Id);
         };
     }
 }

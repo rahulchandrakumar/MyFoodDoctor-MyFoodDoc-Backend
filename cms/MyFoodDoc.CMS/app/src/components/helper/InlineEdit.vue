@@ -12,7 +12,6 @@
         v-model.lazy="input"
         :readonly="!edit"
         @blur="update"
-        @keydown.enter="save"
       >
     </ValidationProvider>
   </div>
@@ -34,11 +33,7 @@ export default {
   },
   methods: {
     update: function () {
-      this.$emit('update', this.input);
-    }, 
-    save: () =>  {
-      this.$emit('update', this.input);
-      this.$emit('save')
+      this.$emit('update:value', this.input);
     }
   }
 }
