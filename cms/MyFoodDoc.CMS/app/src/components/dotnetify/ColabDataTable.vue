@@ -23,6 +23,7 @@
           </v-col>
           <v-col cols="1">
             <v-btn
+                v-if="couldAdd && !readonly"
                 v-on:click="onAdd"
                 class="v-btn--simple ma-0"
                 color="success"
@@ -48,7 +49,7 @@
                     v-bind:edit="item.LockDate != null && (now - item.LockDate <= editTime) && item.Editor == username && (item.Original || !item.Id)"
                     >
                 </slot>
-                <td>
+                <td v-if="!readonly">
                   <v-btn
                     v-if="item.LockDate == null || (now - item.LockDate > editTime)"
                     v-on:click="onBeginEdit(item)"
@@ -87,7 +88,7 @@
                       <span>{{ item.Editor }}</span>
                     </v-tooltip>
                 </td>
-                <td>
+                <td v-if="!readonly">
                   <v-btn
                     v-if="item.LockDate == null || (now - item.LockDate > editTime)"
                     v-on:click="onRemove(item)"
@@ -127,7 +128,7 @@ const editTime = 300000
 
 export default {
   name: 'ColabDataTable',
-  props: ['viewModel', 'headers', 'title'],
+  props: ['viewModel', 'headers', 'title', 'readonly', 'couldAdd'],
   created() {
     let token = this.$store.state.user.token
     let headers = { Authorization: "Bearer " + token } 
@@ -145,21 +146,22 @@ export default {
   },
   data() {
       var mainHeaders = [{
-                sortable: true,
-                text: "Id",
-                value: "Id"
-            }]
-            .concat(this.headers)
-            .concat([      
-            {
-                sortable: false,
-                width: "25px"
-            },
-            {
-                sortable: false,
-                width: "25px"
-            }
-            ]);
+        sortable: true,
+        text: "Id",
+        value: "Id"
+      }]
+      .concat(this.headers);
+      if (!this.readonly)
+        mainHeaders = mainHeaders.concat([      
+        {
+          sortable: false,
+          width: "25px"
+        },
+        {
+          sortable: false,
+          width: "25px"
+        }
+        ]);
 
       return {
             mainHeaders: mainHeaders,
