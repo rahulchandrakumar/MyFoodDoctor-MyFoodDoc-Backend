@@ -14,6 +14,12 @@
             >
               {{ title }}
             </h4>
+            <v-text-field
+              class="mr-4"
+              label="Search..."
+              hide-details
+              v-model="search"
+            />
           </v-col>
           <v-col cols="1">
             <v-btn
@@ -33,13 +39,13 @@
           </v-col>
         </v-row>
 
-          <v-data-table :headers="mainHeaders" :items="Items" sort-by="Id" hide-default-footer disable-pagination>
+          <v-data-table :headers="mainHeaders" :items="Items" :search="search" sort-by="Id" hide-default-footer disable-pagination filterable dense>
             <template slot="item" slot-scope="{ item }">
               <tr>
                 <td>{{ item.Id }}</td>
                 <slot name="item" 
                     v-bind:item="item" 
-                    v-bind:edit="item.LockDate != null && (now - item.LockDate <= editTime) && item.Editor == username && item.Original"
+                    v-bind:edit="item.LockDate != null && (now - item.LockDate <= editTime) && item.Editor == username && (item.Original || !item.Id)"
                     >
                 </slot>
                 <td>
@@ -55,7 +61,7 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    v-else-if="item.Editor == username && item.Original"
+                    v-else-if="item.Editor == username && (item.Original || !item.Id)"
                     v-on:click="onSave(item)"
                     class="v-btn--simple"
                     color="success"
@@ -94,7 +100,7 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    v-else-if="item.Editor == username && item.Original"
+                    v-else-if="item.Editor == username && (item.Original || !item.Id)"
                     v-on:click="onCancel(item)"
                     class="v-btn--simple"
                     color="danger"
@@ -160,7 +166,8 @@ export default {
             now: Date.now(),
             username: '',
             Items: [],
-            editTime: editTime
+            editTime: editTime,
+            search: ''
           }
 },
   methods: {
@@ -206,3 +213,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.v-card--material__header .v-text-field__slot .v-label {
+    color: unset !important;
+}
+</style>

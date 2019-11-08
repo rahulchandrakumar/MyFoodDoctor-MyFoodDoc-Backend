@@ -1,9 +1,6 @@
 <template>
   <div>
-    <ValidationProvider
-      :rules="rules"
-      v-slot="{ classes }"
-    >
+    <span>
         <v-select
           class="inline-select"
           :items="items"
@@ -11,7 +8,7 @@
           v-model.lazy="input"
           @blur="update"
         ></v-select>
-    </ValidationProvider>
+    </span>
   </div>
 </template>
 
