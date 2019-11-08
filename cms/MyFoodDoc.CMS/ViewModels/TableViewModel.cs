@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    [Authorize]
+    [Authorize("Editor")]
     public class TableViewModel: MulticastVM
     {
         public class IngredientSize : ColabDataTableBaseModel
@@ -25,23 +25,23 @@ namespace MyFoodDoc.CMS.ViewModels
         {
             //init props
             Observable.FromAsync(async () => await Task.Run(() =>
-                                            {
-                                                return new List<IngredientSize>()
-                                                    {
-                                                        new IngredientSize()
-                                                        {
-                                                            Id = 0,
-                                                            Name = "Banana",
-                                                            Amount = 100
-                                                        },
-                                                        new IngredientSize()
-                                                        {
-                                                            Id = 1,
-                                                            Name = "Apple",
-                                                            Amount = 200
-                                                        }
-                                                    };
-                                            }))
+                     {
+                         return new List<IngredientSize>()
+                         {
+                             new IngredientSize()
+                             {
+                                 Id = 0,
+                                 Name = "Banana",
+                                 Amount = 100
+                             },
+                             new IngredientSize()
+                             {
+                                 Id = 1,
+                                 Name = "Apple",
+                                 Amount = 200
+                             }
+                         };
+                     }))
                      .Subscribe(x =>
                      {
                          Items = x;

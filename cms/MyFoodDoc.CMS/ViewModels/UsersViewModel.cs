@@ -7,11 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    [Authorize]
+    [Authorize("Admin")]
     public class UsersViewModel: MulticastVM
     {
         public class User : ColabDataTableBaseModel
