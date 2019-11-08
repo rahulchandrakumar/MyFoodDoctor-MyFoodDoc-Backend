@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using MyFoodDoc.CMS.Application.Models;
+using MyFoodDoc.CMS.Application.Services;
 using MyFoodDoc.CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -7,49 +9,34 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Auth.Implementation
 {
     public class DebugAuthenticationService : ICustomAuthenticationService
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        private readonly IList<AppUser> _users = new List<AppUser>
-        {
-            new AppUser
-            {
-                Displayname = "Admin Admin",
-                Username = "admin",
-                Roles = new string[] { "Admin", "Editor", "Viewer" }
-            },
-            new AppUser
-            {
-                Displayname = "editor",
-                Username = "editor",
-                Roles = new string[] { "Editor", "Viewer" }
-            },
-            new AppUser
-            {
-                Displayname = "editor2",
-                Username = "editor2",
-                Roles = new string[] { "Editor", "Viewer" }
-            },
-            new AppUser
-            {
-                Displayname = "Viewer",
-                Username = "viewer",
-                Roles = new string[] { "Viewer" }
-            }
-        };
+        private readonly List<UserModel> _users = new List<UserModel>();
 
-        public DebugAuthenticationService(IConfiguration configuration)
+        public DebugAuthenticationService(IConfiguration configuration, IUserService userService)
         {
+            this._userService = userService;
+
             this._configuration = configuration;
-            this._users.Add(new AppUser()
+
+            //init props
+            Task.Factory.StartNew(async () =>
             {
-                Displayname = _configuration["SuperAdmin:Displayname"],
-                Username = _configuration["SuperAdmin:Username"],
-                Roles = new string[] { "Admin", "Editor", "Viewer" }
+                this._users.AddRange(await _userService.GetItems());
+                this._users.Add(new UserModel()
+                {
+                    Displayname = _configuration["SuperAdmin:Displayname"],
+                    Username = _configuration["SuperAdmin:Username"],
+                    Password = _configuration["SuperAdmin:Password"],
+                    Roles = new UserRoleEnum[] { UserRoleEnum.Admin, UserRoleEnum.Editor, UserRoleEnum.Viewer }
+                });
             });
         }
 
@@ -57,20 +44,20 @@ namespace MyFoodDoc.CMS.Auth.Implementation
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["AuthSecret"]);
-            
-            AppUser user = _users.FirstOrDefault(u => u.Username == username);
 
-            if (user == null)
+            var user = _users.FirstOrDefault(u => u.Username == username);
+
+            if (user == null || user.Password != null && user.Password != password)
                 throw new Exception("Login failed.");
 
             var userClaims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.GivenName, user.Displayname),
-                        new Claim(ClaimTypes.Name, user.Username)
-                    };
+            {
+                new Claim(ClaimTypes.GivenName, user.Displayname),
+                new Claim(ClaimTypes.Name, user.Username)
+            };
 
             if (user.Roles != null)
-                userClaims.AddRange(user.Roles?.Select(role => new Claim(ClaimTypes.Role, role)).ToList());
+                userClaims.AddRange(user.Roles?.Select(role => new Claim(ClaimTypes.Role, role.ToString())).ToList());
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -80,9 +67,13 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            user.Token = tokenHandler.WriteToken(token);
-
-            return user;
+            return new AppUser()
+            {
+                Displayname = user.Displayname,
+                Roles = user.Roles.Select(r => r.ToString()).ToList(),
+                Username = user.Username,
+                Token = tokenHandler.WriteToken(token)
+            };
         }
     }
 }

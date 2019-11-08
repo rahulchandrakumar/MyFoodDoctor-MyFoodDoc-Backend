@@ -4,6 +4,7 @@ using MyFoodDoc.CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
@@ -23,27 +24,29 @@ namespace MyFoodDoc.CMS.ViewModels
         public TableViewModel()
         {
             //init props
-            Task.Factory.StartNew(async () =>
-            {
-                await Task.Factory.StartNew(() =>
-                {
-                    Items = new List<IngredientSize>()
-                    {
-                        new IngredientSize()
-                        {
-                            Id = 0,
-                            Name = "Banana",
-                            Amount = 100
-                        },
-                        new IngredientSize()
-                        {
-                            Id = 1,
-                            Name = "Apple",
-                            Amount = 200
-                        }
-                    };
-                });
-            });
+            Observable.FromAsync(async () => await Task.Run(() =>
+                                            {
+                                                return new List<IngredientSize>()
+                                                    {
+                                                        new IngredientSize()
+                                                        {
+                                                            Id = 0,
+                                                            Name = "Banana",
+                                                            Amount = 100
+                                                        },
+                                                        new IngredientSize()
+                                                        {
+                                                            Id = 1,
+                                                            Name = "Apple",
+                                                            Amount = 200
+                                                        }
+                                                    };
+                                            }))
+                     .Subscribe(x =>
+                     {
+                         Items = x;
+                         PushUpdates();
+                     });
         }
 
         public Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
