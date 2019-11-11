@@ -28,7 +28,7 @@ export default [
   {
     path: "/table-list",
     name: "Table List",
-    view: "TableList",
+    view: "Data/TableList",
     meta: {
       role: UserRoles.EDITOR
     }

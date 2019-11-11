@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

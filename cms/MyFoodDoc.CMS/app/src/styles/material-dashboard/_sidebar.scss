@@ -5,6 +5,10 @@
     background: $sidebar-bg;
     padding: 0;
 
+    .v-list-group.v-list-group--active {
+      color: inherit !important;
+    }
+
     .v-list-item {
       flex: unset;
       padding: $padding-small $padding-general;
@@ -30,7 +34,7 @@
         padding: 0;
       }      
 
-      .v-list-item__action {
+      .v-list-item__action, .v-list-item__icon {
         margin: 0 $margin-general 0 0;
         min-width: unset;
 

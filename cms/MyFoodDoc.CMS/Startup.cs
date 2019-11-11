@@ -8,8 +8,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using MyFoodDoc.CMS.Application.DependencyInjection;
+using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
+using MyFoodDoc.CMS.Infrastructure.Persistence.Implementation;
 using System.Text;
 
 namespace MyFoodDoc.CMS
@@ -27,9 +29,15 @@ namespace MyFoodDoc.CMS
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region ASP
             services.AddMvc(o => o.EnableEndpointRouting = false);
+            #endregion
+
+            #region DI
             services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
+            services.AddTransient<IUserService, UserService>();
             services.AddApplicationDI();
+            #endregion
 
             #region CORS
             services.AddCors();
@@ -80,10 +88,12 @@ namespace MyFoodDoc.CMS
             );
             #endregion
 
+            #region ASP
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMvc();
+            #endregion
 
             #region dotnetify
             app.UseWebSockets();
