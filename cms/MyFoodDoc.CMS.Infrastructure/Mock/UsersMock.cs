@@ -1,7 +1,7 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
 using System.Collections.Generic;
 
-namespace MyFoodDoc.CMS.Application.Mock
+namespace MyFoodDoc.CMS.Infrastructure.Mock
 {
     public static class UsersMock
     {

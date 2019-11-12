@@ -6,10 +6,10 @@ export default {
     state.userInfo.roles = data.roles;
     state.token = data.token;
 
-    localStorage.MyFoodDoc_roles = data.roles.join(",")
-    localStorage.MyFoodDoc_username = data.username
-    localStorage.MyFoodDoc_displayname = data.displayname
-    localStorage.access_token = data.token
+    localStorage.MyFoodDoc_roles = data.roles.join(",");
+    localStorage.MyFoodDoc_username = data.username;
+    localStorage.MyFoodDoc_displayname = data.displayname;
+    localStorage.access_token = data.token;
   },
   logout: state => {
     state.userInfo.isAuthenticated = false;

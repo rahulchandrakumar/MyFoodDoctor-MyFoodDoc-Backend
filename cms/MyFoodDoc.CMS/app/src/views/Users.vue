@@ -4,37 +4,36 @@
     viewModel="UsersViewModel" 
     :headers="mainHeaders"
   >
-    <template v-slot:item="{ item, edit }">
-      <td>
-        <InlineEdit
-          rules="required|max:35"
-          fieldtype="text"
-          :value.sync="item.Username"
-          :edit="edit"
-        />
-      </td>
-      <td>
-        <InlineEdit
-          rules="required|max:35"
-          fieldtype="text"
-          :value.sync="item.DisplayName"
-          :edit="edit"
-        />
-      <td>
-        <InlineEdit
-          rules="required|max:35"
-          fieldtype="text"
-          :value.sync="item.Password"
-          :edit="edit"
-        />
-      </td>
-      <td>
-        <InlineSelect
-          :value.sync="item.Role"
-          :edit="edit"
-          :items="roles"
-        />
-      </td>
+    <template v-slot:item.Username="{ item, edit }">
+      <InlineEdit
+        rules="required|max:35"
+        fieldtype="text"
+        :value.sync="item.Username"
+        :edit="edit"
+      />
+    </template>
+    <template v-slot:item.DisplayName="{ item, edit }">
+      <InlineEdit
+        rules="required|max:35"
+        fieldtype="text"
+        :value.sync="item.DisplayName"
+        :edit="edit"
+      />
+    </template>
+    <template v-slot:item.Password="{ item, edit }">
+      <InlineEdit
+        rules="required|max:35"
+        fieldtype="text"
+        :value.sync="item.Password"
+        :edit="edit"
+      />
+    </template>
+    <template v-slot:item.Role="{ item, edit }">
+      <InlineSelect
+        :value.sync="item.Role"
+        :edit="edit"
+        :items="roles"
+      />
     </template>
   </ColabDataTable>
 </template>

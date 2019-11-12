@@ -1,7 +1,7 @@
 const UserRoles = Object.freeze({
-    VIEWER: "Viewer",
-    EDITOR: "Editor",
-    ADMIN: "Admin"
+  VIEWER: "Viewer",
+  EDITOR: "Editor",
+  ADMIN: "Admin"
 });
 
-export default UserRoles
+export default UserRoles;

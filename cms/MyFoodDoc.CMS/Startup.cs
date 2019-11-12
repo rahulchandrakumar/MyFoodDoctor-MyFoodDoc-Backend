@@ -11,7 +11,7 @@ using MyFoodDoc.CMS.Application.DependencyInjection;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
-using MyFoodDoc.CMS.Infrastructure.Persistence.Implementation;
+using MyFoodDoc.CMS.Infrastructure.Persistence;
 using System.Text;
 
 namespace MyFoodDoc.CMS
@@ -36,6 +36,7 @@ namespace MyFoodDoc.CMS
             #region DI
             services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IPatientService, PatientService>();
             services.AddApplicationDI();
             #endregion
 

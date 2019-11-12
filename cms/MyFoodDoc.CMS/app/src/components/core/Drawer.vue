@@ -109,6 +109,9 @@ export default {
           children:[{
             to: "/table-list",
             text: "Table List"
+          }, {
+            to: "/patient-list",
+            text: "Patients"
           }]
       })
 
