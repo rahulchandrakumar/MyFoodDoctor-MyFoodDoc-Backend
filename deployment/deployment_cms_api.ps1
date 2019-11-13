@@ -1,9 +1,9 @@
 $tag                 = "latest"
 $image               = "myfooddoc-mock-cms-api"
 
-$registryName        = "myfooddocmockregistry"
+$registryName        = "myfooddocmockcmsregistry"
 $registryServer      = "$registryName.azurecr.io"
-$registryPw          = "ZUI+NMC9bpT3Rd+5lhoLWPpVZeZzUat8"
+$registryPw          = "bgxBJ7IUJj/7BmI4AGvpRMeZb0muWrbb"
 
 $tag = $registryServer + "/" + $image + ":" + $tag
 
