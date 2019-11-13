@@ -61,7 +61,7 @@ namespace MyFoodDoc.CMS.ViewModels
         }
 
         public string Items_itemKey => nameof(Patient.Id);
-        public IList<Patient> Items = null;
+        public IList<Patient> Items = new List<Patient>();
 
         private readonly IPatientService _patientService;
 

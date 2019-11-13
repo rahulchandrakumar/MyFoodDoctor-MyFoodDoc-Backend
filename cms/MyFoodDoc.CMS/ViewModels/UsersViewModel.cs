@@ -46,7 +46,7 @@ namespace MyFoodDoc.CMS.ViewModels
         }
 
         public string Items_itemKey => nameof(User.Id);
-        public IList<User> Items = null;
+        public IList<User> Items = new List<User>();
 
         private readonly IUserService _userService;
 

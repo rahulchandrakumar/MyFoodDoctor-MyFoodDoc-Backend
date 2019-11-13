@@ -19,36 +19,22 @@ namespace MyFoodDoc.CMS.ViewModels
         }
 
         public string Items_itemKey => nameof(IngredientSize.Id);
-        public IList<IngredientSize> Items = null;
-
-        public TableViewModel()
+        public IList<IngredientSize> Items = new List<IngredientSize>()
         {
-            //init props
-            Observable.FromAsync(async () => await Task.Run(() =>
-                     {
-                         return new List<IngredientSize>()
-                         {
-                             new IngredientSize()
-                             {
-                                 Id = 0,
-                                 Name = "Banana",
-                                 Amount = 100
-                             },
-                             new IngredientSize()
-                             {
-                                 Id = 1,
-                                 Name = "Apple",
-                                 Amount = 200
-                             }
-                         };
-                     }))
-                     .Subscribe(x =>
-                     {
-                         Items = x;
-                         PushUpdates();
-                     });
-        }
-
+            new IngredientSize()
+            {
+                Id = 0,
+                Name = "Banana",
+                Amount = 100
+            },
+            new IngredientSize()
+            {
+                Id = 1,
+                Name = "Apple",
+                Amount = 200
+            }
+        };
+        
         public Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
         {
             ingredientSize.Id = Items.Count == 0 ? 0 : Items.Max(i => i.Id) + 1;
