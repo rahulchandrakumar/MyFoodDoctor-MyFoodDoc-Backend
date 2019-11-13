@@ -1,5 +1,5 @@
 <template>
-    <v-dialog class="colab-edit" v-model="dialog">
+    <v-dialog class="colab-edit" v-model="innerDialog" @click:outside="close">
         <template v-slot:activator="{ on }">
             <v-btn
             v-on:click="add"
@@ -32,7 +32,7 @@
                 <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                <v-btn color="blue darken-1" text @click="passes(save)" :disabled="invalid || !validated">Save</v-btn>
+                <v-btn color="blue darken-1" text @click="() => validate() && !invalid && passes(save())">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </ValidationObserver>
@@ -64,14 +64,19 @@ export default {
             this.formItem = newval
         },
         dialog(newval) {
+            this.innerDialog = newval
             if (newval)
                 this.timeout = setInterval(this.close, this.editTime)
+        },
+        innerDialog(newval) {
+            this.$emit('update:dialog', newval);
         }
     },
     data() {
         return {
             formItem: this.item,
-            timeout: null
+            timeout: null,
+            innerDialog: this.dialog
         }
     },
     methods: {
@@ -87,7 +92,7 @@ export default {
         close() {
             clearInterval(this.timeout)
             this.$emit('update:dialog', false);
-            this.$emit('cancel', this.item);
+            this.$emit('cancel');
         }
     }
 }

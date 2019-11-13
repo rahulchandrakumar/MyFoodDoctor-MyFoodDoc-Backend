@@ -230,11 +230,11 @@ export default {
 
       this.editItem = {}
     },
-    onCancel(item) {
-      if (item && item.LockDate != null && (this.now - item.LockDate <= editTime) && item.Editor == this.username) {
-        Object.assign(item, item.Original)
-        item.Original = null;
-        this.vm.$dispatch({ Update: item });
+    onCancel() {
+      if (this.editItem && this.editItem.LockDate != null && (this.now - this.editItem.LockDate <= editTime) && this.editItem.Editor == this.username) {
+        Object.assign(this.editItem, this.editItem.Original)
+        this.editItem.Original = null;
+        this.vm.$dispatch({ Update: this.editItem });
       }
       this.editItem = {}
     }
