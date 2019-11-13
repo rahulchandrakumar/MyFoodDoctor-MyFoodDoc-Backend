@@ -9,18 +9,21 @@
     offset-x
     transition="slide-y-transition"
   >
-    <v-btn
-      v-slot:activator
-      class="elevation-0"
-      color="grey"
-      dark
-      fab
-      fixed
-      style="top: 96px;"
-      top
-    >
-      <v-icon>mdi-settings</v-icon>
-    </v-btn>
+    <template v-slot:activator="{ on }">
+      <v-btn
+        
+        class="elevation-0"
+        color="grey"
+        dark
+        fab
+        fixed
+        style="top: 96px;"
+        top
+        v-on="on"
+      >
+        <v-icon>mdi-settings</v-icon>
+      </v-btn>
+    </template>
     <v-card>
       <v-container grid-list-xl>
         <v-layout wrap>
@@ -55,50 +58,6 @@
               @click.native="setImage(img)"
             />
           </v-flex>
-          <v-flex xs12>
-            <v-btn
-              href="https://www.creative-tim.com/product/vuetify-material-dashboard"
-              target="_blank"
-              color="success"
-              block
-            >
-              Free Download
-            </v-btn>
-          </v-flex>
-          <v-flex xs12>
-            <v-btn
-              href="https://demos.creative-tim.com/vuetify-material-dashboard/documentation"
-              target="_blank"
-              class="white--text"
-              color="primary"
-              block
-            >
-              Documentation
-            </v-btn>
-          </v-flex>
-          <v-flex xs12>
-            <div class="text-xs-center body-2 text-uppercase">
-              <div class=" sidebar-filter">
-                Thank You for Sharing!
-              </div>
-
-              <div>
-                <v-btn
-                  color="indigo"
-                  class="mr-2 v-btn-facebook"
-                  fab
-                  icon
-                  small
-                  round
-                >
-                  <v-icon>mdi-facebook</v-icon>
-                </v-btn>
-                <v-btn color="cyan" class="v-btn-twitter" fab icon small rounded>
-                  <v-icon>mdi-twitter</v-icon>
-                </v-btn>
-              </div>
-            </div>
-          </v-flex>
         </v-layout>
       </v-container>
     </v-card>
@@ -108,15 +67,13 @@
 <script>
 // Utilities
 import { mapMutations, mapState } from "vuex";
+import menuImg from '@/assets/menu-img.jpg'
 
 export default {
   data: () => ({
     colors: ["primary", "info", "success", "warning", "danger"],
     images: [
-      "https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-1.23832d31.jpg",
-      "https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg",
-      "https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-3.3a54f533.jpg",
-      "https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-4.3b7e38ed.jpg"
+      menuImg
     ]
   }),
 

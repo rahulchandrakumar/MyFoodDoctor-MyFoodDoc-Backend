@@ -1,6 +1,7 @@
+import menuImg from '@/assets/menu-img.jpg'
+
 export default {
   drawer: null,
   color: "success",
-  image:
-    "https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg"
+  image: menuImg
 };
