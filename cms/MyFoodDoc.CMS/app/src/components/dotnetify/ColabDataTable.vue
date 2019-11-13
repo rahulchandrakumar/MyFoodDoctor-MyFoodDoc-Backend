@@ -22,21 +22,22 @@
               />
             </v-col>
             <v-col cols="1">
-              <v-btn
+              <ColabEdit
                 v-if="couldAdd && !readonly"
-                v-on:click="onAdd"
-                class="v-btn--simple ma-0"
-                color="success"
-                icon
-                small
-              >
-                <v-icon 
-                  color="white"
-                  style="font-size:35px"
+                :dialog.sync="dialog"
+                :item="editItem"
+                :titleSuffix="editorTitleSuffix"
+                :editTime="editTime"
+                v-on:cancel="onCancel"
+                v-on:save="onSave"
                 >
-                  mdi-plus-box
-                </v-icon>
-              </v-btn>
+                 <template slot-scope="scope">
+                  <slot 
+                    name="editor"
+                    v-bind="scope"
+                  ></slot>
+                </template>
+              </ColabEdit>
             </v-col>
           </v-row>
 
@@ -57,7 +58,6 @@
               <slot 
                 :name="slot" 
                 v-bind="scope"
-                v-bind:edit="scope.item.LockDate != null && (now - scope.item.LockDate <= editTime) && scope.item.Editor == username && (scope.item.Original || !scope.item.Id)"
               ></slot>
             </template>
 
@@ -72,19 +72,7 @@
                 <v-icon color="primary">
                   mdi-pencil
                 </v-icon>
-              </v-btn>
-              <v-btn
-                v-else-if="item.Editor == username && (item.Original || !item.Id)"
-                v-on:click="onSave(item)"
-                class="v-btn--simple"
-                color="success"
-                icon
-              >
-                <v-icon color="primary">
-                  mdi-content-save
-                </v-icon>
-              </v-btn>
-                    
+              </v-btn>                    
               <v-tooltip bottom v-else>
                 <template v-slot:activator="{ on }">
                   <v-btn v-on="on"
@@ -113,17 +101,6 @@
                   mdi-close
                 </v-icon>
               </v-btn>
-              <v-btn
-                v-else-if="item.Editor == username && (item.Original || !item.Id)"
-                v-on:click="onCancel(item)"
-                class="v-btn--simple"
-                color="danger"
-                icon
-              >
-                <v-icon color="error">
-                  mdi-undo
-                </v-icon>
-              </v-btn>
             </template>
           </v-data-table>
         </material-card>
@@ -134,11 +111,15 @@
 
 <script>
 import dotnetify from 'dotnetify/vue';
+import ColabEdit from './ColabEdit';
 
 const editTime = 300000
 
 export default {
   name: 'ColabDataTable',
+  components: {
+    ColabEdit: ColabEdit
+  },
   props: {
    viewModel: {
      type: String,
@@ -151,6 +132,10 @@ export default {
    title: {
      type: String,
      required: true
+   },
+   editorTitleSuffix: {
+     type: String,
+     default: ""
    },
    readonly: {
      type: Boolean,
@@ -184,7 +169,7 @@ export default {
     var mainHeaders = [{
       sortable: true,
       text: "Id",
-      value: "Id"
+      value: "Id",
     }]
     .concat(this.headers);
 
@@ -208,7 +193,9 @@ export default {
       username: '',
       Items: [],
       editTime: editTime,
-      search: ''
+      search: '',
+      dialog: false,
+      editItem: {}
     }
   },
   methods: {
@@ -222,7 +209,10 @@ export default {
       item.Original = Object.assign({}, item)
       item.LockDate = Date.now()
       item.Editor = this.username
-      this.vm.$dispatch({ Update: item });
+      this.vm.$dispatch({ Update: item })
+
+      this.editItem = item
+      this.dialog = true
     },
     onRemove(item) {
       if (item.LockDate == null || (this.now - item.LockDate > editTime))
@@ -233,23 +223,20 @@ export default {
       item.LockDate = null;
       item.Editor = null;
 
-      if (item.Id == null) {
-        this.Items.shift();
+      if (item.Id == null)
         this.vm.$dispatch({ Add: item });
-      }
       else
         this.vm.$dispatch({ Update: item });
+
+      this.editItem = {}
     },
     onCancel(item) {
-      if (item.LockDate != null && (this.now - item.LockDate <= editTime) && item.Editor == this.username) {
-        if (item.Id == null)
-          this.Items.shift();
-        else {
-          Object.assign(item, item.Original)
-          item.Original = null;
-          this.vm.$dispatch({ Update: item });
-        }
+      if (item && item.LockDate != null && (this.now - item.LockDate <= editTime) && item.Editor == this.username) {
+        Object.assign(item, item.Original)
+        item.Original = null;
+        this.vm.$dispatch({ Update: item });
       }
+      this.editItem = {}
     }
   }
 };

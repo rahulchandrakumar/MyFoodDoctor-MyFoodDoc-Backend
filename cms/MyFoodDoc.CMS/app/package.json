@@ -10,6 +10,7 @@
   "dependencies": {
     "chartist": "^0.11.4",
     "dotnetify": "^3.5.0",
+    "tiptap": "^1.26.4",
     "vee-validate": "^3.0.11",
     "vue": "^2.6.10",
     "vue-analytics": "^5.17.2",

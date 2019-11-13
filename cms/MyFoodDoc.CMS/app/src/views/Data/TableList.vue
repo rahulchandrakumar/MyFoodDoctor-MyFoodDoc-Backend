@@ -1,24 +1,25 @@
 <template>
   <ColabDataTable 
-    title="Ingredients" 
+    title="Ingredients"
+    editorTitleSuffix="ingredient"
     viewModel="TableViewModel" 
     :headers="mainHeaders"
   >
-    <template v-slot:item.Name="{ item, edit }">
-      <InlineEdit
-        rules="required|max:35"
-        fieldtype="text"
-        :value.sync="item.Name"
-        :edit="edit"
-      />
-    </template>
-    <template v-slot:item.Amount="{ item, edit }">
-      <InlineEdit
-        rules="required"
-        fieldtype="number"
-        :value.sync="item.Amount"
-        :edit="edit"
-      />
+    <template v-slot:editor="{ item }">
+      <v-row>
+        <VeeTextField
+          v-model="item.Name" 
+          :label="mainHeaders.filter(h => h.value == 'Name')[0].text"
+          rules="required|max:35" :counter="35"
+        ></VeeTextField>
+      </v-row>
+      <v-row>
+        <VeeTextField 
+          v-model="item.Amount" 
+          :label="mainHeaders.filter(h => h.value == 'Amount')[0].text"
+          rules="required|decimal"
+        ></VeeTextField>
+      </v-row>
     </template>
   </ColabDataTable>
 </template>
@@ -26,8 +27,8 @@
 <script>
 export default {
   components: {
-    InlineEdit: () => import("@/components/helper/InlineEdit"),
-    ColabDataTable: () => import("@/components/dotnetify/ColabDataTable")
+    ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
+    VeeTextField: () => import("@/components/inputs/VeeTextField"),
   },
   
   data: () => ({
