@@ -4,7 +4,7 @@
     view-model="LexiconViewModel"
     editor-title-suffix="lexicon item"
     :headers="mainHeaders"
-    :beforeSave="beforeSave"
+    :before-save="beforeSave"
   >
     <template v-slot:item.Description="{ item }">
       {{ item.Description | truncate(150) }}
@@ -79,8 +79,8 @@ export default {
   },
   methods: {
     async beforeSave(item) {
-      if (item.Image.ImageData != null)
-        item.Image = await integration.images.uploadImage(item.Image.ImageData);
+      if (item.Image.Url != null && !item.Image.Url.startsWith('http'))
+        item.Image = Object.assign(item.Image, await integration.images.uploadImage(item.Image.Url));
     }
   }
 }

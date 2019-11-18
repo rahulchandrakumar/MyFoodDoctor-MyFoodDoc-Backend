@@ -1,10 +1,10 @@
 <template>
   <ValidationProvider
+    ref="field"
     v-slot="{ errors, valid }"
     :name="$attrs.label"
     :rules="rules"
     style="display: contents;"
-    ref="field"
   >
     <v-text-field
       v-model="innerValue"

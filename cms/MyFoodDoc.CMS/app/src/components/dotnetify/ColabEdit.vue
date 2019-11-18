@@ -12,9 +12,9 @@
     </template>
 
     <ValidationObserver
-      v-slot="{ invalid, validated, passes, validate }"
-      style="display: contents;"
       ref="observer"
+      v-slot="{ invalid, validated, passes, validate }"
+      style="display: contents;"      
     >
       <v-card>
         <v-card-title>

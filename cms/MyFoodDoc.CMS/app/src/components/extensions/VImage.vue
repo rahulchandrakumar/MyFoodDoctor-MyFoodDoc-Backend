@@ -8,8 +8,8 @@
     <v-row v-if="value == null || !value.startsWith('http')">
       <v-image-input
         :key="key"
-        :debounce="300"
-        v-model="innerValue"        
+        v-model="innerValue"         
+        :debounce="300"               
         class="v-image-input"
         :image-quality="0.65"
         image-format="jpeg"

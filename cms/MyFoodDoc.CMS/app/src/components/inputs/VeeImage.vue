@@ -1,11 +1,11 @@
 <template>
   <ValidationProvider
+    ref="field"
     v-slot="{ errors, valid }"
     :name="$attrs.label"
     :rules="rules"
     style="display: contents;"
-    mode="passive"
-    ref="field"
+    mode="passive"    
   >
     <v-image
       v-model="innerValue"
@@ -30,17 +30,17 @@ export default {
   },
   data() {
     return {
-      innerValue: this.value && this.value.Url ? this.value.Url : new String()
+      innerValue: (this.value || {}).Url || new String()
     }
   },
   watch: {
     innerValue(newVal) {
-      let change = this.value || {}
-      change.ImageData = newVal
+      var change = this.value || {}
+      change.Url = newVal
       this.$emit("input", change);
     },
     value(newVal) {
-      this.innerValue = newVal && newVal.Url ? newVal.Url : new String();
+      this.innerValue = (newVal || {}).Url || new String();
       
       let self = this
       setTimeout(() => self.$refs.field.validate(), 10)

@@ -1,11 +1,11 @@
 <template>
   <ValidationProvider
+    ref="field"
     v-slot="{ errors, valid }"
     :name="$attrs.label"
     :rules="rules"
     style="display: contents;"
-    mode="passive"
-    ref="field"
+    mode="passive"    
   >
     <v-tiptap-area
       v-model="innerValue"
