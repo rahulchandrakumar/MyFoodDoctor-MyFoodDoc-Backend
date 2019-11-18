@@ -5,6 +5,6 @@ namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface IFoodService
     {
-        Task<Ingredient> GetAll(string q);
+        Task<IngredientDto> GetAll(string q);
     }
 }

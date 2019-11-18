@@ -15,7 +15,7 @@ namespace MyFoodDoc.App.Api.Controllers
     public class FoodController : BaseController
     {
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Ingredient>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<IngredientDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search(string query)
         {
             var result = IngredientsMock.Entries.Where(x => CultureInfo.InvariantCulture.CompareInfo.IndexOf(x.Name, query, CompareOptions.IgnoreCase) >= 0);

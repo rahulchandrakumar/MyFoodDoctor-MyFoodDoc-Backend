@@ -6,6 +6,6 @@ namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface IDiaryService
     {
-        Task<DiaryEntry> GetAll(DateTime start);
+        Task<DiaryEntryDto> GetAll(DateTime start);
     }
 }
