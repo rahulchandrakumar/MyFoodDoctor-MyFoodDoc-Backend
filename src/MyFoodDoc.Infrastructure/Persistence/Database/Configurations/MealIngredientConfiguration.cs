@@ -4,7 +4,7 @@ using MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
-    class DiaryMealsIngredientsConfiguration : IEntityTypeConfiguration<Meal>
+    class MealIngredientConfiguration : IEntityTypeConfiguration<Meal>
     {
         public void Configure(EntityTypeBuilder<Meal> builder)
         {
