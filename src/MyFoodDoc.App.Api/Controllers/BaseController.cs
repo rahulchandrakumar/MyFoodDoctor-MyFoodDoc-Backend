@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using MyFoodDoc.App.Infrastructure;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
@@ -8,6 +8,9 @@ namespace MyFoodDoc.App.Api.Controllers
     [ApiController]
     public abstract class BaseController : ControllerBase
     {
-        
+        protected string GetUserId()
+        {
+            return User.GetLoggedInUserId<string>();
+        }
     }
 }
