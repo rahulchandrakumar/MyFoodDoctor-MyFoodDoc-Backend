@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entites;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
     class DiaryMealsIngredientsConfiguration : IEntityTypeConfiguration<DiaryMeal>
     {

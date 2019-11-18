@@ -6,7 +6,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Infrastructure.DependencyInjection
 {
-    public static class PersistenceServiceCollectionExtensions
+    public static class DependencyInjection
     {
         public static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration configuration)
         {

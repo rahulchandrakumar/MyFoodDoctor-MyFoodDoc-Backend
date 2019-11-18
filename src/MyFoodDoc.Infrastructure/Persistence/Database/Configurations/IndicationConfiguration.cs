@@ -2,13 +2,13 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entites;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
-    class MotivationConfiguration : IEntityTypeConfiguration<Motivation>
+    class IndicationConfiguration : IEntityTypeConfiguration<Indication>
     {
-        public void Configure(EntityTypeBuilder<Motivation> builder)
+        public void Configure(EntityTypeBuilder<Indication> builder)
         {
-            builder.ToTable("Motivations", "Values");
+            builder.ToTable("Indications", "Values");
             builder.HasKey(o => o.Id);
             builder.HasIndex(o => o.Key);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
