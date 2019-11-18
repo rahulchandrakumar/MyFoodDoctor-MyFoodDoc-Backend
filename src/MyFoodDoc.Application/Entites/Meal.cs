@@ -1,17 +1,18 @@
-﻿using MyFoodDoc.Application.Abstractions;
+﻿using MyFoodDoc.Application.Entites.Abstractions;
 using MyFoodDoc.Application.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class Meal : AbstractAuditableEntity<int>
+    public class Meal : AbstractDiaryEntity<string>
     {
-        public string Time { get; set; }
+        public TimeSpan Time { get; set; }
 
         public MealType Type { get; set; }
 
-        public ICollection<MealIngredient> Ingredients { get; set; }
+        public int? Mood { get; set; }
 
-        public int Mood { get; set; }
+        public ICollection<MealIngredient> Ingredients { get; set; }
     }
 }

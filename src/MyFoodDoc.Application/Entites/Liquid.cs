@@ -1,12 +1,12 @@
-﻿using System;
-using MyFoodDoc.Application.Abstractions;
+﻿using MyFoodDoc.Application.Entites.Abstractions;
+using System;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class Liquid : AbstractAuditableEntity<int>
+    public class Liquid : AbstractDiaryEntity<string>
     {
         public int Amount { get; set; }
 
-        public DateTime LastAdded { get; set; }
+        public TimeSpan LastAdded { get; set; }
     }
 }

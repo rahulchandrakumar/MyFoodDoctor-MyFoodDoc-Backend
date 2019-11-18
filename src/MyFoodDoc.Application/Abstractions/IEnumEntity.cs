@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyFoodDoc.Application.Abstractions
 {
-    public interface IEnumEntity : IAuditableEntity<int>
+    public interface IEnumEntity : IAuditableEntity
     {
         public string Key { get; set; }
 

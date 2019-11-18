@@ -2,9 +2,9 @@
 
 namespace MyFoodDoc.Application.Abstractions
 {
-    public class AbstractAuditableEntity<TKey> : AbstractEntity<TKey>, IAuditableEntity<TKey>
+    public class AbstractAuditableEntity : AbstractEntity, IAuditableEntity
     {
-        public DateTime Created { get; set; }
-        public DateTime? LastModified { get; set; }
+        public virtual DateTime Created { get; set; }
+        public virtual DateTime? LastModified { get; set; }
     }
 }

@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entites;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
-    class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
+    public class IngredientConfiguration : IEntityTypeConfiguration<Ingredient>
     {
         public void Configure(EntityTypeBuilder<Ingredient> builder)
         {

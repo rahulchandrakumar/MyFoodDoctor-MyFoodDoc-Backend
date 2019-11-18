@@ -4,7 +4,10 @@ using System.Text;
 
 namespace MyFoodDoc.Application.Abstractions
 {
-    public interface IAuditableEntity : IEntity, IAuditable
+    public interface ITrackedValue<TValue>
     {
+        public DateTime Date { get; set; }
+
+        public TValue Value { get; set; }
     }
 }

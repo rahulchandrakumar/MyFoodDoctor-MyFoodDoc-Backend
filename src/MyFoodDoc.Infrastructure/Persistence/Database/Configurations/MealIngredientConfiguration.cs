@@ -1,14 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
-    class MealIngredientConfiguration : IEntityTypeConfiguration<Meal>
+    public class MealIngredientConfiguration : IEntityTypeConfiguration<MealIngredient>
     {
-        public void Configure(EntityTypeBuilder<Meal> builder)
+        public void Configure(EntityTypeBuilder<MealIngredient> builder)
         {
             builder.ToTable("MealsIngredients", "Diary");
+            builder.HasKey(x => new { x.MealId, x.IngredientId });
+            builder.Property(p => p.Amount).IsRequired();
+
+            builder.HasOne(x => x.Meal)
+                .WithMany(x => x.Ingredients)
+                .HasForeignKey(x => x.MealId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.Ingredient)
+                .WithMany()
+                .HasForeignKey(x => x.IngredientId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

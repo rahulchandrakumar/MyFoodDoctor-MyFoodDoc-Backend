@@ -1,7 +1,7 @@
 ﻿namespace MyFoodDoc.Application.Abstractions
 {
-    public abstract class AbstractEntity<TKey> : IEntity<TKey>
+    public abstract class AbstractEntity : IEntity
     {
-        public TKey Id { get; set; }
+        public virtual int Id { get; set; }
     }
 }

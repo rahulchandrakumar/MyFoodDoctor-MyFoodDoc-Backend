@@ -1,19 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.EnumEntities;
+using MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
-    class DietConfiguration : IEntityTypeConfiguration<Diet>
+    public class DietConfiguration : AbstractEnumConfiguration<Diet, int>
     {
-        public void Configure(EntityTypeBuilder<Diet> builder)
+        public override void Configure(EntityTypeBuilder<Diet> builder)
         {
-            builder.ToTable("Diets", "Values");
-            builder.HasKey(o => o.Id);
-            builder.HasIndex(o => o.Key);
-            builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Property(o => o.Key).IsRequired().HasMaxLength(50);
-            builder.Property(o => o.Name).IsRequired().HasMaxLength(100);
+            base.Configure(builder);
+
+            builder.ToTable("Diets", "System");
         }
     }
 }

@@ -1,28 +1,42 @@
-﻿using MyFoodDoc.Application.EnumEntities;
+﻿using Microsoft.AspNetCore.Identity;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class User
+    public class User : IdentityUser, IAuditable
     {
-        public int Id { get; set; }
+        public DateTime? Birthday { get; set; }
 
-        public DateTime Birthday { get; set; }
-
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         public int? Height { get; set; }
 
+        public int? InsuranceId { get; set; }
+
         public Insurance Insurance { get; set; }
 
-        public ICollection<Motivation> Motivations { get; set; }
+        public DateTime Created { get; set; }
 
-        public ICollection<Indication> Indications { get; set; }
+        public DateTime? LastModified { get; set; }
 
-        public ICollection<Diet> Diets { get; set; }
+        public ICollection<UserMotivation> Motivations { get; set; }
+
+        public ICollection<UserIndication> Indications { get; set; }
+
+        public ICollection<UserDiet> Diets { get; set; }
+
+        public ICollection<UserWeight> WeightHistory { get; set; } = new List<UserWeight>();
+
+        public ICollection<UserAbdonimalGirth> AbdonimalGirthHistory { get; set; } = new List<UserAbdonimalGirth>();
+
+        public ICollection<UserBloodSugarLevel> BloodSugarLevelHistory { get; set; } = new List<UserBloodSugarLevel>();
+
+
     }
 }
