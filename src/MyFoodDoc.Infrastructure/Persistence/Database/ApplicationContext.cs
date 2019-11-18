@@ -11,7 +11,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
     public class ApplicationContext : DbContext, IApplicationContext
     {
         public DbSet<Coupon> Coupons { get; set; }
-        public DbSet<DiaryEntry> DiaryEntries { get; set; }
         public DbSet<Diet> Diets { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<Insurance> Insurances { get; set; }
