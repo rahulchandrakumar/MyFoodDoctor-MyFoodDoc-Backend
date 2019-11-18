@@ -12,7 +12,7 @@ using MyFoodDoc.App.Application.Mock;
 namespace MyFoodDoc.App.Api.Controllers
 {
     [Authorize]
-    public class FoodController : BaseController
+    public class IngredientsController : BaseController
     {
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<IngredientDto>), StatusCodes.Status200OK)]
