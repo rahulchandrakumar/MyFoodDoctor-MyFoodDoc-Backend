@@ -3,5 +3,8 @@
     "Address": "{IDENTITY_SERVER_ADDRESS}",
     "ClientId": "{IDENTITY_SERVER_CLIENT}",
     "Scope": "{IDENTITY_SERVER_SCOPE}"
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }
 }
