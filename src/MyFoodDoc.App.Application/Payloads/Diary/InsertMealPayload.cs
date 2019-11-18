@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Payloads.Diary
 {
-    public class MealPayload
+    public class InsertMealPayload
     {
         public string Time { get; set; }
 

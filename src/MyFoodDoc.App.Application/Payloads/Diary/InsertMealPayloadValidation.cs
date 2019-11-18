@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace MyFoodDoc.App.Application.Payloads.Diary
 {
-    public class MealPayloadValidation : AbstractValidator<MealPayload>
+    public class InsertMealPayloadValidation : AbstractValidator<InsertMealPayload>
     {
-        public MealPayloadValidation()
+        public InsertMealPayloadValidation()
         {
             RuleFor(x => x.Time).NotEmpty();
             RuleFor(x => x.Type).NotEmpty().IsInEnum();
