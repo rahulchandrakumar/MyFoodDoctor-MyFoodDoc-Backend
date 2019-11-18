@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace MyFoodDoc.App.Application.Payloads.User
 {
-    public class UserPayloadValidation : AbstractValidator<UpdateUserPayload>
+    public class UpdateUserPayloadValidation : AbstractValidator<UpdateUserPayload>
     {
-        public UserPayloadValidation()
+        public UpdateUserPayloadValidation()
         {
             RuleFor(x => x.Birthday).NotEmpty();
             RuleFor(x => x.Gender).IsInEnum();
