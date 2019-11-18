@@ -1,6 +1,6 @@
 ﻿namespace MyFoodDoc.Application.Entites
 {
-    public class DiaryMealIngredient
+    public class MealIngredient
     {
         public Ingredient Ingredient { get; set; }
 

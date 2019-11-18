@@ -3,7 +3,7 @@ using MyFoodDoc.Application.Abstractions;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class DiaryExercise : AbstractAuditEntity<int>
+    public class Exercise : AbstractAuditEntity<int>
     {
         public int Duration { get; set; }
 

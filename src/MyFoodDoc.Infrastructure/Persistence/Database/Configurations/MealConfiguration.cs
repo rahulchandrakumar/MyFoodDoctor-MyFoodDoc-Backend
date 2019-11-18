@@ -4,15 +4,15 @@ using MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
-    class DiaryExerciseConfiguration : IEntityTypeConfiguration<DiaryExercise>
+    class MealConfiguration : IEntityTypeConfiguration<Meal>
     {
-        public void Configure(EntityTypeBuilder<DiaryExercise> builder)
+        public void Configure(EntityTypeBuilder<Meal> builder)
         {
-            builder.ToTable("Exercises", "Diary");
+            builder.ToTable("Meals", "Diary");
             builder.HasKey(o => o.Id);
             builder.Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Property(o => o.Duration).IsRequired();
-            builder.Property(o => o.Duration).IsRequired();
+            builder.Property(p => p.Mood).IsRequired();
+            builder.HasMany(o => o.Ingredients);
         }
     }
 }

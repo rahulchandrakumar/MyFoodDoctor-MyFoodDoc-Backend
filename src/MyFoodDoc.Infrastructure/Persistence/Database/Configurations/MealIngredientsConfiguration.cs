@@ -4,9 +4,9 @@ using MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
-    class DiaryMealsIngredientsConfiguration : IEntityTypeConfiguration<DiaryMeal>
+    class DiaryMealsIngredientsConfiguration : IEntityTypeConfiguration<Meal>
     {
-        public void Configure(EntityTypeBuilder<DiaryMeal> builder)
+        public void Configure(EntityTypeBuilder<Meal> builder)
         {
             builder.ToTable("MealsIngredients", "Diary");
         }

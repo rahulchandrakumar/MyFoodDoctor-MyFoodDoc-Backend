@@ -4,12 +4,12 @@ using Entity = MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Api.Models
 {
-    public class DiaryExercise : IMapFrom<Entity.DiaryExercise>
+    public class DiaryExercise : IMapFrom<Entity.Exercise>
     {
         public int Duration { get; set; }
 
         public string LastAdded { get; set; }
 
-        public void Mapping(Profile profile) => profile.CreateMap(typeof(Entity.DiaryExercise), GetType());
+        public void Mapping(Profile profile) => profile.CreateMap(typeof(Entity.Exercise), GetType());
     }
 }
