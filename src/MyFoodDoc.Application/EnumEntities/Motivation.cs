@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MyFoodDoc.Application.Abstractions;
+﻿using MyFoodDoc.Application.Abstractions;
 
 namespace MyFoodDoc.Application.EnumEntities
 {
-    public class Motivation : AbstractAuditEntity<int>
+    public class Motivation : AbstractEnumEntity
     {
-        public string Key { get; set; }
-
-        public string Name { get; set; }
     }
 }

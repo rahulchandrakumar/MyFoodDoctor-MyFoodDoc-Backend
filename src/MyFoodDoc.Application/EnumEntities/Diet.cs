@@ -2,10 +2,7 @@
 
 namespace MyFoodDoc.Application.EnumEntities
 {
-    public class Diet : AbstractAuditEntity<int>
+    public class Diet : AbstractEnumEntity
     {
-        public string Key { get; set; }
-
-        public string Name { get; set; }
     }
 }
