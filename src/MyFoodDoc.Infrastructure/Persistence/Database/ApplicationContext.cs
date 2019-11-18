@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.Application.Abstractions
 {

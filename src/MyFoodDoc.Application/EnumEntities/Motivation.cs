@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using MyFoodDoc.Application.Abstractions;
 
-namespace MyFoodDoc.Application.Entites
+namespace MyFoodDoc.Application.EnumEntities
 {
     public class Motivation : AbstractAuditEntity<int>
     {

@@ -1,4 +1,5 @@
-﻿using MyFoodDoc.Application.Enums;
+﻿using MyFoodDoc.Application.EnumEntities;
+using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
