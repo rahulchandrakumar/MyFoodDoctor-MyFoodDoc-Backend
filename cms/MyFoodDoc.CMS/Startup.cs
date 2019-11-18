@@ -37,6 +37,8 @@ namespace MyFoodDoc.CMS
             services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPatientService, PatientService>();
+            services.AddTransient<ILexiconService, LexiconService>();
+            services.AddTransient<IImageService, ImageService>();
             services.AddApplicationDI();
             #endregion
 

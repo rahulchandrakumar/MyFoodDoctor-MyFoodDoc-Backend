@@ -1,12 +1,19 @@
 <template>
-  <ValidationProvider :name="$attrs.label" :rules="rules" v-slot="{ errors, valid }" style="display: contents;">
-    <v-select 
-        v-model="innerValue" 
-        :error-messages="errors"
-        :success="valid"
-        v-bind="$attrs" 
-        v-on="$listeners"
-    ></v-select>
+  <ValidationProvider
+    v-slot="{ errors, valid }"
+    :name="$attrs.label"
+    :rules="rules"
+    style="display: contents;"
+    mode="passive"
+    ref="field"
+  >
+    <v-select
+      v-model="innerValue"
+      :error-messages="errors"
+      :success="valid"
+      v-bind="$attrs"
+      v-on="$listeners"
+    />
   </ValidationProvider>
 </template>
 
@@ -18,24 +25,28 @@ export default {
       default: ""
     },
     value: {
-      type: null
+      type: null,
+      default: null
     }
   },
-  data: () => ({
-    innerValue: ""
-  }),
+  data(){
+    return {
+      innerValue: this.value
+    }
+  },
   watch: {
     innerValue(newVal) {
       this.$emit("input", newVal);
     },
     value(newVal) {
       this.innerValue = newVal;
+      
+      let self = this
+      setTimeout(() => self.$refs.field.validate(), 10)
     }
   },
-  created() {
-    if (this.value) {
-      this.innerValue = this.value;
-    }
+  mounted() {
+    this.$refs.field.validate()
   }
 };
 </script>

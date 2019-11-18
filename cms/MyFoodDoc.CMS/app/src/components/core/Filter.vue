@@ -11,7 +11,6 @@
   >
     <template v-slot:activator="{ on }">
       <v-btn
-        
         class="elevation-0"
         color="grey"
         dark
@@ -67,14 +66,12 @@
 <script>
 // Utilities
 import { mapMutations, mapState } from "vuex";
-import menuImg from '@/assets/menu-img.jpg'
+import menuImg from "@/assets/menu-img.jpg";
 
 export default {
   data: () => ({
     colors: ["primary", "info", "success", "warning", "danger"],
-    images: [
-      menuImg
-    ]
+    images: [menuImg]
   }),
 
   computed: {

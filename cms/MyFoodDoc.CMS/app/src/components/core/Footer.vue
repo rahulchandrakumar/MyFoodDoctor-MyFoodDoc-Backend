@@ -19,9 +19,7 @@
 <script>
 export default {
   data: () => ({
-    links: [
-      { name: "Home", Link: "/#" }
-    ]
+    links: [{ name: "Home", Link: "/#" }]
   })
 };
 </script>

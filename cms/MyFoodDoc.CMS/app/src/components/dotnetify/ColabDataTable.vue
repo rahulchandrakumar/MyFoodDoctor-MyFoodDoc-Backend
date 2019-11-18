@@ -2,23 +2,17 @@
   <v-container fill-height fluid grid-list-xl>
     <v-layout justify-center wrap>
       <v-flex md12>
-        <material-card
-          color="green"
-        >
-          <v-row wrap pa-3 slot="header">
-            <v-col 
-              class="subheading font-weight-light mr-3 align-center"
-            >
-              <h4 
-                class="title font-weight-light mb-2"
-              >
+        <material-card color="green">
+          <v-row slot="header" wrap pa-3>
+            <v-col class="subheading font-weight-light mr-3 align-center">
+              <h4 class="title font-weight-light mb-2">
                 {{ title }}
               </h4>
               <v-text-field
+                v-model="search"
                 class="mr-4"
                 label="Search..."
                 hide-details
-                v-model="search"
               />
             </v-col>
             <v-col cols="1">
@@ -26,59 +20,59 @@
                 v-if="couldAdd && !readonly"
                 :dialog.sync="dialog"
                 :item="editItem"
-                :titleSuffix="editorTitleSuffix"
-                :editTime="editTime"
-                v-on:cancel="onCancel"
-                v-on:save="onSave"
-                >
-                 <template slot-scope="scope">
-                  <slot 
-                    name="editor"
-                    v-bind="scope"
-                  ></slot>
+                :title-suffix="editorTitleSuffix"
+                :edit-time="editTime"
+                @cancel="onCancel"
+                @save="onSave"
+              >
+                <template slot-scope="scope">
+                  <slot
+                    name="editor" v-bind="scope"
+                  />
                 </template>
               </ColabEdit>
             </v-col>
           </v-row>
 
-          <v-data-table 
-            :headers="mainHeaders" 
-            :items="Items" 
-            :search="search" 
-            sort-by="Id" 
-            item-key="Id" 
-            hide-default-footer 
-            disable-pagination 
-            filterable 
-            dense 
+          <v-data-table
+            :headers="mainHeaders"
+            :items="Items"
+            :search="search"
+            sort-by="Id"
+            item-key="Id"
+            hide-default-footer
+            disable-pagination
+            filterable
+            dense
             :show-expand="$scopedSlots['expanded-item'] != null"
           >
-              
-            <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="scope">
-              <slot 
-                :name="slot" 
-                v-bind="scope"
-              ></slot>
+            <template
+              v-for="slot in Object.keys($scopedSlots)"
+              :slot="slot"
+              slot-scope="scope"
+            >
+              <slot
+                :name="slot" v-bind="scope"
+              />
             </template>
 
             <template v-slot:item.editAction="{ item }">
               <v-btn
-                v-if="item.LockDate == null || (now - item.LockDate > editTime)"
-                v-on:click="onBeginEdit(item)"
+                v-if="item.LockDate == null || now - item.LockDate > editTime"
                 class="v-btn--simple"
                 color="success"
                 icon
+                @click="onBeginEdit(item)"
               >
                 <v-icon color="primary">
                   mdi-pencil
                 </v-icon>
-              </v-btn>                    
-              <v-tooltip bottom v-else>
+              </v-btn>
+              <v-tooltip v-else bottom>
                 <template v-slot:activator="{ on }">
-                  <v-btn v-on="on"
-                    class="v-btn--simple"
-                    color="success"
-                    icon
+                  <v-btn
+                    class="v-btn--simple" color="success" icon
+                    v-on="on"
                   >
                     <v-icon color="primary">
                       mdi-lock
@@ -91,11 +85,11 @@
 
             <template v-slot:item.removeAction="{ item }">
               <v-btn
-                v-if="item.LockDate == null || (now - item.LockDate > editTime)"
-                v-on:click="onRemove(item)"
+                v-if="item.LockDate == null || now - item.LockDate > editTime"
                 class="v-btn--simple"
                 color="danger"
                 icon
+                @click="onRemove(item)"
               >
                 <v-icon color="error">
                   mdi-close
@@ -110,71 +104,57 @@
 </template>
 
 <script>
-import dotnetify from 'dotnetify/vue';
-import ColabEdit from './ColabEdit';
+import dotnetify from "dotnetify/vue";
+import ColabEdit from "./ColabEdit";
 
-const editTime = 300000
+const editTime = 300000;
 
 export default {
-  name: 'ColabDataTable',
+  name: "ColabDataTable",
   components: {
     ColabEdit: ColabEdit
   },
   props: {
-   viewModel: {
-     type: String,
-     required: true
-   }, 
-   headers: {
-     type: Array,
-     required: true
-   }, 
-   title: {
-     type: String,
-     required: true
-   },
-   editorTitleSuffix: {
-     type: String,
-     default: ""
-   },
-   readonly: {
-     type: Boolean,
-     default: false
-   },
-   couldAdd: {
-     type: Boolean,
-     default: true
-   }
-  },
-  created() {
-    let token = this.$store.state.user.token
-    let headers = { Authorization: "Bearer " + token } 
-    this.vm = dotnetify.vue.connect(this.viewModel, this, { headers });
-
-    this.username = this.$store.state.user.userInfo.username
-
-    var self = this
-    setInterval(() => {
-         self.now = Date.now()
-      }, 1000)
-  },
-  mounted() {
-    if (this.$scopedSlots['expanded-item'] != null)
-      this.mainHeaders.push({ text: '', value: 'data-table-expand' })
-  },
-  destroyed() {
-    this.vm.$destroy();
+    viewModel: {
+      type: String,
+      required: true
+    },
+    headers: {
+      type: Array,
+      required: true
+    },
+    title: {
+      type: String,
+      required: true
+    },
+    editorTitleSuffix: {
+      type: String,
+      default: ""
+    },
+    readonly: {
+      type: Boolean,
+      default: false
+    },
+    couldAdd: {
+      type: Boolean,
+      default: true
+    },
+    beforeSave: {
+      type: Function,
+      default: null
+    }
   },
   data() {
-    var mainHeaders = [{
-      sortable: true,
-      text: "Id",
-      value: "Id",
-    }]
-    .concat(this.headers);
+    var mainHeaders = [
+      {
+        sortable: true,
+        text: "Id",
+        value: "Id"
+      }
+    ].concat(this.headers);
 
     if (!this.readonly)
-      mainHeaders = mainHeaders.concat([      
+      mainHeaders = mainHeaders.concat([
         {
           value: "editAction",
           sortable: false,
@@ -190,53 +170,72 @@ export default {
     return {
       mainHeaders: mainHeaders,
       now: Date.now(),
-      username: '',
+      username: "",
       Items: [],
       editTime: editTime,
-      search: '',
+      search: "",
       dialog: false,
       editItem: {}
-    }
+    };
+  },
+  created() {
+    let token = this.$store.state.user.token;
+    let headers = { Authorization: "Bearer " + token };
+    this.vm = dotnetify.vue.connect(this.viewModel, this, { headers });
+
+    this.username = this.$store.state.user.userInfo.username;
+
+    var self = this;
+    setInterval(() => {
+      self.now = Date.now();
+    }, 1000);
+  },
+  mounted() {
+    if (this.$scopedSlots["expanded-item"] != null)
+      this.mainHeaders.push({ text: "", value: "data-table-expand" });
+  },
+  destroyed() {
+    this.vm.$destroy();
   },
   methods: {
-    onAdd: function () {
-      this.Items.unshift({
-        LockDate: Date.now(),
-        Editor: this.username
-      })
-    },
     onBeginEdit(item) {
-      item.Original = Object.assign({}, item)
-      item.LockDate = Date.now()
-      item.Editor = this.username
-      this.vm.$dispatch({ Update: item })
+      item.Original = Object.assign({}, item);
+      item.LockDate = Date.now();
+      item.Editor = this.username;
+      this.vm.$dispatch({ Update: item });
 
-      this.editItem = item
-      this.dialog = true
+      this.editItem = item;
+      this.dialog = true;
     },
     onRemove(item) {
-      if (item.LockDate == null || (this.now - item.LockDate > editTime))
+      if (item.LockDate == null || this.now - item.LockDate > editTime)
         this.vm.$dispatch({ Remove: item.Id });
     },
-    onSave(item) {
+    async onSave(item) {
+      if (this.beforeSave)
+        await this.beforeSave(item);
+
       item.Original = null;
       item.LockDate = null;
       item.Editor = null;
 
-      if (item.Id == null)
-        this.vm.$dispatch({ Add: item });
-      else
-        this.vm.$dispatch({ Update: item });
+      if (item.Id == null) this.vm.$dispatch({ Add: item });
+      else this.vm.$dispatch({ Update: item });
 
-      this.editItem = {}
+      this.editItem = {};
     },
     onCancel() {
-      if (this.editItem && this.editItem.LockDate != null && (this.now - this.editItem.LockDate <= editTime) && this.editItem.Editor == this.username) {
-        Object.assign(this.editItem, this.editItem.Original)
+      if (
+        this.editItem &&
+        this.editItem.LockDate != null &&
+        this.now - this.editItem.LockDate <= editTime &&
+        this.editItem.Editor == this.username
+      ) {
+        Object.assign(this.editItem, this.editItem.Original);
         this.editItem.Original = null;
         this.vm.$dispatch({ Update: this.editItem });
       }
-      this.editItem = {}
+      this.editItem = {};
     }
   }
 };
@@ -244,6 +243,6 @@ export default {
 
 <style>
 .v-card--material__header .v-text-field__slot .v-label {
-    color: unset !important;
+  color: unset !important;
 }
 </style>

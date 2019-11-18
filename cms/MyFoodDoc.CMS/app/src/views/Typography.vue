@@ -13,10 +13,11 @@
             </h2>
 
             <v-container class="pa-0" grid-list-xl fluid>
-              <v-layout v-for="(t, i) in typography" :key="i" align-end wrap>
-                <v-flex
-xs1
-md3>
+              <v-layout 
+                v-for="(t, i) in typography" :key="i" 
+                align-end wrap
+              >
+                <v-flex xs1 md3>
                   <span class="tim-note" v-text="t[0]" />
                 </v-flex>
                 <v-flex xs8>
@@ -31,7 +32,7 @@ md3>
                     <small v-if="i === 'quote'">Kanye West, Musician</small>
 
                     <template v-if="i === 'small'">
-                      <br />
+                      <br>
                       <small>Use 'small' tag for the headers</small>
                     </template>
                   </component>

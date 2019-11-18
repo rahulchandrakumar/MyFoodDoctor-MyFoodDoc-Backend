@@ -24,7 +24,8 @@
               mdi-clock-outline
             </v-icon>
             <span
-class="caption grey--text font-weight-light">updated 4 minutes ago</span>
+              class="caption grey--text font-weight-light"
+            >updated 4 minutes ago</span>
           </template>
         </material-chart-card>
       </v-flex>
@@ -49,7 +50,8 @@ class="caption grey--text font-weight-light">updated 4 minutes ago</span>
               mdi-clock-outline
             </v-icon>
             <span
-class="caption grey--text font-weight-light">updated 10 minutes ago</span>
+              class="caption grey--text font-weight-light"
+            >updated 10 minutes ago</span>
           </template>
         </material-chart-card>
       </v-flex>
@@ -73,11 +75,15 @@ class="caption grey--text font-weight-light">updated 10 minutes ago</span>
               mdi-clock-outline
             </v-icon>
             <span
-class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
+              class="caption grey--text font-weight-light"
+            >campaign sent 26 minutes ago</span>
           </template>
         </material-chart-card>
       </v-flex>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex
+        sm6 xs12 md6
+        lg3
+      >
         <material-stats-card
           color="green"
           icon="mdi-store"
@@ -87,7 +93,10 @@ class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
           sub-text="Last 24 Hours"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex
+        sm6 xs12 md6
+        lg3
+      >
         <material-stats-card
           color="orange"
           icon="mdi-content-copy"
@@ -100,7 +109,10 @@ class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
           sub-text-color="text-primary"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex
+        sm6 xs12 md6
+        lg3
+      >
         <material-stats-card
           color="red"
           icon="mdi-information-outline"
@@ -110,7 +122,10 @@ class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
           sub-text="Tracked from Github"
         />
       </v-flex>
-      <v-flex sm6 xs12 md6 lg3>
+      <v-flex
+        sm6 xs12 md6
+        lg3
+      >
         <material-stats-card
           color="info"
           icon="mdi-twitter"
@@ -150,11 +165,14 @@ class="caption grey--text font-weight-light">campaign sent 26 minutes ago</span>
         </material-card>
       </v-flex>
       <v-flex md12 lg6>
-        <material-card
-class="card-tabs"
-color="green">
+        <material-card class="card-tabs" color="green">
           <v-flex slot="header">
-            <v-tabs v-model="tabs" color="white" background-color="transparent" slider-color="white">
+            <v-tabs
+              v-model="tabs"
+              color="white"
+              background-color="transparent"
+              slider-color="white"
+            >
               <span
                 class="subheading font-weight-light mr-3"
                 style="align-self: center"
@@ -194,30 +212,30 @@ color="green">
                     <v-tooltip top content-class="top">
                       <template v-slot:activator="{ on }">
                         <v-btn
-                          v-on="on"
                           class="v-btn--simple"
                           color="success"
                           icon
+                          v-on="on"
                         >
                           <v-icon color="primary">
                             mdi-pencil
                           </v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </template>
                       <span>Edit</span>
                     </v-tooltip>
                     <v-tooltip top content-class="top">
                       <template v-slot:activator="{ on }">
                         <v-btn
-                          v-on="on"
                           class="v-btn--simple"
                           color="danger"
                           icon
+                          v-on="on"
                         >
                           <v-icon color="error">
                             mdi-close
                           </v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </template>
                       <span>Close</span>
                     </v-tooltip>
@@ -236,15 +254,15 @@ color="green">
                     <v-tooltip top content-class="top">
                       <template v-slot:activator="{ on }">
                         <v-btn
-                          v-on="on"
                           class="v-btn--simple"
                           color="success"
                           icon
+                          v-on="on"
                         >
                           <v-icon color="primary">
                             mdi-pencil
                           </v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </template>
                       <span>Edit</span>
                     </v-tooltip>
@@ -252,15 +270,15 @@ color="green">
                     <v-tooltip top content-class="top">
                       <template v-slot:activator="{ on }">
                         <v-btn
-                          v-on="on"
                           class="v-btn--simple"
                           color="danger"
                           icon
+                          v-on="on"
                         >
                           <v-icon color="error">
                             mdi-close
                           </v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </template>
                       <span>Close</span>
                     </v-tooltip>
@@ -279,30 +297,30 @@ color="green">
                     <v-tooltip top content-class="top">
                       <template v-slot:activator="{ on }">
                         <v-btn
-                          v-on="on"
                           class="v-btn--simple"
                           color="success"
                           icon
+                          v-on="on"
                         >
                           <v-icon color="primary">
                             mdi-pencil
                           </v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </template>
                       <span>Edit</span>
                     </v-tooltip>
                     <v-tooltip top content-class="top">
                       <template v-slot:activator="{ on }">
                         <v-btn
-                          v-on="on"
                           class="v-btn--simple"
                           color="danger"
                           icon
+                          v-on="on"
                         >
                           <v-icon color="error">
                             mdi-close
                           </v-icon>
-                        </v-btn>                        
+                        </v-btn>
                       </template>
                       <span>Close</span>
                     </v-tooltip>

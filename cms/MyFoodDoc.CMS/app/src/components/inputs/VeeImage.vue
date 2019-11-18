@@ -4,14 +4,14 @@
     :name="$attrs.label"
     :rules="rules"
     style="display: contents;"
+    mode="passive"
     ref="field"
   >
-    <v-text-field
+    <v-image
       v-model="innerValue"
       :error-messages="errors"
       :success="valid"
       v-bind="$attrs"
-      v-on="$listeners"
     />
   </ValidationProvider>
 </template>
@@ -30,16 +30,18 @@ export default {
   },
   data() {
     return {
-      innerValue: this.value
+      innerValue: this.value && this.value.Url ? this.value.Url : new String()
     }
   },
   watch: {
     innerValue(newVal) {
-      this.$emit("input", newVal);
+      let change = this.value || {}
+      change.ImageData = newVal
+      this.$emit("input", change);
     },
     value(newVal) {
-      this.innerValue = newVal;
-
+      this.innerValue = newVal && newVal.Url ? newVal.Url : new String();
+      
       let self = this
       setTimeout(() => self.$refs.field.validate(), 10)
     }
@@ -47,5 +49,9 @@ export default {
   mounted() {
     this.$refs.field.validate()
   }
-};
+}
 </script>
+
+<style lang="scss" scoped>
+
+</style>

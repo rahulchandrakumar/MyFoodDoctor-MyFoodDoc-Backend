@@ -1,4 +1,4 @@
-import menuImg from '@/assets/menu-img.jpg'
+import menuImg from "@/assets/menu-img.jpg";
 
 export default {
   drawer: null,

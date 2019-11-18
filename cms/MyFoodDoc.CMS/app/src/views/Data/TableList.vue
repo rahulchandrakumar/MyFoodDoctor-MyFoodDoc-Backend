@@ -1,24 +1,25 @@
 <template>
-  <ColabDataTable 
+  <ColabDataTable
     title="Ingredients"
-    editorTitleSuffix="ingredient"
-    viewModel="TableViewModel" 
+    editor-title-suffix="ingredient"
+    view-model="TableViewModel"
     :headers="mainHeaders"
   >
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
-          v-model="item.Name" 
+          v-model="item.Name"
           :label="mainHeaders.filter(h => h.value == 'Name')[0].text"
-          rules="required|max:35" :counter="35"
-        ></VeeTextField>
+          rules="required|max:35"
+          :counter="35"
+        />
       </v-row>
       <v-row>
-        <VeeTextField 
-          v-model="item.Amount" 
+        <VeeTextField
+          v-model="item.Amount"
           :label="mainHeaders.filter(h => h.value == 'Amount')[0].text"
           rules="required|decimal"
-        ></VeeTextField>
+        />
       </v-row>
     </template>
   </ColabDataTable>
@@ -28,11 +29,11 @@
 export default {
   components: {
     ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
-    VeeTextField: () => import("@/components/inputs/VeeTextField"),
+    VeeTextField: () => import("@/components/inputs/VeeTextField")
   },
-  
+
   data: () => ({
-    mainHeaders: [      
+    mainHeaders: [
       {
         sortable: true,
         value: "Name",

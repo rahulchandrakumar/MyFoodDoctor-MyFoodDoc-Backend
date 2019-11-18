@@ -1,8 +1,8 @@
 <template>
-  <ColabDataTable 
+  <ColabDataTable
     title="Users"
-    editorTitleSuffix="user"
-    viewModel="UsersViewModel" 
+    editor-title-suffix="user"
+    view-model="UsersViewModel"
     :headers="mainHeaders"
   >
     <template v-slot:item.Role="{ item }">
@@ -14,25 +14,28 @@
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
-          v-model="item.Username" 
+          v-model="item.Username"
           :label="mainHeaders.filter(h => h.value == 'Username')[0].text"
           :readonly="item.Id != null"
-          rules="required|max:35" :counter="35"
-        ></VeeTextField>
-      </v-row>
-      <v-row>
-        <VeeTextField 
-          v-model="item.DisplayName" 
-          :label="mainHeaders.filter(h => h.value == 'DisplayName')[0].text"
-          rules="required|max:35" :counter="35"
-        ></VeeTextField>
+          rules="required|max:35"
+          :counter="35"
+        />
       </v-row>
       <v-row>
         <VeeTextField
-          v-model="item.Password" 
+          v-model="item.DisplayName"
+          :label="mainHeaders.filter(h => h.value == 'DisplayName')[0].text"
+          rules="required|max:35"
+          :counter="35"
+        />
+      </v-row>
+      <v-row>
+        <VeeTextField
+          v-model="item.Password"
           :label="mainHeaders.filter(h => h.value == 'Password')[0].text"
-          rules="required|max:35" :counter="35"
-        ></VeeTextField>
+          rules="required|max:35"
+          :counter="35"
+        />
       </v-row>
       <v-row>
         <VeeSelect
@@ -40,26 +43,23 @@
           :items="roles"
           :label="mainHeaders.filter(h => h.value == 'Role')[0].text"
           rules="required"
-        ></VeeSelect>
+        />
       </v-row>
     </template>
   </ColabDataTable>
 </template>
 
 <script>
-import UserRoles from "@/enums/UserRoles"
+import UserRoles from "@/enums/UserRoles";
 
 export default {
   components: {
     ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
-    VeeSelect: () => import("@/components/inputs/VeeSelect"),
-  },
-  created() {
-      this.roles = Object.values(UserRoles)
+    VeeSelect: () => import("@/components/inputs/VeeSelect")
   },
   data: () => ({
-    mainHeaders: [      
+    mainHeaders: [
       {
         sortable: true,
         value: "Username",
@@ -82,6 +82,9 @@ export default {
       }
     ],
     roles: []
-  })
+  }),
+  created() {
+    this.roles = Object.values(UserRoles);
+  }
 };
 </script>
