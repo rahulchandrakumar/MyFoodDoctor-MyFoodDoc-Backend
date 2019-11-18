@@ -8,7 +8,7 @@ using Entity = MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Api.Models
 {
-    public class User : IMapFrom<Entity.User>
+    public class UserDto : IMapFrom<Entity.User>
     {
         public string Email { get; set; }
 
