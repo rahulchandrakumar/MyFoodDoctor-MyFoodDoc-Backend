@@ -1,6 +1,6 @@
 ﻿namespace MyFoodDoc.App.Application.Payloads.User
 {
-    public class RegistrationPayload
+    public class RegisterPayload
     {
         public string Email { get; set; }
 

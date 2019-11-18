@@ -2,13 +2,13 @@
 
 namespace MyFoodDoc.App.Application.Payloads.User
 {
-    public class RegistrationPayloadValidation : AbstractValidator<RegistrationPayload>
+    public class RegisterPayloadValidation : AbstractValidator<RegisterPayload>
     {
-        public RegistrationPayloadValidation()
+        public RegisterPayloadValidation()
         {
             RuleFor(x => x.Email).NotEmpty().EmailAddress();
             RuleFor(x => x.Password).NotEmpty();
-            RuleFor(x => x.InsuranceId).NotEmpty();
+            RuleFor(x => x.InsuranceId).NotNull();
         }
     }
 }
