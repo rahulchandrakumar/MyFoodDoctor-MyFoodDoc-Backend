@@ -9,8 +9,6 @@ namespace MyFoodDoc.Application.Abstractions
     {
         DbSet<Coupon> Coupons { get; set; }
 
-        DbSet<DiaryEntry> DiaryEntries { get; set; }
-
         DbSet<Diet> Diets { get; set; }
 
         DbSet<Ingredient> Ingredients { get; set; }
