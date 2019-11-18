@@ -2,7 +2,7 @@
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class Insurance : AbstractAuditEntity<int>
+    public class Insurance : AbstractAuditableEntity<int>
     {
         public string Name { get; set; }
     }

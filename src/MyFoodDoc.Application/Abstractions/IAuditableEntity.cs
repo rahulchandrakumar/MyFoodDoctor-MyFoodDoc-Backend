@@ -2,7 +2,7 @@
 
 namespace MyFoodDoc.Application.Abstractions
 {
-    public interface IAuditEntity<TKey> : IEntity<TKey>
+    public interface IAuditableEntity<TKey> : IEntity<TKey>
     {
         DateTime Created { get; set; }
 

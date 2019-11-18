@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class Meal : AbstractAuditEntity<int>
+    public class Meal : AbstractAuditableEntity<int>
     {
         public string Time { get; set; }
 

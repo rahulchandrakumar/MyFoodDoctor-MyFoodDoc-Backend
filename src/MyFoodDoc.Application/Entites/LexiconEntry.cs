@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class LexiconEntry : AbstractAuditEntity<int>
+    public class LexiconEntry : AbstractAuditableEntity<int>
     {
         public string TitleShort { get; set; }
 

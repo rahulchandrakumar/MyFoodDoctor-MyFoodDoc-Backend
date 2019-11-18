@@ -3,7 +3,7 @@ using System;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class Coupon : AbstractAuditEntity<int>
+    public class Coupon : AbstractAuditableEntity<int>
     {
         public string Code { get; set; }
 

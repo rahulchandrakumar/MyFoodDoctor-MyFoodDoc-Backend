@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyFoodDoc.Application.Abstractions
 {
-    public abstract class AbstractEnumEntity : AbstractAuditEntity<int>,  IEnumEntity
+    public abstract class AbstractEnumEntity : AbstractAuditableEntity<int>,  IEnumEntity
     {
         public virtual string Key { get; set; }
 

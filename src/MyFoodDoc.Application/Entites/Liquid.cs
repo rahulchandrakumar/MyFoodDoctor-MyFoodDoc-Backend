@@ -3,7 +3,7 @@ using MyFoodDoc.Application.Abstractions;
 
 namespace MyFoodDoc.Application.Entites
 {
-    public class Liquid : AbstractAuditEntity<int>
+    public class Liquid : AbstractAuditableEntity<int>
     {
         public int Amount { get; set; }
 

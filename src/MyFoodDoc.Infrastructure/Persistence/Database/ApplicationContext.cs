@@ -24,7 +24,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            foreach (var entry in ChangeTracker.Entries<IAuditEntity<int>>())
+            foreach (var entry in ChangeTracker.Entries<IAuditableEntity<int>>())
             {
                 switch (entry.State)
                 {
