@@ -3,7 +3,7 @@ using IdentityServer4.Models;
 using IdentityServer4.Test;
 using System.Collections.Generic;
 
-namespace MyFoodDoc.Auth.Api
+namespace MyFoodDoc.App.Auth
 {
     public class Config
     {
@@ -11,7 +11,8 @@ namespace MyFoodDoc.Auth.Api
         {
             return new IdentityResource[]
             {
-                new IdentityResources.Email(),
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile(),
             };
         }
 
@@ -35,6 +36,7 @@ namespace MyFoodDoc.Auth.Api
                     ClientId = "myfooddoc_app",
                     ClientName = "MyFoodDoc.App",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    AccessTokenType = AccessTokenType.Jwt,
                     RequireClientSecret = false,
                     AllowedScopes = { "myfooddoc_api", IdentityServerConstants.StandardScopes.OfflineAccess },
                     AccessTokenLifetime = 3600 * 7,
@@ -42,19 +44,6 @@ namespace MyFoodDoc.Auth.Api
                     RefreshTokenExpiration = TokenExpiration.Absolute,
                     RefreshTokenUsage = TokenUsage.OneTimeOnly
                 }
-            };
-        }
-
-        public static List<TestUser> GetUsers()
-        {
-            return new List<TestUser>
-            {
-                new TestUser
-                {
-                    SubjectId = "1",
-                    Username = "test@appsfactory.de",
-                    Password = "Wert123+"
-                },
             };
         }
     }

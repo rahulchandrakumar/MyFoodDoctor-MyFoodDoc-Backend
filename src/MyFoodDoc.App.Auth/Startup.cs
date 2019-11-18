@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyFoodDoc.Application.Api;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using MyFoodDoc.Application.Entites;
+using MyFoodDoc.App.Infrastructure;
+using IdentityServer4;
 
-namespace MyFoodDoc.Auth.Api
+namespace MyFoodDoc.App.Auth
 {
     public class Startup
     {
@@ -27,24 +26,18 @@ namespace MyFoodDoc.Auth.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            /*
-            services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(databaseName: "Users"));
-            services.AddIdentityCore<ApplicationUser>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-
-                options.Password.RequireDigit = true;
-                options.Password.RequireLowercase = true;
-                options.Password.RequireUppercase = true;
-                options.Password.RequireNonAlphanumeric = true;
-                options.Password.RequiredLength = 6;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-            */
+            services.AddInfrastructure(Configuration, Environment);
 
             var builder = services.AddIdentityServer(options =>
             {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+
+
+                options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+                /*
                 options.Endpoints.EnableAuthorizeEndpoint = false;
                 options.Endpoints.EnableCheckSessionEndpoint = false;
                 options.Endpoints.EnableDeviceAuthorizationEndpoint = false;
@@ -56,25 +49,19 @@ namespace MyFoodDoc.Auth.Api
                 options.Endpoints.EnableTokenEndpoint = true;
                 options.Endpoints.EnableTokenRevocationEndpoint = false;
                 options.Endpoints.EnableUserInfoEndpoint = false;
+                */
             })
-                .AddInMemoryIdentityResources(Config.GetIdentityResources())
-                .AddInMemoryApiResources(Config.GetApiResources())
-                .AddInMemoryClients(Config.GetClients())
-                .AddTestUsers(Config.GetUsers());
-                //.AddAspNetIdentity<ApplicationUser>();
+            .AddInMemoryIdentityResources(Config.GetIdentityResources())
+            .AddInMemoryApiResources(Config.GetApiResources())
+            .AddInMemoryClients(Config.GetClients())
+            .AddAspNetIdentity<User>();
 
             if (Environment.IsDevelopment())
             {
                 builder.AddDeveloperSigningCredential();
             }
 
-            services.AddSwaggerDocumentation();
-
-            services.AddRouting(options =>
-            {
-                options.LowercaseUrls = true;
-            });
-
+            /*
             services.AddCors(options =>
             {
                 options.AddPolicy(ApiOrigin, builder =>
@@ -82,12 +69,7 @@ namespace MyFoodDoc.Auth.Api
                     builder.WithOrigins("https://myfooddoc-mock-api.azurewebsites.net");
                 });
             });
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-            });
+            */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,16 +78,12 @@ namespace MyFoodDoc.Auth.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwaggerDocumentation();
             }
-            app.UseStaticFiles();
-            app.UseCors(ApiOrigin);
+            //app.UseStaticFiles();
+            //app.UseCors(ApiOrigin);
             app.UseIdentityServer();
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+
+            //app.UseRouting();
         }
     }
 }

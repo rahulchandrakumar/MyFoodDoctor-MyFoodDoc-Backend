@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="IdentityServer4" Version="3.0.1" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.0.0" />
@@ -26,6 +27,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.0.0-rc4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.0.0-rc4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.0.0-rc4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyFoodDoc.App.Application\MyFoodDoc.App.Application.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.App.Infrastructure\MyFoodDoc.App.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
