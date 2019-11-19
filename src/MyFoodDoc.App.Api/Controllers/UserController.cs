@@ -3,72 +3,65 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFoodDoc.Api.Models;
+using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Mock;
 using MyFoodDoc.App.Application.Payloads.User;
 using System.Net.Mime;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Abstractions;
+using System.Threading;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
     [Authorize]
     public partial class UserController : BaseController
     {
+        private IUserService _service;
         private readonly ILogger _logger;
 
-        public UserController(ILogger<UserController> logger)
+        public UserController(IUserService service, ILogger<UserController> logger)
         {
+            _service = service;
             _logger = logger;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Current()
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Current(CancellationToken cancellationToken = default)
         {
-            return Ok(UserMock.Default);
+            var user = await _service.GetUserAsync(GetUserId(), cancellationToken);
+
+            return Ok(user);
         }
 
         [HttpPut]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update([FromBody] UserPayload payload)
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update([FromBody] UpdateUserPayload payload, CancellationToken cancellationToken = default)
         {
-            var newUser = new User
-            {
-                Email = UserMock.Default.Email,
-                Birthday = payload.Birthday,
-                Gender = payload.Gender,
-                Height = payload.Height,
-                InsuranceId = payload.InsuranceId,
-                Motivations = payload.Motivations,
-                Indications = payload.Indications,
-                Diet = payload.Diet,
-            };
+            await _service.UpdateUserAsync(GetUserId(), payload, cancellationToken);
 
-            return Ok(newUser);
+            var result = await _service.GetUserAsync(GetUserId(), cancellationToken);
+
+            return Ok(result);
         }
 
         [HttpPost("anamnesis")]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CompleteAnamnesis([FromBody] AnamnesisPayload payload)
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public async Task<IActionResult> CompleteAnamnesis([FromBody] AnamnesisPayload payload, CancellationToken cancellationToken = default)
         {
-            var newUser = new User
-            {
-                Email = UserMock.Default.Email,
-                Gender = payload.Gender,
-                Height = payload.Height,
-                Motivations = payload.Motivations,
-                Indications = payload.Indications,
-            };
+            await _service.StoreAnamnesisAsync(GetUserId(), payload, cancellationToken);
 
-            return Ok(newUser);
+            var result = await _service.GetUserAsync(GetUserId(), cancellationToken);
+
+            return Ok(result);
         }
 
         [HttpPut("password")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPayload payload)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPayload payload, CancellationToken cancellationToken = default)
         {
             return NoContent();
         }

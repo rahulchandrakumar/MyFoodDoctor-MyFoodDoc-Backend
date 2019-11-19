@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Payloads.User
 {
-    public class UserPayload
+    public class UpdateUserPayload
     {
-        public string Birthday { get; set; }
+        public DateTime? Birthday { get; set; }
 
         public Gender Gender { get; set; }
 
@@ -19,6 +19,6 @@ namespace MyFoodDoc.App.Application.Payloads.User
 
         public ICollection<string> Motivations { get; set; }
 
-        public ICollection<string> Diet { get; set; }
+        public ICollection<string> Diets { get; set; }
     }
 }

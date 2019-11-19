@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace MyFoodDoc.Application.Api
+namespace MyFoodDoc.App.Auth
 {
     public static class StartupExtensions
     {
