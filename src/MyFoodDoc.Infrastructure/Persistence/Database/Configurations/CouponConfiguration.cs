@@ -13,6 +13,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(o => o.Code).IsRequired().HasMaxLength(50);
             builder.Property(o => o.Expiry);
             builder.Property(o => o.Redeemed);
+
+            builder.HasOne(x => x.Insurance).WithMany().HasForeignKey(x => x.InsuranceId);
+            builder.HasOne(x => x.Redeemer).WithMany().HasForeignKey(x => x.RedeemedBy);
         }
     }
 }
