@@ -4,15 +4,13 @@ using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Payloads.Diary
 {
-    public class InsertMealPayload
+    public class UpdateMealPayload
     {
-        public DateTime Date { get; set; }
-
         public TimeSpan Time { get; set; }
 
         public MealType Type { get; set; }
 
-        public ICollection<Ingredient> Ingredients { get; set; }
+        public IEnumerable<Ingredient> Ingredients { get; set; }
 
         public int? Mood { get; set; }
 

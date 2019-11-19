@@ -3,20 +3,19 @@ using FluentValidation;
 
 namespace MyFoodDoc.App.Application.Payloads.Diary
 {
-    public class InsertMealPayloadValidation : AbstractValidator<InsertMealPayload>
+    public class UpdateMealPayloadValidation : AbstractValidator<UpdateMealPayload>
     {
-        public InsertMealPayloadValidation()
+        public UpdateMealPayloadValidation()
         {
-            RuleFor(x => x.Date).NotNull();
-            RuleFor(x => x.Time).NotEmpty();
-            RuleFor(x => x.Type).NotEmpty().IsInEnum();
+            RuleFor(x => x.Time).NotNull();
+            RuleFor(x => x.Type).NotNull().IsInEnum();
             RuleFor(x => x.Ingredients).NotEmpty();
             RuleForEach(x => x.Ingredients).ChildRules(i =>
             {
                 i.RuleFor(x => x.Id).NotNull();
                 i.RuleFor(x => x.Amount).GreaterThanOrEqualTo(0);
             });
-            RuleFor(m => m.Mood).NotEmpty().InclusiveBetween(1,5);
+            RuleFor(m => m.Mood).InclusiveBetween(1,5);
         }
     }
 }

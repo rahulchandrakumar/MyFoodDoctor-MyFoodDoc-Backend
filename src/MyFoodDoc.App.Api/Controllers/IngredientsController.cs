@@ -6,20 +6,33 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyFoodDoc.Api.Models;
+using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Mock;
+using MyFoodDoc.App.Application.Abstractions;
+using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
     [Authorize]
     public class IngredientsController : BaseController
     {
+        private readonly IFoodService _service;
+        private readonly ILogger _logger;
+
+        public IngredientsController(IFoodService service, ILogger<CommonController> logger)
+        {
+            _service = service;
+            _logger = logger;
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<IngredientDto>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Search(string query)
+        public async Task<IActionResult> Search(string query, CancellationToken cancellationToken)
         {
-            var result = IngredientsMock.Entries.Where(x => CultureInfo.InvariantCulture.CompareInfo.IndexOf(x.Name, query, CompareOptions.IgnoreCase) >= 0);
-            return Ok(result);
+            var results = await _service.GetAllAsync(query, cancellationToken);
+
+            return Ok(results);
         }
     }
 }

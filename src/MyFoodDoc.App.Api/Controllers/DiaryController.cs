@@ -4,259 +4,106 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyFoodDoc.Api.Models;
+using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Mock;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Enums;
+using MyFoodDoc.App.Application.Abstractions;
+using Microsoft.Extensions.Logging;
+using System.Threading;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
     [Authorize]
     public class DiaryController : BaseController
     {
-        [HttpGet("{date:Date}")]
-        [ProducesResponseType(typeof(DiaryEntryDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetByDate([FromRoute] string date)
-        {
-            DiaryEntryDto entry;
-            if (date == "2019-10-21")
-            {
-                entry = new DiaryEntryDto
-                {
-                    Meals = new[]
-                    {
-                        new DiaryEntryDtoMeal
-                        {
-                            Id = 1,
-                            Time = "07:25",
-                            Type = MealType.Breakfast,
-                            Ingredients = new []
-                            {
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[0],
-                                    Amount = 2
-                                }
-                                
-                            },
-                            Mood = 3,
-                        }
-                    },
-                    Exercise = new DiaryEntryDtoExercise
-                    {
-                        Duration = 45,
-                        LastAdded = "11:25",
-                    },
-                    Liquid = new DiaryEntryDtoLiquid
-                    {
-                        Amount = 250,
-                        LastAdded = "16:08",
-                    },
-                };
-            }
-            else if (date == "2019-10-22")
-            {
-                entry = new DiaryEntryDto
-                {
-                    Meals = new[]
-                    {
-                        new DiaryEntryDtoMeal
-                        {
-                            Id = 2,
-                            Time = "11:37",
-                            Type = MealType.Snack,
-                            Ingredients = new []
-                            {
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[1],
-                                    Amount = 2
-                                },
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[2],
-                                    Amount = 2
-                                }
-                            },
-                            Mood = 4,
-                        },
-                        new DiaryEntryDtoMeal
-                        {
-                            Id = 2,
-                            Time = "23:04",
-                            Type = MealType.Snack,
-                            Ingredients = new []
-                            {
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[3],
-                                    Amount = 2
-                                }
-                            },
-                            Mood = 5,
-                        }
-                    },
-                    Exercise = new DiaryEntryDtoExercise
-                    {
-                        Duration = 90,
-                        LastAdded = "15:45",
-                    },
-                    Liquid = new DiaryEntryDtoLiquid
-                    {
-                        Amount = 1500,
-                        LastAdded = "23:04",
-                    },
-                };
-            }
-            else
-            {
-                entry = new DiaryEntryDto
-                {
-                    Meals = new []
-                    {
-                        new DiaryEntryDtoMeal
-                        {
-                            Id = 2,
-                            Time = "06:00",
-                            Type = MealType.Breakfast,
-                            Ingredients = new []
-                            {
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[8],
-                                    Amount = 10
-                                }
-                            },
-                            Mood = 3,
-                        },
-                        new DiaryEntryDtoMeal
-                        {
-                            Id = 2,
-                            Time = "12:00",
-                            Type = MealType.Lunch,
-                            Ingredients = new []
-                            {
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[10],
-                                    Amount = 3
-                                }
-                            },
-                            Mood = 3,
-                        },
-                        new DiaryEntryDtoMeal
-                        {
-                            Id = 2,
-                            Time = "18:00",
-                            Type = MealType.Dinner,
-                            Ingredients = new []
-                            {
-                                new DiaryEntryDtoMealIngredient
-                                {
-                                    Ingredient = IngredientsMock.Entries[11],
-                                    Amount = 2
-                                }
-                            },
-                            Mood = 3,
-                        }
-                    },
-                    Exercise = new DiaryEntryDtoExercise
-                    {
-                        Duration = 0,
-                    },
-                    Liquid = new DiaryEntryDtoLiquid
-                    {
-                        Amount = 0,
-                    },
-                };
-            }
+        private readonly IDiaryService _service;
+        private readonly ILogger _logger;
 
-            return Ok(entry);
+        public DiaryController(IDiaryService service, ILogger<UserController> logger)
+        {
+            _service = service;
+            _logger = logger;
         }
 
-        [HttpPost]
+        [HttpGet("overview/{date:Date}")]
         [ProducesResponseType(typeof(DiaryEntryDto), StatusCodes.Status200OK)]
-        [Route("{date}/meal")]
-        public async Task<IActionResult> AddMeal([FromBody] MealPayload payload)
+        public async Task<ActionResult<DiaryEntryDto>> GetByDate([FromRoute] DateTime date, CancellationToken cancellationToken = default)
         {
-            var newMeal = new DiaryEntryDtoMeal
-            {
-                Id = 999,
-                Time = payload.Time,
-                Type = payload.Type,
-                Ingredients = payload.Ingredients.Select(x =>
-                {
-                    return new DiaryEntryDtoMealIngredient
-                    {
-                        Ingredient = IngredientsMock.Entries.FirstOrDefault(y => y.Id == x.IngredientId),
-                        Amount = x.Amount
-                    };
-                }).ToList(),
-                Mood = payload.Mood,
-            };
+            var result = await _service.GetAggregationByDateAsync(GetUserId(), date, cancellationToken);
 
-            return Ok(newMeal);
+            return Ok(result);
         }
 
-        [HttpPut("{date}/meal/{id}")]
-        [ProducesResponseType(typeof(DiaryEntryDto), StatusCodes.Status200OK)]
+        [HttpPost("meal")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(DiaryEntryDtoMeal), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DiaryEntryDtoMeal>> AddMeal([FromBody] InsertMealPayload payload, CancellationToken cancellationToken = default)
+        {
+            var id = await _service.InsertMealAsync(GetUserId(), payload, cancellationToken);
+
+            var result = await _service.GetMealAsync(GetUserId(), id, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpGet("meal/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(DiaryEntryDtoMeal), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DiaryEntryDtoMeal>> GetMeal([FromRoute] int id, CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetMealAsync(GetUserId(), id, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpPut("meal/{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> UpdateMeal([FromRoute] int id, [FromBody] MealPayload payload)
+        [ProducesResponseType(typeof(DiaryEntryDtoMeal), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DiaryEntryDtoMeal>> UpdateMeal([FromRoute] int id, [FromBody] UpdateMealPayload payload, CancellationToken cancellationToken = default)
         {
-            var newMeal = new DiaryEntryDtoMeal
-            {
-                Id = id,
-                Time = payload.Time,
-                Type = payload.Type,
-                Ingredients = payload.Ingredients.Select(x =>
-                {
-                    return new DiaryEntryDtoMealIngredient
-                    {
-                        Ingredient = IngredientsMock.Entries.FirstOrDefault(y => y.Id == x.IngredientId),
-                        Amount = x.Amount
-                    };
-                }).ToList(),
-                Mood = payload.Mood,
-            };
+            await _service.UpdateMealAsync(GetUserId(), id, payload, cancellationToken);
 
-            return Ok(newMeal);
+            var result = await _service.GetMealAsync(GetUserId(), id, cancellationToken);
+
+            return Ok(result);
         }
 
-        [HttpDelete("{date}/meal/{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpDelete("meal/{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveMeal([FromRoute] int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveMeal([FromRoute] int id, CancellationToken cancellationToken = default)
         {
+            await _service.RemoveMealAsync(GetUserId(), id, cancellationToken);
+
             return Ok();
         }
 
-        [HttpPut("{date}/exercise")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpPut("liquid")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateExercise([FromBody] ExercisePayload payload)
+        [ProducesResponseType(typeof(DiaryEntryDtoLiquid), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DiaryEntryDtoLiquid>> UpdateLiquid([FromBody] LiquidPayload payload, CancellationToken cancellationToken = default)
         {
-            var newExercise = new DiaryEntryDtoExercise
-            {
-                Duration = payload.Duration,
-                LastAdded = DateTime.UtcNow.ToString("HH:mm"),
-            };
+            await _service.UpsertLiquidAsync(GetUserId(), payload, cancellationToken);
 
-            return Ok(newExercise);
+            var result = await _service.GetLiquidAsync(GetUserId(), payload.Date, cancellationToken);
+
+            return Ok(result);
         }
 
-        [HttpPut("{date}/liquid")]
+        [HttpPut("exercise")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> UpdateLiquid([FromBody] LiquidPayload payload)
+        [ProducesResponseType(typeof(DiaryEntryDtoExercise), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DiaryEntryDtoExercise>> UpdateExercise([FromBody] ExercisePayload payload, CancellationToken cancellationToken = default)
         {
-            var newLiquid = new DiaryEntryDtoLiquid
-            {
-                Amount = payload.Amount,
-                LastAdded = DateTime.UtcNow.ToString("HH:mm"),
-            };
+            await _service.UpsertExerciseAsync(GetUserId(), payload, cancellationToken);
 
-            return Ok(newLiquid);
+            var result = await _service.GetExerciseAsync(GetUserId(), payload.Date, cancellationToken);
+
+            return Ok(result);
         }
     }
 }
