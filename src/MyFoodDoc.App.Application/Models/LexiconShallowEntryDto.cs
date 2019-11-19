@@ -1,18 +1,18 @@
 ﻿using AutoMapper;
-using MyFoodDoc.Core.Mappings;
-using Entity = MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites;
+using MyFoodDoc.App.Application.Mappings;
 
-namespace MyFoodDoc.Api.Models
+namespace MyFoodDoc.App.Application.Models
 {
-    public class LexiconShallowEntry : IMapFrom<Entity.LexiconEntry>
+    public class LexiconShallowEntryDto : IMapFrom<LexiconEntry>
     {
         public int Id { get; set; }
 
         public string Title { get; set; }
 
-        public virtual void Mapping(Profile profile)
+        public void Mapping(Profile profile)
         {
-            profile.CreateMap<Entity.LexiconEntry, LexiconShallowEntry>()
+            profile.CreateMap<LexiconEntry, LexiconShallowEntryDto>()
                 .ForMember(d => d.Title, opt => opt.MapFrom(s => s.TitleShort));
         }
     }
