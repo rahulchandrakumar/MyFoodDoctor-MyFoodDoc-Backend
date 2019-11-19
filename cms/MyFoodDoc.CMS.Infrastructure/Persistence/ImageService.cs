@@ -1,5 +1,6 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +10,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class ImageService : IImageService
     {
+        private readonly IImageBlobService _imageBlobService = null;
+        public ImageService(IImageBlobService imageBlobService)
+        {
+            this._imageBlobService = imageBlobService;
+        }
+
         public async Task<ImageModel> AddItem(ImageModel item)
         {
             item.Id = ImagesMock.Default.Count == 0 ? 0 : (ImagesMock.Default.Max(u => u.Id) + 1);
 
-            item.Url = "https://dummyimage.com/900x300/FFF/000ba8&text=Uploaded+(mock)+" + item.Id;
+            item.Url = await _imageBlobService.UploadImage(item.ImageData, "image/jpeg");
             ImagesMock.Default.Add(item);
 
             return await Task.FromResult(item);
@@ -42,14 +49,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<ImageModel> UpdateItem(ImageModel item)
         {
-            var user = ImagesMock.Default.FirstOrDefault(u => u.Id == item.Id);
+            var image = ImagesMock.Default.FirstOrDefault(u => u.Id == item.Id);
 
-            if (user == null)
+            if (image == null)
                 return null;
 
-            ImagesMock.Default.Remove(user);
+            await _imageBlobService.DeleteImage(image.Url);
+            ImagesMock.Default.Remove(image);
             ImagesMock.Default.Add(item);
-            return await Task.FromResult(item);
+
+            return item;
         }
     }
 }

@@ -5,7 +5,7 @@
         {{ label }}
       </label>
     </v-row>
-    <v-row v-if="value == null || !value.startsWith('http')">
+    <v-row v-if="innerValue == null || !innerValue.startsWith('http')">
       <v-image-input
         :key="key"
         v-model="innerValue"         
@@ -29,7 +29,7 @@
         :width="imageWidth"
         :max-width="imageWidth"
       />
-      <v-btn text icon @click="innerValue = null">
+      <v-btn text icon @click="innerValue = ''">
         <v-icon>
           mdi-close
         </v-icon>

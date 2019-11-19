@@ -11,7 +11,9 @@ using MyFoodDoc.CMS.Application.DependencyInjection;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
+using MyFoodDoc.CMS.Infrastructure.Dependencyinjection;
 using MyFoodDoc.CMS.Infrastructure.Persistence;
+using System;
 using System.Text;
 
 namespace MyFoodDoc.CMS
@@ -40,6 +42,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<ILexiconService, LexiconService>();
             services.AddTransient<IImageService, ImageService>();
             services.AddApplicationDI();
+            services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
             #endregion
 
             #region CORS
