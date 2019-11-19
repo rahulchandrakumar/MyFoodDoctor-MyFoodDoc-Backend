@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Infrastructure", "cms\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj", "{FBFFE256-3D84-4792-B018-7E008C93B97B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.Database", "tools\database\MyFoodDoc.Database\MyFoodDoc.Database.csproj", "{EB9F5AA7-A171-4D43-9F45-BED550340B9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{FBFFE256-3D84-4792-B018-7E008C93B97B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBFFE256-3D84-4792-B018-7E008C93B97B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBFFE256-3D84-4792-B018-7E008C93B97B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +111,7 @@ Global
 		{8441B39D-B7EF-4A92-8598-025CED5CAC28} = {36B98B16-7C06-4DD7-8F1A-CB6C00C9F2FA}
 		{F0B01733-417C-4753-B4F6-939E40EB490A} = {36B98B16-7C06-4DD7-8F1A-CB6C00C9F2FA}
 		{FBFFE256-3D84-4792-B018-7E008C93B97B} = {36B98B16-7C06-4DD7-8F1A-CB6C00C9F2FA}
+		{EB9F5AA7-A171-4D43-9F45-BED550340B9B} = {77A0EEB2-A6DB-40EE-BEB8-97053A8CC6EC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156771D1-5C1C-4E9F-B531-A625B6AFF31F}

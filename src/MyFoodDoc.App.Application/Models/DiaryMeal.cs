@@ -6,7 +6,7 @@ using Entity = MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Api.Models
 {
-    public class DiaryMeal : IMapFrom<Entity.DiaryMeal>
+    public class DiaryMeal : IMapFrom<Entity.Meal>
     {
         public int Id { get; set; }
 
@@ -18,6 +18,6 @@ namespace MyFoodDoc.Api.Models
 
         public int Mood { get; set; }
 
-        public void Mapping(Profile profile) => profile.CreateMap(typeof(Entity.DiaryMeal), GetType());
+        public void Mapping(Profile profile) => profile.CreateMap(typeof(Entity.Meal), GetType());
     }
 }
