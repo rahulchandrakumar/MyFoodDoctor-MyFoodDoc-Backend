@@ -15,7 +15,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 
             builder.HasIndex(p => new { p.Date, p.Type })
                 .IsUnique()
-                .HasFilter($"Type = '{nameof(MealType.Breakfast)}' or Type = '{nameof(MealType.Lunch)}' or Type = '{nameof(MealType.Dinner)}'");
+                .HasFilter($"Type IN ('{nameof(MealType.Breakfast)}', '{nameof(MealType.Lunch)}', '{nameof(MealType.Dinner)}')");
 
             builder.Property(p => p.Id)
                 .IsRequired()

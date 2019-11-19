@@ -18,7 +18,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasOne(x => x.Diet)
                 .WithMany()
                 .HasForeignKey(x => x.DietId)
-                .OnDelete(DeleteBehavior.Restrict); ;
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

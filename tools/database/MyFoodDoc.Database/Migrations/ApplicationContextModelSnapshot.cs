@@ -664,14 +664,9 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<int>("DietId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "DietId");
 
                     b.HasIndex("DietId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserDiets","User");
                 });
@@ -684,14 +679,9 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<int>("IndicationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "IndicationId");
 
                     b.HasIndex("IndicationId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserIndications","User");
                 });
@@ -704,14 +694,9 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<int>("MotivationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("UserId", "MotivationId");
 
                     b.HasIndex("MotivationId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserMotivations","User");
                 });
@@ -1062,15 +1047,11 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
                         .WithMany("Diets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
@@ -1081,15 +1062,11 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
                         .WithMany("Indications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
@@ -1100,15 +1077,11 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
                         .WithMany("Motivations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
                 });
 #pragma warning restore 612, 618
         }
