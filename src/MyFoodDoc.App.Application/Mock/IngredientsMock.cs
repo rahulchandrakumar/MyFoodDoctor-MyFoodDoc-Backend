@@ -1,9 +1,5 @@
-﻿using MyFoodDoc.Api.Models;
-using MyFoodDoc.App.Application.Models;
-using System;
+﻿using MyFoodDoc.App.Application.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Mock
 {
