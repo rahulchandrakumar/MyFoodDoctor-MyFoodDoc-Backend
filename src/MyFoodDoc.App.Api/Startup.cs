@@ -127,7 +127,7 @@ namespace MyFoodDoc.Application.Api
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.Formatting = Environment.IsProduction() ? Formatting.Indented : Formatting.None;
-                    //options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.Converters.Add(new StringEnumConverter(new SnakeCaseNamingStrategy(), false));
                     options.SerializerSettings.Converters.Add(new DateTimeConverter());
                     options.SerializerSettings.Converters.Add(new TimespanConverter());

@@ -8,8 +8,8 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
         public InsertMealPayloadValidation()
         {
             RuleFor(x => x.Date).NotNull();
-            RuleFor(x => x.Time).NotEmpty();
-            RuleFor(x => x.Type).NotEmpty().IsInEnum();
+            RuleFor(x => x.Time).NotNull();
+            RuleFor(x => x.Type).NotNull().IsInEnum();
             RuleFor(x => x.Ingredients).NotEmpty();
             RuleForEach(x => x.Ingredients).ChildRules(i =>
             {
