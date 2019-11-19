@@ -13,8 +13,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(p => p.TitleShort).IsRequired().HasMaxLength(30);
             builder.Property(p => p.TitleLong).IsRequired().HasMaxLength(200);
-            builder.Property(p => p.ImageUrl).HasMaxLength(250);
+            builder.Property(p => p.ImageId).IsRequired();
             builder.Property(p => p.Text).IsRequired();
+
+            builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId);
         }
     }
 }

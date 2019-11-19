@@ -17,7 +17,9 @@ namespace MyFoodDoc.App.Application.Models
         public void Mapping(Profile profile)
         {
             profile.CreateMap<LexiconEntry, LexiconEntryDto>()
-                .ForMember(d => d.Title, opt => opt.MapFrom(s => s.TitleLong));
+                .ForMember(d => d.Title, opt => opt.MapFrom(s => s.TitleLong))
+                .ForMember(d => d.ImageUrl, opt => opt.MapFrom(s => s.Image.Url));
+                
         }
     }
 }
