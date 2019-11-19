@@ -36,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ActionFilters\" />
     <Folder Include="Options\" />
   </ItemGroup>
 
