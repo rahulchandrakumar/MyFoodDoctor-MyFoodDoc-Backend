@@ -1,0 +1,83 @@
+import UserRoles from "@/enums/UserRoles";
+
+export default [
+  {
+    path: "/login",
+    name: "Login",
+    view: "Login",
+    meta: {
+      requiresAuth: false
+    }
+  },
+  {
+    path: "",
+    // Relative to /src/views
+    view: "Dashboard",
+    meta: {
+      role: UserRoles.VIEWER
+    }
+  },
+  {
+    path: "/user-profile",
+    name: "User Profile",
+    view: "UserProfile",
+    meta: {
+      role: UserRoles.VIEWER
+    }
+  },
+  {
+    path: "/table-list",
+    name: "Table List",
+    view: "Data/TableList",
+    meta: {
+      role: UserRoles.EDITOR
+    }
+  },
+  {
+    path: "/patient-list",
+    name: "Patients",
+    view: "Data/PatientList",
+    meta: {
+      role: UserRoles.EDITOR
+    }
+  },
+  {
+    path: "/users",
+    name: "Users",
+    view: "Users",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
+    path: "/typography",
+    view: "Typography",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
+    path: "/icons",
+    view: "Icons",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
+    path: "/maps",
+    view: "Maps",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
+    path: "/notifications",
+    view: "Notifications",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
+    path: "/logout"
+  }
+];
