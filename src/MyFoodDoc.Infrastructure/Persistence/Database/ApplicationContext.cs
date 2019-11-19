@@ -192,13 +192,26 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                 }
             );
 
+            builder.Entity<Image>().HasData(
+                new Image
+                {
+                    Id = 1,
+                    Url = "https://myfooddoctormockcmsimgs.blob.core.windows.net/images/253f35f4-f3ac-425c-93ff-6edfdb62a12f.jpg"
+                },
+                new Image
+                {
+                    Id = 2,
+                    Url = "https://myfooddoctormockcmsimgs.blob.core.windows.net/images/a5ec0b6f-d3cc-4a52-8283-2d7dba9a560c.jpg"
+                }
+            );
+
             builder.Entity<LexiconEntry>().HasData(
                 new LexiconEntry
                 {
                     Id = 1,
                     TitleShort = "Eiweiß",
                     TitleLong = "Eiweiß",
-                    ImageUrl = "",
+                    ImageId = 1,
                     Text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
                 },
                 new LexiconEntry
@@ -206,7 +219,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     Id = 2,
                     TitleShort = "Proteine",
                     TitleLong = "Proteine",
-                    ImageUrl = "",
+                    ImageId = 1,
                     Text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
                 }
             );
