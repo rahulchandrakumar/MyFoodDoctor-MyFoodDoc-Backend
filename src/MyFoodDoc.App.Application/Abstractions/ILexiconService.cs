@@ -1,13 +1,14 @@
-﻿using MyFoodDoc.Api.Models;
+﻿using MyFoodDoc.App.Application.Models;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface ILexiconService
     {
-        Task<IEnumerable<LexiconShallowEntry>> GetAll();
+        Task<ICollection<LexiconShallowEntryDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
-        Task<LexiconEntry> Get(int entryId);
+        Task<LexiconEntryDto> GetAsync(int entryId, CancellationToken cancellationToken = default);
     }
 }

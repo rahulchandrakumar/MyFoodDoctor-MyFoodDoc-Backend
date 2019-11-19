@@ -7,11 +7,11 @@ namespace MyFoodDoc.App.Application.Payloads.User
     {
         public AnamnesisPayloadValidation()
         {
-            RuleFor(x => x.Gender).NotEmpty().IsInEnum();
+            RuleFor(x => x.Gender).NotNull().IsInEnum();
             RuleFor(x => x.Height).NotEmpty();
             RuleFor(x => x.Weight).NotEmpty();            
-            RuleFor(m => m.Motivations).NotEmpty().Must(x => x.Any()).When(m => !m.Indications.Any());
-            RuleFor(m => m.Indications).NotEmpty().Must(x => x.Any()).When(m => !m.Motivations.Any());
+            RuleFor(m => m.Motivations).NotEmpty().When(m => m.Indications == null || !m.Indications.Any());
+            RuleFor(m => m.Indications).NotEmpty().When(m => m.Motivations == null || !m.Motivations.Any());
         }
     }
 }

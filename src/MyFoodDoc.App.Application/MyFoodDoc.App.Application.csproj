@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.0" />
     <PackageReference Include="IdentityModel" Version="4.0.0" />
   </ItemGroup>
@@ -13,10 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MyFoodDoc.Application\MyFoodDoc.Application.csproj" />
     <ProjectReference Include="..\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

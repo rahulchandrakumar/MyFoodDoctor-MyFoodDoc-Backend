@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using MyFoodDoc.App.Application.Payloads.Coupon;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface ICouponService
     {
-        Task<bool> RedeemCoupon(string Code);
+        Task RedeemCouponAsync(string userId, CouponPayload payload, CancellationToken cancellationToken = default);
     }
 }

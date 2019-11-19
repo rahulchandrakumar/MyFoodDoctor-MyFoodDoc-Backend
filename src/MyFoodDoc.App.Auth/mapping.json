@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
+  }
+}
