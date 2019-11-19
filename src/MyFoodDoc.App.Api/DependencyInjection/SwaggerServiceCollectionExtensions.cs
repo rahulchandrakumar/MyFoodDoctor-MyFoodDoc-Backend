@@ -44,6 +44,8 @@ namespace MyFoodDoc.App.Api.DependencyInjection
                 //options.AddFluentValidationRules();
                 options.SchemaFilter<FluentValidationRules>();
                 options.OperationFilter<FluentValidationOperationFilter>();
+                options.MapType<DateTime>(() => new OpenApiSchema { Type = "string", Format = "date" });
+                options.MapType<TimeSpan>(() => new OpenApiSchema { Type = "string", Format = "time" });
             });
 
             return services;
