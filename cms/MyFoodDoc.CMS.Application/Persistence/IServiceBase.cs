@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MyFoodDoc.CMS.Application.Services
+namespace MyFoodDoc.CMS.Application.Persistence
 {
     public interface IServiceBase<T>
     {

@@ -1,4 +1,4 @@
-import UserRoles from "@/enums/UserRoles"
+import UserRoles from "@/enums/UserRoles";
 
 export default [
   {
@@ -28,7 +28,15 @@ export default [
   {
     path: "/table-list",
     name: "Table List",
-    view: "TableList",
+    view: "Data/TableList",
+    meta: {
+      role: UserRoles.EDITOR
+    }
+  },
+  {
+    path: "/patient-list",
+    name: "Patients",
+    view: "Data/PatientList",
     meta: {
       role: UserRoles.EDITOR
     }

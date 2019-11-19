@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Payloads;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Controllers
 {
@@ -23,12 +24,12 @@ namespace MyFoodDoc.CMS.Controllers
         /// <returns>User info (name, roles)</returns>
         [HttpPost("login")]
         [AllowAnonymous]
-        public ActionResult Login([FromBody]LoginPayload request)
+        public async Task<ActionResult> Login([FromBody]LoginPayload request)
         {
             request.Password = request.Password.Trim();
             request.Username = request.Username.Trim();
 
-            var user = _authService.Login(request.Username, request.Password);
+            var user = await _authService.Login(request.Username, request.Password);
             if (user != null)
             {
                 return Ok(user);

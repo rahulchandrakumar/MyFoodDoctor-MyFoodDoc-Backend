@@ -1,17 +1,16 @@
 ﻿using DotNetify;
 using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Models;
-using MyFoodDoc.CMS.Application.Services;
+using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    [Authorize]
+    [Authorize("Admin")]
     public class UsersViewModel: MulticastVM
     {
         public class User : ColabDataTableBaseModel
@@ -47,7 +46,7 @@ namespace MyFoodDoc.CMS.ViewModels
         }
 
         public string Items_itemKey => nameof(User.Id);
-        public IList<User> Items = null;
+        public IList<User> Items = new List<User>();
 
         private readonly IUserService _userService;
 

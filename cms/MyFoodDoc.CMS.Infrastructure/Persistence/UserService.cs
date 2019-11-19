@@ -1,10 +1,11 @@
-﻿using MyFoodDoc.CMS.Application.Mock;
-using MyFoodDoc.CMS.Application.Models;
+﻿using MyFoodDoc.CMS.Application.Models;
+using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MyFoodDoc.CMS.Application.Services.Implementation
+namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class UserService : IUserService
     {

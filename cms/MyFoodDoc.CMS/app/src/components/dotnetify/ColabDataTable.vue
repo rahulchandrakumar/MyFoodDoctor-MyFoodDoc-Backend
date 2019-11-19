@@ -5,18 +5,25 @@
         <material-card
           color="green"
         >
-        <v-row wrap pa-3 slot="header">
-          <v-col 
-            class="subheading font-weight-light mr-3 align-center"
-          >
-            <h4 
-              class="title font-weight-light mb-2"
+          <v-row wrap pa-3 slot="header">
+            <v-col 
+              class="subheading font-weight-light mr-3 align-center"
             >
-              {{ title }}
-            </h4>
-          </v-col>
-          <v-col cols="1">
-            <v-btn
+              <h4 
+                class="title font-weight-light mb-2"
+              >
+                {{ title }}
+              </h4>
+              <v-text-field
+                class="mr-4"
+                label="Search..."
+                hide-details
+                v-model="search"
+              />
+            </v-col>
+            <v-col cols="1">
+              <v-btn
+                v-if="couldAdd && !readonly"
                 v-on:click="onAdd"
                 class="v-btn--simple ma-0"
                 color="success"
@@ -30,82 +37,93 @@
                   mdi-plus-box
                 </v-icon>
               </v-btn>
-          </v-col>
-        </v-row>
+            </v-col>
+          </v-row>
 
-          <v-data-table :headers="mainHeaders" :items="Items" sort-by="Id" hide-default-footer disable-pagination>
-            <template slot="item" slot-scope="{ item }">
-              <tr>
-                <td>{{ item.Id }}</td>
-                <slot name="item" 
-                    v-bind:item="item" 
-                    v-bind:edit="item.LockDate != null && (now - item.LockDate <= editTime) && item.Editor == username && item.Original"
-                    >
-                </slot>
-                <td>
-                  <v-btn
-                    v-if="item.LockDate == null || (now - item.LockDate > editTime)"
-                    v-on:click="onBeginEdit(item)"
+          <v-data-table 
+            :headers="mainHeaders" 
+            :items="Items" 
+            :search="search" 
+            sort-by="Id" 
+            item-key="Id" 
+            hide-default-footer 
+            disable-pagination 
+            filterable 
+            dense 
+            :show-expand="$scopedSlots['expanded-item'] != null"
+          >
+              
+            <template v-for="slot in Object.keys($scopedSlots)" :slot="slot" slot-scope="scope">
+              <slot 
+                :name="slot" 
+                v-bind="scope"
+                v-bind:edit="scope.item.LockDate != null && (now - scope.item.LockDate <= editTime) && scope.item.Editor == username && (scope.item.Original || !scope.item.Id)"
+              ></slot>
+            </template>
+
+            <template v-slot:item.editAction="{ item }">
+              <v-btn
+                v-if="item.LockDate == null || (now - item.LockDate > editTime)"
+                v-on:click="onBeginEdit(item)"
+                class="v-btn--simple"
+                color="success"
+                icon
+              >
+                <v-icon color="primary">
+                  mdi-pencil
+                </v-icon>
+              </v-btn>
+              <v-btn
+                v-else-if="item.Editor == username && (item.Original || !item.Id)"
+                v-on:click="onSave(item)"
+                class="v-btn--simple"
+                color="success"
+                icon
+              >
+                <v-icon color="primary">
+                  mdi-content-save
+                </v-icon>
+              </v-btn>
+                    
+              <v-tooltip bottom v-else>
+                <template v-slot:activator="{ on }">
+                  <v-btn v-on="on"
                     class="v-btn--simple"
                     color="success"
                     icon
                   >
                     <v-icon color="primary">
-                      mdi-pencil
+                      mdi-lock
                     </v-icon>
                   </v-btn>
-                  <v-btn
-                    v-else-if="item.Editor == username && item.Original"
-                    v-on:click="onSave(item)"
-                    class="v-btn--simple"
-                    color="success"
-                    icon
-                  >
-                    <v-icon color="primary">
-                      mdi-content-save
-                    </v-icon>
-                  </v-btn>
-                  
-                  <v-tooltip bottom v-else>
-                      <template v-slot:activator="{ on }">
-                        <v-btn v-on="on"
-                          class="v-btn--simple"
-                          color="success"
-                          icon
-                        >
-                          <v-icon color="primary">
-                            mdi-lock
-                          </v-icon>
-                        </v-btn>
-                      </template>
-                      <span>{{ item.Editor }}</span>
-                    </v-tooltip>
-                </td>
-                <td>
-                  <v-btn
-                    v-if="item.LockDate == null || (now - item.LockDate > editTime)"
-                    v-on:click="onRemove(item)"
-                    class="v-btn--simple"
-                    color="danger"
-                    icon
-                  >
-                    <v-icon color="error">
-                      mdi-close
-                    </v-icon>
-                  </v-btn>
-                  <v-btn
-                    v-else-if="item.Editor == username && item.Original"
-                    v-on:click="onCancel(item)"
-                    class="v-btn--simple"
-                    color="danger"
-                    icon
-                  >
-                    <v-icon color="error">
-                      mdi-undo
-                    </v-icon>
-                  </v-btn>
-                </td>
-              </tr>
+                </template>
+                <span>{{ item.Editor }}</span>
+              </v-tooltip>
+            </template>
+
+            <template v-slot:item.removeAction="{ item }">
+              <v-btn
+                v-if="item.LockDate == null || (now - item.LockDate > editTime)"
+                v-on:click="onRemove(item)"
+                class="v-btn--simple"
+                color="danger"
+                icon
+              >
+                <v-icon color="error">
+                  mdi-close
+                </v-icon>
+              </v-btn>
+              <v-btn
+                v-else-if="item.Editor == username && (item.Original || !item.Id)"
+                v-on:click="onCancel(item)"
+                class="v-btn--simple"
+                color="danger"
+                icon
+              >
+                <v-icon color="error">
+                  mdi-undo
+                </v-icon>
+              </v-btn>
             </template>
           </v-data-table>
         </material-card>
@@ -121,7 +139,28 @@ const editTime = 300000
 
 export default {
   name: 'ColabDataTable',
-  props: ['viewModel', 'headers', 'title'],
+  props: {
+   viewModel: {
+     type: String,
+     required: true
+   }, 
+   headers: {
+     type: Array,
+     required: true
+   }, 
+   title: {
+     type: String,
+     required: true
+   },
+   readonly: {
+     type: Boolean,
+     default: false
+   },
+   couldAdd: {
+     type: Boolean,
+     default: true
+   }
+  },
   created() {
     let token = this.$store.state.user.token
     let headers = { Authorization: "Bearer " + token } 
@@ -134,35 +173,44 @@ export default {
          self.now = Date.now()
       }, 1000)
   },
+  mounted() {
+    if (this.$scopedSlots['expanded-item'] != null)
+      this.mainHeaders.push({ text: '', value: 'data-table-expand' })
+  },
   destroyed() {
     this.vm.$destroy();
   },
   data() {
-      var mainHeaders = [{
-                sortable: true,
-                text: "Id",
-                value: "Id"
-            }]
-            .concat(this.headers)
-            .concat([      
-            {
-                sortable: false,
-                width: "25px"
-            },
-            {
-                sortable: false,
-                width: "25px"
-            }
-            ]);
+    var mainHeaders = [{
+      sortable: true,
+      text: "Id",
+      value: "Id"
+    }]
+    .concat(this.headers);
 
-      return {
-            mainHeaders: mainHeaders,
-            now: Date.now(),
-            username: '',
-            Items: [],
-            editTime: editTime
-          }
-},
+    if (!this.readonly)
+      mainHeaders = mainHeaders.concat([      
+        {
+          value: "editAction",
+          sortable: false,
+          width: "25px"
+        },
+        {
+          value: "removeAction",
+          sortable: false,
+          width: "25px"
+        }
+      ]);
+
+    return {
+      mainHeaders: mainHeaders,
+      now: Date.now(),
+      username: '',
+      Items: [],
+      editTime: editTime,
+      search: ''
+    }
+  },
   methods: {
     onAdd: function () {
       this.Items.unshift({
@@ -206,3 +254,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.v-card--material__header .v-text-field__slot .v-label {
+    color: unset !important;
+}
+</style>

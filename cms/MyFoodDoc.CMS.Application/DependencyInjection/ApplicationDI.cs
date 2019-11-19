@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using MyFoodDoc.CMS.Application.Services;
-using MyFoodDoc.CMS.Application.Services.Implementation;
 
 namespace MyFoodDoc.CMS.Application.DependencyInjection
 {
@@ -8,8 +6,6 @@ namespace MyFoodDoc.CMS.Application.DependencyInjection
     {
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
-            services.AddTransient<IUserService, UserService>();
-
             return services;
         }
     }

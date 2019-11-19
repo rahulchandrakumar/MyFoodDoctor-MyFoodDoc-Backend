@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MyFoodDoc.CMS.Application.Models;
-using MyFoodDoc.CMS.Application.Services;
+using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models;
 using System;
 using System.Collections.Generic;
@@ -25,23 +25,25 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             this._userService = userService;
 
             this._configuration = configuration;
+        }
 
-            //init props
-            Task.Factory.StartNew(async () =>
+        private async Task InitUsers()
+        {
+            this._users.AddRange(await _userService.GetItems());
+            this._users.Add(new UserModel()
             {
-                this._users.AddRange(await _userService.GetItems());
-                this._users.Add(new UserModel()
-                {
-                    Displayname = _configuration["SuperAdmin:Displayname"],
-                    Username = _configuration["SuperAdmin:Username"],
-                    Password = _configuration["SuperAdmin:Password"],
-                    Roles = new UserRoleEnum[] { UserRoleEnum.Admin, UserRoleEnum.Editor, UserRoleEnum.Viewer }
-                });
+                Displayname = _configuration["SuperAdmin:Displayname"],
+                Username = _configuration["SuperAdmin:Username"],
+                Password = _configuration["SuperAdmin:Password"],
+                Roles = new UserRoleEnum[] { UserRoleEnum.Admin, UserRoleEnum.Editor, UserRoleEnum.Viewer }
             });
         }
 
-        public AppUser Login(string username, string password)
+        public async Task<AppUser> Login(string username, string password)
         {
+            if (_users.Count == 0)
+                await InitUsers();
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["AuthSecret"]);
 

@@ -1,9 +1,10 @@
 ﻿using MyFoodDoc.CMS.Models;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Auth
 {
     public interface ICustomAuthenticationService
     {
-        AppUser Login(string username, string password);
+        Task<AppUser> Login(string username, string password);
     }
 }

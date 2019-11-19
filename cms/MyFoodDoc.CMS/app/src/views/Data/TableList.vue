@@ -4,23 +4,21 @@
     viewModel="TableViewModel" 
     :headers="mainHeaders"
   >
-    <template v-slot:item="{ item, edit }">
-      <td>
-        <InlineEdit
-          rules="required|max:35"
-          fieldtype="text"
-          :value.sync="item.Name"
-          :edit="edit"
-        />
-      </td>
-      <td class="text-right">
-        <InlineEdit
-          rules="required"
-          fieldtype="number"
-          :value.sync="item.Amount"
-          :edit="edit"
-        />
-      </td>
+    <template v-slot:item.Name="{ item, edit }">
+      <InlineEdit
+        rules="required|max:35"
+        fieldtype="text"
+        :value.sync="item.Name"
+        :edit="edit"
+      />
+    </template>
+    <template v-slot:item.Amount="{ item, edit }">
+      <InlineEdit
+        rules="required"
+        fieldtype="number"
+        :value.sync="item.Amount"
+        :edit="edit"
+      />
     </template>
   </ColabDataTable>
 </template>

@@ -47,7 +47,7 @@ const router = new Router({
 
 router.beforeEach(async (to, from, next) => {
   if (to.path === "/logout") {
-    await store.dispatch("user/logout")
+    await store.dispatch("user/logout");
   }
   if (to.meta.requiresAuth != false) {
     let loggedIn = store.state.user.userInfo.isAuthenticated;
