@@ -1,86 +1,83 @@
-﻿using MyFoodDoc.Api.Models;
-using System;
+﻿using MyFoodDoc.App.Application.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Mock
 {
     public static class IngredientsMock
     {
-        public static IList<Ingredient> Entries = new[]
+        public static IList<IngredientDto> Entries = new[]
         {
-            new Ingredient
+            new IngredientDto
             {
                 Id = 0,
                 Name = "Banane"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 1,
                 Name = "Thunfisch"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 2,
                 Name = "Schokolade"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 3,
                 Name = "Butter"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 4,
                 Name = "Kaffee"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 5,
                 Name = "Käse"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 6,
                 Name = "Milch"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 7,
                 Name = "Paprika"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 8,
                 Name = "Zwiebel"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 9,
                 Name = "Spinat"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 10,
                 Name = "Ei"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 11,
                 Name = "Vollkornbrot"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 12,
                 Name = "Rind"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 13,
                 Name = "Schwein"
             },
-            new Ingredient
+            new IngredientDto
             {
                 Id = 14,
                 Name = "Geflügel"

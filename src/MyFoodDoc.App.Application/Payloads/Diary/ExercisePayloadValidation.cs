@@ -6,7 +6,9 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
     {
         public ExercisePayloadValidation()
         {
-            RuleFor(x => x.Duration).NotEmpty().GreaterThanOrEqualTo(1);
+            RuleFor(x => x.Date).NotEmpty();
+            RuleFor(x => x.Time).NotEmpty();
+            RuleFor(x => x.Duration).NotNull().GreaterThanOrEqualTo(0);
         }
     }
 }

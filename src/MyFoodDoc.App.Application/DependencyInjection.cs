@@ -16,6 +16,8 @@ namespace MyFoodDoc.App.Application
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             services.AddScoped<ICommonService, CommonService>();
+            services.AddScoped<IDiaryService, DiaryService>();
+            services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<IUserService, UserService>();
 
             return services;
