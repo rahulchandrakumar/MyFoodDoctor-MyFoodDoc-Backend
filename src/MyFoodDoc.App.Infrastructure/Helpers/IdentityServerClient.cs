@@ -29,7 +29,7 @@ namespace MyFoodDoc.Application.Api.Helpers
             // request the access token token
             var passwordTokenRequest = new PasswordTokenRequest
             {
-                Address = _options.Address,
+                Address = _options.Address + "/connect/token",
                 ClientId = _options.ClientId,
                 Scope = _options.Scope,
                 UserName = username,
