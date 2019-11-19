@@ -39,7 +39,7 @@
                 <td>{{ item.Id }}</td>
                 <slot name="item" 
                     v-bind:item="item" 
-                    v-bind:edit="item.LockDate != null && (now - item.LockDate <= editTime) && item.Editor == username"
+                    v-bind:edit="item.LockDate != null && (now - item.LockDate <= editTime) && item.Editor == username && item.Original"
                     >
                 </slot>
                 <td>
@@ -55,7 +55,7 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    v-else-if="item.Editor == username"
+                    v-else-if="item.Editor == username && item.Original"
                     v-on:click="onSave(item)"
                     class="v-btn--simple"
                     color="success"
@@ -94,7 +94,7 @@
                     </v-icon>
                   </v-btn>
                   <v-btn
-                    v-else-if="item.Editor == username"
+                    v-else-if="item.Editor == username && item.Original"
                     v-on:click="onCancel(item)"
                     class="v-btn--simple"
                     color="danger"
@@ -171,7 +171,7 @@ export default {
       })
     },
     onBeginEdit(item) {
-      item.original = Object.assign({}, item)
+      item.Original = Object.assign({}, item)
       item.LockDate = Date.now()
       item.Editor = this.username
       this.vm.$dispatch({ Update: item });
@@ -181,7 +181,7 @@ export default {
         this.vm.$dispatch({ Remove: item.Id });
     },
     onSave(item) {
-      item.original = null;
+      item.Original = null;
       item.LockDate = null;
       item.Editor = null;
 
@@ -197,7 +197,8 @@ export default {
         if (item.Id == null)
           this.Items.shift();
         else {
-          Object.assign(item, item.original)
+          Object.assign(item, item.Original)
+          item.Original = null;
           this.vm.$dispatch({ Update: item });
         }
       }

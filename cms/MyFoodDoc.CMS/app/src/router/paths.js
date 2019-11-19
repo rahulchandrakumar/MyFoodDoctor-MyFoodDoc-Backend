@@ -1,8 +1,5 @@
-/**
- * Define all of your application routes here
- * for more information on routes, see the
- * official documentation https://router.vuejs.org/en/
- */
+import UserRoles from "@/enums/UserRoles"
+
 export default [
   {
     path: "/login",
@@ -15,33 +12,62 @@ export default [
   {
     path: "",
     // Relative to /src/views
-    view: "Dashboard"
+    view: "Dashboard",
+    meta: {
+      role: UserRoles.VIEWER
+    }
   },
   {
     path: "/user-profile",
     name: "User Profile",
-    view: "UserProfile"
+    view: "UserProfile",
+    meta: {
+      role: UserRoles.VIEWER
+    }
   },
   {
     path: "/table-list",
     name: "Table List",
-    view: "TableList"
+    view: "TableList",
+    meta: {
+      role: UserRoles.EDITOR
+    }
+  },
+  {
+    path: "/users",
+    name: "Users",
+    view: "Users",
+    meta: {
+      role: UserRoles.ADMIN
+    }
   },
   {
     path: "/typography",
-    view: "Typography"
+    view: "Typography",
+    meta: {
+      role: UserRoles.ADMIN
+    }
   },
   {
     path: "/icons",
-    view: "Icons"
+    view: "Icons",
+    meta: {
+      role: UserRoles.ADMIN
+    }
   },
   {
     path: "/maps",
-    view: "Maps"
+    view: "Maps",
+    meta: {
+      role: UserRoles.ADMIN
+    }
   },
   {
     path: "/notifications",
-    view: "Notifications"
+    view: "Notifications",
+    meta: {
+      role: UserRoles.ADMIN
+    }
   },
   {
     path: "/logout"

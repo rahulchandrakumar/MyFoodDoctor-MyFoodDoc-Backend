@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using MyFoodDoc.CMS.Application.DependencyInjection;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
 using System.Text;
@@ -28,6 +29,7 @@ namespace MyFoodDoc.CMS
         {
             services.AddMvc(o => o.EnableEndpointRouting = false);
             services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
+            services.AddApplicationDI();
 
             #region CORS
             services.AddCors();

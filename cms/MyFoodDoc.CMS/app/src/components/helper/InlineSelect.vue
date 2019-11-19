@@ -4,23 +4,21 @@
       :rules="rules"
       v-slot="{ classes }"
     >
-      <input
-        class="form-control inline-edit"
-        :class="classes"
-        :type="fieldtype"
-        ref="inputElem"
-        v-model.lazy="input"
-        :readonly="!edit"
-        @blur="update"
-      >
+        <v-select
+          class="inline-select"
+          :items="items"
+          :readonly="!edit"
+          v-model.lazy="input"
+          @blur="update"
+        ></v-select>
     </ValidationProvider>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'InlineEdit',
-  props: ['value', 'edit', 'valid', 'rules', 'fieldtype'],
+  name: 'InlineSelect',
+  props: ['value', 'edit', 'items'],
   data() {
     return {
       input: this.value
@@ -40,15 +38,15 @@ export default {
 </script>
 
 <style>
-input.inline-edit {
-  text-align: inherit;
-  padding: 9px;
+.v-text-field.inline-select {
+  padding-top: 18px;
 }
-input.inline-edit:read-write {
+.inline-select .v-select__slot {
+  text-align: inherit;
+  padding: 4px;
+}
+.inline-select:not(.v-input--is-readonly) .v-select__slot {
   border-radius: 5px;
   border: 2px solid rgb(102, 187, 106);
-}
-input.inline-edit.invalid:read-write {
-  border-color: rgb(255, 82, 82);
 }
 </style>

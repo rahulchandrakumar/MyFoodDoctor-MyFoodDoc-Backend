@@ -35,12 +35,12 @@ export default {
   data: () => ({
     mainHeaders: [      
       {
-        sortable: false,
-        text: "Name",
-        value: "Name"
+        sortable: true,
+        value: "Name",
+        text: "Name"
       },
       {
-        sortable: false,
+        sortable: true,
         text: "Amount",
         value: "Amount",
         align: "right"
