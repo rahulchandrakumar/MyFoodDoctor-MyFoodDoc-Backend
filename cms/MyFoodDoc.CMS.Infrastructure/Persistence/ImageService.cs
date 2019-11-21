@@ -5,6 +5,7 @@ using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,11 +32,11 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return ImageModel.FromEntity(imageEntity);
         }
 
-        public async Task<ImageModel> UploadImage(byte[] data, CancellationToken cancellationToken = default)
+        public async Task<ImageModel> UploadImage(Stream stream, CancellationToken cancellationToken = default)
         {
             var image = new ImageModel()
             {
-                Url = await _imageBlobService.UploadImage(data, "image/jpeg")
+                Url = await _imageBlobService.UploadImage(stream, "image/jpeg", null, cancellationToken)
             };
 
             var imageEntity = image.ToEntity();

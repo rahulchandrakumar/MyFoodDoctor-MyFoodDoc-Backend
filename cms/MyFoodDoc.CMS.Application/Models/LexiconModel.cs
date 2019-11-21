@@ -29,7 +29,6 @@ namespace MyFoodDoc.CMS.Application.Models
             {
                 Id = this.Id,
                 ImageId = this.Image.Id,
-                LastModified = DateTime.Now,
                 Text = this.Text,
                 TitleLong = this.TitleLong,
                 TitleShort = this.TitleShort

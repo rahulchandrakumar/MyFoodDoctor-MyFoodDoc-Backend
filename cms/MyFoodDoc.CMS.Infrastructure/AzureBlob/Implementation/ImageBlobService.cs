@@ -2,6 +2,8 @@
 using Microsoft.Azure.Storage.Blob;
 using System;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
@@ -25,35 +27,33 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
             _container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Container });
         }
 
-        public async Task<string> UploadImage(byte[] data, string fileType, string filename = null)
+        public async Task<string> UploadImage(Stream stream, string fileType, string filename = null, CancellationToken cancellationToken = default)
         {
-            if (data == null)
+            if (stream == null || !stream.CanRead)
                 return null;
 
-            using (var stream = new MemoryStream(data))
-            {
-                filename = filename ?? (Guid.NewGuid().ToString() + ".jpg");
-                CloudBlockBlob blob = _container.GetBlockBlobReference(filename);
-                blob.Properties.ContentType = fileType;
+            filename = filename ?? (Guid.NewGuid().ToString() + ".jpg");
+            CloudBlockBlob blob = _container.GetBlockBlobReference(filename);
+            blob.Properties.ContentType = fileType;
 
-                bool imageExists = await blob.ExistsAsync();
-                if (imageExists)
-                {
-                    await blob.DeleteAsync();
-                }
-                await blob.UploadFromStreamAsync(stream);
-                return blob.Uri.AbsoluteUri;
-            }
-        }
-
-        public async Task<bool> DeleteImage(string url)
-        {
-            CloudBlockBlob blob = _container.GetBlockBlobReference(url);
-
-            bool imageExists = await blob.ExistsAsync();
+            bool imageExists = await blob.ExistsAsync(cancellationToken);
             if (imageExists)
             {
-                await blob.DeleteAsync();
+                await blob.DeleteAsync(cancellationToken);
+            }
+            await blob.UploadFromStreamAsync(stream, cancellationToken);
+            return blob.Uri.AbsoluteUri;
+        }
+
+        public async Task<bool> DeleteImage(string url, CancellationToken cancellationToken = default)
+        {
+            var fileName = url.Split('/').LastOrDefault();
+            CloudBlockBlob blob = _container.GetBlockBlobReference(fileName);
+
+            bool imageExists = await blob.ExistsAsync(cancellationToken);
+            if (imageExists)
+            {
+                await blob.DeleteAsync(cancellationToken);
                 return true;
             }
             return false;

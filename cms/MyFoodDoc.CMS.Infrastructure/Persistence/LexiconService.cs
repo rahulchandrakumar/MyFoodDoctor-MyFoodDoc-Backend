@@ -2,6 +2,7 @@
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,9 +13,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
     public class LexiconService : ILexiconService
     {
         private readonly IApplicationContext _context;
-        private readonly IImageService _imageService;
+        private readonly IImageBlobService _imageService;
 
-        public LexiconService(IApplicationContext context, IImageService imageService)
+        public LexiconService(IApplicationContext context, IImageBlobService imageService)
         {
             this._context = context;
             this._imageService = imageService;
@@ -28,7 +29,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             await _context.SaveChangesAsync(cancellationToken);
 
             lexiconEntity = await _context.LexiconEntries
-                                            .Include(i => i.Image)
+                                            .Include(x => x.Image)
                                             .FirstOrDefaultAsync(u => u.Id == lexiconEntity.Id);
 
             return LexiconModel.FromEntity(lexiconEntity);
@@ -37,9 +38,11 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             var lexiconEntity = await _context.LexiconEntries
-                                                .Include(i => i.Image)
+                                                .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id);
-                    
+
+            await _imageService.DeleteImage(lexiconEntity.Image.Url, cancellationToken);
+
             _context.Images.Remove(lexiconEntity.Image);
             _context.LexiconEntries.Remove(lexiconEntity);
             await _context.SaveChangesAsync(cancellationToken);
@@ -50,7 +53,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<LexiconModel> GetItem(int id)
         {
             var lexiconEntity = await _context.LexiconEntries
-                                                .Include(i => i.Image)
+                                                .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id);
 
             return LexiconModel.FromEntity(lexiconEntity);
@@ -59,7 +62,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<IList<LexiconModel>> GetItems()
         {
             var lexiconEntities = await _context.LexiconEntries
-                                                .Include(i => i.Image)
+                                                .Include(x => x.Image)
                                                 .ToListAsync();
 
             return lexiconEntities.Select(LexiconModel.FromEntity).ToList();
@@ -68,7 +71,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<LexiconModel> UpdateItem(LexiconModel item, CancellationToken cancellationToken = default)
         {
             var lexiconEntity = await _context.LexiconEntries
-                                                .Include(i => i.Image)
+                                                .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == item.Id);
 
             _context.Entry(lexiconEntity).CurrentValues.SetValues(item.ToEntity());

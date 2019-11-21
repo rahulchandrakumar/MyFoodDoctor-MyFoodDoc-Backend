@@ -6,6 +6,7 @@ using MyFoodDoc.CMS.Models;
 using MyFoodDoc.CMS.Payloads;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Controllers
@@ -22,18 +23,14 @@ namespace MyFoodDoc.CMS.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<Image> UploadImage([FromForm]ImageUploadPayload payload)
+        public async Task<Image> UploadImage([FromForm]ImageUploadPayload payload, CancellationToken cancellationToken = default)
         {
             if (payload?.Files == null)
                 return null;
 
-            using (var stream = new MemoryStream())
-            {
-                await payload.Files.Files.First().CopyToAsync(stream);
-                var image = Image.FromModel(await _imageService.UploadImage(stream.ToArray()));
+            var image = Image.FromModel(await _imageService.UploadImage(payload.Files.Files.First().OpenReadStream(), cancellationToken));
 
-                return image;
-            }
+            return image;
         }
     }
 }
