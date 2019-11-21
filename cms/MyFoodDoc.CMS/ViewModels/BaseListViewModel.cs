@@ -1,5 +1,5 @@
 ﻿using DotNetify;
-using MyFoodDoc.CMS.Models;
+using MyFoodDoc.CMS.Models.VMBase;
 using System.Collections.Generic;
 
 namespace MyFoodDoc.CMS.ViewModels

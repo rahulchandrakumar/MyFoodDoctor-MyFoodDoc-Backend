@@ -1,18 +1,12 @@
 ﻿using DotNetify;
 using DotNetify.Security;
-using MyFoodDoc.CMS.Models;
+using MyFoodDoc.CMS.Models.VM;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    public class IngredientSize : ColabDataTableBaseModel
-    {
-        public string Name { get; set; }
-        public decimal Amount { get; set; }
-    }
-
     [Authorize("Editor")]
     public class TableViewModel : BaseListViewModel<IngredientSize>
     {       

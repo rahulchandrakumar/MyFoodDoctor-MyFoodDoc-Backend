@@ -1,46 +1,13 @@
 ﻿using DotNetify;
 using DotNetify.Security;
-using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using MyFoodDoc.CMS.Models;
+using MyFoodDoc.CMS.Models.VM;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    public class User : ColabDataTableBaseModel
-    {
-        public string Username { get; set; }
-        public string DisplayName { get; set; }
-        public string Password { get; set; }
-        public string Role { get; set; }
-
-        public static User FromModel(UserModel model)
-        {
-            return new User()
-            {
-                DisplayName = model.Displayname,
-                Id = model.Id,
-                Password = model.Password,
-                Role = model.Roles.Max().ToString(),
-                Username = model.Username
-            };
-        }
-
-        public UserModel ToModel()
-        {
-            return new UserModel()
-            {
-                Displayname = this.DisplayName,
-                Id = this.Id,
-                Password = this.Password,
-                Username = this.Username,
-                Roles = Enum.GetValues(typeof(UserRoleEnum)).Cast<UserRoleEnum>().Where(x => x <= Enum.Parse<UserRoleEnum>(this.Role))
-            };
-        }
-    }
-
     [Authorize("Admin")]
     public class UsersViewModel : BaseListViewModel<User>
     {

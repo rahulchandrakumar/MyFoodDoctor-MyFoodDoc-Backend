@@ -1,7 +1,7 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
 using System.Text.Json.Serialization;
 
-namespace MyFoodDoc.CMS.Models
+namespace MyFoodDoc.CMS.Models.VMBase
 {
     public class Image
     {
