@@ -1,8 +1,8 @@
-﻿namespace MyFoodDoc.CMS.Models
+﻿namespace MyFoodDoc.CMS.Models.VMBase
 {
-    public class ColabDataTableBaseModel
+    public class ColabDataTableBaseModel<T>
     {
-        public int Id { get; set; }
+        public T Id { get; set; }
         public string Editor { get; set; }
         public long? LockDate { get; set; }
     }

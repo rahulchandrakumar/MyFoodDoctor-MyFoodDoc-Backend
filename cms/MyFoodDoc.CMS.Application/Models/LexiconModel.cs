@@ -3,7 +3,7 @@ using System;
 
 namespace MyFoodDoc.CMS.Application.Models
 {
-    public class LexiconModel: BaseModel
+    public class LexiconModel: BaseModel<int>
     {
         public string TitleLong { get; set; }
         public string TitleShort { get; set; }

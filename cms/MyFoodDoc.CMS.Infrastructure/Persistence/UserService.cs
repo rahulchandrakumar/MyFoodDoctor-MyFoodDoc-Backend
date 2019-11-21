@@ -17,9 +17,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return await Task.FromResult(item);
         }
 
-        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteItem(object id, CancellationToken cancellationToken = default)
         {
-            var user = UsersMock.Default.FirstOrDefault(u => u.Id == id);
+            var user = UsersMock.Default.FirstOrDefault(u => u.Id == (int)id);
 
             if (user == null)
                 return await Task.FromResult(false);
@@ -28,9 +28,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return await Task.FromResult(true);
         }
 
-        public async Task<UserModel> GetItem(int id)
+        public async Task<UserModel> GetItem(object id)
         {
-            return await Task.FromResult(UsersMock.Default.FirstOrDefault(u => u.Id == id));
+            return await Task.FromResult(UsersMock.Default.FirstOrDefault(u => u.Id == (int)id));
         }
 
         public async Task<IList<UserModel>> GetItems()

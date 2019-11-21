@@ -1,10 +1,9 @@
 ﻿using DotNetify;
-using MyFoodDoc.CMS.Models.VMBase;
 using System.Collections.Generic;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    public class BaseListViewModel<T> : MulticastVM where T: ColabDataTableBaseModel
+    public class BaseListViewModel<T> : MulticastVM
     {
         public string Items_itemKey => "Id";
         public IList<T> Items = new List<T>();

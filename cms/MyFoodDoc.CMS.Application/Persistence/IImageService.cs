@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IImageService: IServiceBase<ImageModel>
+    public interface IImageService
     {
         Task<ImageModel> UploadImage(Stream stream, CancellationToken cancellationToken = default);
     }

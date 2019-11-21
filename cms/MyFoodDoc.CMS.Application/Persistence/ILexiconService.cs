@@ -1,8 +1,9 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface ILexiconService : IServiceBase<LexiconModel>
+    public interface ILexiconService : IServiceBaseRead<LexiconModel>, IServiceBaseWrite<LexiconModel>
     {
     }
 }

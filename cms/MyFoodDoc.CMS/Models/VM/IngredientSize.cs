@@ -2,7 +2,7 @@
 
 namespace MyFoodDoc.CMS.Models.VM
 {
-    public class IngredientSize : ColabDataTableBaseModel
+    public class IngredientSize : ColabDataTableBaseModel<int>
     {
         public string Name { get; set; }
         public decimal Amount { get; set; }

@@ -1,10 +1,8 @@
 ﻿using DotNetify.Security;
 using Microsoft.AspNetCore.Mvc;
-using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using MyFoodDoc.CMS.Models;
+using MyFoodDoc.CMS.Models.VMBase;
 using MyFoodDoc.CMS.Payloads;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

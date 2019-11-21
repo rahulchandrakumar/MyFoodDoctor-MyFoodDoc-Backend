@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Models.VMBase;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
-    public class LexiconItem : ColabDataTableBaseModel
+    public class LexiconItem : ColabDataTableBaseModel<int>
     {
         public string TitleLong { get; set; }
         public string TitleShort { get; set; }

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
-    public class User : ColabDataTableBaseModel
+    public class User : ColabDataTableBaseModel<int>
     {
         public string Username { get; set; }
         public string DisplayName { get; set; }

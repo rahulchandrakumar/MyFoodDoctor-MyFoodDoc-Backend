@@ -1,5 +1,4 @@
-﻿using DotNetify;
-using DotNetify.Security;
+﻿using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
 using System;
@@ -25,49 +24,6 @@ namespace MyFoodDoc.CMS.ViewModels
             try
             {
                 this.Items =_service.GetItems().Result.Select(Patient.FromModel).ToList();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        };
-
-        public Action<Patient> Add => async (Patient patient) =>
-        {
-            try
-            {
-                this.AddList(nameof(Items), Patient.FromModel(await _service.AddItem(patient.ToModel())));
-                this.PushUpdates();
-            }
-            catch (Exception ex)
-            {
-
-            }
-        };
-        public Action<Patient> Update => async (Patient user) =>
-        {
-            try
-            {
-                if (await _service.UpdateItem(user.ToModel()) != null)
-                {
-                    this.UpdateList(nameof(Items), user);
-                    this.PushUpdates();
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-        };
-        public Action<int> Remove => async (int Id) =>
-        {
-            try
-            {
-                if (await _service.DeleteItem(Id))
-                {
-                    this.RemoveList(nameof(Items), Id);
-                    this.PushUpdates();
-                }
             }
             catch (Exception ex)
             {
