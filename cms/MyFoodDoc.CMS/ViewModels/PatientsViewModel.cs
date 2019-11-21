@@ -23,7 +23,7 @@ namespace MyFoodDoc.CMS.ViewModels
         {
             try
             {
-                this.Items =_service.GetItems().Result.Select(Patient.FromModel).Where(x => x.Motivation?.Count > 0).ToList();
+                this.Items =_service.GetItems().Result.Select(Patient.FromModel).ToList();
             }
             catch (Exception ex)
             {
