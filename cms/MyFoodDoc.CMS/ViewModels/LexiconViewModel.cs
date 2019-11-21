@@ -4,51 +4,46 @@ using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-
-    [Authorize("Admin")]
-    public class LexiconViewModel : MulticastVM
+    public class LexiconItem : ColabDataTableBaseModel
     {
-        public class LexiconItem : ColabDataTableBaseModel
+        public string TitleLong { get; set; }
+        public string TitleShort { get; set; }
+        public string Text { get; set; }
+        public Image Image { get; set; }
+
+        public static LexiconItem FromModel(LexiconModel model)
         {
-            public string TitleLong { get; set; }
-            public string TitleShort { get; set; }
-            public string Text { get; set; }
-            public Image Image { get; set; }
-
-            public static LexiconItem FromModel(LexiconModel model)
+            return new LexiconItem()
             {
-                return new LexiconItem()
-                {
-                    Id = model.Id,
-                    TitleLong = model.TitleLong,
-                    TitleShort = model.TitleShort,
-                    Text = model.Text,
-                    Image = Image.FromModel(model.Image)
-                };
-            }
-
-            public LexiconModel ToModel()
-            {
-                return new LexiconModel()
-                {
-                    Id = this.Id,
-                    TitleLong = this.TitleLong,
-                    TitleShort = this.TitleShort,
-                    Text = this.Text,
-                    Image = this.Image.ToModel()
-                };
-            }
+                Id = model.Id,
+                TitleLong = model.TitleLong,
+                TitleShort = model.TitleShort,
+                Text = model.Text,
+                Image = Image.FromModel(model.Image)
+            };
         }
 
-        public string Items_itemKey => nameof(LexiconItem.Id);
-        public IList<LexiconItem> Items = new List<LexiconItem>();
+        public LexiconModel ToModel()
+        {
+            return new LexiconModel()
+            {
+                Id = this.Id,
+                TitleLong = this.TitleLong,
+                TitleShort = this.TitleShort,
+                Text = this.Text,
+                Image = this.Image.ToModel()
+            };
+        }
+    }
 
+    [Authorize("Admin")]
+    public class LexiconViewModel : BaseListViewModel<LexiconItem>
+    {
         private readonly ILexiconService _service;
 
         public LexiconViewModel(ILexiconService service)
@@ -58,14 +53,13 @@ namespace MyFoodDoc.CMS.ViewModels
             //init props
             Init();
         }
-        private Action Init => async () =>
+        private Action Init => () =>
         {
             try
             {
-                this.Set((await _service.GetItems()).Select(LexiconItem.FromModel).ToList(), nameof(Items));
-                this.PushUpdates();
+                this.Items = _service.GetItems().Result.Select(LexiconItem.FromModel).ToList();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }

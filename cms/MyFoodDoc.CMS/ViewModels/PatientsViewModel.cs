@@ -10,99 +10,119 @@ using System.Reactive.Linq;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    [Authorize("Editor")]
-    public class PatientsViewModel: MulticastVM
+    public class Patient : ColabDataTableBaseModel
     {
-        public class Patient : ColabDataTableBaseModel
+        public string FullName { get; set; }
+        public string Email { get; set; }
+        public string Insurance { get; set; }
+        public byte Sex { get; set; }
+        public int Height { get; set; }
+        public DateTime Birth { get; set; }
+        public IList<HistoryBaseModel<decimal>> Weight { get; set; }
+        public IList<HistoryBaseModel<int>> BloodSugar { get; set; }
+        public IList<HistoryBaseModel<decimal>> AbdominalGirth { get; set; }
+        public IList<string> Motivation { get; set; }
+
+        public static Patient FromModel(PatientModel model)
         {
-            public string FullName { get; set; }
-            public string Email { get; set; }
-            public string Insurance { get; set; }
-            public byte Sex { get; set; }
-            public int Height { get; set; }
-            public DateTime Birth { get; set; }
-            public IList<HistoryBaseModel<decimal>> Weight { get; set; }
-            public IList<HistoryBaseModel<int>> BloodSugar { get; set; }
-            public IList<HistoryBaseModel<decimal>> AbdominalGirth { get; set; }
-
-            public static Patient FromModel(PatientModel model)
+            return new Patient()
             {
-                return new Patient()
-                {
-                    Id = model.Id,
-                    FullName = model.FullName,
-                    Birth = model.Birth,
-                    Email = model.Email,
-                    Insurance = model.Insurance,
-                    Height = model.Height,
-                    Sex = (byte)model.Sex,
-                    AbdominalGirth = model.AbdominalGirth?.Select(HistoryBaseModel<decimal>.FromModel).ToList(),
-                    BloodSugar = model.BloodSugar?.Select(HistoryBaseModel<int>.FromModel).ToList(),
-                    Weight = model.Weight?.Select(HistoryBaseModel<decimal>.FromModel).ToList()
-                };
-            }
-
-            public PatientModel ToModel()
-            {
-                return new PatientModel()
-                {
-                    Id = Id,
-                    FullName = FullName,
-                    Birth = Birth,
-                    Email = Email,
-                    Insurance = Insurance,
-                    Height = Height,
-                    Sex = (SexEnum)Sex,
-                    AbdominalGirth = AbdominalGirth?.Select(x => x.ToModel()).ToList(),
-                    BloodSugar = BloodSugar?.Select(x => x.ToModel()).ToList(),
-                    Weight = Weight?.Select(x => x.ToModel()).ToList()
-                };
-            }
+                Id = model.Id,
+                FullName = model.FullName,
+                Birth = model.Birth,
+                Email = model.Email,
+                Insurance = model.Insurance,
+                Height = model.Height,
+                Sex = (byte)model.Sex,
+                AbdominalGirth = model.AbdominalGirth?.Select(HistoryBaseModel<decimal>.FromModel).ToList(),
+                BloodSugar = model.BloodSugar?.Select(HistoryBaseModel<int>.FromModel).ToList(),
+                Weight = model.Weight?.Select(HistoryBaseModel<decimal>.FromModel).ToList(),
+                Motivation = model.Motivation?.ToList()
+            };
         }
 
-        public string Items_itemKey => nameof(Patient.Id);
-        public IList<Patient> Items = new List<Patient>();
+        public PatientModel ToModel()
+        {
+            return new PatientModel()
+            {
+                Id = Id,
+                FullName = FullName,
+                Birth = Birth,
+                Email = Email,
+                Insurance = Insurance,
+                Height = Height,
+                Sex = (SexEnum)Sex,
+                AbdominalGirth = AbdominalGirth?.Select(x => x.ToModel()).ToList(),
+                BloodSugar = BloodSugar?.Select(x => x.ToModel()).ToList(),
+                Weight = Weight?.Select(x => x.ToModel()).ToList()
+            };
+        }
+    }
 
-        private readonly IPatientService _patientService;
+    [Authorize("Editor")]
+    public class PatientsViewModel : BaseListViewModel<Patient>
+    {
+        private readonly IPatientService _service;
 
         public PatientsViewModel(IPatientService patientService)
         {
-            this._patientService = patientService;
+            this._service = patientService;
+
             //init props
-            Observable.FromAsync(async () => (await _patientService.GetItems()).Select(Patient.FromModel).ToList())
-                      .Subscribe(x =>
-                      {
-                          Items = x;
-                          PushUpdates();
-                      });
+            Init();
         }
-
-        public Action<Patient> Add => async (Patient user) =>
+        private Action Init => () =>
         {
-            var userModel = user.ToModel();
-            userModel = await _patientService.AddItem(userModel);
+            try
+            {
+                this.Items =_service.GetItems().Result.Select(Patient.FromModel).ToList();
+            }
+            catch (Exception ex)
+            {
 
-            var intUser = Patient.FromModel(userModel);
+            }
+        };
 
-            Items.Add(intUser);
-            this.AddList(nameof(Items), intUser);
+        public Action<Patient> Add => async (Patient patient) =>
+        {
+            try
+            {
+                this.AddList(nameof(Items), Patient.FromModel(await _service.AddItem(patient.ToModel())));
+                this.PushUpdates();
+            }
+            catch (Exception ex)
+            {
+
+            }
         };
         public Action<Patient> Update => async (Patient user) =>
         {
-            if (await _patientService.UpdateItem(user.ToModel()) != null)
+            try
             {
-                Items.Remove(Items.First(i => i.Id == user.Id));
-                Items.Add(user);
+                if (await _service.UpdateItem(user.ToModel()) != null)
+                {
+                    this.UpdateList(nameof(Items), user);
+                    this.PushUpdates();
+                }
+            }
+            catch (Exception ex)
+            {
 
-                this.UpdateList(nameof(Items), user);
             }
         };
         public Action<int> Remove => async (int Id) =>
         {
-            if (await _patientService.DeleteItem(Id))
+            try
             {
-                Items.Remove(Items.First(i => i.Id == Id));
-                this.RemoveList(nameof(Items), Id);
+                if (await _service.DeleteItem(Id))
+                {
+                    this.RemoveList(nameof(Items), Id);
+                    this.PushUpdates();
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
         };
     }

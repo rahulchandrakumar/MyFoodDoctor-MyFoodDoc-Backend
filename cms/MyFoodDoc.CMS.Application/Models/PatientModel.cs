@@ -14,5 +14,6 @@ namespace MyFoodDoc.CMS.Application.Models
         public IList<HistoryModel<decimal>> Weight { get; set; }
         public IList<HistoryModel<int>> BloodSugar { get; set; }
         public IList<HistoryModel<decimal>> AbdominalGirth { get; set; }
+        public IList<string> Motivation { get; set; }
     }
 }

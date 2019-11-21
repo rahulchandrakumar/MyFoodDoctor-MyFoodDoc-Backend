@@ -45,6 +45,7 @@
             filterable
             dense
             :show-expand="$scopedSlots['expanded-item'] != null"
+            :loading="!IsLoaded"
           >
             <template
               v-for="slot in Object.keys($scopedSlots)"
@@ -172,6 +173,7 @@ export default {
       now: Date.now(),
       username: "",
       Items: [],
+      IsLoaded: false,
       editTime: editTime,
       search: "",
       dialog: false,
