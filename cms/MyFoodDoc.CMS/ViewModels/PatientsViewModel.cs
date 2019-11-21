@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 namespace MyFoodDoc.CMS.ViewModels
 {
     [Authorize("Editor")]
-    public class PatientsViewModel : BaseListViewModel<Patient>
+    public class PatientsViewModel : BaseListViewModel<Patient, string>
     {
         private readonly IPatientService _service;
 

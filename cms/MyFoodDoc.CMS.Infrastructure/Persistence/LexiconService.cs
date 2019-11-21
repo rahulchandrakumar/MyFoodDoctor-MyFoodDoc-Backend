@@ -69,12 +69,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<LexiconModel> UpdateItem(LexiconModel item, CancellationToken cancellationToken = default)
         {
             var lexiconEntity = await _context.LexiconEntries
-                                                .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == item.Id);
 
             _context.Entry(lexiconEntity).CurrentValues.SetValues(item.ToEntity());
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            lexiconEntity = await _context.LexiconEntries
+                                            .Include(x => x.Image)
+                                            .FirstOrDefaultAsync(u => u.Id == item.Id);
 
             return LexiconModel.FromEntity(lexiconEntity);
         }

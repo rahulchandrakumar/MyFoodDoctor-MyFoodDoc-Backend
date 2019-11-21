@@ -9,7 +9,7 @@ using System.Reactive.Linq;
 namespace MyFoodDoc.CMS.ViewModels
 {
     [Authorize("Admin")]
-    public class UsersViewModel : BaseListViewModel<User>
+    public class UsersViewModel : BaseListViewModel<User, int>
     {
         private readonly IUserService _service;
 
@@ -37,22 +37,23 @@ namespace MyFoodDoc.CMS.ViewModels
         {
             try
             {
-                this.AddList(nameof(Items), User.FromModel(await _service.AddItem(user.ToModel())));
-                this.PushUpdates();
+                var itemMod = User.FromModel(await _service.AddItem(user.ToModel()));
+
+                this.AddList(itemMod);
             }
             catch (Exception ex)
             {
 
             }
         };
-        public Action<User> Update => async (User user) =>
+        public Action<User> Update => async (User item) =>
         {
             try
             {
-                if (await _service.UpdateItem(user.ToModel()) != null)
+                var itemMod = User.FromModel(await _service.UpdateItem(item.ToModel()));
+                if (itemMod != null)
                 {
-                    this.UpdateList(nameof(Items), user);
-                    this.PushUpdates();
+                    this.UpdateList(itemMod);
                 }
             }
             catch (Exception ex)
@@ -66,8 +67,7 @@ namespace MyFoodDoc.CMS.ViewModels
             {
                 if (await _service.DeleteItem(Id))
                 {
-                    this.RemoveList(nameof(Items), Id);
-                    this.PushUpdates();
+                    this.RemoveList(Id);
                 }
             }
             catch (Exception ex)

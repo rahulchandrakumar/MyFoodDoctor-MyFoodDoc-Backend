@@ -8,7 +8,7 @@ using System.Reactive.Linq;
 namespace MyFoodDoc.CMS.ViewModels
 {
     [Authorize("Editor")]
-    public class TableViewModel : BaseListViewModel<IngredientSize>
+    public class TableViewModel : BaseListViewModel<IngredientSize, int>
     {       
         public TableViewModel()
         {
@@ -42,9 +42,8 @@ namespace MyFoodDoc.CMS.ViewModels
             try
             {
                 ingredientSize.Id = Items.Count == 0 ? 0 : Items.Max(i => i.Id) + 1;
-                Items.Add(ingredientSize);
-
-                this.AddList(nameof(Items), ingredientSize);
+                
+                this.AddList(ingredientSize);
             }
             catch (Exception ex)
             {
@@ -55,10 +54,7 @@ namespace MyFoodDoc.CMS.ViewModels
         {
             try
             {
-                Items.Remove(Items.First(i => i.Id == ingredientSize.Id));
-                Items.Add(ingredientSize);
-
-                this.UpdateList(nameof(Items), ingredientSize);
+                this.UpdateList(ingredientSize);
             }
             catch (Exception ex)
             {
@@ -69,9 +65,7 @@ namespace MyFoodDoc.CMS.ViewModels
         {
             try
             {
-                Items.Remove(Items.First(i => i.Id == Id));
-
-                this.RemoveList(nameof(Items), Id);
+                this.RemoveList(Id);
             }
             catch (Exception ex)
             {
