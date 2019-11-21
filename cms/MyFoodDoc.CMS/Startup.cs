@@ -13,6 +13,7 @@ using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
 using MyFoodDoc.CMS.Infrastructure.Dependencyinjection;
 using MyFoodDoc.CMS.Infrastructure.Persistence;
+using MyFoodDoc.Infrastructure;
 using System;
 using System.Text;
 
@@ -20,13 +21,15 @@ namespace MyFoodDoc.CMS
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-
         private TokenValidationParameters _tokenValidationParameters;
 
-        public Startup(IConfiguration configuration)
+        public IConfiguration Configuration { get; }
+        public IHostEnvironment Environment { get; }
+
+        public Startup(IConfiguration configuration, IHostEnvironment environment)
         {
-            this.Configuration = configuration;
+            Configuration = configuration;
+            Environment = environment;
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -36,6 +39,8 @@ namespace MyFoodDoc.CMS
             #endregion
 
             #region DI
+            services.AddSharedInfrastructure(Configuration, Environment);
+
             services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPatientService, PatientService>();

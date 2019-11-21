@@ -1,52 +1,81 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class LexiconService : ILexiconService
     {
-        public async Task<LexiconModel> AddItem(LexiconModel item)
+        private readonly IApplicationContext _context;
+        private readonly IImageService _imageService;
+
+        public LexiconService(IApplicationContext context, IImageService imageService)
         {
-            item.Id = LexiconMock.Default.Count == 0 ? 0 : (LexiconMock.Default.Max(u => u.Id) + 1);
-            LexiconMock.Default.Add(item);
-            return await Task.FromResult(item);
+            this._context = context;
+            this._imageService = imageService;
         }
 
-        public async Task<bool> DeleteItem(int id)
+        public async Task<LexiconModel> AddItem(LexiconModel item, CancellationToken cancellationToken = default)
         {
-            var user = LexiconMock.Default.FirstOrDefault(u => u.Id == id);
+            var lexiconEntity = item.ToEntity();
+            await _context.LexiconEntries.AddAsync(lexiconEntity);
 
-            if (user == null)
-                return await Task.FromResult(false);
+            await _context.SaveChangesAsync(cancellationToken);
 
-            LexiconMock.Default.Remove(user);
-            return await Task.FromResult(true);
+            lexiconEntity = await _context.LexiconEntries
+                                            .Include(i => i.Image)
+                                            .FirstOrDefaultAsync(u => u.Id == lexiconEntity.Id);
+
+            return LexiconModel.FromEntity(lexiconEntity);
+        }
+
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
+        {
+            var lexiconEntity = await _context.LexiconEntries
+                                                .Include(i => i.Image)
+                                                .FirstOrDefaultAsync(u => u.Id == id);
+                    
+            _context.Images.Remove(lexiconEntity.Image);
+            _context.LexiconEntries.Remove(lexiconEntity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
         }
 
         public async Task<LexiconModel> GetItem(int id)
         {
-            return await Task.FromResult(LexiconMock.Default.FirstOrDefault(u => u.Id == id));
+            var lexiconEntity = await _context.LexiconEntries
+                                                .Include(i => i.Image)
+                                                .FirstOrDefaultAsync(u => u.Id == id);
+
+            return LexiconModel.FromEntity(lexiconEntity);
         }
 
         public async Task<IList<LexiconModel>> GetItems()
         {
-            return await Task.FromResult(LexiconMock.Default);
+            var lexiconEntities = await _context.LexiconEntries
+                                                .Include(i => i.Image)
+                                                .ToListAsync();
+
+            return lexiconEntities.Select(LexiconModel.FromEntity).ToList();
         }
 
-        public async Task<LexiconModel> UpdateItem(LexiconModel item)
+        public async Task<LexiconModel> UpdateItem(LexiconModel item, CancellationToken cancellationToken = default)
         {
-            var itemModel = LexiconMock.Default.FirstOrDefault(u => u.Id == item.Id);
+            var lexiconEntity = await _context.LexiconEntries
+                                                .Include(i => i.Image)
+                                                .FirstOrDefaultAsync(u => u.Id == item.Id);
 
-            if (itemModel == null)
-                return null;
+            _context.Entry(lexiconEntity).CurrentValues.SetValues(item.ToEntity());
 
-            LexiconMock.Default.Remove(itemModel);
-            LexiconMock.Default.Add(item);
-            return await Task.FromResult(item);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return LexiconModel.FromEntity(lexiconEntity);
         }
     }
 }

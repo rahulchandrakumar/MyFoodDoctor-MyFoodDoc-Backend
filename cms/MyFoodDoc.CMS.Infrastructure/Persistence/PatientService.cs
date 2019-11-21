@@ -3,20 +3,21 @@ using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class PatientService : IPatientService
     {
-        public async Task<PatientModel> AddItem(PatientModel item)
+        public async Task<PatientModel> AddItem(PatientModel item, CancellationToken cancellationToken = default)
         {
             item.Id = PatientsMock.Default.Count == 0 ? 0 : (PatientsMock.Default.Max(u => u.Id) + 1);
             PatientsMock.Default.Add(item);
             return await Task.FromResult(item);
         }
 
-        public async Task<bool> DeleteItem(int id)
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             var user = PatientsMock.Default.FirstOrDefault(u => u.Id == id);
 
@@ -37,7 +38,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return await Task.FromResult(PatientsMock.Default);
         }
 
-        public async Task<PatientModel> UpdateItem(PatientModel item)
+        public async Task<PatientModel> UpdateItem(PatientModel item, CancellationToken cancellationToken = default)
         {
             var user = PatientsMock.Default.FirstOrDefault(u => u.Id == item.Id);
 

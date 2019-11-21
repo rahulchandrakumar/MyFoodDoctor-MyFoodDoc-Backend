@@ -30,7 +30,7 @@ namespace MyFoodDoc.CMS.Controllers
             using (var stream = new MemoryStream())
             {
                 await payload.Files.Files.First().CopyToAsync(stream);
-                var image = Image.FromModel(await _imageService.AddItem(new ImageModel() { ImageData = stream.ToArray() }));
+                var image = Image.FromModel(await _imageService.UploadImage(stream.ToArray()));
 
                 return image;
             }

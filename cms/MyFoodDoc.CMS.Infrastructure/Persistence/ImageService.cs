@@ -1,64 +1,92 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class ImageService : IImageService
     {
-        private readonly IImageBlobService _imageBlobService = null;
-        public ImageService(IImageBlobService imageBlobService)
+        private readonly IApplicationContext _context;
+        private readonly IImageBlobService _imageBlobService;
+        public ImageService(IApplicationContext context, IImageBlobService imageBlobService)
         {
+            this._context = context;
             this._imageBlobService = imageBlobService;
         }
 
-        public async Task<ImageModel> AddItem(ImageModel item)
+        public async Task<ImageModel> AddItem(ImageModel item, CancellationToken cancellationToken = default)
         {
-            item.Id = ImagesMock.Default.Count == 0 ? 0 : (ImagesMock.Default.Max(u => u.Id) + 1);
+            var imageEntity = item.ToEntity(); 
+            await _context.Images.AddAsync(imageEntity);
 
-            item.Url = await _imageBlobService.UploadImage(item.ImageData, "image/jpeg");
-            ImagesMock.Default.Add(item);
+            await _context.SaveChangesAsync(cancellationToken);
 
-            return await Task.FromResult(item);
+            return ImageModel.FromEntity(imageEntity);
         }
 
-        public async Task<bool> DeleteItem(int id)
+        public async Task<ImageModel> UploadImage(byte[] data, CancellationToken cancellationToken = default)
         {
-            var user = ImagesMock.Default.FirstOrDefault(u => u.Id == id);
+            var image = new ImageModel()
+            {
+                Url = await _imageBlobService.UploadImage(data, "image/jpeg")
+            };
 
-            if (user == null)
-                return await Task.FromResult(false);
+            var imageEntity = image.ToEntity();
+            await _context.Images.AddAsync(imageEntity);
 
-            ImagesMock.Default.Remove(user);
-            return await Task.FromResult(true);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return ImageModel.FromEntity(imageEntity);
+        }
+
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
+        {
+            var imageEntity = await _context.Images.FirstOrDefaultAsync(u => u.Id == id);
+
+            var result = await _imageBlobService.DeleteImage(imageEntity.Url);
+
+            _context.Images.Remove(imageEntity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return result;
         }
 
         public async Task<ImageModel> GetItem(int id)
         {
-            return await Task.FromResult(ImagesMock.Default.FirstOrDefault(u => u.Id == id));
+            var imageEntity = await _context.Images.FirstOrDefaultAsync(u => u.Id == id);
+            return ImageModel.FromEntity(imageEntity);
         }
 
         public async Task<IList<ImageModel>> GetItems()
         {
-            return await Task.FromResult(ImagesMock.Default);
+            var imageEntities = await _context.Images.ToListAsync();
+            return imageEntities.Select(ImageModel.FromEntity).ToList();
         }
 
-        public async Task<ImageModel> UpdateItem(ImageModel item)
+        public async Task<ImageModel> UpdateItem(ImageModel item, CancellationToken cancellationToken = default)
         {
-            var image = ImagesMock.Default.FirstOrDefault(u => u.Id == item.Id);
+            var imageEntity = await _context.Images.FirstOrDefaultAsync(u => u.Id == item.Id);
 
-            if (image == null)
+            if (imageEntity == null)
                 return null;
 
-            await _imageBlobService.DeleteImage(image.Url);
-            ImagesMock.Default.Remove(image);
-            ImagesMock.Default.Add(item);
+            var itemEntity = item.ToEntity(); 
 
-            return item;
+            if (itemEntity.Url != imageEntity.Url)
+                await _imageBlobService.DeleteImage(imageEntity.Url);
+
+            _context.Entry(imageEntity).CurrentValues.SetValues(itemEntity);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return ImageModel.FromEntity(imageEntity);
         }
     }
 }

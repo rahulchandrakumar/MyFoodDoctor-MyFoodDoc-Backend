@@ -10,33 +10,9 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
     {
         public static string ConnectionString { private get; set; }
         public static string ContainerName { private get; set; }
-        public static Uri CDN { private get; set; }
-        public static Uri OriginalUrl { private get; set; }
 
         private CloudBlobClient _client = null;
         private CloudBlobContainer _container = null;
-        
-        private static string GetCDNUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return null;
-
-            var newUrl = url;
-            if (CDN != null)
-            {
-                newUrl = new Uri(CDN, new Uri(url).LocalPath.ToString()).ToString();
-            }
-            return newUrl;
-        }
-
-        private static string GetOriginalUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return null;
-
-            var newUrl = new Uri(OriginalUrl, new Uri(url).LocalPath.ToString()).ToString();
-            return newUrl;
-        }
 
         public ImageBlobService(/*IConfiguration configuration*/)
         {
@@ -66,13 +42,13 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
                     await blob.DeleteAsync();
                 }
                 await blob.UploadFromStreamAsync(stream);
-                return GetCDNUrl(blob.Uri.AbsoluteUri);
+                return blob.Uri.AbsoluteUri;
             }
         }
 
         public async Task<bool> DeleteImage(string url)
         {
-            CloudBlockBlob blob = _container.GetBlockBlobReference(GetOriginalUrl(url));
+            CloudBlockBlob blob = _container.GetBlockBlobReference(url);
 
             bool imageExists = await blob.ExistsAsync();
             if (imageExists)

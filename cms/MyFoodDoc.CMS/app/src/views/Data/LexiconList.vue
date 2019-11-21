@@ -6,8 +6,8 @@
     :headers="mainHeaders"
     :before-save="beforeSave"
   >
-    <template v-slot:item.Description="{ item }">
-      {{ item.Description | truncate(150) }}
+    <template v-slot:item.Text="{ item }">
+      {{ stripHtml(item.Text) | truncate(200) }}
     </template>
     <template v-slot:item.Image="{ item }">
       <v-img 
@@ -30,16 +30,24 @@
       </v-row>
       <v-row>
         <VeeTextField
-          v-model="item.Title"
-          :label="mainHeaders.filter(h => h.value == 'Title')[0].text"
-          rules="required|max:35"
-          :counter="35"
+          v-model="item.TitleShort"
+          :label="mainHeaders.filter(h => h.value == 'TitleShort')[0].text"
+          rules="required|max:30"
+          :counter="30"
+        />
+      </v-row>
+      <v-row>
+        <VeeTextField
+          v-model="item.TitleLong"
+          :label="mainHeaders.filter(h => h.value == 'TitleLong')[0].text"
+          rules="required|max:200"
+          :counter="200"
         />
       </v-row>
       <v-row>
         <VeeTextArea
-          v-model="item.Description"
-          :label="mainHeaders.filter(h => h.value == 'Description')[0].text"
+          v-model="item.Text"
+          :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
           rules="required|min:8|max:8192"
         />
       </v-row>
@@ -68,11 +76,15 @@ export default {
         width: "210px"
       }, {
         sortable: true,
-        value: "Title",
-        text: "Title"
+        value: "TitleShort",
+        text: "Title (short)"
+      }, {
+        sortable: true,
+        value: "TitleLong",
+        text: "Title (long)"
       }, {
         sortable: false,
-        value: "Description",
+        value: "Text",
         text: "Description"
       }]
     }
@@ -81,6 +93,11 @@ export default {
     async beforeSave(item) {
       if (item.Image.Url != null && !item.Image.Url.startsWith('http'))
         item.Image = Object.assign(item.Image, await integration.images.uploadImage(item.Image.Url));
+    },
+    stripHtml(html) {
+      var tmp = document.createElement("div");
+      tmp.innerHTML = html;
+      return tmp.textContent || tmp.innerText || "";
     }
   }
 }

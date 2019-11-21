@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\MyFoodDoc.Application\MyFoodDoc.Application.csproj" />
     <ProjectReference Include="..\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj" />
   </ItemGroup>
 

@@ -16,8 +16,9 @@ namespace MyFoodDoc.CMS.ViewModels
     {
         public class LexiconItem : ColabDataTableBaseModel
         {
-            public string Title { get; set; }
-            public string Description { get; set; }
+            public string TitleLong { get; set; }
+            public string TitleShort { get; set; }
+            public string Text { get; set; }
             public Image Image { get; set; }
 
             public static LexiconItem FromModel(LexiconModel model)
@@ -25,8 +26,9 @@ namespace MyFoodDoc.CMS.ViewModels
                 return new LexiconItem()
                 {
                     Id = model.Id,
-                    Title = model.Title,
-                    Description = model.Description,
+                    TitleLong = model.TitleLong,
+                    TitleShort = model.TitleShort,
+                    Text = model.Text,
                     Image = Image.FromModel(model.Image)
                 };
             }
@@ -36,8 +38,9 @@ namespace MyFoodDoc.CMS.ViewModels
                 return new LexiconModel()
                 {
                     Id = this.Id,
-                    Title = this.Title,
-                    Description = this.Description,
+                    TitleLong = this.TitleLong,
+                    TitleShort = this.TitleShort,
+                    Text = this.Text,
                     Image = this.Image.ToModel()
                 };
             }
@@ -51,41 +54,62 @@ namespace MyFoodDoc.CMS.ViewModels
         public LexiconViewModel(ILexiconService service)
         {
             this._service = service;
+
             //init props
-            Observable.FromAsync(async () => (await _service.GetItems()).Select(LexiconItem.FromModel).ToList())
-                      .Subscribe(x =>
-                      {
-                          Items = x;
-                          PushUpdates();
-                      });
+            Init();
         }
+        private Action Init => async () =>
+        {
+            try
+            {
+                this.Set((await _service.GetItems()).Select(LexiconItem.FromModel).ToList(), nameof(Items));
+                this.PushUpdates();
+            }
+            catch(Exception ex)
+            {
+
+            }
+        };
 
         public Action<LexiconItem> Add => async (LexiconItem item) =>
         {
-            var itemModel = item.ToModel();
-            itemModel = await _service.AddItem(itemModel);
-
-            var intUser = LexiconItem.FromModel(itemModel);
-
-            Items.Add(intUser);
-            this.AddList(nameof(Items), intUser);
+            try
+            {
+                this.AddList(nameof(Items), LexiconItem.FromModel(await _service.AddItem(item.ToModel())));
+                this.PushUpdates();
+            }
+            catch(Exception ex) 
+            { 
+            }
         };
         public Action<LexiconItem> Update => async (LexiconItem item) =>
         {
-            if (await _service.UpdateItem(item.ToModel()) != null)
+            try
             {
-                Items.Remove(Items.First(i => i.Id == item.Id));
-                Items.Add(item);
+                if (await _service.UpdateItem(item.ToModel()) != null)
+                {
+                    this.UpdateList(nameof(Items), item);
+                    this.PushUpdates();
+                }
+            }
+            catch(Exception ex)
+            {
 
-                this.UpdateList(nameof(Items), item);
             }
         };
         public Action<int> Remove => async (int Id) =>
         {
-            if (await _service.DeleteItem(Id))
+            try
             {
-                Items.Remove(Items.First(i => i.Id == Id));
-                this.RemoveList(nameof(Items), Id);
+                if (await _service.DeleteItem(Id))
+                {
+                    this.RemoveList(nameof(Items), Id);
+                    this.PushUpdates();
+                }
+            }
+            catch(Exception ex)
+            {
+
             }
         };
     }

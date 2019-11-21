@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation;
 using System;
@@ -12,8 +13,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Dependencyinjection
         {
             ImageBlobService.ConnectionString = ConnectionString;
             ImageBlobService.ContainerName = "images";
-            ImageBlobService.CDN = CDN;
-            ImageBlobService.OriginalUrl = CloudStorageAccount.Parse(ConnectionString).BlobStorageUri.PrimaryUri;
+
+            ImageModel.CDN = CDN;
+            ImageModel.OriginalUrl = CloudStorageAccount.Parse(ConnectionString).BlobStorageUri.PrimaryUri;
 
             services.AddScoped<IImageBlobService, ImageBlobService>();
 
