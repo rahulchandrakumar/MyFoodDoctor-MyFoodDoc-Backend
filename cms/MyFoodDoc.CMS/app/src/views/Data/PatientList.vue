@@ -53,6 +53,11 @@
               </material-chart-card>
             </v-col>
           </v-row>
+          <v-row v-if="item.Motivation != null">
+            <h6 class="font-weight-light">
+              Motivations: {{ item.Motivation.join(',') }}
+            </h6>
+          </v-row>
         </v-container>
       </td>
     </template>

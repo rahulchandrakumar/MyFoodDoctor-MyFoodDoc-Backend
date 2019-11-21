@@ -21,10 +21,10 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<PatientModel> GetItem(object id)
         {
             var item = await _context.Users.FindAsync(id);
-            await _context.Entry(item).Reference(p => p.AbdonimalGirthHistory).LoadAsync();
-            await _context.Entry(item).Reference(p => p.BloodSugarLevelHistory).LoadAsync();
-            await _context.Entry(item).Reference(p => p.Motivations).LoadAsync();
-            await _context.Entry(item).Reference(p => p.WeightHistory).LoadAsync();
+            await _context.Entry(item).Reference(x => x.AbdonimalGirthHistory).LoadAsync();
+            await _context.Entry(item).Reference(x => x.BloodSugarLevelHistory).LoadAsync();
+            await _context.Entry(item).Reference(x => x.Motivations.Select(q => q.Motivation)).LoadAsync();
+            await _context.Entry(item).Reference(x => x.WeightHistory).LoadAsync();
 
             return PatientModel.FromEntity(item);
         }
@@ -35,6 +35,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                         .Include(x => x.AbdonimalGirthHistory)
                                         .Include(x => x.BloodSugarLevelHistory)
                                         .Include(x => x.Motivations)
+                                            .ThenInclude(x => x.Motivation)
                                         .Include(x => x.WeightHistory)
                                         .ToListAsync();
 
