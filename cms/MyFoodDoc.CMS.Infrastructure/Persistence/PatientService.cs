@@ -19,13 +19,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             this._context = context;
         }
 
-        public async Task<PatientModel> GetItem(object id, CancellationToken cancellationToken = default)
+        public async Task<PatientModel> GetItem(string id, CancellationToken cancellationToken = default)
         {
-            var item = await _context.Users.FindAsync(id, cancellationToken);
-            await _context.Entry(item).Reference(x => x.AbdonimalGirthHistory).LoadAsync(cancellationToken);
-            await _context.Entry(item).Reference(x => x.BloodSugarLevelHistory).LoadAsync(cancellationToken);
-            await _context.Entry(item).Reference(x => x.Motivations.Select(q => q.Motivation)).LoadAsync(cancellationToken);
-            await _context.Entry(item).Reference(x => x.WeightHistory).LoadAsync(cancellationToken);
+            var item = await _context.Users
+                                         .Include(x => x.AbdonimalGirthHistory)
+                                         .Include(x => x.BloodSugarLevelHistory)
+                                         .Include(x => x.Motivations)
+                                             .ThenInclude(x => x.Motivation)
+                                         .Include(x => x.WeightHistory)
+                                         .FirstOrDefaultAsync(x => x.Id == id);
 
             return PatientModel.FromEntity(item);
         }

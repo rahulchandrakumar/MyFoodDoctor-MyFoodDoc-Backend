@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Application.Persistence.Base
 {
-    public interface IServiceBaseRead<T>
+    public interface IServiceBaseRead<T1, T2>
     {
-        public Task<IList<T>> GetItems(CancellationToken cancellationToken = default);
-        public Task<T> GetItem(object id, CancellationToken cancellationToken = default);
+        public Task<IList<T1>> GetItems(CancellationToken cancellationToken = default);
+        public Task<T1> GetItem(T2 id, CancellationToken cancellationToken = default);
     }
 }

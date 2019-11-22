@@ -35,10 +35,10 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return LexiconModel.FromEntity(lexiconEntity);
         }
 
-        public async Task<bool> DeleteItem(object id, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var lexiconEntity = await _context.LexiconEntries.FindAsync(id);
-            await _context.Entry(lexiconEntity).Reference(p => p.Image).LoadAsync();
+            var lexiconEntity = await _context.LexiconEntries
+                                                .FirstOrDefaultAsync(u => u.Id == id);
 
             await _imageService.DeleteImage(lexiconEntity.Image.Url, cancellationToken);
 
@@ -49,10 +49,10 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return true;
         }
 
-        public async Task<LexiconModel> GetItem(object id, CancellationToken cancellationToken = default)
+        public async Task<LexiconModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            var lexiconEntity = await _context.LexiconEntries.FindAsync(id, cancellationToken);
-            await _context.Entry(lexiconEntity).Reference(p => p.Image).LoadAsync(cancellationToken);
+            var lexiconEntity = await _context.LexiconEntries
+                                                .FirstOrDefaultAsync(u => u.Id == id);
 
             return LexiconModel.FromEntity(lexiconEntity);
         }
