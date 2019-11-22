@@ -49,19 +49,19 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return true;
         }
 
-        public async Task<LexiconModel> GetItem(object id)
+        public async Task<LexiconModel> GetItem(object id, CancellationToken cancellationToken = default)
         {
-            var lexiconEntity = await _context.LexiconEntries.FindAsync(id);
-            await _context.Entry(lexiconEntity).Reference(p => p.Image).LoadAsync();
+            var lexiconEntity = await _context.LexiconEntries.FindAsync(id, cancellationToken);
+            await _context.Entry(lexiconEntity).Reference(p => p.Image).LoadAsync(cancellationToken);
 
             return LexiconModel.FromEntity(lexiconEntity);
         }
 
-        public async Task<IList<LexiconModel>> GetItems()
+        public async Task<IList<LexiconModel>> GetItems(CancellationToken cancellationToken = default)
         {
             var lexiconEntities = await _context.LexiconEntries
                                                 .Include(x => x.Image)
-                                                .ToListAsync();
+                                                .ToListAsync(cancellationToken);
 
             return lexiconEntities.Select(LexiconModel.FromEntity).ToList();
         }

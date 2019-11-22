@@ -1,43 +1,48 @@
 ﻿using DotNetify;
 using DotNetify.Security;
 using MyFoodDoc.CMS.Models.VM;
+using MyFoodDoc.CMS.ViewModels.Base;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
     [Authorize("Editor")]
-    public class TableViewModel : BaseListViewModel<IngredientSize, int>
+    public class TableViewModel : BaseEditableListViewModel<IngredientSize, int>
     {       
         public TableViewModel()
         {
-            Init();
         }
-        public Action Init => () =>
+        protected override Func<Task<IList<IngredientSize>>> GetData => async () =>
         {
             try
             {
-                this.Items.Add(new IngredientSize()
+                return await Task.FromResult(new List<IngredientSize>()
                 {
-                    Id = 0,
-                    Name = "Banana",
-                    Amount = 100
-                });
-                this.Items.Add(new IngredientSize()
-                {
-                    Id = 1,
-                    Name = "Apple",
-                    Amount = 200
+                    new IngredientSize()
+                    {
+                        Id = 0,
+                        Name = "Banana",
+                        Amount = 100
+                    },
+                    new IngredientSize()
+                    {
+                        Id = 1,
+                        Name = "Apple",
+                        Amount = 200
+                    }
                 });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
+                return null;
             }
-        };        
+        };      
 
-        public Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
+        public override Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
         {
             try
             {
@@ -50,7 +55,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
             }
         };
-        public Action<IngredientSize> Update => (IngredientSize ingredientSize) =>
+        public override Action<IngredientSize> Update => (IngredientSize ingredientSize) =>
         {
             try
             {
@@ -61,7 +66,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
             }
         };
-        public Action<int> Remove => (int Id) =>
+        public override Action<int> Remove => (int Id) =>
         {
             try
             {

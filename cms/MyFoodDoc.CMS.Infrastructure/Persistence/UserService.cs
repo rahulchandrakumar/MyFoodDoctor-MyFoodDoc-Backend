@@ -28,12 +28,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return await Task.FromResult(true);
         }
 
-        public async Task<UserModel> GetItem(object id)
+        public async Task<UserModel> GetItem(object id, CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(UsersMock.Default.FirstOrDefault(u => u.Id == (int)id));
         }
 
-        public async Task<IList<UserModel>> GetItems()
+        public async Task<IList<UserModel>> GetItems(CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(UsersMock.Default);
         }

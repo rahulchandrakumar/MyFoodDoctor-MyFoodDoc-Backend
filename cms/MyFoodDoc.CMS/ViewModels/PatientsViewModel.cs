@@ -1,9 +1,12 @@
 ﻿using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
+using MyFoodDoc.CMS.ViewModels.Base;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
@@ -15,19 +18,18 @@ namespace MyFoodDoc.CMS.ViewModels
         public PatientsViewModel(IPatientService patientService)
         {
             this._service = patientService;
-
-            //init props
-            Init();
         }
-        private Action Init => () =>
+
+        protected override Func<Task<IList<Patient>>> GetData => async () =>
         {
             try
             {
-                this.Items =_service.GetItems().Result.Select(Patient.FromModel).ToList();
+                return (await _service.GetItems()).Select(Patient.FromModel).ToList();
             }
             catch (Exception ex)
             {
 
+                return null;
             }
         };
     }

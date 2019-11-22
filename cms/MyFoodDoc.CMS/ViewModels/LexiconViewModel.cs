@@ -1,38 +1,39 @@
-﻿using DotNetify;
-using DotNetify.Security;
+﻿using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
+using MyFoodDoc.CMS.ViewModels.Base;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
     [Authorize("Admin")]
-    public class LexiconViewModel : BaseListViewModel<LexiconItem, int>
+    public class LexiconViewModel : BaseEditableListViewModel<LexiconItem, int>
     {
         private readonly ILexiconService _service;
 
         public LexiconViewModel(ILexiconService service)
         {
             this._service = service;
-
-            //init props
-            Init();
         }
-        private Action Init => () =>
+
+        protected override Func<Task<IList<LexiconItem>>> GetData => async () =>
         {
             try
             {
-                this.Items = _service.GetItems().Result.Select(LexiconItem.FromModel).ToList();
+                return (await _service.GetItems()).Select(LexiconItem.FromModel).ToList();
             }
             catch (Exception ex)
             {
 
+                return null;
             }
         };
 
-        public Action<LexiconItem> Add => async (LexiconItem item) =>
+        public override Action<LexiconItem> Add => async (LexiconItem item) =>
         {
             try
             {
@@ -44,7 +45,7 @@ namespace MyFoodDoc.CMS.ViewModels
             { 
             }
         };
-        public Action<LexiconItem> Update => async (LexiconItem item) =>
+        public override Action<LexiconItem> Update => async (LexiconItem item) =>
         {
             try
             {
@@ -59,7 +60,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
             }
         };
-        public Action<int> Remove => async (int Id) =>
+        public override Action<int> Remove => async (int Id) =>
         {
             try
             {

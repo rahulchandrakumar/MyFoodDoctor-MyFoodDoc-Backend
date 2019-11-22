@@ -1,39 +1,39 @@
-﻿using DotNetify;
-using DotNetify.Security;
+﻿using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
+using MyFoodDoc.CMS.ViewModels.Base;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
     [Authorize("Admin")]
-    public class UsersViewModel : BaseListViewModel<User, int>
+    public class UsersViewModel : BaseEditableListViewModel<User, int>
     {
         private readonly IUserService _service;
 
         public UsersViewModel(IUserService userService)
         {
             this._service = userService;
-
-            //init props
-            Init();
         }
 
-        private Action Init => () =>
+        protected override Func<Task<IList<User>>> GetData => async () =>
         {
             try
             {
-                this.Items = _service.GetItems().Result.Select(User.FromModel).ToList();
+                return (await _service.GetItems()).Select(User.FromModel).ToList();
             }
             catch (Exception ex)
             {
 
+                return null;
             }
         };
 
-        public Action<User> Add => async (User user) =>
+        public override Action<User> Add => async (User user) =>
         {
             try
             {
@@ -46,7 +46,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
             }
         };
-        public Action<User> Update => async (User item) =>
+        public override Action<User> Update => async (User item) =>
         {
             try
             {
@@ -61,7 +61,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
             }
         };
-        public Action<int> Remove => async (int Id) =>
+        public override Action<int> Remove => async (int Id) =>
         {
             try
             {

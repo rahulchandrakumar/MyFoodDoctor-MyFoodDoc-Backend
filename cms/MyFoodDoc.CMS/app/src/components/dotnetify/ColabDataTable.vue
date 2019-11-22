@@ -173,12 +173,19 @@ export default {
       now: Date.now(),
       username: "",
       Items: [],
-      IsLoaded: false,
+      IsLoaded: null,
       editTime: editTime,
       search: "",
       dialog: false,
       editItem: {}
     };
+  },
+  watch: {
+    IsLoaded(newVal) {
+      if (newVal == false) {
+        this.vm.$dispatch({ Init: null });
+      }
+    }
   },
   created() {
     let token = this.$store.state.user.token;
