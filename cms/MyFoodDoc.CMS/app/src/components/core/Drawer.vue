@@ -10,11 +10,18 @@
     width="260"
   >
     <v-img :src="image" height="100%">
-      <v-layout class="fill-height overflow-y-auto" tag="v-list" column nav dense>
+      <v-layout
+        class="fill-height overflow-y-auto"
+        tag="v-list"
+        column
+        nav
+        dense
+      >
         <v-list-item
           active-class="success"
           class="v-list-item"
-          to="/user-profile">
+          to="/user-profile"
+        >
           <v-list-item-avatar>
             <v-icon>mdi-account-circle</v-icon>
           </v-list-item-avatar>
@@ -24,7 +31,8 @@
         </v-list-item>
         <v-divider />
         <template v-for="(link, i) in links">
-          <v-list-item v-if="!link.children"
+          <v-list-item
+            v-if="!link.children"
             :key="i"
             :to="link.to"
             :active-class="color"
@@ -37,9 +45,7 @@
           </v-list-item>
 
           <template v-else>
-            <v-list-group
-                    :key="i"
-            >
+            <v-list-group :key="i">
               <template v-slot:activator>
                 <v-list-item-action>
                   <v-icon>{{ link.icon }}</v-icon>
@@ -54,13 +60,18 @@
                 class="v-list-item"
               >
                 <v-list-item-action>
-                  <v-icon class="ml-3 pa-0">mdi-dots-horizontal-circle-outline</v-icon>
+                  <v-icon
+                    class="ml-3 pa-0"
+                  >
+                    mdi-dots-horizontal-circle-outline
+                  </v-icon>
                 </v-list-item-action>
                 <v-list-item-title v-text="sublink.text" />
               </v-list-item>
             </v-list-group>
           </template>
         </template>
+
         <v-list-item
           active-class="success"
           class="v-list-item v-list-item--buy"
@@ -81,7 +92,7 @@
 <script>
 // Utilities
 import { mapMutations, mapState } from "vuex";
-import UserRoles from "@/enums/UserRoles"
+import UserRoles from "@/enums/UserRoles";
 
 export default {
   props: {
@@ -90,33 +101,63 @@ export default {
       default: false
     }
   },
+  data: () => ({
+    logo: "favicon.ico",
+    links: [],
+    username: ""
+  }),
+  computed: {
+    ...mapState("app", ["image", "color"]),
+    inputValue: {
+      get() {
+        return this.$store.state.app.drawer;
+      },
+      set(val) {
+        this.setDrawer(val);
+      }
+    },
+    items() {
+      return this.$t("Layout.View.items");
+    }
+  },
   created() {
-    this.username = this.$store.state.user.userInfo.displayname
+    this.username = this.$store.state.user.userInfo.displayname;
 
-    let userRoles = this.$store.state.user.userInfo.roles
-    let links = []
+    let userRoles = this.$store.state.user.userInfo.roles;
+    let links = [];
     if (userRoles.includes(UserRoles.VIEWER))
       links.push({
-          to: "/",
-          icon: "mdi-view-dashboard",
-          text: "Dashboard"
-      })
-    
-    if (userRoles.includes(UserRoles.EDITOR))
-      links.push({
-          icon: "mdi-table-of-contents",
-          text: "Data",
-          children:[{
+        to: "/",
+        icon: "mdi-view-dashboard",
+        text: "Dashboard"
+      });
+
+    if (userRoles.includes(UserRoles.EDITOR)) {
+      let link = {
+        icon: "mdi-table-of-contents",
+        text: "Data",
+        children: [
+          {
             to: "/table-list",
             text: "Table List"
-          }, {
+          },
+          {
             to: "/patient-list",
             text: "Patients"
-          }]
-      })
+          }
+        ]
+      }
+      if (userRoles.includes(UserRoles.ADMIN))
+        link.children.push({
+          to: "/lexicon-list",
+          text: "Lexicon"
+        })
+      links.push(link)
+    }
 
     if (userRoles.includes(UserRoles.ADMIN)) {
-      links.push({
+      links.push(
+        {
           to: "/users",
           icon: "mdi-account-multiple",
           text: "Users"
@@ -140,29 +181,11 @@ export default {
           to: "/notifications",
           icon: "mdi-bell",
           text: "Notifications"
-        })
+        }
+      );
     }
 
-    this.links = links
-  },
-  data: () => ({
-    logo: "favicon.ico",
-    links: [],
-    username: ''
-  }),
-  computed: {
-    ...mapState("app", ["image", "color"]),
-    inputValue: {
-      get() {
-        return this.$store.state.app.drawer;
-      },
-      set(val) {
-        this.setDrawer(val);
-      }
-    },
-    items() {
-      return this.$t("Layout.View.items");
-    }
+    this.links = links;
   },
 
   methods: {

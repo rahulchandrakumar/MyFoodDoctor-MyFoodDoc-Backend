@@ -23,7 +23,7 @@
             <template v-slot:activator="{ on }">
               <v-icon v-on="on">
                 {{ icon }}
-              </v-icon>              
+              </v-icon>
             </template>
             <span>{{ icon }}</span>
           </v-tooltip>

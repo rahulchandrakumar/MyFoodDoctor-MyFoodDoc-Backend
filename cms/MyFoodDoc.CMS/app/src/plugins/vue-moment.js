@@ -1,4 +1,4 @@
 import Vue from "vue";
-import vuemoment from 'vue-moment';
+import vuemoment from "vue-moment";
 
-Vue.use(vuemoment)
+Vue.use(vuemoment);

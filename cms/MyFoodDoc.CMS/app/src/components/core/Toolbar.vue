@@ -1,5 +1,8 @@
 <template>
-  <v-app-bar id="core-toolbar" app flat style="background: #eee;">
+  <v-app-bar
+    id="core-toolbar" app flat
+    style="background: #eee;"
+  >
     <div class="v-toolbar-title">
       <v-toolbar-title class="tertiary--text font-weight-light">
         <v-btn
@@ -37,7 +40,10 @@
           transition="slide-y-transition"
         >
           <template v-slot:activator="{ on }">
-            <v-btn icon light class="toolbar-items" v-on="on">
+            <v-btn
+              icon light class="toolbar-items"
+              v-on="on"
+            >
               <v-badge color="error" overlap>
                 <template slot="badge">
                   {{ notifications.length }}
@@ -48,15 +54,15 @@
               </v-badge>
             </v-btn>
           </template>
-            <v-list dense>
-              <v-list-item
-                v-for="notification in notifications"
-                :key="notification"
-                @click="onClick"
-              >
-                <v-list-item-title v-text="notification" />
-              </v-list-item>
-            </v-list>
+          <v-list dense>
+            <v-list-item
+              v-for="notification in notifications"
+              :key="notification"
+              @click="onClick"
+            >
+              <v-list-item-title v-text="notification" />
+            </v-list-item>
+          </v-list>
         </v-menu>
       </v-flex>
     </v-toolbar-items>
@@ -99,7 +105,7 @@ export default {
       this.setDrawer(!this.$store.state.app.drawer);
     },
     onClick() {
-      this.$router.push({ path: `/notifications` })
+      this.$router.push({ path: `/notifications` });
     },
     onResponsiveInverted() {
       if (window.innerWidth < 991) {

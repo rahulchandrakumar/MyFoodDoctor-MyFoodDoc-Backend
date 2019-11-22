@@ -61,9 +61,7 @@
       <v-flex xs12 md4>
         <material-card class="v-card-profile">
           <v-avatar slot="offset" class="mx-auto d-block" size="130">
-            <img
-              src="https://demos.creative-tim.com/vue-material-dashboard/img/marc.aba54d65.jpg"
-            >
+            <img :src="userImg">
           </v-avatar>
           <v-card-text class="text-xs-center">
             <h6 class="category text-gray font-weight-thin mb-3">
@@ -88,7 +86,12 @@
 </template>
 
 <script>
+import userImg from "@/assets/user-img.jpg";
 export default {
-  //
+  data() {
+    return {
+      userImg: userImg
+    };
+  }
 };
 </script>

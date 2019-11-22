@@ -48,14 +48,16 @@ class HttpRequest {
     return await axiosInstance.get(path, { params: data });
   }
 
+  async download(path) {
+    return await axiosInstance.get(path, { responseType: 'arraybuffer' })
+  }
+
   async post(path, data, type = "json") {
-    axiosInstance.defaults.headers.post["Content-Type"] = contentTypes[type];
-    return await axiosInstance.post(path, data);
+    return await axiosInstance.post(path, data, { "Content-Type": contentTypes[type] });
   }
 
   async put(path, data, type = "json") {
-    axiosInstance.defaults.headers.put["Content-Type"] = contentTypes[type];
-    return await axiosInstance.put(path, data);
+    return await axiosInstance.put(path, data, { "Content-Type": contentTypes[type] });
   }
 
   async delete(path, data) {

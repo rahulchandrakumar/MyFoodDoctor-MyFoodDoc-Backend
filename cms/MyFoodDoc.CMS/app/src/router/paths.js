@@ -42,6 +42,14 @@ export default [
     }
   },
   {
+    path: "/lexicon-list",
+    name: "Lexicon",
+    view: "Data/LexiconList",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
     path: "/users",
     name: "Users",
     view: "Users",

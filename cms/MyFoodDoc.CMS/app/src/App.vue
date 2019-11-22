@@ -3,7 +3,7 @@
     <core-view />
   </v-app>
   <v-app v-else>
-    <core-filter />
+    <!--<core-filter />-->
     <core-toolbar />
     <core-drawer />
     <core-view />

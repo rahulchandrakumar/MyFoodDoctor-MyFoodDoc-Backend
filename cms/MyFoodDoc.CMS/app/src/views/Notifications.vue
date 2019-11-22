@@ -1,11 +1,12 @@
 <template>
   <v-container
-fluid
-grid-list-xl fill-height>
+    fluid grid-list-xl fill-height
+  >
     <v-layout justify-center align-center>
       <v-flex xs12>
         <material-card
-color="green">
+          color="green"
+        >
           <div slot="header">
             <div class="title font-weight-light mb-2">
               Notifications
@@ -20,11 +21,11 @@ color="green">
 
           <v-card-text>
             <v-layout
-row
-wrap>
+              row wrap
+            >
               <v-flex
-md6
-sm12>
+                md6 sm12
+              >
                 <h2 class="title font-weight-light mb-3">
                   Notifications Style
                 </h2>
@@ -57,8 +58,8 @@ sm12>
               </v-flex>
 
               <v-flex
-md6
-sm12>
+                md6 sm12
+              >
                 <h2 class="title font-weight-light">
                   Notifcation States
                 </h2>
@@ -94,59 +95,60 @@ sm12>
                 Notification Places
               </h2>
               <span
-class=" subheading font-weight-light grey--text">Click to view notifications</span>
+                class=" subheading font-weight-light grey--text"
+              >Click to view notifications</span>
             </div>
 
             <v-container grid-list-lg>
               <v-layout
-justify-center
-row wrap>
+                justify-center row wrap
+              >
                 <v-flex
-xs12
-sm4>
+                  xs12 sm4
+                >
                   <v-btn block color="success" @click="snack('top', 'left')">
                     Top Left
                   </v-btn>
                 </v-flex>
                 <v-flex
-xs12
-sm4>
+                  xs12 sm4
+                >
                   <v-btn block color="success" @click="snack('top')">
                     Top Center
                   </v-btn>
                 </v-flex>
               </v-layout>
               <v-layout
-justify-center
-row wrap>
+                justify-center row wrap
+              >
                 <v-flex
-xs12
-sm4>
+                  xs12 sm4
+                >
                   <v-btn block color="success" @click="snack('top', 'right')">
                     Top Right
                   </v-btn>
                 </v-flex>
                 <v-flex
-xs12
-sm4>
+                  xs12 sm4
+                >
                   <v-btn block color="success" @click="snack('bottom', 'left')">
                     Bottom Left
                   </v-btn>
                 </v-flex>
               </v-layout>
               <v-layout
-justify-center
-row wrap>
+                justify-center row wrap
+              >
                 <v-flex
-xs12
-sm4>
+                  xs12 sm4
+                >
                   <v-btn block color="success" @click="snack('bottom')">
                     Bottom Center
                   </v-btn>
                 </v-flex>
                 <v-flex
-xs12
-sm4>
+                  xs12 sm4
+                >
                   <v-btn
                     block
                     color="success"

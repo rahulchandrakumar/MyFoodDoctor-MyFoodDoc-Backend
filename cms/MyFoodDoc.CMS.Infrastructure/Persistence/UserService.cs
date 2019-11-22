@@ -3,20 +3,21 @@ using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class UserService : IUserService
     {
-        public async Task<UserModel> AddItem(UserModel item)
+        public async Task<UserModel> AddItem(UserModel item, CancellationToken cancellationToken = default)
         {
             item.Id = UsersMock.Default.Count == 0 ? 0 : (UsersMock.Default.Max(u => u.Id) + 1);
             UsersMock.Default.Add(item);
             return await Task.FromResult(item);
         }
 
-        public async Task<bool> DeleteItem(int id)
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             var user = UsersMock.Default.FirstOrDefault(u => u.Id == id);
 
@@ -27,17 +28,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return await Task.FromResult(true);
         }
 
-        public async Task<UserModel> GetItem(int id)
+        public async Task<UserModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(UsersMock.Default.FirstOrDefault(u => u.Id == id));
         }
 
-        public async Task<IList<UserModel>> GetItems()
+        public async Task<IList<UserModel>> GetItems(CancellationToken cancellationToken = default)
         {
             return await Task.FromResult(UsersMock.Default);
         }
 
-        public async Task<UserModel> UpdateItem(UserModel item)
+        public async Task<UserModel> UpdateItem(UserModel item, CancellationToken cancellationToken = default)
         {
             var user = UsersMock.Default.FirstOrDefault(u => u.Id == item.Id);
 

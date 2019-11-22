@@ -25,6 +25,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Liquid> Liquids { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
         public DbSet<LexiconEntry> LexiconEntries { get; set; }
+        public DbSet<Image> Images { get; set; }
         public DbSet<UserMotivation> UserMotivations { get; set; }
         public DbSet<UserIndication> UserIndications { get; set; }
         public DbSet<UserDiet> UserDiets { get; set; }

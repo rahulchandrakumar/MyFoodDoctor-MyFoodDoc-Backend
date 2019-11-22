@@ -1,52 +1,48 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class PatientService : IPatientService
     {
-        public async Task<PatientModel> AddItem(PatientModel item)
+        private readonly IApplicationContext _context;
+
+        public PatientService(IApplicationContext context)
         {
-            item.Id = PatientsMock.Default.Count == 0 ? 0 : (PatientsMock.Default.Max(u => u.Id) + 1);
-            PatientsMock.Default.Add(item);
-            return await Task.FromResult(item);
+            this._context = context;
         }
 
-        public async Task<bool> DeleteItem(int id)
+        public async Task<PatientModel> GetItem(string id, CancellationToken cancellationToken = default)
         {
-            var user = PatientsMock.Default.FirstOrDefault(u => u.Id == id);
+            var item = await _context.Users
+                                         .Include(x => x.AbdonimalGirthHistory)
+                                         .Include(x => x.BloodSugarLevelHistory)
+                                         .Include(x => x.Motivations)
+                                             .ThenInclude(x => x.Motivation)
+                                         .Include(x => x.WeightHistory)
+                                         .FirstOrDefaultAsync(x => x.Id == id);
 
-            if (user == null)
-                return await Task.FromResult(false);
-
-            PatientsMock.Default.Remove(user);
-            return await Task.FromResult(true);
+            return PatientModel.FromEntity(item);
         }
 
-        public async Task<PatientModel> GetItem(int id)
+        public async Task<IList<PatientModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            return await Task.FromResult(PatientsMock.Default.FirstOrDefault(u => u.Id == id));
-        }
+            var items = await _context.Users
+                                        .Include(x => x.AbdonimalGirthHistory)
+                                        .Include(x => x.BloodSugarLevelHistory)
+                                        .Include(x => x.Motivations)
+                                            .ThenInclude(x => x.Motivation)
+                                        .Include(x => x.WeightHistory)
+                                        .ToListAsync(cancellationToken);
 
-        public async Task<IList<PatientModel>> GetItems()
-        {
-            return await Task.FromResult(PatientsMock.Default);
-        }
-
-        public async Task<PatientModel> UpdateItem(PatientModel item)
-        {
-            var user = PatientsMock.Default.FirstOrDefault(u => u.Id == item.Id);
-
-            if (user == null)
-                return null;
-
-            PatientsMock.Default.Remove(user);
-            PatientsMock.Default.Add(item);
-            return await Task.FromResult(item);
+            return items.Select(PatientModel.FromEntity).ToList();
         }
     }
 }

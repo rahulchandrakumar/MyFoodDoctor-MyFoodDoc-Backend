@@ -1,12 +1,12 @@
 <template>
-  <ColabDataTable 
-    title="Patients" 
-    viewModel="PatientsViewModel" 
+  <ColabDataTable
+    title="Patients"
+    view-model="PatientsViewModel"
     :headers="mainHeaders"
     :readonly="true"
   >
     <template v-slot:item.Sex="{ item }">
-        {{ translateSex(item.Sex) }}
+      {{ translateSex(item.Sex) }}
     </template>
     <template v-slot:item.Birth="{ item }">
       {{ item.Birth | moment("DD.MM.YYYY") }}
@@ -38,7 +38,7 @@
                 <h4 class="title font-weight-light">
                   Abdominal girth
                 </h4>
-              </material-chart-card>         
+              </material-chart-card>
             </v-col>
             <v-col>
               <material-chart-card
@@ -50,8 +50,13 @@
                 <h4 class="title font-weight-light">
                   Blood sugar
                 </h4>
-              </material-chart-card>     
+              </material-chart-card>
             </v-col>
+          </v-row>
+          <v-row v-if="item.Motivation != null">
+            <h6 class="font-weight-light">
+              Motivations: {{ item.Motivation.join(',') }}
+            </h6>
           </v-row>
         </v-container>
       </td>
@@ -60,61 +65,59 @@
 </template>
 
 <script>
-import Sex from "@/enums/Sex"
+import Sex from "@/enums/Sex";
 
 export default {
   components: {
     ColabDataTable: () => import("@/components/dotnetify/ColabDataTable")
   },
-  
-  data: () => ({
-    mainHeaders: [      
-      {
-        sortable: true,
-        value: "FullName",
-        text: "Name"
-      },
-      {
-        sortable: false,
-        value: "Email",
-        text: "Email"
-      },
-      {
-        sortable: true,
-        value: "Insurance",
-        text: "Insurance"
-      },
-      {
-        filterable: false,
-        sortable: true,
-        value: "Sex",
-        text: "Sex"
-      },
-      {
-        sortable: true,
-        value: "Height",
-        text: "Height"
-      },
-      {
-        filterable: false,
-        sortable: true,
-        text: "Birth",
-        value: "Birth"
-      }
-    ]
-  }),
+
+  data() {
+    return {
+      mainHeaders: [{
+          sortable: true,
+          value: "FullName",
+          text: "Name"
+        }, {
+          sortable: false,
+          value: "Email",
+          text: "Email"
+        }, {
+          sortable: true,
+          value: "Insurance",
+          text: "Insurance"
+        }, {
+          filterable: false,
+          sortable: true,
+          value: "Sex",
+          text: "Sex"
+        }, {
+          sortable: true,
+          value: "Height",
+          text: "Height"
+        }, {
+          filterable: false,
+          sortable: true,
+          text: "Birth",
+          value: "Birth"
+        }
+      ]
+    }
+  },
 
   methods: {
     translateSex(value) {
-      return value == Sex.MALE ? "Male" : "Female"
+      return value == Sex.MALE ? "Male" : "Female";
     },
     makeChartData(items) {
       return {
         labels: items.map(i => this.$moment(i.Created).format("DD MMM")),
-        series: [{
-          data: items.map(i => i.Value)
-        }]
-      }
+        series: [
+          {
+            data: items.map(i => i.Value)
+          }
+        ]
+      };
     }
   }
 };
