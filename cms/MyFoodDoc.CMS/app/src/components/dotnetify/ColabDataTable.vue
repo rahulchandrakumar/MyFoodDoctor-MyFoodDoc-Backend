@@ -216,9 +216,10 @@ export default {
       this.editItem = item;
       this.dialog = true;
     },
-    onRemove(item) {
+    async onRemove(item) {
       if (item.LockDate == null || this.now - item.LockDate > editTime)
-        this.vm.$dispatch({ Remove: item.Id });
+        if (await this.$confirm("Do you really want to delete this item?"))
+          this.vm.$dispatch({ Remove: item.Id });
     },
     async onSave(item) {
       if (this.beforeSave)
