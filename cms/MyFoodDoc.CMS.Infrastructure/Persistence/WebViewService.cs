@@ -3,6 +3,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
+using MyFoodDoc.CMS.Infrastructure.Mock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,12 +23,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             this._webViewBlobService = webViewBlobService;
         }
 
-        public async Task<WebViewModel> AddItem(WebViewModel item, CancellationToken cancellationToken = default)
+        public Task<WebViewModel> AddItem(WebViewModel item, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
+        public Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
         }
