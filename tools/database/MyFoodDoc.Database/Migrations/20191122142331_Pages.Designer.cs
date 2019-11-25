@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20191122142331_Pages")]
+    partial class Pages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -686,7 +688,7 @@ namespace MyFoodDoc.Database.Migrations
                         {
                             Id = "3ee857ac-26ee-43d8-8f68-76f1ca7bfa9b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "29165cf9-ec4e-485b-8c3f-b8837a74675c",
+                            ConcurrencyStamp = "f061fe53-5d7b-4acf-bf1f-463163955e44",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@appsfactory.de",
                             EmailConfirmed = true,
@@ -694,7 +696,7 @@ namespace MyFoodDoc.Database.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST@APPSFACTORY.DE",
                             NormalizedUserName = "TEST@APPSFACTORY.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAEZ43sZzCgJv/hiK65T8HEUGGM++65+gvAtA36oAwaoTr1zc6qKQfT5Y6L4Ky6E2w==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEETfwxEVWP1h+OoQDFO+//gt3enaJTqNauZkcI1tA80hRkITjcEYzgxrWwR8ZwiUuQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -755,7 +757,9 @@ namespace MyFoodDoc.Database.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<bool>("IsDeletable")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<string>("Text")
                         .IsRequired()
@@ -767,6 +771,7 @@ namespace MyFoodDoc.Database.Migrations
                         .HasMaxLength(200);
 
                     b.Property<string>("Url")
+                        .IsRequired()
                         .HasColumnType("nvarchar(2083)")
                         .HasMaxLength(2083);
 
