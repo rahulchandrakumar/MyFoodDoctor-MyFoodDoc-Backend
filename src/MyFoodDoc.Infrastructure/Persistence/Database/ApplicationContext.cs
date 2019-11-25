@@ -30,6 +30,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<UserIndication> UserIndications { get; set; }
         public DbSet<UserDiet> UserDiets { get; set; }
         public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<WebPage> WebPages { get; set; }
         //public DbSet<UserWeight> UserWeights { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
