@@ -45,7 +45,7 @@
         />
       </v-row>
       <v-row>
-        <VeeTextArea
+        <VeeRichTextArea
           v-model="item.Text"
           :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
           rules="required|min:8|max:8192"
@@ -63,7 +63,7 @@ export default {
   components: {
     ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
-    VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
+    VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
     VeeImage: () => import("@/components/inputs/VeeImage")
   },
   data() {

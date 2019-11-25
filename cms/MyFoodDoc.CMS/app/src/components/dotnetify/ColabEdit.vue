@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="innerDialog" class="colab-edit" @click:outside="close">
-    <template v-slot:activator="{ on }">
+    <template v-if="couldAdd" v-slot:activator="{ on }">
       <v-btn
         class="v-btn--simple ma-0" color="success" icon
         small @click="add"
@@ -71,7 +71,11 @@ export default {
     item: {
       type: Object,
       default: null
-    }
+    },
+    couldAdd: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {

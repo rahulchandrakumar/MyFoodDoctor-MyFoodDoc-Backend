@@ -6,6 +6,7 @@ import VExtensions from "@/components/extensions"
 import 'tiptap-vuetify/dist/main.css'
 import "vuetify/dist/vuetify.min.css";
 import "@mdi/font/css/materialdesignicons.css";
+import VuetifyConfirm from 'vuetify-confirm'
 
 Vue.use(Vuetify);
 
@@ -22,5 +23,7 @@ Vue.use(TiptapVuetifyPlugin, {
 })
 
 Vue.use(VExtensions, { vuetify } )
+
+Vue.use(VuetifyConfirm, { vuetify })
 
 export default vuetify;

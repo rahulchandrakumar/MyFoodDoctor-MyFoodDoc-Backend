@@ -1,4 +1,5 @@
 ﻿using MyFoodDoc.Application.Entites;
+using MyFoodDoc.CMS.Application.Common;
 using System;
 
 namespace MyFoodDoc.CMS.Application.Models
@@ -6,30 +7,8 @@ namespace MyFoodDoc.CMS.Application.Models
     public class ImageModel: BaseModel<int>
     {
         #region CDN
-        public static Uri CDN { private get; set; }
+        public static Uri CdnUrl { private get; set; }
         public static Uri OriginalUrl { private get; set; }
-
-        private static string GetCDNUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return null;
-
-            var newUrl = url;
-            if (CDN != null)
-            {
-                newUrl = new Uri(CDN, new Uri(url).LocalPath.ToString()).ToString();
-            }
-            return newUrl;
-        }
-
-        private static string GetOriginalUrl(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-                return null;
-
-            var newUrl = new Uri(OriginalUrl, new Uri(url).LocalPath.ToString()).ToString();
-            return newUrl;
-        }
         #endregion
 
         public string Url { get; set; }
@@ -39,7 +18,7 @@ namespace MyFoodDoc.CMS.Application.Models
             return new ImageModel()
             {
                 Id = entity.Id,
-                Url = GetCDNUrl(entity.Url)
+                Url = CDN.GetCDNUrl(entity.Url, CdnUrl)
             };
         }
 
@@ -49,7 +28,7 @@ namespace MyFoodDoc.CMS.Application.Models
             {
                 Id = this.Id,
                 LastModified = DateTime.Now,
-                Url = GetOriginalUrl(this.Url)
+                Url = CDN.GetOriginalUrl(this.Url, OriginalUrl)
             };
         }
     }
