@@ -38,7 +38,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
             //this.Database.EnsureCreated();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        private void BeforeSaveChanges()
         {
             foreach (var entry in ChangeTracker.Entries<IAuditable>())
             {
@@ -52,6 +52,18 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         break;
                 }
             }
+        }
+
+        public override int SaveChanges()
+        {
+            BeforeSaveChanges();
+
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            BeforeSaveChanges();
 
             return base.SaveChangesAsync(cancellationToken);
         }

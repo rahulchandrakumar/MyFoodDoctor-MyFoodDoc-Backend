@@ -35,6 +35,7 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<WebPage> WebPages { get; set; }
         //DbSet<UserWeight> UserWeights { get; set; }
 
+        int SaveChanges();
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 

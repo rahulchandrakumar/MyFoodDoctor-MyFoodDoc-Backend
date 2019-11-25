@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
+using MyFoodDoc.CMS.Infrastructure.Common;
 using System;
 using System.IO;
 using System.Linq;
@@ -11,7 +12,6 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
     public class ImageBlobService : IImageBlobService
     {
         public static string ConnectionString { private get; set; }
-        public static string ContainerName { private get; set; }
 
         private CloudBlobClient _client = null;
         private CloudBlobContainer _container = null;
@@ -21,7 +21,7 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
             CloudStorageAccount account = CloudStorageAccount.Parse(ConnectionString);
             _client = account.CreateCloudBlobClient();
 
-            _container = _client.GetContainerReference(ContainerName);
+            _container = _client.GetContainerReference(Consts.ImagesContainerName);
             _container.CreateIfNotExistsAsync();
 
             _container.SetPermissionsAsync(new BlobContainerPermissions { PublicAccess = BlobContainerPublicAccessType.Container });

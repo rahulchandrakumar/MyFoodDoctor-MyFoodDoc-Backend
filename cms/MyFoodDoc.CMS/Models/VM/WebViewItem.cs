@@ -7,6 +7,7 @@ namespace MyFoodDoc.CMS.Models.VM
     {
         public string Title { get; set; }
         public string Text { get; set; }
+        public string Url { get; set; }
         public bool Undeletable { get; set; }
 
         public static WebViewItem FromModel(WebViewModel model)
@@ -16,6 +17,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Id = model.Id,
                 Title = model.Title,
                 Text = model.Text,
+                Url = model.Url,
                 Undeletable = model.Undeletable
             };
         }
@@ -27,6 +29,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Id = this.Id,
                 Title = this.Title,
                 Text = this.Text,
+                Url = this.Url,
                 Undeletable = this.Undeletable
             };
         }

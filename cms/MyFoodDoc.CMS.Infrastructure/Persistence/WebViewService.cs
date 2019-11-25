@@ -1,6 +1,9 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using MyFoodDoc.CMS.Infrastructure.Mock;
+using MyFoodDoc.CMS.Infrastructure.AzureBlob;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,44 +13,50 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class WebViewService : IWebViewService
     {
+        private readonly IApplicationContext _context;
+        private readonly IWebViewBlobService _webViewBlobService;
+
+        public WebViewService(IApplicationContext context, IWebViewBlobService webViewBlobService)
+        {
+            this._context = context;
+            this._webViewBlobService = webViewBlobService;
+        }
+
         public async Task<WebViewModel> AddItem(WebViewModel item, CancellationToken cancellationToken = default)
         {
-            item.Id = WebViewMock.Default.Count == 0 ? 0 : (WebViewMock.Default.Max(u => u.Id) + 1);
-            WebViewMock.Default.Add(item);
-            return await Task.FromResult(item);
+            throw new NotImplementedException();
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var user = WebViewMock.Default.FirstOrDefault(u => u.Id == id);
-
-            if (user == null)
-                return await Task.FromResult(false);
-
-            WebViewMock.Default.Remove(user);
-            return await Task.FromResult(true);
+            throw new NotImplementedException();
         }
 
         public async Task<WebViewModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            return await Task.FromResult(WebViewMock.Default.FirstOrDefault(u => u.Id == id));
+            return WebViewModel.FromEntity(await _context.WebPages.FindAsync(id));
         }
 
         public async Task<IList<WebViewModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            return await Task.FromResult(WebViewMock.Default);
+            return (await _context.WebPages.ToListAsync()).Select(WebViewModel.FromEntity).ToList();
         }
 
         public async Task<WebViewModel> UpdateItem(WebViewModel item, CancellationToken cancellationToken = default)
         {
-            var user = WebViewMock.Default.FirstOrDefault(u => u.Id == item.Id);
+            var webView = await _context.WebPages.FindAsync(item.Id);
 
-            if (user == null)
+            if (webView == null)
                 return null;
 
-            WebViewMock.Default.Remove(user);
-            WebViewMock.Default.Add(item);
-            return await Task.FromResult(item);
+            if (await _webViewBlobService.UpdateFile(item.Text, item.Url, cancellationToken))
+            {
+                _context.Entry(webView).CurrentValues.SetValues(item.ToEntity());
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            return WebViewModel.FromEntity(webView);
         }
     }
 }

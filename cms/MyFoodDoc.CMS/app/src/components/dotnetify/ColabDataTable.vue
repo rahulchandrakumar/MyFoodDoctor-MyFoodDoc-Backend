@@ -17,11 +17,12 @@
             </v-col>
             <v-col cols="1">
               <ColabEdit
-                v-if="couldAdd && !readonly"
+                v-if="couldAdd || !readonly"
                 :dialog.sync="dialog"
                 :item="editItem"
                 :title-suffix="editorTitleSuffix"
                 :edit-time="editTime"
+                :could-add="couldAdd"
                 @cancel="onCancel"
                 @save="onSave"
               >
@@ -211,7 +212,7 @@ export default {
       item.Original = Object.assign({}, item);
       item.LockDate = Date.now();
       item.Editor = this.username;
-      this.vm.$dispatch({ Update: item });
+      this.vm.$dispatch({ BeginEdit: item });
 
       this.editItem = item;
       this.dialog = true;
@@ -241,9 +242,7 @@ export default {
         this.now - this.editItem.LockDate <= editTime &&
         this.editItem.Editor == this.username
       ) {
-        Object.assign(this.editItem, this.editItem.Original);
-        this.editItem.Original = null;
-        this.vm.$dispatch({ Update: this.editItem });
+        this.vm.$dispatch({ CancelEdit: this.editItem.Id });
       }
       this.editItem = {};
     }

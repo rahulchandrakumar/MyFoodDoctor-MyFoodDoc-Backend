@@ -4,9 +4,20 @@
     view-model="WebViewViewModel"
     editor-title-suffix="web view item"
     :headers="mainHeaders"
+    :could-add="false"
   >
     <template v-slot:item.Text="{ item }">
       {{ stripHtml(item.Text) | truncate(200) }}
+    </template>
+
+    <template v-slot:item.Url="{ item }">
+      <a 
+        v-if="item.Url"
+        :href="item.Url"
+        target="_blank"
+      >
+        {{ item.Url }}
+      </a>
     </template>
 
     <template v-slot:editor="{ item }">
@@ -19,10 +30,17 @@
         />
       </v-row>
       <v-row>
-        <VeeTextArea
+        <VeeRichTextArea
+          v-if="item.Url && item.Url.endsWith('html')"
           v-model="item.Text"
           :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
           rules="required|min:8"
+        />
+        <VeeTextArea
+          v-else
+          v-model="item.Text"
+          :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
+          rules="required"
         />
       </v-row>
     </template>
@@ -38,6 +56,7 @@ export default {
     ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
+    VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
   },
   data() {
     return {
@@ -49,6 +68,11 @@ export default {
         sortable: false,
         value: "Text",
         text: "Text"
+      },
+      {
+        sortable: false,
+        value: "Url",
+        text: "Url"
       }]
     }
   },

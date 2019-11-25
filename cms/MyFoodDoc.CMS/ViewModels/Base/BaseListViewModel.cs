@@ -40,6 +40,40 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
         };
 
+        public Action<T1> BeginEdit => (T1 item) =>
+        {
+            try
+            {
+                var edited = this.Items.First(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id));
+                edited.Editor = item.Editor;
+                edited.LockDate = item.LockDate;
+
+                this.UpdateList(nameof(Items), edited);
+                this.PushUpdates();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        };
+
+        public Action<T2> CancelEdit => (T2 id) =>
+        {
+            try
+            {
+                var edited = this.Items.First(x => EqualityComparer<T2>.Default.Equals(x.Id, id));
+                edited.Editor = null;
+                edited.LockDate = null;
+
+                this.UpdateList(nameof(Items), edited);
+                this.PushUpdates();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        };
+
         public void SetList(IList<T1> list)
         {
             this.Items = list;

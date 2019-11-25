@@ -11,7 +11,7 @@ using MyFoodDoc.CMS.Application.DependencyInjection;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
-using MyFoodDoc.CMS.Infrastructure.Dependencyinjection;
+using MyFoodDoc.CMS.Infrastructure;
 using MyFoodDoc.CMS.Infrastructure.Persistence;
 using MyFoodDoc.Infrastructure;
 using System;
@@ -49,6 +49,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IWebViewService, WebViewService>();
             services.AddApplicationDI();
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
+            services.AddSeeds();
             #endregion
 
             #region CORS
@@ -90,6 +91,10 @@ namespace MyFoodDoc.CMS
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            #region DI
+            app.UseSharedInfrastructure();
+            #endregion
 
             #region CORS
             app.UseCors(builder =>

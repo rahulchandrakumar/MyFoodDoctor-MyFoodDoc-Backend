@@ -5,14 +5,13 @@
     :name="$attrs.label"
     :rules="rules"
     style="display: contents;"
+    mode="passive"    
   >
-    <v-textarea
+    <v-tiptap-area
       v-model="innerValue"
-      :error-messages="errors"
+      :errors="errors"
       :success="valid"
       v-bind="$attrs"
-      auto-grow
-      solo
       v-on="$listeners"
     />
   </ValidationProvider>
@@ -41,7 +40,7 @@ export default {
     },
     value(newVal) {
       this.innerValue = newVal;
-
+            
       let self = this
       setTimeout(() => self.$refs.field.validate(), 10)
     }
