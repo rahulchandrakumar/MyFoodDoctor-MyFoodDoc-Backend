@@ -50,6 +50,14 @@ export default [
     }
   },
   {
+    path: "/webview-list",
+    name: "WebView List",
+    view: "Data/WebViewList",
+    meta: {
+      role: UserRoles.ADMIN
+    }
+  },
+  {
     path: "/users",
     name: "Users",
     view: "Users",

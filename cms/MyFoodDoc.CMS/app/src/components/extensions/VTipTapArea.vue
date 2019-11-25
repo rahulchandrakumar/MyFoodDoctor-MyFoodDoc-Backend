@@ -31,6 +31,9 @@ import {
   Paragraph,
   HardBreak,
   History,
+  ListItem,
+  BulletList,
+  OrderedList,
 } from "tiptap-vuetify";
 
 export default { 
@@ -73,6 +76,9 @@ export default {
           }
         ],
         Paragraph,
+        ListItem,
+        BulletList,
+        OrderedList,
         HardBreak // line break on Shift + Ctrl + Enter
       ]
     }

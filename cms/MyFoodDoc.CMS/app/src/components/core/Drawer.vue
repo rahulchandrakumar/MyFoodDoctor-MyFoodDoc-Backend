@@ -151,6 +151,9 @@ export default {
         link.children.push({
           to: "/lexicon-list",
           text: "Lexicon"
+        },{
+          to: "/webview-list",
+          text: "Web Views"
         })
       links.push(link)
     }

@@ -86,7 +86,7 @@
 
             <template v-slot:item.removeAction="{ item }">
               <v-btn
-                v-if="item.LockDate == null || now - item.LockDate > editTime"
+                v-if="(item.LockDate == null || now - item.LockDate > editTime) && !item.Undeletable"
                 class="v-btn--simple"
                 color="danger"
                 icon

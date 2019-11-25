@@ -46,6 +46,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<ILexiconService, LexiconService>();
             services.AddTransient<IImageService, ImageService>();
+            services.AddTransient<IWebViewService, WebViewService>();
             services.AddApplicationDI();
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
             #endregion
@@ -56,7 +57,7 @@ namespace MyFoodDoc.CMS
 
             #region dotnetify
             services.AddMemoryCache();
-            services.AddSignalR().AddNewtonsoftJsonProtocol();
+            services.AddSignalR().AddMessagePackProtocol();
             services.AddDotNetify();
             #endregion
 
@@ -108,9 +109,10 @@ namespace MyFoodDoc.CMS
 
             #region dotnetify
             app.UseWebSockets();
-#pragma warning disable CS0618 // Type or member is obsolete
-            app.UseSignalR(routes => routes.MapDotNetifyHub());
-#pragma warning restore CS0618 // Type or member is obsolete
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapHub<DotNetifyHub>("/dotnetify");
+            });
             app.UseDotNetify(config => {
                 config.UseFilter<AuthorizeFilter>();
                 config.UseJwtBearerAuthentication(_tokenValidationParameters);

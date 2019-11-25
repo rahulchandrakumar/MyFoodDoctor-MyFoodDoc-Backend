@@ -1,5 +1,4 @@
-﻿using DotNetify;
-using DotNetify.Security;
+﻿using DotNetify.Security;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
 using System;

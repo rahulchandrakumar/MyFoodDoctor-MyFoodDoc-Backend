@@ -16,7 +16,7 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
         private CloudBlobClient _client = null;
         private CloudBlobContainer _container = null;
 
-        public ImageBlobService(/*IConfiguration configuration*/)
+        public ImageBlobService()
         {
             CloudStorageAccount account = CloudStorageAccount.Parse(ConnectionString);
             _client = account.CreateCloudBlobClient();
