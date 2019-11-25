@@ -32,7 +32,9 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<UserMotivation> UserMotivations { get; set; }
         DbSet<UserIndication> UserIndications { get; set; }
         DbSet<UserDiet> UserDiets { get; set; }
+        DbSet<WebPage> WebPages { get; set; }
         //DbSet<UserWeight> UserWeights { get; set; }
+
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 
