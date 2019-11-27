@@ -1,10 +1,12 @@
 ﻿using Microsoft.Azure.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Seed;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation;
+using MyFoodDoc.CMS.Infrastructure.Seed;
 using System;
 
 namespace MyFoodDoc.CMS.Infrastructure
@@ -32,9 +34,14 @@ namespace MyFoodDoc.CMS.Infrastructure
             return services;
         }
 
-        public static IServiceCollection AddSeeds(this IServiceCollection services)
+        public static IServiceCollection AddSeeds(this IServiceCollection services, IHostEnvironment environment)
         {
             services.AddSingleton<ISeed, WebPageSeed>();
+
+            if (environment.IsDevelopment() || environment.EnvironmentName == "VisualStudio")
+            {
+                services.AddSingleton<ISeed, UsersSeed>();
+            }
 
             return services;
         }

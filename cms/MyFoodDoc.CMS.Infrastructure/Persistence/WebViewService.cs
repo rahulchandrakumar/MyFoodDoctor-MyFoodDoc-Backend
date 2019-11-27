@@ -3,7 +3,6 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
-using MyFoodDoc.CMS.Infrastructure.Mock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
