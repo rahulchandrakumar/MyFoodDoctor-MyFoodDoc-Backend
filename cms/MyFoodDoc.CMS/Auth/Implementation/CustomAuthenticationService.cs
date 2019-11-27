@@ -13,18 +13,19 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Auth.Implementation
 {
-    public class DebugAuthenticationService : ICustomAuthenticationService
+    public class CustomAuthenticationService : ICustomAuthenticationService
     {
         private readonly IConfiguration _configuration;
         private readonly IUserService _userService;
+        private readonly IHashingManager _hashingManager;
 
         private readonly List<UserModel> _users = new List<UserModel>();
 
-        public DebugAuthenticationService(IConfiguration configuration, IUserService userService)
+        public CustomAuthenticationService(IConfiguration configuration, IUserService userService, IHashingManager hashingManager)
         {
             this._userService = userService;
-
             this._configuration = configuration;
+            this._hashingManager = hashingManager;
         }
 
         private async Task InitUsers()
@@ -34,8 +35,8 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             {
                 Displayname = _configuration["SuperAdmin:Displayname"],
                 Username = _configuration["SuperAdmin:Username"],
-                Password = _configuration["SuperAdmin:Password"],
-                Roles = new UserRoleEnum[] { UserRoleEnum.Admin, UserRoleEnum.Editor, UserRoleEnum.Viewer }
+                PasswordHash = _hashingManager.HashToString(_configuration["SuperAdmin:Password"]),
+                Role = UserRoleEnum.Admin
             });
         }
 
@@ -49,7 +50,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
 
             var user = _users.FirstOrDefault(u => u.Username == username);
 
-            if (user == null || user.Password != null && user.Password != password)
+            if (user == null || user.PasswordHash != null && !_hashingManager.Verify(password, user.PasswordHash))
                 throw new Exception("Login failed.");
 
             var userClaims = new List<Claim>

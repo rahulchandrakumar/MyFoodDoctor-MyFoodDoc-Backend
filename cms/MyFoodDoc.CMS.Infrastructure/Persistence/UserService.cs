@@ -1,6 +1,7 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using MyFoodDoc.CMS.Infrastructure.Mock;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,44 +11,57 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class UserService : IUserService
     {
+        private readonly IApplicationContext _context;
+        public UserService(IApplicationContext context)
+        {
+            this._context = context;
+        }
+
         public async Task<UserModel> AddItem(UserModel item, CancellationToken cancellationToken = default)
         {
-            item.Id = UsersMock.Default.Count == 0 ? 0 : (UsersMock.Default.Max(u => u.Id) + 1);
-            UsersMock.Default.Add(item);
-            return await Task.FromResult(item);
+            var entity = item.ToEntity();
+
+            await _context.CmsUsers.AddAsync(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return UserModel.FromEntity(entity);
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var user = UsersMock.Default.FirstOrDefault(u => u.Id == id);
+            var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id);
+            if (entity == null)
+                return false;
+            
+            _context.CmsUsers.Remove(entity);
+            await _context.SaveChangesAsync(cancellationToken);
 
-            if (user == null)
-                return await Task.FromResult(false);
-
-            UsersMock.Default.Remove(user);
-            return await Task.FromResult(true);
+            return true;
         }
 
         public async Task<UserModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            return await Task.FromResult(UsersMock.Default.FirstOrDefault(u => u.Id == id));
+            return UserModel.FromEntity(await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id));
         }
 
         public async Task<IList<UserModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            return await Task.FromResult(UsersMock.Default);
+            return (await _context.CmsUsers.ToListAsync()).Select(UserModel.FromEntity).ToList();
         }
 
         public async Task<UserModel> UpdateItem(UserModel item, CancellationToken cancellationToken = default)
         {
-            var user = UsersMock.Default.FirstOrDefault(u => u.Id == item.Id);
+            var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == item.Id);
+            var passHash = entity.PasswordHash;
 
-            if (user == null)
-                return null;
+            _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
 
-            UsersMock.Default.Remove(user);
-            UsersMock.Default.Add(item);
-            return await Task.FromResult(item);
+            if (string.IsNullOrEmpty(item.PasswordHash))
+                entity.PasswordHash = passHash;
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return UserModel.FromEntity(entity);
         }
     }
 }

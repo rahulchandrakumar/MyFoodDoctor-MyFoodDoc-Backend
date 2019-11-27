@@ -1,5 +1,6 @@
 ﻿using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
 using System;
@@ -14,10 +15,12 @@ namespace MyFoodDoc.CMS.ViewModels
     public class UsersViewModel : BaseEditableListViewModel<User, int>
     {
         private readonly IUserService _service;
+        private readonly IHashingManager _hashingManager;
 
-        public UsersViewModel(IUserService userService)
+        public UsersViewModel(IUserService userService, IHashingManager hashingManager)
         {
             this._service = userService;
+            this._hashingManager = hashingManager;
         }
 
         protected override Func<Task<IList<User>>> GetData => async () =>
@@ -33,11 +36,14 @@ namespace MyFoodDoc.CMS.ViewModels
             }
         };
 
-        public override Action<User> Add => async (User user) =>
+        public override Action<User> Add => async (User item) =>
         {
             try
             {
-                var itemMod = User.FromModel(await _service.AddItem(user.ToModel()));
+                var itemIntModel = item.ToModel();
+                itemIntModel.PasswordHash = _hashingManager.HashToString(item.Password);
+
+                var itemMod = User.FromModel(await _service.AddItem(itemIntModel));
 
                 this.AddList(itemMod);
             }
@@ -50,7 +56,10 @@ namespace MyFoodDoc.CMS.ViewModels
         {
             try
             {
-                var itemMod = User.FromModel(await _service.UpdateItem(item.ToModel()));
+                var itemIntModel = item.ToModel();
+                itemIntModel.PasswordHash = item.Password == null ? null : _hashingManager.HashToString(item.Password);
+
+                var itemMod = User.FromModel(await _service.UpdateItem(itemIntModel));
                 if (itemMod != null)
                 {
                     this.UpdateList(itemMod);

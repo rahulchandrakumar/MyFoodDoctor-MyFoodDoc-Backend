@@ -41,7 +41,8 @@ namespace MyFoodDoc.CMS
             #region DI
             services.AddSharedInfrastructure(Configuration, Environment);
 
-            services.AddTransient<ICustomAuthenticationService, DebugAuthenticationService>();
+            services.AddSingleton<IHashingManager, HashingManager>();
+            services.AddTransient<ICustomAuthenticationService, CustomAuthenticationService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<ILexiconService, LexiconService>();
@@ -49,7 +50,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IWebViewService, WebViewService>();
             services.AddApplicationDI();
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
-            services.AddSeeds();
+            services.AddSeeds(Environment);
             #endregion
 
             #region CORS
