@@ -29,6 +29,7 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<LexiconEntry> LexiconEntries { get; set; }
         DbSet<Image> Images { get; set; }
         DbSet<User> Users { get; set; }
+        DbSet<CmsUser> CmsUsers { get; set; }
         DbSet<UserMotivation> UserMotivations { get; set; }
         DbSet<UserIndication> UserIndications { get; set; }
         DbSet<UserDiet> UserDiets { get; set; }

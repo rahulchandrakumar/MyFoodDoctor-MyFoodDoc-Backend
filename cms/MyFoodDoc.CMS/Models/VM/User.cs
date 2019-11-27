@@ -1,7 +1,6 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Models.VMBase;
 using System;
-using System.Linq;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
@@ -18,8 +17,7 @@ namespace MyFoodDoc.CMS.Models.VM
             {
                 DisplayName = model.Displayname,
                 Id = model.Id,
-                Password = model.Password,
-                Role = model.Roles.Max().ToString(),
+                Role = model.Role.ToString(),
                 Username = model.Username
             };
         }
@@ -30,9 +28,8 @@ namespace MyFoodDoc.CMS.Models.VM
             {
                 Displayname = this.DisplayName,
                 Id = this.Id,
-                Password = this.Password,
                 Username = this.Username,
-                Roles = Enum.GetValues(typeof(UserRoleEnum)).Cast<UserRoleEnum>().Where(x => x <= Enum.Parse<UserRoleEnum>(this.Role))
+                Role = Enum.Parse<UserRoleEnum>(this.Role)
             };
         }
     }
