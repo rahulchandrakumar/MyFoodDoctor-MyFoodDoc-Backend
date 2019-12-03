@@ -43,7 +43,7 @@
                 </h4>
               </material-chart-card>
             </v-col>
-            <v-col>
+            <v-col v-if="false">
               <material-chart-card
                 :data="makeChartData(item.BloodSugar)"
                 ratio="16:9"

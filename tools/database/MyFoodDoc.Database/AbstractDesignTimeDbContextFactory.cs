@@ -34,7 +34,7 @@ namespace MyFoodDoc.Database
                 .WithJsonMapping("mapping.json")
                 .Build();
 
-            var connectionString = "Server=(localdb)\\mssqllocaldb;Initial Catalog=MyFoodDocCMS;Integrated Security=true;MultipleActiveResultSets=True;";// configuration.GetConnectionString(ConnectionStringName);
+            var connectionString = configuration.GetConnectionString(ConnectionStringName);
 
             return Create(connectionString);
         }
