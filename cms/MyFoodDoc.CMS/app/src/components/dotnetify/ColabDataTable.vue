@@ -254,4 +254,7 @@ export default {
 .v-card--material__header .v-text-field__slot .v-label {
   color: unset !important;
 }
+.v-dialog .v-textarea {
+  min-width: 65vw;
+}
 </style>

@@ -29,9 +29,15 @@
           :counter="200"
         />
       </v-row>
+      <v-row v-if="item.Url && item.Url.endsWith('html')">
+        <v-switch
+          v-model="preview"
+          label="Preview HTML"
+        />
+      </v-row>
       <v-row>
         <VeeRichTextArea
-          v-if="item.Url && item.Url.endsWith('html')"
+          v-if="!preview && item.Url && item.Url.endsWith('html')"
           v-model="item.Text"
           :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
           rules="required|min:8"
@@ -73,7 +79,8 @@ export default {
         sortable: false,
         value: "Url",
         text: "Url"
-      }]
+      }],
+      preview: false
     }
   },
   methods: {
