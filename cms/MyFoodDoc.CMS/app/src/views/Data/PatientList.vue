@@ -8,8 +8,8 @@
     <template v-slot:item.InsuranceId="{ item }">
       {{ translateInsurance(item.InsuranceId) }}
     </template>
-    <template v-slot:item.Sex="{ item }">
-      {{ translateSex(item.Sex) }}
+    <template v-slot:item.Gender="{ item }">
+      {{ translateSex(item.Gender) }}
     </template>
     <template v-slot:item.Birth="{ item }">
       {{ item.Birth | moment("DD.MM.YYYY") }}
@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import Sex from "@/enums/Sex";
+import Gender from "@/enums/Gender";
 
 export default {
   components: {
@@ -92,8 +92,8 @@ export default {
         }, {
           filterable: false,
           sortable: true,
-          value: "Sex",
-          text: "Sex"
+          value: "Gender",
+          text: "Gender"
         }, {
           sortable: true,
           value: "Height",
@@ -113,7 +113,7 @@ export default {
   },
   methods: {
     translateSex(value) {
-      return value == Sex.MALE ? "Male" : "Female";
+      return value == null ? null : value == Gender.MALE ? "Male" : "Female";
     },
     translateInsurance(value) {
       return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
