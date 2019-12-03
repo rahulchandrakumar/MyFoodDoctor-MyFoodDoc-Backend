@@ -2,7 +2,7 @@
 
 namespace MyFoodDoc.CMS.Payloads
 {
-    public class ImageUploadPayload
+    public class FileUploadPayload
     {
         public IFormCollection Files { get; set; }
     }

@@ -5,6 +5,9 @@
     :headers="mainHeaders"
     :readonly="true"
   >
+    <template v-slot:item.InsuranceId="{ item }">
+      {{ translateInsurance(item.InsuranceId) }}
+    </template>
     <template v-slot:item.Sex="{ item }">
       {{ translateSex(item.Sex) }}
     </template>
@@ -84,7 +87,7 @@ export default {
           text: "Email"
         }, {
           sortable: true,
-          value: "Insurance",
+          value: "InsuranceId",
           text: "Insurance"
         }, {
           filterable: false,
@@ -101,13 +104,19 @@ export default {
           text: "Birth",
           value: "Birth"
         }
-      ]
+      ],
+      insuranceList: []
     }
   },
-
+  async mounted() {
+    this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
+  },
   methods: {
     translateSex(value) {
       return value == Sex.MALE ? "Male" : "Female";
+    },
+    translateInsurance(value) {
+      return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
     },
     makeChartData(items) {
       return {

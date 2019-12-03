@@ -21,7 +21,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = item.ToEntity();
 
-            await _context.CmsUsers.AddAsync(entity);
+            await _context.CmsUsers.AddAsync(entity, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
 
             return UserModel.FromEntity(entity);
@@ -29,7 +29,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id);
+            var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
             if (entity == null)
                 return false;
             
@@ -41,17 +41,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<UserModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            return UserModel.FromEntity(await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id));
+            return UserModel.FromEntity(await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id, cancellationToken));
         }
 
         public async Task<IList<UserModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            return (await _context.CmsUsers.ToListAsync()).Select(UserModel.FromEntity).ToList();
+            return (await _context.CmsUsers.ToListAsync(cancellationToken)).Select(UserModel.FromEntity).ToList();
         }
 
         public async Task<UserModel> UpdateItem(UserModel item, CancellationToken cancellationToken = default)
         {
-            var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == item.Id);
+            var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == item.Id, cancellationToken);
             var passHash = entity.PasswordHash;
 
             _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());

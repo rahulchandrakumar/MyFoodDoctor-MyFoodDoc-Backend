@@ -2,7 +2,6 @@
 using MyFoodDoc.Application.Entites;
 using MyFoodDoc.CMS.Infrastructure.Common;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace MyFoodDoc.CMS.Application.Seed

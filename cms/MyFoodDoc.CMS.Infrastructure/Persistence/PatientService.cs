@@ -26,7 +26,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                          .Include(x => x.Motivations)
                                              .ThenInclude(x => x.Motivation)
                                          .Include(x => x.WeightHistory)
-                                         .FirstOrDefaultAsync(x => x.Id == id);
+                                         .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return PatientModel.FromEntity(item);
         }

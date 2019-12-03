@@ -99,3 +99,10 @@
 .v-btn:hover:before {
   background-color: transparent;
 }
+
+.v-date-picker-table {
+  .v-btn {
+    color: unset !important;
+    padding: unset !important;
+  }
+}

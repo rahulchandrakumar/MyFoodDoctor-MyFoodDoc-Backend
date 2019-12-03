@@ -9,7 +9,7 @@ namespace MyFoodDoc.CMS.Application.Models
     {
         public string FullName { get; set; }
         public string Email { get; set; }
-        public string Insurance { get; set; }
+        public int? InsuranceId { get; set; }
         public GenderEnum? Sex { get; set; }
         public int? Height { get; set; }
         public DateTime? Birth { get; set; }
@@ -26,7 +26,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Birth = entity.Birthday,
                 Email = entity.Email,
                 FullName = entity.UserName,
-                Insurance = entity.Insurance?.Name,
+                InsuranceId = entity.InsuranceId,
                 Sex = entity.Gender == null ? null : (GenderEnum?)Enum.Parse(typeof(GenderEnum), entity.Gender?.ToString()),
                 Height = entity.Height,
                 AbdominalGirth = entity.AbdonimalGirthHistory?.Select(HistoryModel<int>.FromEntity).ToList(),

@@ -5,6 +5,12 @@
     <UserSecretsId>71bdabb2-f279-40b5-b8d7-1bfc0fef714b</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Migrations\20191202111749_Promotions.cs" />
+    <Compile Remove="Migrations\20191202111749_Promotions.Designer.cs" />
+    <Compile Remove="Migrations\20191202112422_Promotions.cs" />
+    <Compile Remove="Migrations\20191202112422_Promotions.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="mapping.json" />
   </ItemGroup>
   <ItemGroup>

@@ -144,6 +144,10 @@ export default {
           {
             to: "/patient-list",
             text: "Patients"
+          },
+          {
+            to: "/promotion-list",
+            text: "Promotions"
           }
         ]
       }

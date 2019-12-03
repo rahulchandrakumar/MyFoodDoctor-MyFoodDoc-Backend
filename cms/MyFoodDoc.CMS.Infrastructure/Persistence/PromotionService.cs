@@ -1,0 +1,103 @@
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entites;
+using MyFoodDoc.CMS.Application.Models;
+using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Infrastructure.FileProcessors;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace MyFoodDoc.CMS.Infrastructure.Persistence
+{
+    public class PromotionService : IPromotionService
+    {
+        private IFileService _fileService;
+        private IApplicationContext _context;
+
+        public PromotionService(IFileService fileService, IApplicationContext context)
+        {
+            this._context = context;
+            this._fileService = fileService;
+        }
+
+        public async Task<PromotionModel> AddItem(PromotionModel item, CancellationToken cancellationToken = default)
+        {
+            if (item?.TempFileId == null)
+                throw new ArgumentException("Field should contain value", "item.TempFileId");
+
+            var file = await _fileService.GetTempFile(item.TempFileId.Value, cancellationToken);
+
+            var promotion = item.ToEntity();
+            promotion.Coupons = (await CouponFileProcessor.ReadCouponFile(file.Data)).Select(code => new Coupon() { Code = code }).ToList();
+
+            await _context.Promotions.AddAsync(promotion, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return await GetItem(promotion.Id, cancellationToken);
+        }
+
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
+        {
+            var entity = await _context.Promotions.FindAsync(new object[] { id }, cancellationToken);
+            if (entity == null)
+                return false;
+
+            _context.Promotions.Remove(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+
+        public async Task<PromotionModel> GetItem(int id, CancellationToken cancellationToken = default)
+        {
+            var promotionQueryResult = (await (from p in _context.Promotions
+                                                where p.Id == id
+                                                select new
+                                                {
+                                                    entity = p,
+                                                    CouponCount = p.Coupons.Count(),
+                                                    UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
+                                                }).FirstOrDefaultAsync());
+
+            var promotion = PromotionModel.FromEntity(promotionQueryResult.entity);
+            promotion.CouponCount = promotionQueryResult.CouponCount;
+            promotion.UsedCouponCount = promotionQueryResult.UsedCouponCount;
+
+            return promotion;
+        }
+
+        public async Task<IList<PromotionModel>> GetItems(CancellationToken cancellationToken = default)
+        {
+            return (await (from p in _context.Promotions select new {
+                       entity = p,
+                       CouponCount = p.Coupons.Count(),
+                       UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
+                   }).ToListAsync())
+                   .Select(x =>
+                   {
+                       var model = PromotionModel.FromEntity(x.entity);
+                       model.CouponCount = x.CouponCount;
+                       model.UsedCouponCount = x.UsedCouponCount;
+
+                       return model;
+                   }).ToList();
+        }
+
+        public async Task<PromotionModel> UpdateItem(PromotionModel item, CancellationToken cancellationToken = default)
+        {
+            var promoEntity = await _context.Promotions.FindAsync(new object[] { item.Id }, cancellationToken);
+
+            promoEntity.IsActive = item.IsActive;
+            promoEntity.StartDate = item.StartDate;
+            promoEntity.EndDate = item.EndDate;
+            promoEntity.Title = item.Title;
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return await GetItem(promoEntity.Id, cancellationToken);
+        }
+    }
+}
