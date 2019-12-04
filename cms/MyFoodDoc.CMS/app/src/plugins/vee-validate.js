@@ -7,6 +7,8 @@ import { setInteractionMode } from 'vee-validate';
 
 import moment from 'moment';
 
+import { displayDateFormat } from "@/utils/Consts.js"
+
 extend("required", required);
 extend("email", email);
 extend("numeric", numeric);
@@ -15,13 +17,13 @@ extend("min", min);
 extend("dateLess", {
   params: ['date'],
   validate(value, { date }) {
-    return moment(value) < moment(date);
+    return moment(value, displayDateFormat) < moment(date);
   }
 });
 extend("dateMore", {
   params: ['date'],
   validate(value, { date }) {
-    return moment(value) > moment(date);
+    return moment(value, displayDateFormat) > moment(date);
   }
 });
 extend("decimal", {

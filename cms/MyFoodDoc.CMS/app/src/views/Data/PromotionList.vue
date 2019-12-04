@@ -16,10 +16,10 @@
       {{ item.CouponCount }} ({{ item.CouponCount - item.UsedCouponCount }} / {{ item.UsedCouponCount }})
     </template>
     <template v-slot:item.StartDate="{ item }">
-      {{ item.StartDate | moment("DD.MM.YYYY") }}
+      {{ item.StartDate | moment(displayDateFormat) }}
     </template>
     <template v-slot:item.EndDate="{ item }">
-      {{ item.EndDate | moment("DD.MM.YYYY") }}
+      {{ item.EndDate | moment(displayDateFormat) }}
     </template>
 
     <template v-slot:editor="{ item }">
@@ -75,6 +75,7 @@
 
 <script>
 import integration from "@/integration";
+import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
@@ -114,7 +115,8 @@ export default {
         text: "End"
       }
     ],
-    insuranceList: []
+    insuranceList: [],
+    displayDateFormat: displayDateFormat
   }),
   async mounted() {
     this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")

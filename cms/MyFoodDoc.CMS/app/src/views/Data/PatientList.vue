@@ -12,7 +12,7 @@
       {{ translateSex(item.Gender) }}
     </template>
     <template v-slot:item.Birth="{ item }">
-      {{ item.Birth | moment("DD.MM.YYYY") }}
+      {{ item.Birth | moment(displayDateFormat) }}
     </template>
 
     <template v-slot:expanded-item="{ headers, item }">
@@ -69,6 +69,7 @@
 
 <script>
 import Gender from "@/enums/Gender";
+import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
@@ -105,7 +106,8 @@ export default {
           value: "Birth"
         }
       ],
-      insuranceList: []
+      insuranceList: [],
+      displayDateFormat: displayDateFormat
     }
   },
   async mounted() {

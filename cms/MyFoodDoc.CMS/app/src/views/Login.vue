@@ -71,12 +71,16 @@ export default Vue.extend({
   },
   methods: {
     async login() {
-      const success = await this.$store.dispatch("user/login", this.loginForm);
-      if (success) {
-        this.loginForm.username = "";
-        this.loginForm.password = "";
-        this.$router.push({ name: "Dashboard" });
-      } else {
+      try {
+        const success = await this.$store.dispatch("user/login", this.loginForm);
+        if (success) {
+          this.loginForm.username = "";
+          this.loginForm.password = "";
+          this.$router.push({ name: "Dashboard" });
+        } else {
+          this.hasFailed = true;
+        }
+      } catch (ex) {
         this.hasFailed = true;
       }
     },

@@ -1,6 +1,6 @@
-const Sex = Object.freeze({
+const Gender = Object.freeze({
   MALE: 1,
   FEMALE: 2
 });
 
-export default Sex;
+export default Gender;

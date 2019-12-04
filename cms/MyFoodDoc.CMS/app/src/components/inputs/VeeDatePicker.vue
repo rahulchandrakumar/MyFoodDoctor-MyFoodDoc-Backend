@@ -16,7 +16,7 @@
         style="display: contents;"
       >
         <v-text-field
-          v-model="innerValue"
+          :value="innerValue == null ? null : $moment(innerValue).format(displayDateFormat)"
           :error-messages="errors"
           :success="valid"
           v-bind="$attrs"
@@ -26,11 +26,13 @@
         />
       </ValidationProvider>
     </template>
-    <v-date-picker v-model="innerValue" @input="menu = false" />
+    <v-date-picker v-model="pickerValue" @input="menu = false" />
   </v-menu>
 </template>
 
 <script>
+import { displayDateFormat, pickerDateFormat } from "@/utils/Consts.js"
+
 export default {
   props: {
     rules: {
@@ -45,15 +47,21 @@ export default {
   data() {
     return {
       innerValue: this.value,
-      menu: null
+      pickerValue: this.value == null ? null : this.$moment(this.value).format(pickerDateFormat),
+      menu: null,
+      displayDateFormat: displayDateFormat
     }
   },
   watch: {
+    pickerValue(newVal) {
+      this.$emit("input", newVal == null ? null : this.$moment(newVal, pickerDateFormat).toISOString());
+    },
     innerValue(newVal) {
       this.$emit("input", newVal);
     },
     value(newVal) {
       this.innerValue = newVal;
+      this.pickerValue = newVal == null ? null : this.$moment(newVal).format(pickerDateFormat)
 
       let self = this
       setTimeout(() => self.$refs.field.validate(), 100)
