@@ -48,8 +48,8 @@ class HttpRequest {
     return await axiosInstance.get(path, { params: data });
   }
 
-  async download(path) {
-    return await axiosInstance.get(path, { responseType: 'arraybuffer' })
+  async download(path, data = null, type = 'arraybuffer') {
+    return await axiosInstance.get(path, {  params: data, responseType: type })
   }
 
   async post(path, data, type = "json") {

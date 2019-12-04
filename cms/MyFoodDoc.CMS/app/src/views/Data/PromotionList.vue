@@ -21,6 +21,18 @@
     <template v-slot:item.EndDate="{ item }">
       {{ item.EndDate | moment(displayDateFormat) }}
     </template>
+    <template v-slot:item.DownloadCoupons="{ item }">
+      <v-btn
+        class="v-btn--simple"
+        color="success"
+        icon
+        @click="downloadCoupons(item)"
+      >
+        <v-icon color="success">
+          mdi-download
+        </v-icon>
+      </v-btn>
+    </template>
 
     <template v-slot:editor="{ item }">
       <v-row>
@@ -113,6 +125,10 @@ export default {
         sortable: true,
         value: "EndDate",
         text: "End"
+      },
+      {
+        sortable: false,
+        value: "DownloadCoupons"
       }
     ],
     insuranceList: [],
@@ -125,6 +141,11 @@ export default {
     async beforeSave(item) {
       if (item.File != null)
         item.TempFileId = await integration.files.uploadTemp(item.File);
+    },
+    async downloadCoupons(item) {
+      if (item.Id != null) {
+        integration.files.downloadCoupons(item.Id);
+      }
     }
   }
 };

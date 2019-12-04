@@ -53,6 +53,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return true;
         }
 
+        public async Task<byte[]> GetCouponsFile(int Id, CancellationToken cancellationToken = default)
+        {
+            var coupons = await _context.Coupons.Where(x => x.PromotionId == Id).ToListAsync(cancellationToken);
+            return await CouponFileProcessor.MakeCouponFile(coupons, cancellationToken);
+        }
+
         public async Task<PromotionModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
             var promotionQueryResult = (await (from p in _context.Promotions
