@@ -17,8 +17,6 @@ import paths from "./paths";
 
 import store from "@/store";
 
-import httpRequest from "@/integration/httpRequest";
-
 function route(path, view, name, meta) {
   return {
     name: name || view,
@@ -50,7 +48,6 @@ const router = new Router({
 router.beforeEach(async (to, from, next) => {
   if (to.path === "/logout") {
     await store.dispatch("user/logout");
-    httpRequest.setHeader({ key: "Authorization", value: null })
   }
   if (to.meta.requiresAuth != false) {
     let loggedIn = store.state.user.userInfo.isAuthenticated;
