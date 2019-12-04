@@ -1,4 +1,5 @@
-﻿using DotNetify.Security;
+﻿using DotNetify;
+using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
@@ -15,22 +16,14 @@ namespace MyFoodDoc.CMS.ViewModels
     {
         private readonly ILexiconService _service;
 
-        public LexiconViewModel(ILexiconService service)
+        public LexiconViewModel(ILexiconService service, IConnectionContext connectionContext): base(connectionContext)
         {
             this._service = service;
         }
 
         protected override Func<Task<IList<LexiconItem>>> GetData => async () =>
         {
-            try
-            {
-                return (await _service.GetItems()).Select(LexiconItem.FromModel).ToList();
-            }
-            catch (Exception ex)
-            {
-
-                return null;
-            }
+            return (await _service.GetItems()).Select(LexiconItem.FromModel).ToList();
         };
 
         public override Action<LexiconItem> Add => async (LexiconItem item) =>
@@ -42,7 +35,8 @@ namespace MyFoodDoc.CMS.ViewModels
                 this.AddList(itemMod);
             }
             catch(Exception ex) 
-            { 
+            {
+                SendError(ex);
             }
         };
         public override Action<LexiconItem> Update => async (LexiconItem item) =>
@@ -57,7 +51,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch(Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<int> Remove => async (int Id) =>
@@ -71,7 +65,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch(Exception ex)
             {
-
+                SendError(ex);
             }
         };
     }

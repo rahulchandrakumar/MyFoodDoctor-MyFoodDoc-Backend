@@ -36,6 +36,13 @@ namespace MyFoodDoc.CMS.Application.Seed
                         Text = "",
                         Title = "Impressum",
                         Url = new Uri(OriginalUrl, $"{Consts.WebPageContainerName}/about.html").ToString()
+                    },
+                    new WebPage()
+                    {
+                        IsDeletable = false,
+                        Text = "",
+                        Title = "Allgemeine Geschäftsbedingungen",
+                        Url = new Uri(OriginalUrl, $"{Consts.WebPageContainerName}/terms-of-use.html").ToString()
                     }
                 });
 

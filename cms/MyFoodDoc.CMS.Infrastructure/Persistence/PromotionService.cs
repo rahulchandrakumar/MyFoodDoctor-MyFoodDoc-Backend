@@ -32,6 +32,8 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             var promotion = item.ToEntity();
             promotion.Coupons = (await CouponFileProcessor.ReadCouponFile(file.Data)).Select(code => new Coupon() { Code = code }).ToList();
+            if (promotion.Coupons.Count == 0)
+                throw new ArgumentException("File should contain values", "item.TempFileId");
 
             await _context.Promotions.AddAsync(promotion, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);

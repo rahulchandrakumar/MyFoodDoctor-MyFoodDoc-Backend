@@ -1,4 +1,5 @@
-﻿using DotNetify.Security;
+﻿using DotNetify;
+using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Models.VM;
@@ -17,7 +18,7 @@ namespace MyFoodDoc.CMS.ViewModels
         private readonly IUserService _service;
         private readonly IHashingManager _hashingManager;
 
-        public UsersViewModel(IUserService userService, IHashingManager hashingManager)
+        public UsersViewModel(IUserService userService, IHashingManager hashingManager, IConnectionContext connectionContext): base(connectionContext)
         {
             this._service = userService;
             this._hashingManager = hashingManager;
@@ -25,15 +26,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
         protected override Func<Task<IList<User>>> GetData => async () =>
         {
-            try
-            {
-                return (await _service.GetItems()).Select(User.FromModel).ToList();
-            }
-            catch (Exception ex)
-            {
-
-                return null;
-            }
+            return (await _service.GetItems()).Select(User.FromModel).ToList();
         };
 
         public override Action<User> Add => async (User item) =>
@@ -49,7 +42,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<User> Update => async (User item) =>
@@ -67,7 +60,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<int> Remove => async (int Id) =>
@@ -81,7 +74,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
     }

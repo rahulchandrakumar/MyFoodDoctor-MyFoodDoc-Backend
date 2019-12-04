@@ -1,4 +1,5 @@
-﻿using DotNetify.Security;
+﻿using DotNetify;
+using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
@@ -14,22 +15,14 @@ namespace MyFoodDoc.CMS.ViewModels
     public class WebViewViewModel : BaseEditableListViewModel<WebViewItem, int>
     {
         private readonly IWebViewService _service;
-        public WebViewViewModel(IWebViewService service)
+        public WebViewViewModel(IWebViewService service, IConnectionContext connectionContext): base(connectionContext)
         {
             this._service = service;
         }
 
         protected override Func<Task<IList<WebViewItem>>> GetData => async () =>
         {
-            try
-            {
-                return (await _service.GetItems()).Select(WebViewItem.FromModel).ToList();
-            }
-            catch (Exception ex)
-            {
-
-                return null;
-            }
+            return (await _service.GetItems()).Select(WebViewItem.FromModel).ToList();
         };
 
         public override Action<WebViewItem> Add => async (WebViewItem user) =>
@@ -42,7 +35,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<WebViewItem> Update => async (WebViewItem item) =>
@@ -57,7 +50,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<int> Remove => async (int Id) =>
@@ -71,7 +64,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
     }

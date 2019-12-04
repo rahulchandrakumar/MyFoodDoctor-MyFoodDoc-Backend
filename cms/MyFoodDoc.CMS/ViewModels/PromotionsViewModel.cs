@@ -1,4 +1,5 @@
-﻿using MyFoodDoc.CMS.Application.Persistence;
+﻿using DotNetify;
+using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
 using System;
@@ -13,7 +14,7 @@ namespace MyFoodDoc.CMS.ViewModels
         private IInsuranceService _insuranceService;
         private IPromotionService _service;
 
-        public PromotionsViewModel(IPromotionService promotionService, IInsuranceService insuranceService)
+        public PromotionsViewModel(IPromotionService promotionService, IInsuranceService insuranceService, IConnectionContext connectionContext): base(connectionContext)
         {
             this._service = promotionService;
             this._insuranceService = insuranceService;
@@ -22,15 +23,7 @@ namespace MyFoodDoc.CMS.ViewModels
 
         protected override Func<Task<IList<Promotion>>> GetData => async () =>
         {
-            try
-            {
-                return (await _service.GetItems()).Select(Promotion.FromModel).ToList();                
-            }
-            catch (Exception ex)
-            {
-
-                return null;
-            }
+            return (await _service.GetItems()).Select(Promotion.FromModel).ToList();
         };
 
         public override Action<Promotion> Add => async (Promotion item) =>
@@ -43,6 +36,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
+                SendError(ex);
             }
         };
         public override Action<Promotion> Update => async (Promotion item) =>
@@ -57,7 +51,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<int> Remove => async (int Id) =>
@@ -71,7 +65,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
     }
