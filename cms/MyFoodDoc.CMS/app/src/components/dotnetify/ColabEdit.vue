@@ -1,5 +1,9 @@
 <template>
-  <v-dialog v-model="innerDialog" class="colab-edit" @click:outside="close">
+  <v-dialog 
+    v-model="innerDialog" 
+    class="colab-edit"
+    @click:outside="close"
+  >
     <template v-if="couldAdd" v-slot:activator="{ on }">
       <v-btn
         class="v-btn--simple ma-0" color="success" icon
