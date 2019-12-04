@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20191204121759_UniqueCouponCode")]
+    [Migration("20191204131058_UniqueCouponCode")]
     partial class UniqueCouponCode
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -221,6 +221,9 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("InsuranceId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -235,12 +238,14 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
+                    b.HasIndex("InsuranceId");
 
                     b.HasIndex("PromotionId");
 
                     b.HasIndex("RedeemedBy");
+
+                    b.HasIndex("Code", "InsuranceId")
+                        .IsUnique();
 
                     b.ToTable("Coupons","Coupon");
                 });
@@ -756,7 +761,7 @@ namespace MyFoodDoc.Database.Migrations
                         {
                             Id = "3ee857ac-26ee-43d8-8f68-76f1ca7bfa9b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a02b26ca-35f2-4190-a29c-0204b0aa6897",
+                            ConcurrencyStamp = "7ab0095d-dcdf-4c19-a79f-ea4e49386b86",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@appsfactory.de",
                             EmailConfirmed = true,
@@ -764,7 +769,7 @@ namespace MyFoodDoc.Database.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST@APPSFACTORY.DE",
                             NormalizedUserName = "TEST@APPSFACTORY.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEETFVV7gD2w4A3k7O1qyJ5PKjwIo9JtcKi6hq3nSaRHj0aiNNGRV6ruqU0EIn8+yAA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEAmM0h6jTE6UAJOwjVOFwxfiqtgbWCx6PVMoTGm5EajuNXWZRV9y8j8d+2EIoWZHog==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1085,6 +1090,12 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
                 {
+                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                        .WithMany()
+                        .HasForeignKey("InsuranceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("MyFoodDoc.Application.Entites.Promotion", "Promotion")
                         .WithMany("Coupons")
                         .HasForeignKey("PromotionId")

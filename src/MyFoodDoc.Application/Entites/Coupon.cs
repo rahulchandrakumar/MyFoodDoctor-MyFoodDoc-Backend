@@ -9,6 +9,10 @@ namespace MyFoodDoc.Application.Entites
 
         public Promotion Promotion { get; set; }
 
+        public int InsuranceId { get; set; }
+
+        public Insurance Insurance { get; set; }
+
         public string Code { get; set; }
 
         public DateTime? Redeemed { get; set; }

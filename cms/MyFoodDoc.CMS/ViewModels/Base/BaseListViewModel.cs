@@ -62,7 +62,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
 
@@ -79,7 +79,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
 

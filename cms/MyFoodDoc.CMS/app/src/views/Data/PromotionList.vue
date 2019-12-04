@@ -108,7 +108,7 @@ export default {
       {
         sortable: true,
         value: "Disabled",
-        text: "Is Active"
+        text: "Active"
       },{
         sortable: true,
         value: "InsuranceId",

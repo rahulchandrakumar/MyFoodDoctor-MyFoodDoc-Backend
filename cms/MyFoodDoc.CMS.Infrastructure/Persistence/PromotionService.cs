@@ -31,7 +31,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var file = await _fileService.GetTempFile(item.TempFileId.Value, cancellationToken);
 
             var promotion = item.ToEntity();
-            promotion.Coupons = (await CouponFileProcessor.ReadCouponFile(file.Data)).Select(code => new Coupon() { Code = code }).ToList();
+            promotion.Coupons = (await CouponFileProcessor.ReadCouponFile(file.Data)).Select(code => new Coupon() { Code = code, InsuranceId = promotion.InsuranceId }).ToList();
             if (promotion.Coupons.Count == 0)
                 throw new ArgumentException("File should contain values", "item.TempFileId");
 
