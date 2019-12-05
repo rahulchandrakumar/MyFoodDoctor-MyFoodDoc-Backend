@@ -5,7 +5,7 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY ["MyFoodDoc.CMS.csproj", "cms/MyFoodDoc.CMS/"]
-RUN dotnet restore "MyFoodDoc.CMS.csproj"
+RUN dotnet restore "cms/MyFoodDoc.CMS/MyFoodDoc.CMS.csproj"
 COPY . .
 WORKDIR "/src/cms/MyFoodDoc.CMS"
 RUN dotnet build "MyFoodDoc.CMS.csproj" -c Release -o /app/build
