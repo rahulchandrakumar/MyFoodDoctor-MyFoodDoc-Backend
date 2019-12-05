@@ -16,7 +16,8 @@ services:
   myfooddoc.application.cms.api:
     image: ${DOCKER_REGISTRY-}myfooddocapplicationcmsapi
     build:
-      context: cms/MyFoodDoc.CMS/
+      context: .
+      context: cms/MyFoodDoc.CMS/Dockerfile
   
   myfooddoc.application.cms.web:
     image: ${DOCKER_REGISTRY-}myfooddocapplicationcmsweb
