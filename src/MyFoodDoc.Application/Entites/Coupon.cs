@@ -5,6 +5,7 @@ namespace MyFoodDoc.Application.Entites
 {
     public class Coupon : AbstractAuditableEntity
     {
+        public int InsuranceId { get; set; }
         public int PromotionId { get; set; }
 
         public Promotion Promotion { get; set; }

@@ -101,42 +101,50 @@ export default {
     VeeFileInput: () => import("@/components/inputs/VeeFileInput")
   },
 
-  data: () => ({
-    mainHeaders: [
-      {
-        sortable: true,
-        value: "Title",
-        text: "Title"
-      },
-      {
-        sortable: true,
-        value: "Disabled",
-        text: "Active"
-      },{
-        sortable: true,
-        value: "InsuranceId",
-        text: "Insurance"
-      },{
-        sortable: true,
-        value: "Coupons",
-        text: "Coupons"
-      },{
-        sortable: true,
-        value: "StartDate",
-        text: "Start"
-      },{
-        sortable: true,
-        value: "EndDate",
-        text: "End"
-      },
-      {
-        sortable: false,
-        value: "DownloadCoupons"
-      }
-    ],
-    insuranceList: [],
-    displayDateFormat: displayDateFormat
-  }),
+  data() {
+    var self = this;
+
+    return {
+      mainHeaders: [
+        {
+          sortable: true,
+          value: "Title",
+          text: "Title"
+        },
+        {
+          sortable: true,
+          value: "Disabled",
+          text: "Active"
+        },{
+          sortable: true,
+          filterable: true,
+          value: "InsuranceId",
+          text: "Insurance",
+          filter: function(value, search) {
+            return self.translateInsurance(value).includes(search);
+          }
+        },{
+          sortable: true,
+          value: "Coupons",
+          text: "Coupons"
+        },{
+          sortable: true,
+          value: "StartDate",
+          text: "Start"
+        },{
+          sortable: true,
+          value: "EndDate",
+          text: "End"
+        },
+        {
+          sortable: false,
+          value: "DownloadCoupons"
+        }
+      ],
+      insuranceList: [],
+      displayDateFormat: displayDateFormat
+    }
+  },
   async mounted() {
     this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
   },

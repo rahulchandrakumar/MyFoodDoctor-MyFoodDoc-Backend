@@ -34,7 +34,7 @@ namespace MyFoodDoc.Database
                 .WithJsonMapping("mapping.json")
                 .Build();
 
-            var connectionString = configuration.GetConnectionString(ConnectionStringName);
+            var connectionString = "Server=tcp:myfooddoc-mock-sql-server.database.windows.net,1433;Initial Catalog=myfooddoc-mock;Persist Security Info=False;User ID=mfd-admin;Password=Asdf1234;MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";// configuration.GetConnectionString(ConnectionStringName);
 
             return Create(connectionString);
         }
