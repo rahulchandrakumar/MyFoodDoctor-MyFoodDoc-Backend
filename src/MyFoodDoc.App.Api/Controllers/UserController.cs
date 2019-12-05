@@ -65,7 +65,7 @@ namespace MyFoodDoc.App.Api.Controllers
         {
             await _service.ChangePassword(GetUserId(), payload.OldPassword, payload.NewPassword);
 
-            return Ok();
+            return NoContent();
         }
     }
 }
