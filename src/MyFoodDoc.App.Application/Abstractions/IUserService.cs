@@ -15,5 +15,7 @@ namespace MyFoodDoc.App.Application.Abstractions
         Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload, CancellationToken cancellationToken = default);
 
         Task<UserDto> UpdateUserAsync(string userId, UpdateUserPayload payload, CancellationToken cancellationToken = default);
+
+        Task ChangePassword(string userId, string oldPassword, string newPassword);
     }
 }

@@ -229,5 +229,16 @@ namespace MyFoodDoc.App.Application.Services
 
             return await query.ToListAsync(cancellationToken);
         }
+
+        public async Task ChangePassword(string userId, string oldPassword, string newPassword)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (!await _userManager.CheckPasswordAsync(user, oldPassword))
+            {
+                throw new ArgumentException("Old password is wrong", oldPassword);
+            }
+            await _userManager.RemovePasswordAsync(user);
+            await _userManager.AddPasswordAsync(user, newPassword);
+        }
     }
 }
