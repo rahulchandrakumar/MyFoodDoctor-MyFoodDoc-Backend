@@ -12,9 +12,13 @@ namespace MyFoodDoc.Infrastructure
             var seeders = app.ApplicationServices.GetServices<ISeed>();
             if (seeders?.Count() > 0)
             {
-                var context = app.ApplicationServices.GetRequiredService<IApplicationContext>();
-                foreach (var seeder in seeders)
-                    seeder.SeedData(context);
+                var serviceScopeFactory = app.ApplicationServices.GetService<IServiceScopeFactory>();
+                using (var scope = serviceScopeFactory.CreateScope())
+                {
+                    var context = (IApplicationContext)scope.ServiceProvider.GetService(typeof(IApplicationContext));
+                    foreach (var seeder in seeders)
+                        seeder.SeedData(context);
+                }
             }
         }
     }

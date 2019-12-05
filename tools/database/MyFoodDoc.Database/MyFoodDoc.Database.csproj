@@ -1,9 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>71bdabb2-f279-40b5-b8d7-1bfc0fef714b</UserSecretsId>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Migrations\20191202111749_Promotions.cs" />
+    <Compile Remove="Migrations\20191202111749_Promotions.Designer.cs" />
+    <Compile Remove="Migrations\20191202112422_Promotions.cs" />
+    <Compile Remove="Migrations\20191202112422_Promotions.Designer.cs" />
+    <Compile Remove="Migrations\20191204120736_UniqueCouponCode.cs" />
+    <Compile Remove="Migrations\20191204120736_UniqueCouponCode.Designer.cs" />
+    <Compile Remove="Migrations\20191204121759_UniqueCouponCode.cs" />
+    <Compile Remove="Migrations\20191204121759_UniqueCouponCode.Designer.cs" />
+    <Compile Remove="Migrations\20191204131058_UniqueCouponCode.cs" />
+    <Compile Remove="Migrations\20191204131058_UniqueCouponCode.Designer.cs" />
+    <Compile Remove="Migrations\20191205075820_UniqueCouponCode.cs" />
+    <Compile Remove="Migrations\20191205075820_UniqueCouponCode.Designer.cs" />
+    <Compile Remove="Migrations\20191205112503_UniqueCouponCodeUpd.cs" />
+    <Compile Remove="Migrations\20191205112503_UniqueCouponCodeUpd.Designer.cs" />
+    <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.cs" />
+    <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.Designer.cs" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />
   </ItemGroup>
@@ -15,16 +33,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />

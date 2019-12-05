@@ -1,4 +1,5 @@
-﻿using DotNetify.Security;
+﻿using DotNetify;
+using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
@@ -15,22 +16,14 @@ namespace MyFoodDoc.CMS.ViewModels
     {
         private readonly IPatientService _service;
 
-        public PatientsViewModel(IPatientService patientService)
+        public PatientsViewModel(IPatientService patientService, IConnectionContext connectionContext): base(connectionContext)
         {
             this._service = patientService;
         }
 
         protected override Func<Task<IList<Patient>>> GetData => async () =>
         {
-            try
-            {
-                return (await _service.GetItems()).Select(Patient.FromModel).ToList();
-            }
-            catch (Exception ex)
-            {
-
-                return null;
-            }
+            return (await _service.GetItems()).Select(Patient.FromModel).ToList();
         };
     }
 }

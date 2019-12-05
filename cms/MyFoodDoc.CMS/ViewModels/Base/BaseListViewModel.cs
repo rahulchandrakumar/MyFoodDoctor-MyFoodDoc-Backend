@@ -12,10 +12,19 @@ namespace MyFoodDoc.CMS.ViewModels.Base
         public string Items_itemKey => "Id";
         public IList<T1> Items = new List<T1>();
         public bool IsLoaded = false;
+        public bool HasError = false;
+        public string ErrorMessage = null;
 
         private readonly object loadLock = new object();
 
         protected abstract Func<Task<IList<T1>>> GetData { get; }
+
+        private readonly IConnectionContext _connectionContext;
+
+        public BaseListViewModel(IConnectionContext connectionContext)
+        {
+            this._connectionContext = connectionContext;
+        }
 
         public Action Init => async () =>
         {
@@ -36,7 +45,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
 
@@ -53,7 +62,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
 
@@ -70,7 +79,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
 
@@ -105,6 +114,13 @@ namespace MyFoodDoc.CMS.ViewModels.Base
 
             this.RemoveList(nameof(Items), Id);
             this.PushUpdates();
+        }
+
+        internal void SendError(Exception ex)
+        {
+            var message = ex.Message;
+
+            base.Send(new List<string>() { _connectionContext.ConnectionId }, "Error", new { ErrorMessage = message });
         }
     }
 }

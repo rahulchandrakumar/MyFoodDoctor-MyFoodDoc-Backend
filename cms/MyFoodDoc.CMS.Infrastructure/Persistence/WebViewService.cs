@@ -34,7 +34,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<WebViewModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            return WebViewModel.FromEntity(await _context.WebPages.FindAsync(id));
+            return WebViewModel.FromEntity(await _context.WebPages.FindAsync(new object[] { id }, cancellationToken));
         }
 
         public async Task<IList<WebViewModel>> GetItems(CancellationToken cancellationToken = default)
@@ -44,7 +44,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<WebViewModel> UpdateItem(WebViewModel item, CancellationToken cancellationToken = default)
         {
-            var webView = await _context.WebPages.FindAsync(item.Id);
+            var webView = await _context.WebPages.FindAsync(new object[] { item.Id }, cancellationToken);
 
             if (webView == null)
                 return null;

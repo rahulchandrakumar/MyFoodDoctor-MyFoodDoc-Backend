@@ -1,4 +1,5 @@
 import axios from "axios";
+import Store from "@/store";
 
 const contentTypes = {
   json: "application/json",
@@ -44,24 +45,32 @@ class HttpRequest {
       "application/x-www-form-urlencoded";
   }
 
-  async get(path, data = null) {
-    return await axiosInstance.get(path, { params: data });
+  getHeaders() {
+    var headers = {}
+    if (Store.state.user.token)
+      headers["Authorization"] = "Bearer " + Store.state.user.token;
+
+    return headers;
   }
 
-  async download(path) {
-    return await axiosInstance.get(path, { responseType: 'arraybuffer' })
+  async get(path, data = null) {
+    return await axiosInstance.get(path, { headers: this.getHeaders(), params: data });
+  }
+
+  async download(path, data = null, type = 'arraybuffer') {
+    return await axiosInstance.get(path, { headers: this.getHeaders(), params: data, responseType: type })
   }
 
   async post(path, data, type = "json") {
-    return await axiosInstance.post(path, data, { "Content-Type": contentTypes[type] });
+    return await axiosInstance.post(path, data, { headers: this.getHeaders(), "Content-Type": contentTypes[type] });
   }
 
   async put(path, data, type = "json") {
-    return await axiosInstance.put(path, data, { "Content-Type": contentTypes[type] });
+    return await axiosInstance.put(path, data, { headers: this.getHeaders(), "Content-Type": contentTypes[type] });
   }
 
   async delete(path, data) {
-    return await axiosInstance.delete(path, { params: data });
+    return await axiosInstance.delete(path, { headers: this.getHeaders(), params: data });
   }
 }
 

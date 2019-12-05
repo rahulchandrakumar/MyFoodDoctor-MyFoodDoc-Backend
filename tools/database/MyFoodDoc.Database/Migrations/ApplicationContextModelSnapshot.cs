@@ -15,7 +15,7 @@ namespace MyFoodDoc.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.1")
+                .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -219,17 +219,14 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("Expiry")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("InsuranceId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Redeemed")
                         .HasColumnType("datetime2");
@@ -239,9 +236,12 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InsuranceId");
-
                     b.HasIndex("RedeemedBy");
+
+                    b.HasIndex("Code", "InsuranceId")
+                        .IsUnique();
+
+                    b.HasIndex("PromotionId", "InsuranceId");
 
                     b.ToTable("Coupons","Coupon");
                 });
@@ -631,6 +631,40 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("MealsIngredients","Diary");
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entites.Promotion", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InsuranceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id", "InsuranceId");
+
+                    b.HasIndex("InsuranceId");
+
+                    b.ToTable("Promotions","Coupon");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
                 {
                     b.Property<string>("Id")
@@ -721,7 +755,7 @@ namespace MyFoodDoc.Database.Migrations
                         {
                             Id = "3ee857ac-26ee-43d8-8f68-76f1ca7bfa9b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b33cba5b-0c09-44ce-82a9-3c237ba6e0fe",
+                            ConcurrencyStamp = "061fce92-6b05-4fcf-9378-4551af35d604",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@appsfactory.de",
                             EmailConfirmed = true,
@@ -729,7 +763,7 @@ namespace MyFoodDoc.Database.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST@APPSFACTORY.DE",
                             NormalizedUserName = "TEST@APPSFACTORY.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEP0gIf0GiHKhj4ts7xtIYjjNPGiKYDwnVOHOup/RtEvWGKZJf2fBLVcqJ5aFNmBbCA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKFb1tcxc48UHhaiaD1gdDAP5EqRmnVFkWy1EAp9njVf58I9AYtrSGtr2XirDaQhPA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1050,15 +1084,15 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
-                        .WithMany()
-                        .HasForeignKey("InsuranceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MyFoodDoc.Application.Entites.User", "Redeemer")
                         .WithMany()
                         .HasForeignKey("RedeemedBy");
+
+                    b.HasOne("MyFoodDoc.Application.Entites.Promotion", "Promotion")
+                        .WithMany("Coupons")
+                        .HasForeignKey("PromotionId", "InsuranceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.Exercise", b =>
@@ -1102,6 +1136,15 @@ namespace MyFoodDoc.Database.Migrations
                     b.HasOne("MyFoodDoc.Application.Entites.Meal", "Meal")
                         .WithMany("Ingredients")
                         .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entites.Promotion", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                        .WithMany()
+                        .HasForeignKey("InsuranceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

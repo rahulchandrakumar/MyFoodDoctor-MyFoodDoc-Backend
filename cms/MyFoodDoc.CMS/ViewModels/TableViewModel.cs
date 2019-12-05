@@ -1,4 +1,5 @@
-﻿using DotNetify.Security;
+﻿using DotNetify;
+using DotNetify.Security;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
 using System;
@@ -12,34 +13,27 @@ namespace MyFoodDoc.CMS.ViewModels
     [Authorize("Editor")]
     public class TableViewModel : BaseEditableListViewModel<IngredientSize, int>
     {       
-        public TableViewModel()
+        public TableViewModel(IConnectionContext connectionContext): base(connectionContext)
         {
         }
         protected override Func<Task<IList<IngredientSize>>> GetData => async () =>
         {
-            try
+            return await Task.FromResult(new List<IngredientSize>()
             {
-                return await Task.FromResult(new List<IngredientSize>()
+                new IngredientSize()
                 {
-                    new IngredientSize()
-                    {
-                        Id = 0,
-                        Name = "Banana",
-                        Amount = 100
-                    },
-                    new IngredientSize()
-                    {
-                        Id = 1,
-                        Name = "Apple",
-                        Amount = 200
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        };      
+                    Id = 0,
+                    Name = "Banana",
+                    Amount = 100
+                },
+                new IngredientSize()
+                {
+                    Id = 1,
+                    Name = "Apple",
+                    Amount = 200
+                }
+            });
+        };     
 
         public override Action<IngredientSize> Add => (IngredientSize ingredientSize) =>
         {
@@ -51,7 +45,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<IngredientSize> Update => (IngredientSize ingredientSize) =>
@@ -62,7 +56,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
         public override Action<int> Remove => (int Id) =>
@@ -73,7 +67,7 @@ namespace MyFoodDoc.CMS.ViewModels
             }
             catch (Exception ex)
             {
-
+                SendError(ex);
             }
         };
     }

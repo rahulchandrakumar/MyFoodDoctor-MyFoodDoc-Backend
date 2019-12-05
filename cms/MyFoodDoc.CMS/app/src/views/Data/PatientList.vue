@@ -5,11 +5,14 @@
     :headers="mainHeaders"
     :readonly="true"
   >
-    <template v-slot:item.Sex="{ item }">
-      {{ translateSex(item.Sex) }}
+    <template v-slot:item.InsuranceId="{ item }">
+      {{ translateInsurance(item.InsuranceId) }}
+    </template>
+    <template v-slot:item.Gender="{ item }">
+      {{ translateSex(item.Gender) }}
     </template>
     <template v-slot:item.Birth="{ item }">
-      {{ item.Birth | moment("DD.MM.YYYY") }}
+      {{ item.Birth | moment(displayDateFormat) }}
     </template>
 
     <template v-slot:expanded-item="{ headers, item }">
@@ -40,7 +43,7 @@
                 </h4>
               </material-chart-card>
             </v-col>
-            <v-col>
+            <v-col v-if="false">
               <material-chart-card
                 :data="makeChartData(item.BloodSugar)"
                 ratio="16:9"
@@ -65,7 +68,8 @@
 </template>
 
 <script>
-import Sex from "@/enums/Sex";
+import Gender from "@/enums/Gender";
+import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
@@ -84,13 +88,13 @@ export default {
           text: "Email"
         }, {
           sortable: true,
-          value: "Insurance",
+          value: "InsuranceId",
           text: "Insurance"
         }, {
           filterable: false,
           sortable: true,
-          value: "Sex",
-          text: "Sex"
+          value: "Gender",
+          text: "Gender"
         }, {
           sortable: true,
           value: "Height",
@@ -101,13 +105,20 @@ export default {
           text: "Birth",
           value: "Birth"
         }
-      ]
+      ],
+      insuranceList: [],
+      displayDateFormat: displayDateFormat
     }
   },
-
+  async mounted() {
+    this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
+  },
   methods: {
     translateSex(value) {
-      return value == Sex.MALE ? "Male" : "Female";
+      return value == null ? null : value == Gender.MALE ? "Male" : "Female";
+    },
+    translateInsurance(value) {
+      return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
     },
     makeChartData(items) {
       return {

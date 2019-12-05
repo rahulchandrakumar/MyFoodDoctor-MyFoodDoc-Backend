@@ -11,7 +11,7 @@
   >
     <v-img :src="image" height="100%">
       <v-layout
-        class="fill-height overflow-y-auto"
+        class="fill-height overflow-y-auto d-flex"
         tag="v-list"
         column
         nav
@@ -144,6 +144,10 @@ export default {
           {
             to: "/patient-list",
             text: "Patients"
+          },
+          {
+            to: "/promotion-list",
+            text: "Promotions"
           }
         ]
       }

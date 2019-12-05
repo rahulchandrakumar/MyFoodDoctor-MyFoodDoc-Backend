@@ -101,6 +101,31 @@
           </v-data-table>
         </material-card>
       </v-flex>
+      <v-flex>
+        <v-dialog
+          v-model="errorDialog"
+          max-width="290"
+        >
+          <v-card>
+            <v-card-title class="headline">
+              Error
+            </v-card-title>
+            <v-card-text>
+              {{ errorText }}
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-btn
+                color="green darken-1"
+                text
+                @click="errorDialog = false"
+              >
+                Ok
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-flex>
     </v-layout>
   </v-container>
 </template>
@@ -178,7 +203,10 @@ export default {
       editTime: editTime,
       search: "",
       dialog: false,
-      editItem: {}
+      editItem: {},
+      Error: null,
+      errorDialog: false,
+      errorText: null
     };
   },
   watch: {
@@ -196,6 +224,12 @@ export default {
     this.username = this.$store.state.user.userInfo.username;
 
     var self = this;
+
+    this.$watch("Error", message => {
+      self.errorText = message.ErrorMessage
+      self.errorDialog = true
+    })
+
     setInterval(() => {
       self.now = Date.now();
     }, 1000);
@@ -253,5 +287,8 @@ export default {
 <style>
 .v-card--material__header .v-text-field__slot .v-label {
   color: unset !important;
+}
+.v-dialog .v-textarea {
+  min-width: 65vw;
 }
 </style>

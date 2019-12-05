@@ -12,7 +12,6 @@
       :success="valid"
       v-bind="$attrs"
       auto-grow
-      solo
       v-on="$listeners"
     />
   </ValidationProvider>

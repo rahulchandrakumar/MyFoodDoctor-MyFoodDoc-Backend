@@ -25,6 +25,6 @@ namespace MyFoodDoc.Infrastructure
             services.AddScoped<IApplicationContext, ApplicationContext>();
 
             return services;
-        }                                                       
+        }
     }
 }

@@ -10,8 +10,8 @@ namespace MyFoodDoc.CMS.Models.VM
     {
         public string FullName { get; set; }
         public string Email { get; set; }
-        public string Insurance { get; set; }
-        public byte? Sex { get; set; }
+        public int? InsuranceId { get; set; }
+        public byte? Gender { get; set; }
         public int Height { get; set; }
         public DateTime? Birth { get; set; }
         public IList<HistoryBaseModel<int>> Weight { get; set; }
@@ -27,9 +27,9 @@ namespace MyFoodDoc.CMS.Models.VM
                 FullName = model.FullName,
                 Birth = model.Birth,
                 Email = model.Email,
-                Insurance = model.Insurance,
+                InsuranceId = model.InsuranceId,
                 Height = model.Height ?? 0,
-                Sex = (byte?)model.Sex,
+                Gender = (byte?)model.Gender,
                 AbdominalGirth = model.AbdominalGirth?.Select(HistoryBaseModel<int>.FromModel).ToList(),
                 BloodSugar = model.BloodSugar?.Select(HistoryBaseModel<int>.FromModel).ToList(),
                 Weight = model.Weight?.Select(HistoryBaseModel<int>.FromModel).ToList(),

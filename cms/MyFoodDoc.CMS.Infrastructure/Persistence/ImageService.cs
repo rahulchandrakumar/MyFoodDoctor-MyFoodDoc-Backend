@@ -26,7 +26,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             };
 
             var imageEntity = image.ToEntity();
-            await _context.Images.AddAsync(imageEntity);
+            await _context.Images.AddAsync(imageEntity, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -24,13 +24,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<LexiconModel> AddItem(LexiconModel item, CancellationToken cancellationToken = default)
         {
             var lexiconEntity = item.ToEntity();
-            await _context.LexiconEntries.AddAsync(lexiconEntity);
+            await _context.LexiconEntries.AddAsync(lexiconEntity, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 
             lexiconEntity = await _context.LexiconEntries
                                             .Include(x => x.Image)
-                                            .FirstOrDefaultAsync(u => u.Id == lexiconEntity.Id);
+                                            .FirstOrDefaultAsync(u => u.Id == lexiconEntity.Id, cancellationToken);
 
             return LexiconModel.FromEntity(lexiconEntity);
         }
@@ -38,7 +38,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             var lexiconEntity = await _context.LexiconEntries
-                                                .FirstOrDefaultAsync(u => u.Id == id);
+                                                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             await _imageService.DeleteImage(lexiconEntity.Image.Url, cancellationToken);
 
@@ -51,8 +51,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<LexiconModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            var lexiconEntity = await _context.LexiconEntries
-                                                .FirstOrDefaultAsync(u => u.Id == id);
+            var lexiconEntity = await _context.LexiconEntries.FindAsync(new object[] { id }, cancellationToken);
 
             return LexiconModel.FromEntity(lexiconEntity);
         }
@@ -68,18 +67,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<LexiconModel> UpdateItem(LexiconModel item, CancellationToken cancellationToken = default)
         {
-            var lexiconEntity = await _context.LexiconEntries
-                                                .FirstOrDefaultAsync(u => u.Id == item.Id);
+            var lexiconEntity = await _context.LexiconEntries.FindAsync(new object[] { item.Id }, cancellationToken);
 
             _context.Entry(lexiconEntity).CurrentValues.SetValues(item.ToEntity());
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            lexiconEntity = await _context.LexiconEntries
-                                            .Include(x => x.Image)
-                                            .FirstOrDefaultAsync(u => u.Id == item.Id);
-
-            return LexiconModel.FromEntity(lexiconEntity);
+            return await GetItem(lexiconEntity.Id, cancellationToken);
         }
     }
 }

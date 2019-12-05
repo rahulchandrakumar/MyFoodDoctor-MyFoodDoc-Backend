@@ -32,7 +32,7 @@ namespace MyFoodDoc.App.Application.Services
                 throw new ArgumentException();
             }
 
-            var validCode = _context.Coupons.SingleOrDefault(x => x.Code == payload.Code && x.IsActive && x.Redeemed == null && x.Expiry < DateTime.UtcNow && x.InsuranceId == user.InsuranceId);   
+            var validCode = _context.Coupons.Include(x => x.Promotion).SingleOrDefault(x => x.Code == payload.Code && x.Promotion.IsActive && x.Redeemed == null && x.Promotion.StartDate >= DateTime.UtcNow && x.Promotion.EndDate < DateTime.UtcNow && x.Promotion.InsuranceId == user.InsuranceId);   
             if (validCode == null)
             {
                 throw new NotFoundException(nameof(Coupon), payload.Code);

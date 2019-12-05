@@ -1,4 +1,4 @@
-﻿using DotNetify.Security;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VMBase;
@@ -21,7 +21,7 @@ namespace MyFoodDoc.CMS.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<Image> UploadImage([FromForm]ImageUploadPayload payload, CancellationToken cancellationToken = default)
+        public async Task<Image> UploadImage([FromForm]FileUploadPayload payload, CancellationToken cancellationToken = default)
         {
             if (payload?.Files == null)
                 return null;

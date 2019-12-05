@@ -58,6 +58,14 @@ export default [
     }
   },
   {
+    path: "/promotion-list",
+    name: "Promotions",
+    view: "Data/PromotionList",
+    meta: {
+      role: UserRoles.EDITOR
+    }
+  },
+  {
     path: "/users",
     name: "Users",
     view: "Users",
