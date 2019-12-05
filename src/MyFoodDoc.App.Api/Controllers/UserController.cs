@@ -63,6 +63,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPayload payload, CancellationToken cancellationToken = default)
         {
+            await _service.ChangePassword(GetUserId(), payload.OldPassword, payload.NewPassword);
+
             return NoContent();
         }
     }
