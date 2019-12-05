@@ -235,7 +235,7 @@ namespace MyFoodDoc.App.Application.Services
             var user = await _userManager.FindByIdAsync(userId);
             if (!await _userManager.CheckPasswordAsync(user, oldPassword))
             {
-                throw new ArgumentException("Old password is wrong", oldPassword);
+                throw new BadRequestException("Old password is wrong");
             }
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, newPassword);
