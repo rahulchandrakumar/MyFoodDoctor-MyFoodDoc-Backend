@@ -219,9 +219,6 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("InsuranceId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
@@ -236,14 +233,11 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InsuranceId");
+                    b.HasIndex("Code");
 
                     b.HasIndex("PromotionId");
 
                     b.HasIndex("RedeemedBy");
-
-                    b.HasIndex("Code", "InsuranceId")
-                        .IsUnique();
 
                     b.ToTable("Coupons","Coupon");
                 });
@@ -759,7 +753,7 @@ namespace MyFoodDoc.Database.Migrations
                         {
                             Id = "3ee857ac-26ee-43d8-8f68-76f1ca7bfa9b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7ab0095d-dcdf-4c19-a79f-ea4e49386b86",
+                            ConcurrencyStamp = "534dbe5a-91ab-45c7-9b69-bf92f326a14f",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@appsfactory.de",
                             EmailConfirmed = true,
@@ -767,7 +761,7 @@ namespace MyFoodDoc.Database.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST@APPSFACTORY.DE",
                             NormalizedUserName = "TEST@APPSFACTORY.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAEAmM0h6jTE6UAJOwjVOFwxfiqtgbWCx6PVMoTGm5EajuNXWZRV9y8j8d+2EIoWZHog==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEJIF1Yr6Axt0dLLYZlQ1zPozREk5vss7QiCqImIyMSQa2rL+t+MpEr4M7uFVNbhKhA==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1088,12 +1082,6 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
-                        .WithMany()
-                        .HasForeignKey("InsuranceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("MyFoodDoc.Application.Entites.Promotion", "Promotion")
                         .WithMany("Coupons")
                         .HasForeignKey("PromotionId")

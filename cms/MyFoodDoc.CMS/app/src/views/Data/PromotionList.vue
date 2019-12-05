@@ -12,6 +12,9 @@
         readonly
       />
     </template>
+    <template v-slot:item.InsuranceId="{ item }">
+      {{ translateInsurance(item.InsuranceId) }}
+    </template>
     <template v-slot:item.Coupons="{ item }">
       {{ item.CouponCount }} ({{ item.CouponCount - item.UsedCouponCount }} / {{ item.UsedCouponCount }})
     </template>
@@ -146,7 +149,10 @@ export default {
       if (item.Id != null) {
         integration.files.downloadCoupons(item.Id);
       }
-    }
+    },
+    translateInsurance(value) {
+      return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
+    },
   }
 };
 </script>

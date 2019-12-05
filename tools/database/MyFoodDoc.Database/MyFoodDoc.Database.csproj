@@ -13,6 +13,8 @@
     <Compile Remove="Migrations\20191204120736_UniqueCouponCode.Designer.cs" />
     <Compile Remove="Migrations\20191204121759_UniqueCouponCode.cs" />
     <Compile Remove="Migrations\20191204121759_UniqueCouponCode.Designer.cs" />
+    <Compile Remove="Migrations\20191204131058_UniqueCouponCode.cs" />
+    <Compile Remove="Migrations\20191204131058_UniqueCouponCode.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />
