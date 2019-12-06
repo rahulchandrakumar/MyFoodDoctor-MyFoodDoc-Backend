@@ -32,7 +32,7 @@
       <v-row v-if="item.Url && item.Url.endsWith('html')">
         <v-switch
           v-model="preview"
-          label="Preview HTML"
+          label="HTML"
         />
       </v-row>
       <v-row>

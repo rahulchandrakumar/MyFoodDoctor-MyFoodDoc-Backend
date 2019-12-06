@@ -45,10 +45,23 @@
         />
       </v-row>
       <v-row>
+        <v-switch
+          v-model="preview"
+          label="HTML"
+        />
+      </v-row>
+      <v-row>
         <VeeRichTextArea
+          v-if="!preview"
           v-model="item.Text"
           :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
           rules="required|min:8|max:8192"
+        />
+        <VeeTextArea
+          v-else
+          v-model="item.Text"
+          :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
+          rules="required|min:1|max:8192"
         />
       </v-row>
     </template>
@@ -64,6 +77,7 @@ export default {
     ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
+    VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
     VeeImage: () => import("@/components/inputs/VeeImage")
   },
   data() {
@@ -86,7 +100,8 @@ export default {
         sortable: false,
         value: "Text",
         text: "Description"
-      }]
+      }],
+      preview: false
     }
   },
   methods: {
