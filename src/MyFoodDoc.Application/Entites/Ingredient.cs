@@ -5,5 +5,7 @@ namespace MyFoodDoc.Application.Entites
     public class Ingredient : AbstractAuditableEntity
     {
         public string Name { get; set; }
+
+        public string ExternalKey { get; set; }
     }
 }

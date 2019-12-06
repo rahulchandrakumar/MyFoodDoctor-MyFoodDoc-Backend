@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -6,6 +8,10 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
 using MyFoodDoc.Application.EnumEntities;
 using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -256,84 +262,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                 }
             );
 
-            builder.Entity<Ingredient>().HasData(
-                new Ingredient
-                {
-                    Id = 1,
-                    Name = "Thunfisch"
-                },
-                new Ingredient
-                {
-                    Id = 2,
-                    Name = "Schokolade"
-                },
-                new Ingredient
-                {
-                    Id = 3,
-                    Name = "Butter"
-                },
-                new Ingredient
-                {
-                    Id = 4,
-                    Name = "Kaffee"
-                },
-                new Ingredient
-                {
-                    Id = 5,
-                    Name = "Käse"
-                },
-                new Ingredient
-                {
-                    Id = 6,
-                    Name = "Milch"
-                },
-                new Ingredient
-                {
-                    Id = 7,
-                    Name = "Paprika"
-                },
-                new Ingredient
-                {
-                    Id = 8,
-                    Name = "Zwiebel"
-                },
-                new Ingredient
-                {
-                    Id = 9,
-                    Name = "Spinat"
-                },
-                new Ingredient
-                {
-                    Id = 10,
-                    Name = "Ei"
-                },
-                new Ingredient
-                {
-                    Id = 11,
-                    Name = "Vollkornbrot"
-                },
-                new Ingredient
-                {
-                    Id = 12,
-                    Name = "Rind"
-                },
-                new Ingredient
-                {
-                    Id = 13,
-                    Name = "Schwein"
-                },
-                new Ingredient
-                {
-                    Id = 14,
-                    Name = "Geflügel"
-                },
-                new Ingredient
-                {
-                    Id = 15,
-                    Name = "Banane"
-                }
-            );
-
             var hasher = new PasswordHasher<User>();
             builder.Entity<User>().HasData(
                 new User
@@ -349,6 +277,31 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     InsuranceId = 1
                 }
             );
+
+            var resourceName = "bls.csv";
+            using StreamReader reader = new StreamReader(resourceName, Encoding.UTF8);
+            using CsvReader csv = new CsvReader(reader);
+            
+            csv.Configuration.RegisterClassMap<IngredientsMap>();
+            csv.Configuration.BadDataFound = null;
+            csv.Configuration.Delimiter = ",";
+            var ingredients = csv.GetRecords<Ingredient>().Where(x => !x.ExternalKey.EndsWith("00000")).ToArray();
+
+            var id = 1;
+            foreach (var ingredient in ingredients)
+            {
+                ingredient.Id = id++;
+            }
+            builder.Entity<Ingredient>().HasData(ingredients);
+        }
+
+        class IngredientsMap : ClassMap<Ingredient>
+        {
+            public IngredientsMap()
+            {
+                Map(x => x.ExternalKey).Index(0);
+                Map(x => x.Name).Index(1);
+            }
         }
     }
 }
