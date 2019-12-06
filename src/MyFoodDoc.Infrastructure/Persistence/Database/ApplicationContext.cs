@@ -158,6 +158,24 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     Id = 1,
                     Key = "anti_aging",
                     Name = "Anti-Aging"
+                },
+                new Motivation
+                {
+                    Id = 2,
+                    Key = "healthier_lifestyle",
+                    Name = "Healthier lifestyle"
+                },
+                new Motivation
+                {
+                    Id = 3,
+                    Key = "reduce_weight",
+                    Name = "Reduce weight"
+                },
+                new Motivation
+                {
+                    Id = 4,
+                    Key = "feel_better",
+                    Name = "Feel better"
                 }
             );
 
