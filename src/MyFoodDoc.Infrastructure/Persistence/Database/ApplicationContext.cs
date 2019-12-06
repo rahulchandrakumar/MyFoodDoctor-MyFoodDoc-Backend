@@ -158,6 +158,54 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     Id = 1,
                     Key = "anti_aging",
                     Name = "Anti-Aging"
+                },
+                new Motivation
+                {
+                    Id = 2,
+                    Key = "healthier_lifestyle",
+                    Name = "Healthier lifestyle"
+                },
+                new Motivation
+                {
+                    Id = 3,
+                    Key = "reduce_weight",
+                    Name = "Reduce weight"
+                },
+                new Motivation
+                {
+                    Id = 4,
+                    Key = "feel_better",
+                    Name = "Feel better"
+                },
+                new Motivation
+                {
+                    Id = 5,
+                    Key = "hypertension",
+                    Name = "Hypertension"
+                },
+                new Motivation
+                {
+                    Id = 6,
+                    Key = "adipositas",
+                    Name = "Adipositas"
+                },
+                new Motivation
+                {
+                    Id = 7,
+                    Key = "gout",
+                    Name = "Gout"
+                },
+                new Motivation
+                {
+                    Id = 8,
+                    Key = "diaetes_type1",
+                    Name = "Diaetes (type 1)"
+                },
+                new Motivation
+                {
+                    Id = 9,
+                    Key = "diabetes_type2",
+                    Name = "Diabetes (type 2)"
                 }
             );
 
