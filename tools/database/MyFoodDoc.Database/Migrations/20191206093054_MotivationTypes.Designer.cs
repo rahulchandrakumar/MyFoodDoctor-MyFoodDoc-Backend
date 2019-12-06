@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20191206081031_MotivationTypes")]
+    [Migration("20191206093054_MotivationTypes")]
     partial class MotivationTypes
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -759,7 +759,7 @@ namespace MyFoodDoc.Database.Migrations
                         {
                             Id = "3ee857ac-26ee-43d8-8f68-76f1ca7bfa9b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ade61086-e171-4392-b89d-9d6522569e49",
+                            ConcurrencyStamp = "e0977a98-fbe2-4470-9ca6-f6daf8fd8cc6",
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "test@appsfactory.de",
                             EmailConfirmed = true,
@@ -767,7 +767,7 @@ namespace MyFoodDoc.Database.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "TEST@APPSFACTORY.DE",
                             NormalizedUserName = "TEST@APPSFACTORY.DE",
-                            PasswordHash = "AQAAAAEAACcQAAAAELCLVZ3QNwkr4EjlfJR4fXwPldAihXcn/+5zuxF4aimIi3HuE6OliWkz6hWlLVOj+Q==",
+                            PasswordHash = "AQAAAAEAACcQAAAAED6BmuyxLsuW2u9/jKJQSYt87/f5isLD7Pq+FtZlKRBoPUQm7RekebB5xv/RFx+J6Q==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -1053,41 +1053,6 @@ namespace MyFoodDoc.Database.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Key = "feel_better",
                             Name = "Feel better"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "hypertension",
-                            Name = "Hypertension"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "adipositas",
-                            Name = "Adipositas"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "gout",
-                            Name = "Gout"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "diaetes_type1",
-                            Name = "Diaetes (type 1)"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "diabetes_type2",
-                            Name = "Diabetes (type 2)"
                         });
                 });
 
