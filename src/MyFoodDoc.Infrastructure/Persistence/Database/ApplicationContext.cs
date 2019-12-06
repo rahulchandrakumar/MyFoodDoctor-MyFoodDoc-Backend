@@ -176,36 +176,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     Id = 4,
                     Key = "feel_better",
                     Name = "Feel better"
-                },
-                new Motivation
-                {
-                    Id = 5,
-                    Key = "hypertension",
-                    Name = "Hypertension"
-                },
-                new Motivation
-                {
-                    Id = 6,
-                    Key = "adipositas",
-                    Name = "Adipositas"
-                },
-                new Motivation
-                {
-                    Id = 7,
-                    Key = "gout",
-                    Name = "Gout"
-                },
-                new Motivation
-                {
-                    Id = 8,
-                    Key = "diaetes_type1",
-                    Name = "Diaetes (type 1)"
-                },
-                new Motivation
-                {
-                    Id = 9,
-                    Key = "diabetes_type2",
-                    Name = "Diabetes (type 2)"
                 }
             );
 
