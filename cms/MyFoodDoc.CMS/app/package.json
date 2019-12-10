@@ -13,6 +13,7 @@
     "@microsoft/signalr-protocol-msgpack": "^3.0.0",
     "base64-arraybuffer": "^0.2.0",
     "chartist": "^0.11.4",
+    "debounce": "^1.2.0",
     "dotnetify": "^3.6.1",
     "tiptap": "^1.26.4",
     "tiptap-vuetify": "^2.8.0",

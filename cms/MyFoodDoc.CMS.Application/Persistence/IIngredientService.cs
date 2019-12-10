@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IIngredientService : IServiceBaseRead<IngredientModel, int>, IServiceBaseWrite<IngredientModel, int>
+    public interface IIngredientService : IServiceBasePaginatedRead<IngredientModel, int>, IServiceBaseWrite<IngredientModel, int>
     {
     }
 }

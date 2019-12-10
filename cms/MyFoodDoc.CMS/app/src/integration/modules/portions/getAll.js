@@ -1,5 +1,5 @@
 import httpRequest from "@/integration/httpRequest";
 
-export default async function() {
-  return await httpRequest.get("/api/v1/portions");
+export default async function(args) {
+  return await httpRequest.get("/api/v1/portions", args);
 }

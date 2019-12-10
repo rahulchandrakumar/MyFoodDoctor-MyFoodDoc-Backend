@@ -1,6 +1,7 @@
 export default {
   setItems: (state, data) => {
-    state.items = data
+    state.items = data.values
+    state.total = data.total
     state.loaded = true
   },
   setItem: (state, data) => {
@@ -13,7 +14,9 @@ export default {
     state.loaded = true
   },
   deleteItem: (state, data) => {
-    state.items = state.items.filter((i) => i.id != data)
+    state.items = state.items.filter((i) => i.id != data.Id)
+    if (state.item)
+      state.ipems.push(item)
     state.loaded = true
   }
 };

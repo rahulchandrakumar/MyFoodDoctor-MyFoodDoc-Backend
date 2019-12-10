@@ -38,11 +38,9 @@
           <v-data-table
             :headers="mainHeaders"
             :items="tableItems"
-            :search="search"
-            sort-by="id"
-            item-key="id"
-            hide-default-footer
-            disable-pagination
+            :server-items-length="tableItemsCount"
+            :page.sync="page"
+            disable-sort
             filterable
             dense
             :show-expand="$scopedSlots['expanded-item'] != null"
@@ -133,6 +131,7 @@
 <script>
 import dotnetify from "dotnetify/vue";
 import ColabEdit from "./ColabEdit";
+import debounce from "debounce"
 
 const editTime = 300000;
 
@@ -200,6 +199,7 @@ export default {
 
     return {
       mainHeaders: mainHeaders,
+      page: 1,
       now: Date.now(),
       username: "",
       editTime: editTime,
@@ -214,6 +214,9 @@ export default {
   computed: {
     tableItems() {
       return this.$store.getters[this.storeName + "/items"]
+    },
+    tableItemsCount() {
+      return this.$store.getters[this.storeName + "/total"]
     },
     tableLoaded() {
       return this.$store.getters[this.storeName + "/loaded"]
@@ -232,6 +235,14 @@ export default {
     }
   },
   watch: {
+    async page(newVal) {
+      await this.$store.dispatch(this.storeName + "/loadItems", { page: newVal, search: this.search })
+    },
+    async search(newVal) {
+      if (this.debouncedSearch == null)
+        this.debouncedSearch = debounce(async (page, search) => { await this.$store.dispatch(this.storeName + "/loadItems", { page, search }) }, 350)
+      this.debouncedSearch(this.page, newVal)
+    },
     async addedItems(newVal) {
       while((newVal || []).length > 0) {
         await this.$store.dispatch(this.storeName + "/itemAdded", { Id: newVal.pop() })
@@ -260,7 +271,7 @@ export default {
     if (this.$scopedSlots["expanded-item"] != null)
       this.mainHeaders.push({ text: "", value: "data-table-expand" });
 
-    await this.$store.dispatch(this.storeName + "/loadItems")
+    await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search })
     await this.$store.dispatch('edit-state/init', { groupName: this.storeName })
   },
   async destroyed() {
@@ -324,11 +335,19 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
 .v-card--material__header .v-text-field__slot .v-label {
   color: unset !important;
 }
 .v-dialog .v-textarea {
   min-width: 65vw;
+}
+.v-data-table .v-data-footer {
+  .v-data-footer__select {
+    display: none;
+  }
+  .v-btn {
+    color:rgba(0,0,0,.54) !important;
+  }
 }
 </style>

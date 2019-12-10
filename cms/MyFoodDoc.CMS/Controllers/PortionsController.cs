@@ -28,9 +28,13 @@ namespace MyFoodDoc.CMS.Controllers
 
         // GET: api/v1/Portions
         [HttpGet]
-        public async Task<IEnumerable<Ingredient>> Get(CancellationToken cancellationToken = default)
+        public async Task<object> Get(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            return (await _ingredientService.GetItems(cancellationToken)).Take(100).Select(Ingredient.FromModel);
+            return new 
+            { 
+                values = (await _ingredientService.GetItems(take, skip, search, cancellationToken)).Select(Ingredient.FromModel),
+                total = await _ingredientService.GetItemsCount(search, cancellationToken)
+            };
         }
 
         // GET: api/v1/Portions/5

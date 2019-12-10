@@ -1,10 +1,13 @@
 import integration from "@/integration";
 
 export default {
-  loadItems: async ({ commit, state }) => {
+  loadItems: async ({ commit, state }, { page, search }) => {
     state.loaded = false
 
-    let response = await integration.portions.getAll();
+    state.skip = (page - 1) * state.take;
+    state.search = search;
+
+    let response = await integration.portions.getAll({ take: state.take, skip: state.skip, search: state.search });
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -21,6 +24,16 @@ export default {
     }
 
     return response.data;
+  },
+  loadOneMoreItem: async ({ state }) => {
+    state.loaded = false
+
+    let response = await integration.portions.getAll({ take: 1, skip: state.skip + state.take - 1, search: state.search });
+    if (response.status !== 200) {
+      throw new Error(`undefined error in backend (${response.status})`);
+    }
+
+    return response.data.values.length > 0 ? response.data.values[0] : null;
   },
   addItem: async ({ state }, { item }) => {
     state.loaded = false
@@ -52,15 +65,24 @@ export default {
 
     return state.items;
   },
-  itemAdded: async ({ commit, dispatch }, { Id }) => {
-    var item = await dispatch('loadItem', { id: Id })
-    commit("addItem", item)
+  itemAdded: async ({ state, commit, dispatch }, { Id }) => {
+    if (state.skip == 0) {
+      var item = await dispatch('loadItem', { id: Id })
+      commit("addItem", item)
+    }
+    state.total++
   },
-  itemUpdated: async ({ commit, dispatch }, { Id }) => {
-    var item = await dispatch('loadItem', { id: Id })
-    commit("setItem", item)
+  itemUpdated: async ({ state, commit, dispatch }, { Id }) => {
+    if (state.items.filter(i => i.id == Id).length > 0) {
+      var item = await dispatch('loadItem', { id: Id })
+      commit("setItem", item)
+    }
   },
-  itemDeleted: async ({ commit }, { Id }) => {
-    commit("deleteItem", Id)
+  itemDeleted: async ({ state, commit }, { Id }) => {
+    if (state.items.filter(i => i.id == Id).length > 0) {
+      var item = await dispatch('loadOneMoreItem')
+      commit("deleteItem", { Id, item })
+    }
+    state.total--
   },
 };

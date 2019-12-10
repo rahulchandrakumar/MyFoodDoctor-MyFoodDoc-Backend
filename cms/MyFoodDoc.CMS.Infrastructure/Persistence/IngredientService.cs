@@ -45,9 +45,14 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return IngredientModel.FromEntity(await _context.Ingredients.FindAsync(new object[] { id }, cancellationToken));
         }
 
-        public async Task<IList<IngredientModel>> GetItems(CancellationToken cancellationToken = default)
+        public async Task<IList<IngredientModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            return (await _context.Ingredients.ToListAsync(cancellationToken)).Select(IngredientModel.FromEntity).ToList();
+            return (await _context.Ingredients.Skip(skip).Take(take).ToListAsync(cancellationToken)).Select(IngredientModel.FromEntity).ToList();
+        }
+
+        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        {
+            return await _context.Ingredients.CountAsync(cancellationToken);
         }
 
         public async Task<IngredientModel> UpdateItem(IngredientModel item, CancellationToken cancellationToken = default)
