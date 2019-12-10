@@ -7,22 +7,20 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels.Base
 {
-    public abstract class BaseListViewModel<T1, T2> : MulticastVM where T1: ColabDataTableBaseModel<T2> where T2: IEquatable<T2>
+    public abstract class BaseStateViewModel<T1, T2> : MulticastVM where T1: ColabDataTableBaseModel<T2> where T2: IEquatable<T2>
     {
         public string Items_itemKey => "Id";
-        public IList<T1> Items = new List<T1>();
+        public IList<T1> State = new List<T1>();
         public bool IsLoaded = false;
-        public bool HasError = false;
-        public string ErrorMessage = null;
 
         private readonly object loadLock = new object();
 
         protected abstract Func<Task<IList<T1>>> GetData { get; }
 
-        private readonly IConnectionContext _connectionContext;
-        private readonly List<string> _connectionIds = new List<string>();
+        internal readonly IConnectionContext _connectionContext;
+        internal readonly List<string> _connectionIds = new List<string>();
 
-        public BaseListViewModel(IConnectionContext connectionContext)
+        public BaseStateViewModel(IConnectionContext connectionContext)
         {
             this._connectionContext = connectionContext;
         }
@@ -48,7 +46,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
             }
             catch (Exception ex)
             {
-                SendError(ex);
+                Error(ex);
             }
         };
 
@@ -56,24 +54,24 @@ namespace MyFoodDoc.CMS.ViewModels.Base
         {
             try
             {
-                var edited = this.Items.FirstOrDefault(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id));
+                var edited = this.State.FirstOrDefault(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id));
                 if (edited == null)
                 {
                     edited = (T1)Activator.CreateInstance(typeof(T1));
-                    this.Items.Add(edited);
-                    this.AddList(nameof(Items), edited);
+                    this.State.Add(edited);
+                    this.AddList(nameof(State), edited);
                 }
 
                 edited.Id = item.Id;
                 edited.Editor = item.Editor;
                 edited.LockDate = item.LockDate;
 
-                this.UpdateList(nameof(Items), edited);
+                this.UpdateList(nameof(State), edited);
                 this.PushUpdates();
             }
             catch (Exception ex)
             {
-                SendError(ex);
+                Error(ex);
             }
         };
 
@@ -81,53 +79,68 @@ namespace MyFoodDoc.CMS.ViewModels.Base
         {
             try
             {
-                var edited = this.Items.First(x => EqualityComparer<T2>.Default.Equals(x.Id, id));
+                var edited = this.State.First(x => EqualityComparer<T2>.Default.Equals(x.Id, id));
                 edited.Editor = null;
                 edited.LockDate = null;
 
-                this.UpdateList(nameof(Items), edited);
+                this.UpdateList(nameof(State), edited);
                 this.PushUpdates();
             }
             catch (Exception ex)
             {
-                SendError(ex);
+                Error(ex);
             }
         };
 
         public void SetList(IList<T1> list)
         {
-            this.Items = list;
-            this.Set(list, nameof(Items));
+            this.State = list;
+            this.Set(list, nameof(State));
 
             this.PushUpdates();
         }
 
         public void AddList(T1 item)
         {
-            this.Items.Add(item);
-            this.AddList(nameof(Items), item);
+            this.State.Add(item);
+            this.AddList(nameof(State), item);
 
             this.PushUpdates();
         }
 
         public void UpdateList(T1 item)
         {
-            this.Items.Remove(this.Items.First(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id)));
-            this.Items.Add(item);
+            this.State.Remove(this.State.First(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id)));
+            this.State.Add(item);
 
-            this.UpdateList(nameof(Items), item);
+            this.UpdateList(nameof(State), item);
             this.PushUpdates();
         }
 
         public void RemoveList(T2 Id)
         {
-            this.Items.Remove(this.Items.First(x => EqualityComparer<T2>.Default.Equals(x.Id, Id)));
+            this.State.Remove(this.State.First(x => EqualityComparer<T2>.Default.Equals(x.Id, Id)));
 
-            this.RemoveList(nameof(Items), Id);
+            this.RemoveList(nameof(State), Id);
             this.PushUpdates();
         }
 
-        internal void SendError(Exception ex)
+        public Action<ColabDataTableBaseModel<int>> Add => (item) =>
+        {
+            base.Send(_connectionIds, "Added", new { Id = item.Id });
+        };
+
+        public Action<ColabDataTableBaseModel<int>> Update => (item) =>
+        {
+            base.Send(_connectionIds, "Updated", new { Id = item.Id });
+        };
+
+        public Action<int> Remove => (id) =>
+        {
+            base.Send(_connectionIds, "Deleted", new { Id = id });
+        };
+
+        internal void Error(Exception ex)
         {
             var message = ex.Message;
 

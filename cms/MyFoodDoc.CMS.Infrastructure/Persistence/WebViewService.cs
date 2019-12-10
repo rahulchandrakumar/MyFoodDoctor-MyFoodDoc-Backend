@@ -39,7 +39,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<IList<WebViewModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            return (await _context.WebPages.ToListAsync()).Select(WebViewModel.FromEntity).ToList();
+            return (await _context.WebPages.ToListAsync(cancellationToken)).Select(WebViewModel.FromEntity).ToList();
         }
 
         public async Task<WebViewModel> UpdateItem(WebViewModel item, CancellationToken cancellationToken = default)

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@aspnet/signalr-protocol-msgpack": "^1.1.0",
+    "@microsoft/signalr": "^3.1.0",
     "@microsoft/signalr-protocol-msgpack": "^3.0.0",
     "base64-arraybuffer": "^0.2.0",
     "chartist": "^0.11.4",

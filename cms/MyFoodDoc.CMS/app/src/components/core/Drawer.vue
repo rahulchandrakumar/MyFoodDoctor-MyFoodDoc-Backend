@@ -138,8 +138,8 @@ export default {
         text: "Data",
         children: [
           {
-            to: "/table-list",
-            text: "Table List"
+            to: "/portion-list",
+            text: "Portions"
           },
           {
             to: "/patient-list",

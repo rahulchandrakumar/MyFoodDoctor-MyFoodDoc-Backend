@@ -25,7 +25,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<IList<InsuranceModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            return (await _context.Insurances.ToListAsync()).Select(InsuranceModel.FromEntity).ToList();
+            return (await _context.Insurances.ToListAsync(cancellationToken)).Select(InsuranceModel.FromEntity).ToList();
         }
     }
 }

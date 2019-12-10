@@ -1,34 +1,35 @@
 ﻿using DotNetify;
+using DotNetify.Security;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.ViewModels.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.ViewModels
 {
-    public class PromotionsViewModel : BaseEditableListViewModel<Promotion, int>
+    /*[Authorize("Editor")]
+    public class PortionsViewModel : BaseEditableListViewModel<Ingredient, int>
     {
-        private IPromotionService _service;
-
-        public PromotionsViewModel(IPromotionService promotionService, IConnectionContext connectionContext): base(connectionContext)
+        private IIngredientService _service;
+        public PortionsViewModel(IIngredientService ingredientService, IConnectionContext connectionContext) : base(connectionContext)
         {
-            this._service = promotionService;
+            this._service = ingredientService;
         }
 
-
-        protected override Func<Task<IList<Promotion>>> GetData => async () =>
+        protected override Func<Task<IList<Ingredient>>> GetData => async () =>
         {
-            return (await _service.GetItems()).Select(Promotion.FromModel).ToList();
+            return (await _service.GetItems()).Select(Ingredient.FromModel).ToList();
         };
 
-        public override Action<Promotion> Add => async (Promotion item) =>
+        public override Action<Ingredient> Add => async (Ingredient item) =>
         {
             try
             {
-                var itemMod = Promotion.FromModel(await _service.AddItem(item.ToModel()));
+                var itemMod = Ingredient.FromModel(await _service.AddItem(item.ToModel()));
 
                 this.AddList(itemMod);
             }
@@ -37,11 +38,11 @@ namespace MyFoodDoc.CMS.ViewModels
                 SendError(ex);
             }
         };
-        public override Action<Promotion> Update => async (Promotion item) =>
+        public override Action<Ingredient> Update => async (Ingredient item) =>
         {
             try
             {
-                var itemMod = Promotion.FromModel(await _service.UpdateItem(item.ToModel()));
+                var itemMod = Ingredient.FromModel(await _service.UpdateItem(item.ToModel()));
                 if (itemMod != null)
                 {
                     this.UpdateList(itemMod);
@@ -66,5 +67,5 @@ namespace MyFoodDoc.CMS.ViewModels
                 SendError(ex);
             }
         };
-    }
+    }*/
 }
