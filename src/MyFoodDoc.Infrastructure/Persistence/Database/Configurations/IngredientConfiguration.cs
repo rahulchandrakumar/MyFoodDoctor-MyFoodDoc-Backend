@@ -10,7 +10,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
         {
             builder.ToTable("Ingredients", "Food");
             builder.HasKey(o => o.Id);
-            builder.HasIndex(o => o.ExternalKey);
+            builder.HasIndex(o => new { o.ExternalKey, o.Name });
             builder.HasIndex(o => o.Amount);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(o => o.Name).IsRequired().HasMaxLength(100);
