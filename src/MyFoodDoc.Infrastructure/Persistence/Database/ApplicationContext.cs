@@ -279,20 +279,23 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
             );
 
             var resourceName = "bls.csv";
-            using StreamReader reader = new StreamReader(resourceName, Encoding.UTF8);
-            using CsvReader csv = new CsvReader(reader);
-            
-            csv.Configuration.RegisterClassMap<IngredientsMap>();
-            csv.Configuration.BadDataFound = null;
-            csv.Configuration.Delimiter = ",";
-            var ingredients = csv.GetRecords<Ingredient>().Where(x => !x.ExternalKey.EndsWith("00000")).ToArray();
-
-            var id = 1;
-            foreach (var ingredient in ingredients)
+            if (File.Exists(resourceName))
             {
-                ingredient.Id = id++;
+                using StreamReader reader = new StreamReader(resourceName, Encoding.UTF8);
+                using CsvReader csv = new CsvReader(reader);
+
+                csv.Configuration.RegisterClassMap<IngredientsMap>();
+                csv.Configuration.BadDataFound = null;
+                csv.Configuration.Delimiter = ",";
+                var ingredients = csv.GetRecords<Ingredient>().Where(x => !x.ExternalKey.EndsWith("00000")).ToArray();
+
+                var id = 1;
+                foreach (var ingredient in ingredients)
+                {
+                    ingredient.Id = id++;
+                }
+                builder.Entity<Ingredient>().HasData(ingredients);
             }
-            builder.Entity<Ingredient>().HasData(ingredients);
         }
 
         class IngredientsMap : ClassMap<Ingredient>

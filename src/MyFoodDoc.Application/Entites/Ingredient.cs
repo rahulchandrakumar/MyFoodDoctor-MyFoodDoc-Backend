@@ -7,5 +7,7 @@ namespace MyFoodDoc.Application.Entites
         public string Name { get; set; }
 
         public string ExternalKey { get; set; }
+
+        public int? Amount { get; set; }
     }
 }
