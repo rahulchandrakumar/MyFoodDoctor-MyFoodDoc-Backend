@@ -31,12 +31,10 @@ namespace MyFoodDoc.Application.Entites
 
         public ICollection<UserDiet> Diets { get; set; }
 
-        public ICollection<UserWeight> WeightHistory { get; set; } = new List<UserWeight>();
+        public ICollection<UserWeight> WeightHistory { get; set; }
 
-        public ICollection<UserAbdonimalGirth> AbdonimalGirthHistory { get; set; } = new List<UserAbdonimalGirth>();
+        public ICollection<UserAbdominalGirth> AbdominalGirthHistory { get; set; }
 
-        public ICollection<UserBloodSugarLevel> BloodSugarLevelHistory { get; set; } = new List<UserBloodSugarLevel>();
-
-
+        public ICollection<UserBloodSugarLevel> BloodSugarLevelHistory { get; set; }
     }
 }

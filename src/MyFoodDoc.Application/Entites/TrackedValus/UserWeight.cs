@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MyFoodDoc.Application.Entites.TrackedValus
 {
-    public class UserWeight : AbstractTrackedValue<int>
+    public class UserWeight : AbstractTrackedValue<decimal>
     {
         public string UserId { get; set; }
     }

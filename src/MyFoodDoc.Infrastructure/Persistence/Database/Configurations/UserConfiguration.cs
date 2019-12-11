@@ -18,22 +18,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasMany(x => x.Motivations).WithOne(x => x.User).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.Diets).WithOne(x => x.User).OnDelete(DeleteBehavior.Cascade);
 
-            builder.OwnsMany(e => e.WeightHistory, builder =>
-            {
-                builder.ToTable("WeightHistory", "User");
-                builder.WithOwner().HasForeignKey(x => x.UserId);
-                builder.HasKey(x => new { x.UserId, x.Date });
-                builder.Property(x => x.Date).HasColumnType("Date");
-                builder.Property(x => x.Value).IsRequired();
-            });
-            builder.OwnsMany(e => e.AbdonimalGirthHistory, builder =>
-            {
-                builder.ToTable("AbdonimalGirthHistory", "User");
-                builder.WithOwner().HasForeignKey(x => x.UserId);
-                builder.HasKey(x => new { x.UserId, x.Date });
-                builder.Property(x => x.Date).HasColumnType("Date");
-                builder.Property(x => x.Value).IsRequired();
-            });
             builder.OwnsMany(e => e.BloodSugarLevelHistory, builder =>
             {
                 builder.ToTable("BloodSugarLevelHistory", "User");
@@ -42,6 +26,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
                 builder.Property(x => x.Date).HasColumnType("Date");
                 builder.Property(x => x.Value).IsRequired();
             });
+
+            builder.HasMany(e => e.WeightHistory).WithOne().HasForeignKey(x => x.UserId);
+            builder.HasMany(e => e.AbdominalGirthHistory).WithOne().HasForeignKey(x => x.UserId);
         }
     }
 }

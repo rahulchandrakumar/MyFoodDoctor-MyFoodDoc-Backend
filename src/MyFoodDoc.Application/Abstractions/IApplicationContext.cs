@@ -35,7 +35,8 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<UserDiet> UserDiets { get; set; }
         DbSet<WebPage> WebPages { get; set; }
         DbSet<Promotion> Promotions { get; set; }
-        //DbSet<UserWeight> UserWeights { get; set; }
+        DbSet<UserWeight> UserWeights { get; set; }
+        DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
 
         int SaveChanges();
 
