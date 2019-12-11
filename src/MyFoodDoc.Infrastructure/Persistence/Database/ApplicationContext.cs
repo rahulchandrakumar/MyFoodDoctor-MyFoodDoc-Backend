@@ -103,6 +103,11 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                 builder.Entity<Insurance>().HasData(
                     new Insurance
                     {
+                        Id = -1,
+                        Name = "Other"
+                    },
+                    new Insurance
+                    {
                         Id = 1,
                         Name = "Aok"
                     },
