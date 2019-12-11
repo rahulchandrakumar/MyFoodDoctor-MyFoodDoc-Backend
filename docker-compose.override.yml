@@ -11,11 +11,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "8080:80"
-  myfooddoc.application.cms.api:
+  myfooddoc.application.cms:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "8001:80"
-  myfooddoc.application.cms.web:
-    ports:
-      - "8002:80"

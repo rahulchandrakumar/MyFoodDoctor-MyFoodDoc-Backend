@@ -31,11 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.App.Infrastructur
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cms", "cms", "{36B98B16-7C06-4DD7-8F1A-CB6C00C9F2FA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.CMS", "cms\MyFoodDoc.CMS\MyFoodDoc.CMS.csproj", "{8441B39D-B7EF-4A92-8598-025CED5CAC28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.CMS", "src\MyFoodDoc.CMS\MyFoodDoc.CMS.csproj", "{8441B39D-B7EF-4A92-8598-025CED5CAC28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Application", "cms\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj", "{F0B01733-417C-4753-B4F6-939E40EB490A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Application", "src\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj", "{F0B01733-417C-4753-B4F6-939E40EB490A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Infrastructure", "cms\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj", "{FBFFE256-3D84-4792-B018-7E008C93B97B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Infrastructure", "src\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj", "{FBFFE256-3D84-4792-B018-7E008C93B97B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.Database", "tools\database\MyFoodDoc.Database\MyFoodDoc.Database.csproj", "{EB9F5AA7-A171-4D43-9F45-BED550340B9B}"
 EndProject
