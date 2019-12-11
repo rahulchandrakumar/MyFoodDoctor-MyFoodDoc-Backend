@@ -21,6 +21,8 @@
     <Compile Remove="Migrations\20191205112503_UniqueCouponCodeUpd.Designer.cs" />
     <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.cs" />
     <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.Designer.cs" />
+    <Compile Remove="Migrations\20191206081031_MotivationTypes.cs" />
+    <Compile Remove="Migrations\20191206081031_MotivationTypes.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />

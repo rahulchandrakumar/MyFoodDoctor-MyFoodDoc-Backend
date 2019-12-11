@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs"
 import Store from "@/store";
 
 const contentTypes = {
@@ -54,7 +55,7 @@ class HttpRequest {
   }
 
   async get(path, data = null) {
-    return await axiosInstance.get(path, { headers: this.getHeaders(), params: data });
+    return await axiosInstance.get(path + (data == null ? '' : `?${qs.stringify(data, { allowDots: true })}`), { headers: this.getHeaders() });
   }
 
   async download(path, data = null, type = 'arraybuffer') {

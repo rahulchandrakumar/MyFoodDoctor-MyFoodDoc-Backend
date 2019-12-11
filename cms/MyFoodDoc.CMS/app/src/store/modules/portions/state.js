@@ -1,0 +1,9 @@
+export default {
+  items: [],
+  loaded: false,
+  search: null,
+  take: 10,
+  skip: 0,
+  total: 0,
+  filter: { state: "0" }
+};

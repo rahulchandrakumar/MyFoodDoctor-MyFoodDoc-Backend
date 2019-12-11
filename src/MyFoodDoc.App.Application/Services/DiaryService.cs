@@ -18,7 +18,7 @@ namespace MyFoodDoc.App.Application.Services
 {
     public class DiaryService : IDiaryService
     {
-        private static readonly DiaryEntryDtoLiquid _liquidDefault = new DiaryEntryDtoLiquid { Amount = 0 };
+        private static readonly DiaryEntryDtoLiquid _liquidDefault = new DiaryEntryDtoLiquid { Amount = 0, PredefinedAmount = 0 };
         private static readonly DiaryEntryDtoExercise _exerciseDefault = new DiaryEntryDtoExercise { Duration = 0 };
 
         private readonly IApplicationContext _context;

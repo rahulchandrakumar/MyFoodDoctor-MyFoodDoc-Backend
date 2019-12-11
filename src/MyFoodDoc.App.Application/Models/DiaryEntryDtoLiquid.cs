@@ -9,6 +9,8 @@ namespace MyFoodDoc.App.Application.Models
     {
         public int Amount { get; set; } = 0;
 
+        public int PredefinedAmount { get; set; } = 0;
+
         public TimeSpan? LastAdded { get; set; }
 
         public void Mapping(Profile profile) => profile.CreateMap(typeof(Liquid), GetType());

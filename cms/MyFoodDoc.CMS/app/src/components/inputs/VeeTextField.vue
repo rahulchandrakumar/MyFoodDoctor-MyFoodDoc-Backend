@@ -26,6 +26,10 @@ export default {
     value: {
       type: null,
       default: null
+    },
+    number: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -35,7 +39,7 @@ export default {
   },
   watch: {
     innerValue(newVal) {
-      this.$emit("input", newVal);
+      this.$emit("input", (newVal == null || newVal == '') ? null : this.number ? Number.parseInt(newVal) : newVal);
     },
     value(newVal) {
       this.innerValue = newVal;

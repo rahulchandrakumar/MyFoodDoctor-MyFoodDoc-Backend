@@ -8,7 +8,11 @@ namespace MyFoodDoc.Database
     {
         protected override ApplicationContext CreateNewInstance(DbContextOptions<ApplicationContext> options)
         {
-            return new ApplicationContext(options);
+            var context = new ApplicationContext(options);
+
+            context.WithSeeding = true;
+
+            return context;
         }
     }
 }

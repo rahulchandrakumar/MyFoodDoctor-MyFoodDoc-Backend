@@ -11,13 +11,11 @@ namespace MyFoodDoc.CMS.ViewModels
 {
     public class PromotionsViewModel : BaseEditableListViewModel<Promotion, int>
     {
-        private IInsuranceService _insuranceService;
         private IPromotionService _service;
 
-        public PromotionsViewModel(IPromotionService promotionService, IInsuranceService insuranceService, IConnectionContext connectionContext): base(connectionContext)
+        public PromotionsViewModel(IPromotionService promotionService, IConnectionContext connectionContext): base(connectionContext)
         {
             this._service = promotionService;
-            this._insuranceService = insuranceService;
         }
 
 

@@ -11,6 +11,7 @@ using MyFoodDoc.CMS.Application.DependencyInjection;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
+using MyFoodDoc.CMS.Hubs;
 using MyFoodDoc.CMS.Infrastructure;
 using MyFoodDoc.CMS.Infrastructure.Persistence;
 using MyFoodDoc.Infrastructure;
@@ -51,6 +52,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IPromotionService, PromotionService>();
             services.AddTransient<IInsuranceService, InsuranceService>();
             services.AddTransient<IFileService, FileService>();
+            services.AddTransient<IIngredientService, IngredientService>();
             services.AddApplicationDI();
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
@@ -121,6 +123,7 @@ namespace MyFoodDoc.CMS
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<DotNetifyHub>("/dotnetify");
+                endpoints.MapHub<EditStateHub>("/edit-states");
             });
             app.UseDotNetify(config => {
                 config.UseFilter<AuthorizeFilter>();

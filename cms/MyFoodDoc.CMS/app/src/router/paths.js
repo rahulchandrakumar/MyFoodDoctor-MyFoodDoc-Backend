@@ -26,9 +26,9 @@ export default [
     }
   },
   {
-    path: "/table-list",
-    name: "Table List",
-    view: "Data/TableList",
+    path: "/portion-list",
+    name: "Portions",
+    view: "Data/PortionList",
     meta: {
       role: UserRoles.EDITOR
     }
