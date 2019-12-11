@@ -1,8 +1,8 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 COPY ["src/MyFoodDoc.App.Auth/MyFoodDoc.App.Auth.csproj", "src/MyFoodDoc.App.Auth/"]
 COPY ["src/MyFoodDoc.App.Application/MyFoodDoc.App.Application.csproj", "src/MyFoodDoc.App.Application/"]

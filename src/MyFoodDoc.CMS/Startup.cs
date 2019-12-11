@@ -35,6 +35,14 @@ namespace MyFoodDoc.CMS
 
         public void ConfigureServices(IServiceCollection services)
         {
+            #region SPA
+            services.AddSpaStaticFiles(configuration =>
+            {
+                // In production, the Vue.js files will be served from this directory
+                configuration.RootPath = "app/dist";
+            });
+            #endregion
+
             #region ASP
             services.AddMvc(o => o.EnableEndpointRouting = false);
             #endregion
@@ -103,12 +111,16 @@ namespace MyFoodDoc.CMS
             #endregion
 
             #region CORS
-            app.UseCors(builder =>
-                builder.WithOrigins(Configuration["Cors"])
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials()
-            );
+            var cors = Configuration["Cors"];
+            if (!string.IsNullOrWhiteSpace(cors))
+            {
+                app.UseCors(builder =>
+                    builder.WithOrigins(cors)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials()
+                );
+            }
             #endregion
 
             #region ASP
@@ -125,20 +137,26 @@ namespace MyFoodDoc.CMS
                 endpoints.MapHub<DotNetifyHub>("/dotnetify");
                 endpoints.MapHub<EditStateHub>("/edit-states");
             });
-            app.UseDotNetify(config => {
+            app.UseDotNetify(config =>
+            {
                 config.UseFilter<AuthorizeFilter>();
                 config.UseJwtBearerAuthentication(_tokenValidationParameters);
             });
             #endregion
 
-            #region SPA-debug
-            if (env.EnvironmentName == "VisualStudio")
+            #region SPA
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
+            app.UseSpa(spa =>
             {
-                app.UseSpa(spa =>
+                spa.Options.SourcePath = "app";
+
+                if (env.EnvironmentName == "VisualStudio")
                 {
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:8081");
-                });
-            }
+                }
+            });
             #endregion
         }
     }

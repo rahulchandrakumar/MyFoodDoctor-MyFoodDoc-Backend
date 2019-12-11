@@ -1,5 +1,5 @@
 $tag                 = "latest"
-$image               = "myfooddoc-mock-cms-app"
+$image               = "myfooddoc-mock-cms"
 
 $registryName        = "myfooddocmockcmsregistry"
 $registryServer      = "$registryName.azurecr.io"
@@ -9,5 +9,5 @@ $tag = $registryServer + "/" + $image + ":" + $tag
 
 docker login $registryServer -u $registryName -p $registryPw
 
-docker build --tag "$tag" -f ../cms/MyFoodDoc.CMS/app/Dockerfile ../cms/MyFoodDoc.CMS/app
+docker build --tag "$tag" -f ../src/MyFoodDoc.CMS/Dockerfile ../
 docker push $tag
