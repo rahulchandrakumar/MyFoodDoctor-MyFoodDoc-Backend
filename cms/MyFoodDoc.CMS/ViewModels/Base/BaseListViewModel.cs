@@ -20,6 +20,7 @@ namespace MyFoodDoc.CMS.ViewModels.Base
         protected abstract Func<Task<IList<T1>>> GetData { get; }
 
         private readonly IConnectionContext _connectionContext;
+        private readonly List<string> _connectionIds = new List<string>();
 
         public BaseListViewModel(IConnectionContext connectionContext)
         {
@@ -30,6 +31,8 @@ namespace MyFoodDoc.CMS.ViewModels.Base
         {
             try
             {
+                this._connectionIds.Add(_connectionContext.ConnectionId);
+
                 if (!IsLoaded)
                 {
                     var data = await GetData();
@@ -53,7 +56,15 @@ namespace MyFoodDoc.CMS.ViewModels.Base
         {
             try
             {
-                var edited = this.Items.First(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id));
+                var edited = this.Items.FirstOrDefault(x => EqualityComparer<T2>.Default.Equals(x.Id, item.Id));
+                if (edited == null)
+                {
+                    edited = (T1)Activator.CreateInstance(typeof(T1));
+                    this.Items.Add(edited);
+                    this.AddList(nameof(Items), edited);
+                }
+
+                edited.Id = item.Id;
                 edited.Editor = item.Editor;
                 edited.LockDate = item.LockDate;
 
