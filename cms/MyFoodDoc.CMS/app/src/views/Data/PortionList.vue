@@ -17,10 +17,16 @@
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
+          v-model="item.blsId"
+          :label="mainHeaders.filter(h => h.value == 'blsId')[0].text"
+          readonly
+        />
+      </v-row>
+      <v-row>
+        <VeeTextField
           v-model="item.name"
           :label="mainHeaders.filter(h => h.value == 'name')[0].text"
-          rules="required|max:35"
-          :counter="35"
+          readonly
         />
       </v-row>
       <v-row>
