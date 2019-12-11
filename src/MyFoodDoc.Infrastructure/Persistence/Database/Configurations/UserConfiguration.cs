@@ -18,17 +18,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasMany(x => x.Motivations).WithOne(x => x.User).OnDelete(DeleteBehavior.Cascade);
             builder.HasMany(x => x.Diets).WithOne(x => x.User).OnDelete(DeleteBehavior.Cascade);
 
-            builder.OwnsMany(e => e.BloodSugarLevelHistory, builder =>
-            {
-                builder.ToTable("BloodSugarLevelHistory", "User");
-                builder.WithOwner().HasForeignKey(x => x.UserId);
-                builder.HasKey(x => new { x.UserId, x.Date });
-                builder.Property(x => x.Date).HasColumnType("Date");
-                builder.Property(x => x.Value).IsRequired();
-            });
-
-            builder.HasMany(e => e.WeightHistory).WithOne().HasForeignKey(x => x.UserId);
-            builder.HasMany(e => e.AbdominalGirthHistory).WithOne().HasForeignKey(x => x.UserId);
+            builder.HasMany(e => e.WeightHistory).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+            builder.HasMany(e => e.AbdominalGirthHistory).WithOne(x => x.User).HasForeignKey(x => x.UserId);
         }
     }
 }

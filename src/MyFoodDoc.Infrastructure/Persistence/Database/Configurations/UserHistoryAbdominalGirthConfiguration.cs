@@ -5,15 +5,17 @@ using MyFoodDoc.Application.Entites.TrackedValus;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
-    public class UserHistoryAbdominalGirthConfiguration : IEntityTypeConfiguration<UserWeight>
+    public class UserHistoryAbdominalGirthConfiguration : IEntityTypeConfiguration<UserAbdominalGirth>
     {
-        public void Configure(EntityTypeBuilder<UserWeight> builder)
+        public void Configure(EntityTypeBuilder<UserAbdominalGirth> builder)
         {
             builder.ToTable("AbdonimalGirthHistory", "User");
             
             builder.HasKey(x => new { x.UserId, x.Date });
             builder.Property(x => x.Date).HasColumnType("Date");
             builder.Property(x => x.Value).IsRequired();
+
+            builder.HasOne(x => x.User).WithMany(e => e.AbdominalGirthHistory);
         }
     }
 }
