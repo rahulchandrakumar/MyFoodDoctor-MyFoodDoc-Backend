@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.CMS.Application.FilterModels;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using System.Collections.Generic;
@@ -46,7 +47,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return IngredientModel.FromEntity(await _context.Ingredients.FindAsync(new object[] { id }, cancellationToken));
         }
 
-        public async Task<IList<IngredientModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        private IQueryable<Ingredient> GetBaseQuery(string search, IngredientFilter filter)
         {
             IQueryable<Ingredient> baseQuery = _context.Ingredients;
             if (!string.IsNullOrWhiteSpace(search))
@@ -54,18 +55,32 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 var searchstring = $"%{search}%";
                 baseQuery = baseQuery.Where(f => EF.Functions.Like(f.ExternalKey, searchstring) || EF.Functions.Like(f.Name, searchstring));
             }
-            return (await baseQuery.Skip(skip).Take(take).ToListAsync(cancellationToken)).Select(IngredientModel.FromEntity).ToList();
+            if (filter != null)
+            {
+                switch (filter.State)
+                {
+                    case IngredientFilterState.HaveToSpecify:
+                        baseQuery = baseQuery.Where(x => x.Amount == null && x.Meals.Count != 0);
+                        break;
+                    case IngredientFilterState.Specified:
+                        baseQuery = baseQuery.Where(x => x.Amount != null);
+                        break;
+                    case IngredientFilterState.NotSpecified:
+                        baseQuery = baseQuery.Where(x => x.Amount == null && x.Meals.Count == 0);
+                        break;
+                }
+            }
+            return baseQuery;
         }
 
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        public async Task<IList<IngredientModel>> GetItems(int take, int skip, string search, IngredientFilter filter, CancellationToken cancellationToken = default)
         {
-            IQueryable<Ingredient> baseQuery = _context.Ingredients;
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var searchstring = $"%{search}%";
-                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.ExternalKey, searchstring) || EF.Functions.Like(f.Name, searchstring));
-            }
-            return await baseQuery.CountAsync(cancellationToken);
+            return (await GetBaseQuery(search, filter).Skip(skip).Take(take).ToListAsync(cancellationToken)).Select(IngredientModel.FromEntity).ToList();
+        }
+
+        public async Task<long> GetItemsCount(string search, IngredientFilter filter, CancellationToken cancellationToken = default)
+        {
+            return await GetBaseQuery(search, filter).CountAsync(cancellationToken);
         }
 
         public async Task<IngredientModel> UpdateItem(IngredientModel item, CancellationToken cancellationToken = default)

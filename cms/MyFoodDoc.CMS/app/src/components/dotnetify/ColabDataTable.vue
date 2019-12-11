@@ -17,7 +17,7 @@
             </v-col>
             <v-col cols="1">
               <ColabEdit
-                v-if="couldAdd || !readonly"
+                v-if="couldAdd && !readonly"
                 :dialog.sync="dialog"
                 :item="editItem"
                 :title-suffix="editorTitleSuffix"

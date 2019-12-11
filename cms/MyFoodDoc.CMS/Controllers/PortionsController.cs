@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Hubs;
 using MyFoodDoc.CMS.Models.VM;
+using MyFoodDoc.CMS.Payloads;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -28,12 +29,12 @@ namespace MyFoodDoc.CMS.Controllers
 
         // GET: api/v1/Portions
         [HttpGet]
-        public async Task<object> Get(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<object> Get([FromQuery] PortionsGetPayload payload, CancellationToken cancellationToken = default)
         {
             return new 
             { 
-                values = (await _ingredientService.GetItems(take, skip, search, cancellationToken)).Select(Ingredient.FromModel),
-                total = await _ingredientService.GetItemsCount(search, cancellationToken)
+                values = (await _ingredientService.GetItems(payload.Take, payload.Skip, payload.Search, payload.Filter.ToModel(), cancellationToken)).Select(Ingredient.FromModel),
+                total = await _ingredientService.GetItemsCount(payload.Search, payload.Filter.ToModel(), cancellationToken)
             };
         }
 

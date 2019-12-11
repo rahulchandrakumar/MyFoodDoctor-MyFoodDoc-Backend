@@ -7,5 +7,8 @@ export default {
   },
   loaded(state) {
     return state.loaded
+  },
+  filter(state) {
+    return state.filter
   }
 }

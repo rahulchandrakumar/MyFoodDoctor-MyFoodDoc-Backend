@@ -19,7 +19,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.Ingredient)
-                .WithMany()
+                .WithMany(x => x.Meals)
                 .HasForeignKey(x => x.IngredientId)
                 .OnDelete(DeleteBehavior.Restrict);
         }

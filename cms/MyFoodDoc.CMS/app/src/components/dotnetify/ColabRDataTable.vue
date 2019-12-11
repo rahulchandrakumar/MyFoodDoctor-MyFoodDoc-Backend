@@ -3,7 +3,7 @@
     <v-layout justify-center wrap>
       <v-flex md12>
         <material-card color="green">
-          <v-row slot="header" wrap pa-3>
+          <v-row slot="header" wrap>
             <v-col class="subheading font-weight-light mr-3 align-center">
               <h4 class="title font-weight-light mb-2">
                 {{ title }}
@@ -14,6 +14,11 @@
                 label="Search..."
                 hide-details
               />
+              <v-row v-if="filter" class="mt-1 ml-1" wrap>
+                <slot
+                  name="filter" :filter="filter"
+                />
+              </v-row>
             </v-col>
             <v-col cols="1">
               <ColabEdit
@@ -221,6 +226,9 @@ export default {
     tableLoaded() {
       return this.$store.getters[this.storeName + "/loaded"]
     },
+    filter() {
+      return this.$store.getters[this.storeName + "/filter"]
+    },
     stateDict() {
       return this.$store.getters["edit-state/states"][this.storeName] || {}
     },
@@ -236,12 +244,18 @@ export default {
   },
   watch: {
     async page(newVal) {
-      await this.$store.dispatch(this.storeName + "/loadItems", { page: newVal, search: this.search })
+      await this.loadItems({ page: newVal, search: this.search, filter: this.filter })
     },
     async search(newVal) {
       if (this.debouncedSearch == null)
-        this.debouncedSearch = debounce(async (page, search) => { await this.$store.dispatch(this.storeName + "/loadItems", { page, search }) }, 350)
+        this.debouncedSearch = debounce(async (page, search) => { await this.loadItems({ page, search }) }, 350)
       this.debouncedSearch(this.page, newVal)
+    },
+    filter: {
+      deep: true,
+      async handler(newVal) {
+        await this.loadItems({ page: this.page, search: this.search, filter: newVal })
+      }
     },
     async addedItems(newVal) {
       while((newVal || []).length > 0) {
@@ -271,7 +285,7 @@ export default {
     if (this.$scopedSlots["expanded-item"] != null)
       this.mainHeaders.push({ text: "", value: "data-table-expand" });
 
-    await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search })
+    await this.loadItems({ page: this.page, search: this.search, filter: this.filter })
     await this.$store.dispatch('edit-state/init', { groupName: this.storeName })
   },
   async destroyed() {
@@ -330,6 +344,9 @@ export default {
         }
       }
       this.editItem = {};
+    },
+    async loadItems({ page, search, filter }) {
+      await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter })
     }
   }
 };

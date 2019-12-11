@@ -1,13 +1,14 @@
 import integration from "@/integration";
 
 export default {
-  loadItems: async ({ commit, state }, { page, search }) => {
+  loadItems: async ({ commit, state }, { page, search, filter }) => {
     state.loaded = false
 
     state.skip = (page - 1) * state.take;
     state.search = search;
+    state.filter = filter;
 
-    let response = await integration.portions.getAll({ take: state.take, skip: state.skip, search: state.search });
+    let response = await integration.portions.getAll({ take: state.take, skip: state.skip, search: state.search, filter: state.filter });
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }

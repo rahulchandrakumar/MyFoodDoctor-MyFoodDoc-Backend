@@ -7,6 +7,13 @@
     :could-add="false"
     :could-remove="false"
   >
+    <template v-slot:filter="{ filter }">
+      <v-radio-group v-model="filter.state" row hide-details>
+        <v-radio label="Have to specify" value="0" />
+        <v-radio label="Not specified" value="1" />
+        <v-radio label="Specified" value="2" />
+      </v-radio-group>
+    </template>
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
