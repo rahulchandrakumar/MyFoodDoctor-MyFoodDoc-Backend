@@ -5,12 +5,6 @@
     :headers="mainHeaders"
     :readonly="true"
   >
-    <template v-slot:item.insuranceId="{ item }">
-      {{ translateInsurance(item.insuranceId) }}
-    </template>
-    <template v-slot:item.gender="{ item }">
-      {{ translateSex(item.gender) }}
-    </template>
     <template v-slot:item.birth="{ item }">
       {{ item.birth | moment(displayDateFormat) }}
     </template>
@@ -76,7 +70,7 @@ export default {
           text: "Email"
         }, {
           sortable: true,
-          value: "insuranceId",
+          value: "insurance",
           text: "Insurance"
         }, {
           filterable: false,
@@ -98,16 +92,10 @@ export default {
       displayDateFormat: displayDateFormat
     }
   },
-  async mounted() {
+  async created() {
     this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
   },
   methods: {
-    translateSex(value) {
-      return value == null ? null : value == Gender.MALE ? "Male" : "Female";
-    },
-    translateInsurance(value) {
-      return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
-    },
     makeChartData(items) {
       return {
         labels: items.map(i => this.$moment(i.created).format("DD MMM")),

@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -43,7 +45,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
-                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || EF.Functions.Like(f.Gender.ToString(), searchstring));
+                var genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().Where(v => v.ToString().ToUpper() == search.ToUpper()).ToList();
+                if (genders.Count > 0)
+                {
+                    var gender = genders.First();
+                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || f.Gender == gender);
+                }
+                else
+                {
+                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring));
+                }
             }
 
             return (await baseQuery.Take(take).Skip(skip).ToListAsync(cancellationToken)).Select(PatientModel.FromEntity).ToList();
@@ -56,7 +67,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
-                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || EF.Functions.Like(f.Gender.ToString(), searchstring));
+                var genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().Where(v => v.ToString().ToUpper() == search.ToUpper()).ToList();
+                if (genders.Count > 0)
+                {
+                    var gender = genders.First();
+                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || f.Gender == gender);
+                }
+                else
+                {
+                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring));
+                }
             }
             return await baseQuery.CountAsync(cancellationToken);
         }
