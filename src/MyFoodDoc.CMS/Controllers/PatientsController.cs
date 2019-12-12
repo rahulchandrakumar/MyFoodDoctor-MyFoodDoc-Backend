@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Editor")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class PatientsController : ControllerBase

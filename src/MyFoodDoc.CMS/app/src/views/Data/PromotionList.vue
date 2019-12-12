@@ -2,29 +2,26 @@
   <ColabDataTable
     title="Promotions"
     editor-title-suffix="promotion"
-    view-model="PromotionsViewModel"
+    store-name="promotions"
     :headers="mainHeaders"
     :before-save="beforeSave"
   >
-    <template v-slot:item.Disabled="{ item }">
+    <template v-slot:item.disabled="{ item }">
       <v-checkbox
-        :input-value="!item.Disabled"
+        :input-value="!item.disabled"
         readonly
       />
     </template>
-    <template v-slot:item.InsuranceId="{ item }">
-      {{ translateInsurance(item.InsuranceId) }}
+    <template v-slot:item.coupons="{ item }">
+      {{ item.couponCount }} ({{ item.couponCount - item.usedCouponCount }} / {{ item.usedCouponCount }})
     </template>
-    <template v-slot:item.Coupons="{ item }">
-      {{ item.CouponCount }} ({{ item.CouponCount - item.UsedCouponCount }} / {{ item.UsedCouponCount }})
+    <template v-slot:item.startDate="{ item }">
+      {{ item.startDate | moment(displayDateFormat) }}
     </template>
-    <template v-slot:item.StartDate="{ item }">
-      {{ item.StartDate | moment(displayDateFormat) }}
+    <template v-slot:item.endDate="{ item }">
+      {{ item.endDate | moment(displayDateFormat) }}
     </template>
-    <template v-slot:item.EndDate="{ item }">
-      {{ item.EndDate | moment(displayDateFormat) }}
-    </template>
-    <template v-slot:item.DownloadCoupons="{ item }">
+    <template v-slot:item.downloadCoupons="{ item }">
       <v-btn
         class="v-btn--simple"
         color="success"
@@ -40,39 +37,39 @@
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
-          v-model="item.Title"
-          :label="mainHeaders.filter(h => h.value == 'Title')[0].text"
+          v-model="item.title"
+          :label="mainHeaders.filter(h => h.value == 'title')[0].text"
           rules="required|max:35"
           :counter="35"
         />
       </v-row>
       <v-row>
         <VeeSelect
-          v-model="item.InsuranceId"
+          v-model="item.insuranceId"
           :items="insuranceList"
           item-text="name"
           item-value="id"
-          :label="mainHeaders.filter(h => h.value == 'InsuranceId')[0].text"
+          :label="mainHeaders.filter(h => h.value == 'insurance')[0].text"
           rules="required"
         />
       </v-row>
       <v-row>
         <VeeDatePicker
-          v-model="item.StartDate"
-          :label="mainHeaders.filter(h => h.value == 'StartDate')[0].text"
-          :rules="{ required: true, dateLess: { date: item.EndDate } }"
+          v-model="item.startDate"
+          :label="mainHeaders.filter(h => h.value == 'startDate')[0].text"
+          :rules="{ required: true, dateLess: { date: item.endDate } }"
         />
       </v-row>
       <v-row>
         <VeeDatePicker
-          v-model="item.EndDate"
-          :label="mainHeaders.filter(h => h.value == 'EndDate')[0].text"
-          :rules="{ required: true, dateMore: { date: item.StartDate } }"
+          v-model="item.endDate"
+          :label="mainHeaders.filter(h => h.value == 'endDate')[0].text"
+          :rules="{ required: true, dateMore: { date: item.startDate } }"
         />
       </v-row>
       <v-row v-if="item.Id == null">
         <VeeFileInput
-          v-model="item.File"
+          v-model="item.file"
           label="CSV file"
           rules="required"
           accept=".csv,.txt"
@@ -80,7 +77,7 @@
       </v-row>
       <v-row>
         <v-checkbox
-          v-model="item.Disabled"
+          v-model="item.disabled"
           label="Disabled"
         />
       </v-row>
@@ -94,7 +91,7 @@ import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
+    ColabDataTable: () => import("@/components/dotnetify/ColabRDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeSelect: () => import("@/components/inputs/VeeSelect"),
     VeeDatePicker: () => import("@/components/inputs/VeeDatePicker"),
@@ -108,37 +105,34 @@ export default {
       mainHeaders: [
         {
           sortable: true,
-          value: "Title",
+          value: "title",
           text: "Title"
         },
         {
           sortable: true,
-          value: "Disabled",
+          value: "disabled",
           text: "Active"
         },{
           sortable: true,
           filterable: true,
-          value: "InsuranceId",
-          text: "Insurance",
-          filter: function(value, search) {
-            return self.translateInsurance(value).includes(search);
-          }
+          value: "insurance",
+          text: "Insurance"
         },{
           sortable: true,
-          value: "Coupons",
+          value: "coupons",
           text: "Coupons"
         },{
           sortable: true,
-          value: "StartDate",
+          value: "startDate",
           text: "Start"
         },{
           sortable: true,
-          value: "EndDate",
+          value: "endDate",
           text: "End"
         },
         {
           sortable: false,
-          value: "DownloadCoupons"
+          value: "downloadCoupons"
         }
       ],
       insuranceList: [],
@@ -150,17 +144,14 @@ export default {
   },
   methods: {
     async beforeSave(item) {
-      if (item.File != null)
-        item.TempFileId = await integration.files.uploadTemp(item.File);
+      if (item.file != null)
+        item.tempFileId = await integration.files.uploadTemp(item.file);
     },
     async downloadCoupons(item) {
-      if (item.Id != null) {
-        integration.files.downloadCoupons(item.Id);
+      if (item.id != null) {
+        integration.files.downloadCoupons(item.id);
       }
-    },
-    translateInsurance(value) {
-      return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
-    },
+    }
   }
 };
 </script>
