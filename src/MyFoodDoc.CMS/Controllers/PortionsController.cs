@@ -39,7 +39,7 @@ namespace MyFoodDoc.CMS.Controllers
         }
 
         // GET: api/v1/Portions/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}")]
         public async Task<Ingredient> Get(int id, CancellationToken cancellationToken = default)
         {
             return Ingredient.FromModel(await _ingredientService.GetItem(id, cancellationToken));

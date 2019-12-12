@@ -22,7 +22,6 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var item = await _context.Users
                                          .Include(x => x.AbdominalGirthHistory)
-                                         .Include(x => x.BloodSugarLevelHistory)
                                          .Include(x => x.Motivations)
                                              .ThenInclude(x => x.Motivation)
                                          .Include(x => x.WeightHistory)
@@ -36,7 +35,6 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var items = await _context.Users
                                         .Include(x => x.AbdominalGirthHistory)
-                                        .Include(x => x.BloodSugarLevelHistory)
                                         .Include(x => x.Motivations)
                                             .ThenInclude(x => x.Motivation)
                                         .Include(x => x.WeightHistory)

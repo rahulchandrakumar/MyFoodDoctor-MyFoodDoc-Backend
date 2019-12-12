@@ -333,7 +333,7 @@ export default {
       this.editItem = {};
     },
     async onCancel() {
-      if (this.editItem) {
+      if (this.editItem && this.editItem.id) {
         var editprops = this.stateDict[this.editItem.id]
         if (      
           editprops.LockDate != null &&

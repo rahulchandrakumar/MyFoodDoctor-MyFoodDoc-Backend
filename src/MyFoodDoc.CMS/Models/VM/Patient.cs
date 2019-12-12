@@ -14,8 +14,8 @@ namespace MyFoodDoc.CMS.Models.VM
         public byte? Gender { get; set; }
         public int Height { get; set; }
         public DateTime? Birth { get; set; }
-        public IList<HistoryBaseModel<int>> Weight { get; set; }
-        public IList<HistoryBaseModel<int>> BloodSugar { get; set; }
+        public IList<HistoryBaseModel<decimal>> Weight { get; set; }
+        //public IList<HistoryBaseModel<int>> BloodSugar { get; set; }
         public IList<HistoryBaseModel<int>> AbdominalGirth { get; set; }
         public IList<string> Motivation { get; set; }
 
@@ -31,8 +31,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Height = model.Height ?? 0,
                 Gender = (byte?)model.Gender,
                 AbdominalGirth = model.AbdominalGirth?.Select(HistoryBaseModel<int>.FromModel).ToList(),
-                BloodSugar = model.BloodSugar?.Select(HistoryBaseModel<int>.FromModel).ToList(),
-                Weight = model.Weight?.Select(HistoryBaseModel<int>.FromModel).ToList(),
+                //BloodSugar = model.BloodSugar?.Select(HistoryBaseModel<int>.FromModel).ToList(),
+                Weight = model.Weight?.Select(HistoryBaseModel<decimal>.FromModel).ToList(),
                 Motivation = model.Motivation?.ToList()
             };
         }

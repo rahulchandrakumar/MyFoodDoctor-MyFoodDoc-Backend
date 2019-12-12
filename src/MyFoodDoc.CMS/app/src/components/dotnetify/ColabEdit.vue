@@ -8,6 +8,7 @@
       <v-btn
         class="v-btn--simple ma-0" color="success" icon
         small @click="add"
+        v-on="on"
       >
         <v-icon color="white" style="font-size:35px">
           mdi-plus-box
@@ -17,7 +18,6 @@
 
     <ValidationObserver
       ref="observer"
-      v-slot="{ invalid, validated, passes, validate }"
       style="display: contents;"      
     >
       <v-card>

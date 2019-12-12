@@ -6,7 +6,7 @@ export default {
     var connection = state.connection;
     if (connection == null) {
       connection = new HubConnectionBuilder()
-                      .withUrl(process.env.VUE_APP_WEB_API_URL + "/edit-states")
+                      .withUrl((process.env.VUE_APP_WEB_API_URL || "") + "/edit-states")
                       .withHubProtocol(new MessagePackHubProtocol())
                       .withAutomaticReconnect()
                       .build();

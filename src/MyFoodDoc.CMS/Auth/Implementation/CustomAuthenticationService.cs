@@ -19,8 +19,6 @@ namespace MyFoodDoc.CMS.Auth.Implementation
         private readonly IUserService _userService;
         private readonly IHashingManager _hashingManager;
 
-        private readonly List<UserModel> _users = new List<UserModel>();
-
         public CustomAuthenticationService(IConfiguration configuration, IUserService userService, IHashingManager hashingManager)
         {
             this._userService = userService;
@@ -28,27 +26,26 @@ namespace MyFoodDoc.CMS.Auth.Implementation
             this._hashingManager = hashingManager;
         }
 
-        private async Task InitUsers()
-        {
-            this._users.AddRange(await _userService.GetItems());
-            this._users.Add(new UserModel()
-            {
-                Displayname = _configuration["SuperAdmin:Displayname"],
-                Username = _configuration["SuperAdmin:Username"],
-                PasswordHash = _hashingManager.HashToString(_configuration["SuperAdmin:Password"]),
-                Role = UserRoleEnum.Admin
-            });
-        }
-
         public async Task<AppUser> Login(string username, string password)
         {
-            if (_users.Count == 0)
-                await InitUsers();
+            //if (_users.Count == 0)
+            //    await InitUsers();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_configuration["AuthSecret"]);
 
-            var user = _users.FirstOrDefault(u => u.Username == username);
+            var user = await _userService.GetByUsername(username);
+
+            if (user == null && user.Username == _configuration["SuperAdmin:Username"])
+            {
+                user = new UserModel()
+                {
+                    Displayname = _configuration["SuperAdmin:Displayname"],
+                    Username = _configuration["SuperAdmin:Username"],
+                    PasswordHash = _hashingManager.HashToString(_configuration["SuperAdmin:Password"]),
+                    Role = UserRoleEnum.Admin
+                };
+            }
 
             if (user == null || user.PasswordHash != null && !_hashingManager.Verify(password, user.PasswordHash))
                 throw new Exception("Login failed.");
