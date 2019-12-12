@@ -134,7 +134,6 @@
 </template>
 
 <script>
-import dotnetify from "dotnetify/vue";
 import ColabEdit from "./ColabEdit";
 import debounce from "debounce"
 

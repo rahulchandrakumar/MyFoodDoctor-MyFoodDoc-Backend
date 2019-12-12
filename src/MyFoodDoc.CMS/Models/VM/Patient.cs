@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
-    public class Patient : ColabDataTableBaseModel<string>
+    public class Patient : VMBase.BaseModel<string>
     {
         public string FullName { get; set; }
         public string Email { get; set; }

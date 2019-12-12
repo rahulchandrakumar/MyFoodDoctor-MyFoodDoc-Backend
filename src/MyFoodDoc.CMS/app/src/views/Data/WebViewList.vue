@@ -59,7 +59,7 @@ import integration from "@/integration";
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabRDataTable"),
+    ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
     VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),

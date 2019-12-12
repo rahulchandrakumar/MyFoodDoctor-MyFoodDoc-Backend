@@ -91,7 +91,7 @@ import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabRDataTable"),
+    ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeSelect: () => import("@/components/inputs/VeeSelect"),
     VeeDatePicker: () => import("@/components/inputs/VeeDatePicker"),

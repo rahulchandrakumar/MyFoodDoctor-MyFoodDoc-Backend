@@ -1,5 +1,3 @@
-using DotNetify;
-using DotNetify.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -70,10 +68,9 @@ namespace MyFoodDoc.CMS
             services.AddCors();
             #endregion
 
-            #region dotnetify
+            #region SignalR
             services.AddMemoryCache();
             services.AddSignalR().AddMessagePackProtocol();
-            services.AddDotNetify();
             #endregion
 
             #region Auth
@@ -130,17 +127,11 @@ namespace MyFoodDoc.CMS
             app.UseMvc();
             #endregion
 
-            #region dotnetify
+            #region SignalR
             app.UseWebSockets();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<DotNetifyHub>("/dotnetify");
                 endpoints.MapHub<EditStateHub>("/edit-states");
-            });
-            app.UseDotNetify(config =>
-            {
-                config.UseFilter<AuthorizeFilter>();
-                config.UseJwtBearerAuthentication(_tokenValidationParameters);
             });
             #endregion
 

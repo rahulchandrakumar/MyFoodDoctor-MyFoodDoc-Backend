@@ -55,7 +55,7 @@ import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabRDataTable")
+    ColabDataTable: () => import("@/components/signalR/ColabRDataTable")
   },
 
   data() {
