@@ -286,10 +286,12 @@ export default {
       this.mainHeaders.push({ text: "", value: "data-table-expand" });
 
     await this.loadItems({ page: this.page, search: this.search, filter: this.filter })
-    await this.$store.dispatch('edit-state/init', { groupName: this.storeName })
+    if (!this.readonly)
+      await this.$store.dispatch('edit-state/init', { groupName: this.storeName })
   },
   async destroyed() {
-    await this.$store.dispatch('edit-state/removeGroup', { groupName: this.storeName })
+    if (!this.readonly)
+      await this.$store.dispatch('edit-state/removeGroup', { groupName: this.storeName })
   },
   methods: {
     async onBeginEdit(item) {
@@ -306,28 +308,25 @@ export default {
     },
     async onRemove(item) {
       var editprops = this.stateDict[item.id];
-      if (editprops != null && editprops.LockDate == null || this.now - editprops.LockDate > editTime)
+      if (editprops == null || (editprops.LockDate == null || this.now - editprops.LockDate > editTime))
         if (await this.$confirm("Do you really want to delete this item?")) {
-          await this.$store.dispatch(this.storeName + "/updateItem", { item: this.editItem })
-          await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: item.id })
+          await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id })
+          if (editprops != null)
+            await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.id })
         }
     },
     async onSave(item) {
       if (this.beforeSave)
         await this.beforeSave(item);
 
-      var editprops = this.stateDict[item.id];
-
-      editprops.LockDate = null;
-      editprops.Editor = null;
-
-      await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.Id })
-
       if (item.id == null) {
-        await this.$store.dispatch(this.storeName + "/addItem", { item: this.editItem })
+        await this.$store.dispatch(this.storeName + "/addItem", { item })
       }
       else {
-        await this.$store.dispatch(this.storeName + "/updateItem", { item: this.editItem })
+        var editprops = this.stateDict[item.id];
+
+        await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.Id })
+        await this.$store.dispatch(this.storeName + "/updateItem", { item })
       }
 
       this.editItem = {};

@@ -34,51 +34,43 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return PatientModel.FromEntity(item);
         }
 
+        public IQueryable<User> GetBaseQuery(string search)
+        {
+            IQueryable<User> baseQuery = _context.Users;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchstring = $"%{search}%";
+                var genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().Where(v => v.ToString().ToUpper() == search.ToUpper()).ToList();
+                if (genders.Count > 0)
+                {
+                    var gender = genders.First();
+                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || f.Gender == gender);
+                }
+                else
+                {
+                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring));
+                }
+            }
+            return baseQuery;
+        }
+
         public async Task<IList<PatientModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            IQueryable<User> baseQuery = _context.Users
+            var queryResult = await GetBaseQuery(search).Take(take).Skip(skip)
                                         .Include(x => x.AbdominalGirthHistory)
                                         .Include(x => x.Motivations)
                                             .ThenInclude(x => x.Motivation)
                                         .Include(x => x.WeightHistory)
-                                        .AsNoTracking();
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var searchstring = $"%{search}%";
-                var genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().Where(v => v.ToString().ToUpper() == search.ToUpper()).ToList();
-                if (genders.Count > 0)
-                {
-                    var gender = genders.First();
-                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || f.Gender == gender);
-                }
-                else
-                {
-                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring));
-                }
-            }
+                                        .AsNoTracking()
+                                        .ToListAsync(cancellationToken);
+            
 
-            return (await baseQuery.Take(take).Skip(skip).ToListAsync(cancellationToken)).Select(PatientModel.FromEntity).ToList();
+            return queryResult.Select(PatientModel.FromEntity).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
         {
-            IQueryable<User> baseQuery = _context.Users
-                                        .AsNoTracking();
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var searchstring = $"%{search}%";
-                var genders = Enum.GetValues(typeof(Gender)).Cast<Gender>().Where(v => v.ToString().ToUpper() == search.ToUpper()).ToList();
-                if (genders.Count > 0)
-                {
-                    var gender = genders.First();
-                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || f.Gender == gender);
-                }
-                else
-                {
-                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring));
-                }
-            }
-            return await baseQuery.CountAsync(cancellationToken);
+            return await GetBaseQuery(search).AsNoTracking().CountAsync(cancellationToken);
         }
     }
 }

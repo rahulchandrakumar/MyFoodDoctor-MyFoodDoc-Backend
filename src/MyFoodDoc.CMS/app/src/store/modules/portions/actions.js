@@ -56,10 +56,10 @@ export default {
 
     return state.items;
   },
-  deleteItem: async ({ state }, { item }) => {
+  deleteItem: async ({ state }, { id }) => {
     state.loaded = false
 
-    let response = await integration.portions.put(item);
+    let response = await integration.portions.delete(id);
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -80,10 +80,11 @@ export default {
     }
   },
   itemDeleted: async ({ state, commit }, { Id }) => {
-    if (state.items.filter(i => i.id == Id).length > 0) {
-      var item = await dispatch('loadOneMoreItem')
-      commit("deleteItem", { Id, item })
+    var item = null;
+    if (state.items.filter(i => i.id == Id).length > 0 && state.total > state.take) {
+      item = await dispatch('loadOneMoreItem')
     }
+    commit("deleteItem", { Id, item })
     state.total--
   },
 };

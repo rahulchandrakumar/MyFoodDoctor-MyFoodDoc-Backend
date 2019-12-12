@@ -7,7 +7,7 @@ export default {
     state.skip = (page - 1) * state.take;
     state.search = search;
 
-    let response = await integration.webpages.getAll({ take: state.take, skip: state.skip, search: state.search });
+    let response = await integration.lexicon.getAll({ take: state.take, skip: state.skip, search: state.search });
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -18,7 +18,7 @@ export default {
   loadItem: async ({ state }, { id }) => {
     state.loaded = false
 
-    let response = await integration.webpages.get(id);
+    let response = await integration.lexicon.get(id);
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -28,7 +28,7 @@ export default {
   loadOneMoreItem: async ({ state }) => {
     state.loaded = false
 
-    let response = await integration.webpages.getAll({ take: 1, skip: state.skip + state.take - 1, search: state.search });
+    let response = await integration.lexicon.getAll({ take: 1, skip: state.skip + state.take - 1, search: state.search });
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -38,7 +38,7 @@ export default {
   addItem: async ({ state }, { item }) => {
     state.loaded = false
 
-    let response = await integration.webpages.post(item);
+    let response = await integration.lexicon.post(item);
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -48,7 +48,7 @@ export default {
   updateItem: async ({ state }, { item }) => {
     state.loaded = false
 
-    let response = await integration.webpages.put(item);
+    let response = await integration.lexicon.put(item);
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
@@ -58,7 +58,7 @@ export default {
   deleteItem: async ({ state }, { id }) => {
     state.loaded = false
 
-    let response = await integration.webpages.delete(id);
+    let response = await integration.lexicon.delete(id);
     if (response.status !== 200) {
       throw new Error(`undefined error in backend (${response.status})`);
     }
