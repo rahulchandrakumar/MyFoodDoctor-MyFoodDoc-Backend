@@ -64,6 +64,15 @@ namespace MyFoodDoc.App.Application.Services
             var oldIndications = _context.UserIndications.Where(x => x.UserId.Equals(userId));
             _context.UserIndications.RemoveRange(oldIndications);
 
+            if (payload.Weight > 0)
+            {
+                user.WeightHistory.Add(new UserWeight()
+                {
+                    Date = DateTime.UtcNow,
+                    Value = payload.Weight
+                });
+            }
+
             if (payload.Indications != null)
             {
                 var indicationsIds = await _context.Indications
