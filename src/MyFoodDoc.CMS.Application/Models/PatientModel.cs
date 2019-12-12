@@ -29,7 +29,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 InsuranceId = entity.InsuranceId,
                 Gender = entity.Gender == null ? null : (GenderEnum?)Enum.Parse(typeof(GenderEnum), entity.Gender?.ToString()),
                 Height = entity.Height,
-                AbdominalGirth = entity.AbdonimalGirthHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
+                AbdominalGirth = entity.AbdominalGirthHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
                 BloodSugar = entity.BloodSugarLevelHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
                 Weight = entity.WeightHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
                 Motivation = entity.Motivations?.Select(x => x.Motivation.Name).ToList()

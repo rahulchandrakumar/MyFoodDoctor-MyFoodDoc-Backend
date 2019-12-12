@@ -21,6 +21,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<ILexiconService, LexiconService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserHistoryService, UserHistoryService>();
 
             return services;
         }

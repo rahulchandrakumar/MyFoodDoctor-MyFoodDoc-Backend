@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.IO;
@@ -39,7 +40,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<WebPage> WebPages { get; set; }
         public DbSet<CmsUser> CmsUsers { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
-        //public DbSet<UserWeight> UserWeights { get; set; }
+        public DbSet<UserWeight> UserWeights { get; set; }
+        public DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {

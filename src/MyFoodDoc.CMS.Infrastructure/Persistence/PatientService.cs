@@ -21,7 +21,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<PatientModel> GetItem(string id, CancellationToken cancellationToken = default)
         {
             var item = await _context.Users
-                                         .Include(x => x.AbdonimalGirthHistory)
+                                         .Include(x => x.AbdominalGirthHistory)
                                          .Include(x => x.BloodSugarLevelHistory)
                                          .Include(x => x.Motivations)
                                              .ThenInclude(x => x.Motivation)
@@ -35,7 +35,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<IList<PatientModel>> GetItems(CancellationToken cancellationToken = default)
         {
             var items = await _context.Users
-                                        .Include(x => x.AbdonimalGirthHistory)
+                                        .Include(x => x.AbdominalGirthHistory)
                                         .Include(x => x.BloodSugarLevelHistory)
                                         .Include(x => x.Motivations)
                                             .ThenInclude(x => x.Motivation)
