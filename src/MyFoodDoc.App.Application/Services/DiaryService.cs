@@ -7,6 +7,7 @@ using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +77,9 @@ namespace MyFoodDoc.App.Application.Services
                 Type = payload.Type,
                 Mood = payload.Mood,
             };
+
+            if (payload.Type != MealType.Snack && await _context.Meals.CountAsync(x => x.Date == payload.Date && x.Type == payload.Type, cancellationToken) > 0)
+                throw new BadRequestException("Meal type was already added for today");
 
             _context.Meals.Add(meal);
 
