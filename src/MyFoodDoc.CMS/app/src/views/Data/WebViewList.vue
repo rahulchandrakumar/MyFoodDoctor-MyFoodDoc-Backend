@@ -1,7 +1,7 @@
 <template>
   <ColabDataTable
     title="WebView"
-    view-model="WebViewViewModel"
+    store-name="webpages"
     editor-title-suffix="web view item"
     :headers="mainHeaders"
     :could-add="false"
@@ -23,13 +23,13 @@
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
-          v-model="item.Title"
-          :label="mainHeaders.filter(h => h.value == 'Title')[0].text"
+          v-model="item.title"
+          :label="mainHeaders.filter(h => h.value == 'title')[0].text"
           rules="required|max:200"
           :counter="200"
         />
       </v-row>
-      <v-row v-if="item.Url && item.Url.endsWith('html')">
+      <v-row v-if="item.url && item.url.endsWith('html')">
         <v-switch
           v-model="preview"
           label="HTML"
@@ -37,15 +37,15 @@
       </v-row>
       <v-row>
         <VeeRichTextArea
-          v-if="!preview && item.Url && item.Url.endsWith('html')"
-          v-model="item.Text"
-          :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
+          v-if="!preview && item.url && item.url.endsWith('html')"
+          v-model="item.text"
+          :label="mainHeaders.filter(h => h.value == 'text')[0].text"
           rules="required|min:8"
         />
         <VeeTextArea
           v-else
-          v-model="item.Text"
-          :label="mainHeaders.filter(h => h.value == 'Text')[0].text"
+          v-model="item.text"
+          :label="mainHeaders.filter(h => h.value == 'text')[0].text"
           rules="required"
         />
       </v-row>
@@ -59,7 +59,7 @@ import integration from "@/integration";
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
+    ColabDataTable: () => import("@/components/dotnetify/ColabRDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
     VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
@@ -68,16 +68,16 @@ export default {
     return {
       mainHeaders: [{
         sortable: true,
-        value: "Title",
+        value: "title",
         text: "Title"
       }, {
         sortable: false,
-        value: "Text",
+        value: "text",
         text: "Text"
       },
       {
         sortable: false,
-        value: "Url",
+        value: "url",
         text: "Url"
       }],
       preview: false

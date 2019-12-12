@@ -125,13 +125,7 @@ export default {
 
     let userRoles = this.$store.state.user.userInfo.roles;
     let links = [];
-    if (userRoles.includes(UserRoles.VIEWER))
-      links.push({
-        to: "/",
-        icon: "mdi-view-dashboard",
-        text: "Dashboard"
-      });
-
+    
     if (userRoles.includes(UserRoles.EDITOR)) {
       let link = {
         icon: "mdi-table-of-contents",
@@ -168,26 +162,6 @@ export default {
           to: "/users",
           icon: "mdi-account-multiple",
           text: "Users"
-        },
-        {
-          to: "/typography",
-          icon: "mdi-format-font",
-          text: "Typography"
-        },
-        {
-          to: "/icons",
-          icon: "mdi-chart-bubble",
-          text: "Icons"
-        },
-        {
-          to: "/maps",
-          icon: "mdi-map-marker",
-          text: "Maps"
-        },
-        {
-          to: "/notifications",
-          icon: "mdi-bell",
-          text: "Notifications"
         }
       );
     }

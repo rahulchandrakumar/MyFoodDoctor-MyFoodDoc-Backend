@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entites;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
@@ -37,9 +38,25 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return WebViewModel.FromEntity(await _context.WebPages.FindAsync(new object[] { id }, cancellationToken));
         }
 
-        public async Task<IList<WebViewModel>> GetItems(CancellationToken cancellationToken = default)
+        public IQueryable<WebPage> GetBaseQuery(string search)
         {
-            return (await _context.WebPages.ToListAsync(cancellationToken)).Select(WebViewModel.FromEntity).ToList();
+            IQueryable<WebPage> baseQuery = _context.WebPages;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchstring = $"%{search}%";
+                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Title, searchstring));
+            }
+            return baseQuery;
+        }
+
+        public async Task<IList<WebViewModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        {
+            return (await GetBaseQuery(search).Take(take).Skip(skip).ToListAsync(cancellationToken)).Select(WebViewModel.FromEntity).ToList();
+        }
+
+        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        {
+            return await GetBaseQuery(search).CountAsync(cancellationToken);
         }
 
         public async Task<WebViewModel> UpdateItem(WebViewModel item, CancellationToken cancellationToken = default)

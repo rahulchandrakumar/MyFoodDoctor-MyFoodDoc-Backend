@@ -1,9 +1,8 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
-using MyFoodDoc.CMS.Models.VMBase;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
-    public class WebViewItem : ColabDataTableBaseModel<int>
+    public class WebViewItem : VMBase.BaseModel<int>
     {
         public string Title { get; set; }
         public string Text { get; set; }
