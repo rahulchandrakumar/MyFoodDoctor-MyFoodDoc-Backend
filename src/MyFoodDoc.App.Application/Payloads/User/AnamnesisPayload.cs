@@ -10,7 +10,7 @@ namespace MyFoodDoc.App.Application.Payloads.User
 
         public int Height { get; set; }
 
-        public int Weight { get; set; }
+        public decimal Weight { get; set; }
 
         public ICollection<string> Motivations { get; set; }
 
