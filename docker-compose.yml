@@ -17,4 +17,4 @@ services:
     image: ${DOCKER_REGISTRY-}myfooddocapplicationcms
     build:
       context: .
-      context: cms/MyFoodDoc.CMS/Dockerfile
+      context: src/MyFoodDoc.CMS/Dockerfile
