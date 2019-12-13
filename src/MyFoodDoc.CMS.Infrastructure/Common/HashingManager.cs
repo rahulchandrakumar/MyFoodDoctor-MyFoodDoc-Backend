@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using MyFoodDoc.CMS.Application.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace MyFoodDoc.CMS.Auth.Implementation
+namespace MyFoodDoc.CMS.Infrastructure.Common
 {
     /// <summary>
     /// https://codereview.stackexchange.com/questions/176697/net-core-mvc-future-proof-hashing-of-passwords

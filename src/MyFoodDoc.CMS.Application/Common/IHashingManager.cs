@@ -1,4 +1,4 @@
-﻿namespace MyFoodDoc.CMS.Auth
+﻿namespace MyFoodDoc.CMS.Application.Common
 {
     public interface IHashingManager
     {
