@@ -51,7 +51,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<IList<WebViewModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            return (await GetBaseQuery(search).Take(take).Skip(skip).ToListAsync(cancellationToken)).Select(WebViewModel.FromEntity).ToList();
+            return (await GetBaseQuery(search).Skip(skip).Take(take).ToListAsync(cancellationToken)).Select(WebViewModel.FromEntity).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)

@@ -7,5 +7,8 @@ export default {
   },
   loaded(state) {
     return state.loaded
+  },
+  pageSize(state) {
+    return state.take
   }
 }

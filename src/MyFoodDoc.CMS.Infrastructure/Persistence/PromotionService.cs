@@ -96,7 +96,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                               entity = p,
                               CouponCount = p.Coupons.Count(),
                               UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
-                          }).Take(take).Skip(skip).ToListAsync(cancellationToken))
+                          }).Skip(skip).Take(take).ToListAsync(cancellationToken))
                    .Select(x =>
                    {
                        var model = PromotionModel.FromEntity(x.entity);

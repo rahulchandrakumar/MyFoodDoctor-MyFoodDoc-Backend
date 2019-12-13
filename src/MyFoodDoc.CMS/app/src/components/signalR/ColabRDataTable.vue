@@ -45,6 +45,7 @@
             :items="tableItems"
             :server-items-length="tableItemsCount"
             :page.sync="page"
+            :items-per-page="pageSize"
             disable-sort
             filterable
             dense
@@ -227,6 +228,9 @@ export default {
     },
     filter() {
       return this.$store.getters[this.storeName + "/filter"]
+    },
+    pageSize() {
+      return this.$store.getters[this.storeName + "/pageSize"]
     },
     stateDict() {
       return this.$store.getters["edit-state/states"][this.storeName] || {}

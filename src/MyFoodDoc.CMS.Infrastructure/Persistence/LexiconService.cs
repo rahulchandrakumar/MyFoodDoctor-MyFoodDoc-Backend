@@ -84,8 +84,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var lexiconEntities = await GetBaseQuery(search)
                                                 .Include(x => x.Image)
-                                                .Take(take)
-                                                .Skip(skip)
+                                                .Skip(skip).Take(take)                                                
                                                 .ToListAsync(cancellationToken);
 
             return lexiconEntities.Select(LexiconModel.FromEntity).ToList();

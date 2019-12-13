@@ -56,11 +56,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<IList<PatientModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var queryResult = await GetBaseQuery(search).Take(take).Skip(skip)
+            var queryResult = await GetBaseQuery(search)
                                         .Include(x => x.AbdominalGirthHistory)
                                         .Include(x => x.Motivations)
                                             .ThenInclude(x => x.Motivation)
                                         .Include(x => x.WeightHistory)
+                                        .Skip(skip).Take(take)
                                         .AsNoTracking()
                                         .ToListAsync(cancellationToken);
             
