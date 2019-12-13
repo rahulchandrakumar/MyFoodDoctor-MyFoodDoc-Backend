@@ -17,6 +17,7 @@ using MyFoodDoc.CMS.Infrastructure.Persistence;
 using MyFoodDoc.Infrastructure;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS
 {
@@ -94,6 +95,23 @@ namespace MyFoodDoc.CMS
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = _tokenValidationParameters;
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/edit-states")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
             #endregion
         }
