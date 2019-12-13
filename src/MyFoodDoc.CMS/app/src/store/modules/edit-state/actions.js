@@ -2,11 +2,11 @@ import { HubConnectionBuilder } from "@microsoft/signalr"
 import { MessagePackHubProtocol } from "@microsoft/signalr-protocol-msgpack"
 
 export default {
-  init: async ({ commit, state }, { groupName }) => {
+  init: async ({ commit, state, rootState }, { groupName }) => {
     var connection = state.connection;
     if (connection == null) {
       connection = new HubConnectionBuilder()
-                      .withUrl((process.env.VUE_APP_WEB_API_URL || "") + "/edit-states")
+                      .withUrl((process.env.VUE_APP_WEB_API_URL || "") + "/edit-states", { accessTokenFactory: () => rootState.user.token })
                       .withHubProtocol(new MessagePackHubProtocol())
                       .withAutomaticReconnect()
                       .build();
