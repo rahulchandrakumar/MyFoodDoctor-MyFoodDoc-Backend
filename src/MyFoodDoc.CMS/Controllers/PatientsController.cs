@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using MyFoodDoc.CMS.Application.Persistence;
-using MyFoodDoc.CMS.Hubs;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.Payloads;
 using System.Linq;
@@ -11,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Controllers
 {
-    [Authorize(Roles = "Editor")]
+    [Authorize(Roles = "Viewer")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class PatientsController : ControllerBase

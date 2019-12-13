@@ -27,7 +27,7 @@
                 :item="editItem"
                 :title-suffix="editorTitleSuffix"
                 :edit-time="editTime"
-                :could-add="couldAdd"
+                :could-add="couldAdd && !readonly"
                 @cancel="onCancel"
                 @save="onSave"
               >
