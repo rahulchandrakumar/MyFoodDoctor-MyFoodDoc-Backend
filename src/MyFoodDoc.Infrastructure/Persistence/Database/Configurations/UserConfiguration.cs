@@ -10,6 +10,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
         {
             builder.ToTable("Users", "User");
             builder.HasKey(x => x.Id);
+            builder.HasIndex(x => new { x.UserName, x.Gender });
             builder.Property(x => x.Birthday).HasColumnType("Date");
             builder.Property(x => x.Gender).HasConversion<string>().HasMaxLength(6);
             

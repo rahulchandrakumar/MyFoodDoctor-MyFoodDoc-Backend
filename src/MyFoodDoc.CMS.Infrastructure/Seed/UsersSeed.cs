@@ -1,5 +1,6 @@
 ﻿using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.CMS.Application.Common;
 using MyFoodDoc.CMS.Application.Models;
 using System.Linq;
 
@@ -7,6 +8,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Seed
 {
     public class UsersSeed : ISeed
     {
+        private readonly IHashingManager _hashingManager;
+        public UsersSeed(IHashingManager hashingManager)
+        {
+            this._hashingManager = hashingManager;
+        }
+
         public void SeedData(IApplicationContext context)
         {
             if (context.CmsUsers.Count() == 0)
@@ -37,6 +44,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Seed
                         Role = (int)UserRoleEnum.Viewer
                     }
                 });
+
+                context.SaveChanges();
+            }
+
+            if (string.IsNullOrEmpty(context.CmsUsers.FirstOrDefault().PasswordHash))
+            {
+                string defaultPassword = "Wert123+";
+                context.CmsUsers.Where(x => x.Username == "admin" || x.Username == "editor" || x.Username == "editor2" || x.Username == "viewer")
+                                .ToList()
+                                .ForEach(x => x.PasswordHash = _hashingManager.HashToString(defaultPassword));
 
                 context.SaveChanges();
             }

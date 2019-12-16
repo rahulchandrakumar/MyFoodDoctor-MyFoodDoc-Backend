@@ -13,8 +13,8 @@ namespace MyFoodDoc.CMS.Application.Models
         public GenderEnum? Gender { get; set; }
         public int? Height { get; set; }
         public DateTime? Birth { get; set; }
-        public IList<HistoryModel<int>> Weight { get; set; }
-        public IList<HistoryModel<int>> BloodSugar { get; set; }
+        public IList<HistoryModel<decimal>> Weight { get; set; }
+        //public IList<HistoryModel<int>> BloodSugar { get; set; }
         public IList<HistoryModel<int>> AbdominalGirth { get; set; }
         public IList<string> Motivation { get; set; }
 
@@ -30,8 +30,8 @@ namespace MyFoodDoc.CMS.Application.Models
                 Gender = entity.Gender == null ? null : (GenderEnum?)Enum.Parse(typeof(GenderEnum), entity.Gender?.ToString()),
                 Height = entity.Height,
                 AbdominalGirth = entity.AbdominalGirthHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
-                BloodSugar = entity.BloodSugarLevelHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
-                Weight = entity.WeightHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
+                //BloodSugar = entity.BloodSugarLevelHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
+                Weight = entity.WeightHistory?.Select(HistoryModel<decimal>.FromEntity).ToList(),
                 Motivation = entity.Motivations?.Select(x => x.Motivation.Name).ToList()
             };
         }

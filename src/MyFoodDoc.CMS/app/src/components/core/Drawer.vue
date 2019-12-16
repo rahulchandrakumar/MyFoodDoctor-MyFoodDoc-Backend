@@ -125,31 +125,26 @@ export default {
 
     let userRoles = this.$store.state.user.userInfo.roles;
     let links = [];
-    if (userRoles.includes(UserRoles.VIEWER))
-      links.push({
-        to: "/",
-        icon: "mdi-view-dashboard",
-        text: "Dashboard"
-      });
-
-    if (userRoles.includes(UserRoles.EDITOR)) {
+    
+    if (userRoles.includes(UserRoles.VIEWER)) {
       let link = {
         icon: "mdi-table-of-contents",
         text: "Data",
         children: [
           {
-            to: "/portion-list",
-            text: "Portions"
-          },
-          {
             to: "/patient-list",
             text: "Patients"
-          },
-          {
-            to: "/promotion-list",
-            text: "Promotions"
           }
         ]
+      }
+      if (userRoles.includes(UserRoles.EDITOR)) {
+        link.children.push({
+            to: "/portion-list",
+            text: "Portions"
+          },{
+            to: "/promotion-list",
+            text: "Promotions"
+          })
       }
       if (userRoles.includes(UserRoles.ADMIN))
         link.children.push({
@@ -168,26 +163,6 @@ export default {
           to: "/users",
           icon: "mdi-account-multiple",
           text: "Users"
-        },
-        {
-          to: "/typography",
-          icon: "mdi-format-font",
-          text: "Typography"
-        },
-        {
-          to: "/icons",
-          icon: "mdi-chart-bubble",
-          text: "Icons"
-        },
-        {
-          to: "/maps",
-          icon: "mdi-map-marker",
-          text: "Maps"
-        },
-        {
-          to: "/notifications",
-          icon: "mdi-bell",
-          text: "Notifications"
         }
       );
     }
