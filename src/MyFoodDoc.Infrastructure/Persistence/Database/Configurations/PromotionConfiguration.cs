@@ -10,6 +10,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         {
             builder.ToTable("Promotions", "Coupon");
             builder.HasKey(o => new { o.Id, o.InsuranceId });
+            builder.HasIndex(o => o.Title);
             builder.Property(o => o.Id).ValueGeneratedOnAdd();
             builder.Property(o => o.Title).HasMaxLength(100);
             builder.Property(o => o.StartDate).IsRequired();

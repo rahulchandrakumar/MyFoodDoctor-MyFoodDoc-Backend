@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IPromotionService: IServiceBaseRead<PromotionModel, int>, IServiceBaseWrite<PromotionModel, int>
+    public interface IPromotionService: IServiceBasePaginatedRead<PromotionModel, int>, IServiceBaseWrite<PromotionModel, int>
     {
         Task<byte[]> GetCouponsFile(int Id, CancellationToken cancellationToken = default);
     }

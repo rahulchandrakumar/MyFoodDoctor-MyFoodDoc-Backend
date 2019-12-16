@@ -1,10 +1,9 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
-using MyFoodDoc.CMS.Models.VMBase;
 using System;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
-    public class User : ColabDataTableBaseModel<int>
+    public class User : VMBase.BaseModel<int>
     {
         public string Username { get; set; }
         public string DisplayName { get; set; }

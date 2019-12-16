@@ -9,11 +9,12 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
         public void Configure(EntityTypeBuilder<CmsUser> builder)
         {
             builder.ToTable("Users", "CMS");
-            builder.HasKey(p => p.Id);
-            builder.Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Property(p => p.Displayname).IsRequired().HasMaxLength(50);
-            builder.Property(p => p.Username).IsRequired().HasMaxLength(25);
-            builder.Property(p => p.PasswordHash).HasMaxLength(200);
+            builder.HasKey(o => o.Id);
+            builder.HasIndex(o => new { o.Username, o.Displayname });
+            builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Property(o => o.Displayname).IsRequired().HasMaxLength(50);
+            builder.Property(o => o.Username).IsRequired().HasMaxLength(25);
+            builder.Property(o => o.PasswordHash).HasMaxLength(200);
         }
     }
 }

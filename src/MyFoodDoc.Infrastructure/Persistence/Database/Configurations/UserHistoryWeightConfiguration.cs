@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites;
 using MyFoodDoc.Application.Entites.TrackedValus;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
@@ -13,7 +12,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 
             builder.HasKey(x => new { x.UserId, x.Date });
             builder.Property(x => x.Date).HasColumnType("Date");
-            builder.Property(x => x.Value).IsRequired();
+            builder.Property(x => x.Value).IsRequired().HasColumnType("decimal(4,1)");
 
             builder.HasOne(x => x.User).WithMany(e => e.WeightHistory);
         }

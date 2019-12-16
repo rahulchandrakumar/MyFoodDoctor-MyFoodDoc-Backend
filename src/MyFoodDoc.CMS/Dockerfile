@@ -17,7 +17,7 @@ FROM node:latest as webbuild
 WORKDIR /app
 COPY src/MyFoodDoc.CMS/app/package*.json ./
 RUN npm install
-COPY cms/MyFoodDoc.CMS/app/ .
+COPY src/MyFoodDoc.CMS/app/ .
 RUN npm run build
 
 FROM base AS final

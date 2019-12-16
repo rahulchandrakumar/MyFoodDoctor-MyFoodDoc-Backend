@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using MyFoodDoc.CMS.Models.VMBase;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Hubs
 {
+    [Authorize]
     public class EditStateHub: Hub
     {
         private static readonly Dictionary<string, Dictionary<int, EditStateHubModel>> _groupedEditList = new Dictionary<string, Dictionary<int, EditStateHubModel>>();

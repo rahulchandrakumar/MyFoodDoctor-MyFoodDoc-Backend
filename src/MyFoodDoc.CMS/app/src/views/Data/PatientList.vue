@@ -1,18 +1,12 @@
 <template>
   <ColabDataTable
     title="Patients"
-    view-model="PatientsViewModel"
+    store-name="patients"
     :headers="mainHeaders"
     :readonly="true"
   >
-    <template v-slot:item.InsuranceId="{ item }">
-      {{ translateInsurance(item.InsuranceId) }}
-    </template>
-    <template v-slot:item.Gender="{ item }">
-      {{ translateSex(item.Gender) }}
-    </template>
-    <template v-slot:item.Birth="{ item }">
-      {{ item.Birth | moment(displayDateFormat) }}
+    <template v-slot:item.birth="{ item }">
+      {{ item.birth | moment(displayDateFormat) }}
     </template>
 
     <template v-slot:expanded-item="{ headers, item }">
@@ -21,7 +15,7 @@
           <v-row>
             <v-col>
               <material-chart-card
-                :data="makeChartData(item.Weight)"
+                :data="makeChartData(item.weight)"
                 ratio="16:9"
                 color="info"
                 type="Line"
@@ -33,7 +27,7 @@
             </v-col>
             <v-col>
               <material-chart-card
-                :data="makeChartData(item.AbdominalGirth)"
+                :data="makeChartData(item.abdominalGirth)"
                 ratio="16:9"
                 color="green"
                 type="Line"
@@ -43,22 +37,10 @@
                 </h4>
               </material-chart-card>
             </v-col>
-            <v-col v-if="false">
-              <material-chart-card
-                :data="makeChartData(item.BloodSugar)"
-                ratio="16:9"
-                color="red"
-                type="Line"
-              >
-                <h4 class="title font-weight-light">
-                  Blood sugar
-                </h4>
-              </material-chart-card>
-            </v-col>
           </v-row>
-          <v-row v-if="item.Motivation != null">
+          <v-row v-if="item.motivation != null">
             <h6 class="font-weight-light">
-              Motivations: {{ item.Motivation.join(',') }}
+              Motivations: {{ item.motivation.join(',') }}
             </h6>
           </v-row>
         </v-container>
@@ -73,59 +55,53 @@ import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabDataTable")
+    ColabDataTable: () => import("@/components/signalR/ColabRDataTable")
   },
 
   data() {
     return {
       mainHeaders: [{
           sortable: true,
-          value: "FullName",
+          value: "fullName",
           text: "Name"
         }, {
           sortable: false,
-          value: "Email",
+          value: "email",
           text: "Email"
         }, {
           sortable: true,
-          value: "InsuranceId",
+          value: "insurance",
           text: "Insurance"
         }, {
           filterable: false,
           sortable: true,
-          value: "Gender",
+          value: "gender",
           text: "Gender"
         }, {
           sortable: true,
-          value: "Height",
+          value: "height",
           text: "Height"
         }, {
           filterable: false,
           sortable: true,
           text: "Birth",
-          value: "Birth"
+          value: "birth"
         }
       ],
       insuranceList: [],
       displayDateFormat: displayDateFormat
     }
   },
-  async mounted() {
+  async created() {
     this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
   },
   methods: {
-    translateSex(value) {
-      return value == null ? null : value == Gender.MALE ? "Male" : "Female";
-    },
-    translateInsurance(value) {
-      return value == null ? null : this.insuranceList.filter(v => v.id == value)[0].name
-    },
     makeChartData(items) {
       return {
-        labels: items.map(i => this.$moment(i.Created).format("DD MMM")),
+        labels: items.map(i => this.$moment(i.created).format("DD MMM")),
         series: [
           {
-            data: items.map(i => i.Value)
+            data: items.map(i => i.value)
           }
         ]
       };

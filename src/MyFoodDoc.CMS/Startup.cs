@@ -1,5 +1,3 @@
-using DotNetify;
-using DotNetify.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,16 +5,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using MyFoodDoc.CMS.Application.Common;
 using MyFoodDoc.CMS.Application.DependencyInjection;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Auth;
 using MyFoodDoc.CMS.Auth.Implementation;
 using MyFoodDoc.CMS.Hubs;
 using MyFoodDoc.CMS.Infrastructure;
+using MyFoodDoc.CMS.Infrastructure.Common;
 using MyFoodDoc.CMS.Infrastructure.Persistence;
 using MyFoodDoc.Infrastructure;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS
 {
@@ -70,10 +71,9 @@ namespace MyFoodDoc.CMS
             services.AddCors();
             #endregion
 
-            #region dotnetify
+            #region SignalR
             services.AddMemoryCache();
             services.AddSignalR().AddMessagePackProtocol();
-            services.AddDotNetify();
             #endregion
 
             #region Auth
@@ -95,6 +95,23 @@ namespace MyFoodDoc.CMS
             {
                 x.SaveToken = true;
                 x.TokenValidationParameters = _tokenValidationParameters;
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/edit-states")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
             #endregion
         }
@@ -130,17 +147,11 @@ namespace MyFoodDoc.CMS
             app.UseMvc();
             #endregion
 
-            #region dotnetify
+            #region SignalR
             app.UseWebSockets();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<DotNetifyHub>("/dotnetify");
                 endpoints.MapHub<EditStateHub>("/edit-states");
-            });
-            app.UseDotNetify(config =>
-            {
-                config.UseFilter<AuthorizeFilter>();
-                config.UseJwtBearerAuthentication(_tokenValidationParameters);
             });
             #endregion
 

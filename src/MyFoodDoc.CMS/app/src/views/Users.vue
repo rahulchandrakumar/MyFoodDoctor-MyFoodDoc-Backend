@@ -2,7 +2,7 @@
   <ColabDataTable
     title="Users"
     editor-title-suffix="user"
-    view-model="UsersViewModel"
+    store-name="users"
     :headers="mainHeaders"
   >
     <template v-slot:item.Role="{ item }">
@@ -14,8 +14,8 @@
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeTextField
-          v-model="item.Username"
-          :label="mainHeaders.filter(h => h.value == 'Username')[0].text"
+          v-model="item.username"
+          :label="mainHeaders.filter(h => h.value == 'username')[0].text"
           :readonly="item.Id != null"
           rules="required|max:35"
           :counter="35"
@@ -23,25 +23,25 @@
       </v-row>
       <v-row>
         <VeeTextField
-          v-model="item.DisplayName"
-          :label="mainHeaders.filter(h => h.value == 'DisplayName')[0].text"
+          v-model="item.displayName"
+          :label="mainHeaders.filter(h => h.value == 'displayName')[0].text"
           rules="required|max:35"
           :counter="35"
         />
       </v-row>
       <v-row>
         <VeeTextField
-          v-model="item.Password"
-          :label="mainHeaders.filter(h => h.value == 'Password')[0].text"
+          v-model="item.password"
+          :label="mainHeaders.filter(h => h.value == 'password')[0].text"
           :rules="(item.Id == null ? 'required|' : '') + 'max:35'"
           :counter="35"
         />
       </v-row>
       <v-row>
         <VeeSelect
-          v-model="item.Role"
+          v-model="item.role"
           :items="roles"
-          :label="mainHeaders.filter(h => h.value == 'Role')[0].text"
+          :label="mainHeaders.filter(h => h.value == 'role')[0].text"
           rules="required"
         />
       </v-row>
@@ -54,7 +54,7 @@ import UserRoles from "@/enums/UserRoles";
 
 export default {
   components: {
-    ColabDataTable: () => import("@/components/dotnetify/ColabDataTable"),
+    ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
     VeeSelect: () => import("@/components/inputs/VeeSelect")
   },
@@ -62,22 +62,22 @@ export default {
     mainHeaders: [
       {
         sortable: true,
-        value: "Username",
+        value: "username",
         text: "User Name"
       },
       {
         sortable: true,
-        value: "DisplayName",
+        value: "displayName",
         text: "Display Name"
       },
       {
         sortable: false,
-        value: "Password",
+        value: "password",
         text: "Password"
       },
       {
         sortable: true,
-        value: "Role",
+        value: "role",
         text: "Role"
       }
     ],

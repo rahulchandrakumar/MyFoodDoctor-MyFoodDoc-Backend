@@ -43,7 +43,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var entity = await _context.Promotions.FindAsync(new object[] { id }, cancellationToken);
+            var entity = await _context.Promotions.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
             if (entity == null)
                 return false;
 
@@ -77,13 +77,26 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return promotion;
         }
 
-        public async Task<IList<PromotionModel>> GetItems(CancellationToken cancellationToken = default)
+        public IQueryable<Promotion> GetBaseQuery(string search)
         {
-            return (await (from p in _context.Promotions select new {
-                       entity = p,
-                       CouponCount = p.Coupons.Count(),
-                       UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
-                   }).ToListAsync())
+            IQueryable<Promotion> baseQuery = _context.Promotions.Include(x => x.Insurance);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchstring = $"%{search}%";
+                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Title, searchstring) || EF.Functions.Like(f.Insurance.Name, searchstring));
+            }
+            return baseQuery;
+        }
+
+        public async Task<IList<PromotionModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        {
+            return (await(from p in GetBaseQuery(search)
+                          select new
+                          {
+                              entity = p,
+                              CouponCount = p.Coupons.Count(),
+                              UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
+                          }).Skip(skip).Take(take).ToListAsync(cancellationToken))
                    .Select(x =>
                    {
                        var model = PromotionModel.FromEntity(x.entity);
@@ -94,9 +107,14 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                    }).ToList();
         }
 
+        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        {
+            return await GetBaseQuery(search).CountAsync(cancellationToken);
+        }
+
         public async Task<PromotionModel> UpdateItem(PromotionModel item, CancellationToken cancellationToken = default)
         {
-            var promoEntity = await _context.Promotions.FindAsync(new object[] { item.Id }, cancellationToken);
+            var promoEntity = await _context.Promotions.FirstOrDefaultAsync(x => x.Id == item.Id, cancellationToken);
 
             promoEntity.IsActive = item.IsActive;
             promoEntity.StartDate = item.StartDate;
