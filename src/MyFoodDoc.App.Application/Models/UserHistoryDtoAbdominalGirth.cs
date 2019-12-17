@@ -11,19 +11,16 @@ namespace MyFoodDoc.App.Application.Models
 {
     public class UserHistoryDtoAbdominalGirth : IMapFrom<IEnumerable<UserAbdominalGirth>>
     {
-        public decimal? Initial { get; set; }
+        public HistoryEntry Initial { get; set; }
 
         public IEnumerable<HistoryEntry> History { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<UserAbdominalGirth, decimal?>().ConvertUsing(src => src.Value);
             profile.CreateMap<UserAbdominalGirth, HistoryEntry>();
             profile.CreateMap<IEnumerable<UserAbdominalGirth>, UserHistoryDtoAbdominalGirth>()
                 .ForMember(d => d.Initial, opt => opt.MapFrom(s => s.AsQueryable().OrderBy(x => x.Date).FirstOrDefault()))
                 .ForMember(d => d.History, opt => opt.MapFrom(s => s.AsQueryable().OrderBy(x => x.Date)));
-
-            //
         }
 
         public class HistoryEntry
