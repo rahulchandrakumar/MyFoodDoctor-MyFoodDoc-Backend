@@ -30,7 +30,7 @@ namespace MyFoodDoc.Database
                 //.AddJsonFile($"appsettings.Local.json", optional: true)
                 //.AddJsonFile($"appsettings.{environmentName}.json", optional: true)
                 .AddUserSecrets(Assembly.GetExecutingAssembly())
-                //.AddEnvironmentVariables()
+                .AddEnvironmentVariables()
                 .WithJsonMapping("mapping.json")
                 .Build();
 

@@ -1,17 +1,17 @@
 #global_variables.tf
 variable "project" {
-  type        = "string"
-  default     = "myfooddoc"
+  type    = string
+  default = "mfd"
 }
 
 variable "location" {
-  type        = "string"
+  type        = string
   default     = "westeurope"
   description = "Specify a location see: az account list-locations -o table"
 }
 
 variable "tags" {
-  type        = "map"
+  type        = map(string)
   description = "A list of tags associated to all resources"
 
   default = {
@@ -20,7 +20,7 @@ variable "tags" {
 }
 
 variable "workspace_to_environment_map" {
-  type = "map"
+  type = map(string)
   default = {
     dev     = "dev"
     qa      = "qa"
@@ -30,7 +30,7 @@ variable "workspace_to_environment_map" {
 }
 
 variable "environment_to_sqlsize_map" {
-  type = "map"
+  type = map(string)
   default = {
     dev     = "Basic"
     qa      = "Basic"
@@ -40,21 +40,22 @@ variable "environment_to_sqlsize_map" {
 }
 
 variable "environment_to_plantier_map" {
-  type = "map"
+  type = map(string)
   default = {
-    dev = "Basic"
-    qa = "Basic"
+    dev     = "Basic"
+    qa      = "Basic"
     staging = "Basic"
-    prod = "Standard"
+    prod    = "Standard"
   }
 }
 
 variable "environment_to_plansize_map" {
-  type = "map"
+  type = map(string)
   default = {
-    dev = "B1"
-    qa = "B1"
+    dev     = "B1"
+    qa      = "B1"
     staging = "B2"
-    prod = "S2"
+    prod    = "S2"
   }
 }
+
