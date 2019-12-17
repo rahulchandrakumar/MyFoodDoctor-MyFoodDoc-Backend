@@ -1,4 +1,12 @@
 #main.tf
+provider "azurerm" {
+  version = "=1.38.0"
+}
+
+provider "random" {
+  version = ">=2.2"
+} 
+
 resource "random_string" "random" {
   length = 16
   special = false
@@ -43,6 +51,9 @@ data "azurerm_container_registry" "acr" {
 }
 
 data "azurerm_client_config" "current" {}
+data "azuread_user" "admin" {
+  user_principal_name = "nikolai.shmatenkov@appsfactory.de"
+}
 
 resource "azurerm_sql_server" "sqlserver" {
   name                         = local.sqlServerName
@@ -56,9 +67,9 @@ resource "azurerm_sql_server" "sqlserver" {
 resource "azurerm_sql_active_directory_administrator" "sqlserverad" {
   server_name         = azurerm_sql_server.sqlserver.name
   resource_group_name = azurerm_sql_server.sqlserver.resource_group_name
-  login               = "nikolai.shmatenkov@appsfactory.de"
   tenant_id           = data.azurerm_client_config.current.tenant_id
-  object_id           = data.azurerm_client_config.current.object_id
+  login               = data.azuread_user.admin.user_principal_name
+  object_id           = data.azuread_user.admin.id
 }
 
 resource "azurerm_sql_firewall_rule" "sqlfirewall" {
