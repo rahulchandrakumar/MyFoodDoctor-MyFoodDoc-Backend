@@ -15,7 +15,7 @@ locals {
   sqlSize = "${var.environment_to_sqlsize_map[local.environment]}"
   planTier = "${var.environment_to_plantier_map[local.environment]}"
   planSize = "${var.environment_to_plansize_map[local.environment]}"
-  aspEnv = "${environment_to_aspenv_map[local.environment]}"
+  aspEnv = "${var.environment_to_aspenv_map[local.environment]}"
   dbadmin = "${random_string.random.result}"
   dbpassword = "${random_password.password.result}"
   sqlServerName = "${var.project}sqlserver${local.environment}"
