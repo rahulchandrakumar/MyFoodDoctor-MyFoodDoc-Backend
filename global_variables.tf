@@ -59,3 +59,12 @@ variable "environment_to_plansize_map" {
   }
 }
 
+variable "environment_to_aspenv_map" {
+  type = map(string)
+  default = {
+    dev     = "Development"
+    qa      = "Staging"
+    staging = "Production"
+    prod    = "Production"
+  }
+}

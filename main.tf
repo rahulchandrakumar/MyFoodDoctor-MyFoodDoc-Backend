@@ -1,8 +1,4 @@
 #main.tf
-provider "azurerm" {
-  version = "=1.38.0"
-}
-
 resource "random_string" "random" {
   length = 16
   special = false
@@ -19,6 +15,7 @@ locals {
   sqlSize = "${var.environment_to_sqlsize_map[local.environment]}"
   planTier = "${var.environment_to_plantier_map[local.environment]}"
   planSize = "${var.environment_to_plansize_map[local.environment]}"
+  aspEnv = "${environment_to_aspenv_map[local.environment]}"
   dbadmin = "${random_string.random.result}"
   dbpassword = "${random_password.password.result}"
   sqlServerName = "${var.project}sqlserver${local.environment}"
@@ -57,19 +54,19 @@ resource "azurerm_sql_server" "sqlserver" {
 }
 
 resource "azurerm_sql_active_directory_administrator" "sqlserverad" {
-  server_name         = "${azurerm_sql_server.sqlserver.name}"
-  resource_group_name = "${azurerm_sql_server.sqlserver.resource_group_name}"
-  login               = "sqladmin"
-  tenant_id           = "${data.azurerm_client_config.current.tenant_id}"
-  object_id           = "${data.azurerm_client_config.current.object_id}"
+  server_name         = azurerm_sql_server.sqlserver.name
+  resource_group_name = azurerm_sql_server.sqlserver.resource_group_name
+  login               = "nikolai.shmatenkov@appsfactory.de"
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  object_id           = data.azurerm_client_config.current.object_id
 }
 
 resource "azurerm_sql_firewall_rule" "sqlfirewall" {
- name = "Allow All Azure Service"
- resource_group_name = "${azurerm_sql_server.sqlserver.resource_group_name}"
- server_name = "${azurerm_sql_server.sqlserver.name}"
- start_ip_address = "0.0.0.0"
- end_ip_address = "0.0.0.0"
+  name                = "Allow All Azure Service"
+  resource_group_name = azurerm_sql_server.sqlserver.resource_group_name
+  server_name         = azurerm_sql_server.sqlserver.name
+  start_ip_address    = "0.0.0.0"
+  end_ip_address      = "0.0.0.0"
 }
 
 resource "azurerm_sql_database" "sqldb" {
@@ -139,7 +136,7 @@ resource "azurerm_app_service" "cms" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT              = "Development"
+    ASPNETCORE_ENVIRONMENT              = local.aspEnv
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     DOCKER_REGISTRY_SERVER_URL          = "https://${data.azurerm_container_registry.acr.name}.azurecr.io"
     DOCKER_REGISTRY_SERVER_USERNAME     = data.azurerm_container_registry.acr.admin_username
@@ -174,7 +171,7 @@ resource "azurerm_app_service" "auth" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT              = "Development"
+    ASPNETCORE_ENVIRONMENT              = local.aspEnv
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     DOCKER_REGISTRY_SERVER_URL          = "https://${data.azurerm_container_registry.acr.name}.azurecr.io"
     DOCKER_REGISTRY_SERVER_USERNAME     = data.azurerm_container_registry.acr.admin_username
@@ -197,7 +194,7 @@ resource "azurerm_app_service" "api" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT              = "Development"
+    ASPNETCORE_ENVIRONMENT              = local.aspEnv
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
     DOCKER_REGISTRY_SERVER_URL          = "https://${data.azurerm_container_registry.acr.name}.azurecr.io"
     DOCKER_REGISTRY_SERVER_USERNAME     = data.azurerm_container_registry.acr.admin_username
