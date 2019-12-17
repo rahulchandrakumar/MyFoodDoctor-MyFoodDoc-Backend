@@ -15,7 +15,7 @@ namespace MyFoodDoc.Application.Entites
 
         public Gender? Gender { get; set; }
 
-        public int? Height { get; set; }
+        public decimal? Height { get; set; }
 
         public int? InsuranceId { get; set; }
 
