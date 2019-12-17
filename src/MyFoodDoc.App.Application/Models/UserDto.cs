@@ -22,7 +22,7 @@ namespace MyFoodDoc.App.Application.Models
 
         public Gender? Gender { get; set; }
 
-        public int? Height { get; set; }
+        public decimal? Height { get; set; }
 
         public int? InsuranceId { get; set; }
 

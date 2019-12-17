@@ -13,7 +13,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             
             builder.HasKey(x => new { x.UserId, x.Date });
             builder.Property(x => x.Date).HasColumnType("Date");
-            builder.Property(x => x.Value).IsRequired();
+            builder.Property(x => x.Value).IsRequired().HasColumnType("decimal(4,1)");
 
             builder.HasOne(x => x.User).WithMany(e => e.AbdominalGirthHistory);
         }

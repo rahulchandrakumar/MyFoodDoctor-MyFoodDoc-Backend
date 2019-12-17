@@ -8,7 +8,7 @@ namespace MyFoodDoc.App.Application.Payloads.User
     {
         public Gender Gender { get; set; }
 
-        public int Height { get; set; }
+        public decimal Height { get; set; }
 
         public decimal Weight { get; set; }
 
