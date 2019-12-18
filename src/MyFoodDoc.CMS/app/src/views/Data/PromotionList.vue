@@ -67,7 +67,7 @@
           :rules="{ required: true, dateMore: { date: item.startDate } }"
         />
       </v-row>
-      <v-row v-if="item.Id == null">
+      <v-row v-if="item.id == null">
         <VeeFileInput
           v-model="item.file"
           label="CSV file"
