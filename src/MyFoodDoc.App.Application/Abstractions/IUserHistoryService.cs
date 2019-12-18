@@ -13,11 +13,11 @@ namespace MyFoodDoc.App.Application.Abstractions
     {
         Task<UserHistoryDto> GetAggregationAsync(string userId, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<UserHistoryDtoWeight>> GetWeightHistoryAsync(string userId, CancellationToken cancellationToken);
+        Task<UserHistoryDtoWeight> GetWeightHistoryAsync(string userId, CancellationToken cancellationToken);
 
         Task UpsertWeightHistoryAsync(string userId, WeightHistoryPayload payload, CancellationToken cancellationToken = default);
 
-        Task<IEnumerable<UserHistoryDtoAbdominalGirth>> GetAbdonimalGirthHistoryAsync(string userId, CancellationToken cancellationToken);
+        Task<UserHistoryDtoAbdominalGirth> GetAbdonimalGirthHistoryAsync(string userId, CancellationToken cancellationToken);
 
         Task UpsertAbdonimalGirthHistoryAsync(string userId, AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default);
     }

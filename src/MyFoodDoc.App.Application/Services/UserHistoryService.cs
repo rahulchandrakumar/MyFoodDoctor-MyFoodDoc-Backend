@@ -76,24 +76,22 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<UserHistoryDtoWeight>> GetWeightHistoryAsync(string userId, CancellationToken cancellationToken)
+        public async Task<UserHistoryDtoWeight> GetWeightHistoryAsync(string userId, CancellationToken cancellationToken)
         {
-            var result = await _context.UserWeights
-                .Where(x => x.UserId == userId )
-                .ProjectTo<UserHistoryDtoWeight>(_mapper.ConfigurationProvider)
+            var weights = await _context.UserWeights
+                .Where(x => x.UserId == userId)
                 .ToListAsync(cancellationToken);
 
-            return result;
+            return _mapper.Map<UserHistoryDtoWeight>(weights);
         }
 
-        public async Task<IEnumerable<UserHistoryDtoAbdominalGirth>> GetAbdonimalGirthHistoryAsync(string userId, CancellationToken cancellationToken)
+        public async Task<UserHistoryDtoAbdominalGirth> GetAbdonimalGirthHistoryAsync(string userId, CancellationToken cancellationToken)
         {
-            var result = await _context.UserAbdominalGirths
+            var abdominalGirths = await _context.UserAbdominalGirths
                 .Where(x => x.UserId == userId)
-                .ProjectTo<UserHistoryDtoAbdominalGirth>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-            return result;
+            return _mapper.Map<UserHistoryDtoAbdominalGirth>(abdominalGirths);
         }
     }
 }
