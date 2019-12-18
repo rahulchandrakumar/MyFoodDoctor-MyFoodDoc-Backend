@@ -17,7 +17,8 @@ namespace MyFoodDoc.CMS.Models.VM
         public IList<HistoryBaseModel<decimal>> Weight { get; set; }
         //public IList<HistoryBaseModel<int>> BloodSugar { get; set; }
         public IList<HistoryBaseModel<decimal>> AbdominalGirth { get; set; }
-        public IList<string> Motivation { get; set; }
+        public IList<string> Motivations { get; set; }
+        public IList<string> Indications { get; set; }
 
         public static Patient FromModel(PatientModel model)
         {
@@ -33,7 +34,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 AbdominalGirth = model.AbdominalGirth?.Select(HistoryBaseModel<decimal>.FromModel).ToList(),
                 //BloodSugar = model.BloodSugar?.Select(HistoryBaseModel<int>.FromModel).ToList(),
                 Weight = model.Weight?.Select(HistoryBaseModel<decimal>.FromModel).ToList(),
-                Motivation = model.Motivation?.ToList()
+                Motivations = model.Motivations?.ToList(),
+                Indications = model.Indications?.ToList()
             };
         }
     }
