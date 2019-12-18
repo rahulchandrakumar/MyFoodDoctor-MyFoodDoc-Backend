@@ -8,7 +8,6 @@ namespace MyFoodDoc.CMS.Models.VM
 {
     public class Patient : VMBase.BaseModel<string>
     {
-        public string FullName { get; set; }
         public string Email { get; set; }
         public int? InsuranceId { get; set; }
         public byte? Gender { get; set; }
@@ -24,7 +23,6 @@ namespace MyFoodDoc.CMS.Models.VM
             return model == null ? null : new Patient()
             {
                 Id = model.Id,
-                FullName = model.FullName,
                 Birth = model.Birth,
                 Email = model.Email,
                 InsuranceId = model.InsuranceId,
