@@ -12,7 +12,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static LexiconItem FromModel(LexiconModel model)
         {
-            return new LexiconItem()
+            return model == null ? null : new LexiconItem()
             {
                 Id = model.Id,
                 TitleLong = model.TitleLong,

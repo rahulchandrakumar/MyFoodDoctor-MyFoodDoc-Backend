@@ -11,7 +11,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static WebViewItem FromModel(WebViewModel model)
         {
-            return new WebViewItem()
+            return model == null ? null : new WebViewItem()
             {
                 Id = model.Id,
                 Title = model.Title,

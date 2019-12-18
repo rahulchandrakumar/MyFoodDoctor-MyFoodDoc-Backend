@@ -18,7 +18,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static Promotion FromModel(PromotionModel model)
         {
-            return new Promotion()
+            return model == null ? null : new Promotion()
             {
                 Id = model.Id,
                 Disabled = !model.IsActive,

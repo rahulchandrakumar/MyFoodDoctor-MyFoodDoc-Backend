@@ -10,7 +10,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static HistoryModel<T> FromEntity(AbstractTrackedValue<T> entity)
         {
-            return new HistoryModel<T>()
+            return entity == null ? null : new HistoryModel<T>()
             {
                 Created = entity.Date,
                 Value = entity.Value

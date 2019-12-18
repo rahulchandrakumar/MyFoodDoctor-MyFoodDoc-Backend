@@ -10,7 +10,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static Ingredient FromModel(IngredientModel model)
         {
-            return new Ingredient()
+            return model == null ? null : new Ingredient()
             {
                 Id = model.Id,
                 Amount = model.Amount,

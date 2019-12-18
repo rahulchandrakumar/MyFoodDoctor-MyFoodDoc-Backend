@@ -18,7 +18,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static WebViewModel FromEntity(WebPage entity)
         {
-            return new WebViewModel()
+            return entity == null ? null : new WebViewModel()
             {
                 Id = entity.Id,
                 Title = entity.Title,
