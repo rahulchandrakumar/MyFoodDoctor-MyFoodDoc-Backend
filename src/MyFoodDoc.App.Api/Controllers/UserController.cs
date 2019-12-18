@@ -83,8 +83,8 @@ namespace MyFoodDoc.App.Api.Controllers
 
         [HttpPut("history/weight")]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<UserHistoryDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<UserHistoryDto>>> UpdateUserHistoryWeight([FromBody] WeightHistoryPayload payload, CancellationToken cancellationToken = default)
+        [ProducesResponseType(typeof(IEnumerable<UserHistoryDtoWeight>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<UserHistoryDtoWeight>>> UpdateUserHistoryWeight([FromBody] WeightHistoryPayload payload, CancellationToken cancellationToken = default)
         {
             await _historyService.UpsertWeightHistoryAsync(GetUserId(), payload, cancellationToken);
 
@@ -95,8 +95,8 @@ namespace MyFoodDoc.App.Api.Controllers
 
         [HttpPut("history/abdominal-girth")]
         [Consumes(MediaTypeNames.Application.Json)]
-        [ProducesResponseType(typeof(IEnumerable<UserHistoryDto>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<UserHistoryDto>>> UpdateUserHistoryAbdominalGirth([FromBody] AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
+        [ProducesResponseType(typeof(IEnumerable<UserHistoryDtoAbdominalGirth>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<UserHistoryDtoAbdominalGirth>>> UpdateUserHistoryAbdominalGirth([FromBody] AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
         {
             await _historyService.UpsertAbdonimalGirthHistoryAsync(GetUserId(), payload, cancellationToken);
 
