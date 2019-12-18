@@ -181,11 +181,7 @@ export default {
   },
   data() {
     var mainHeaders = [
-      {
-        sortable: true,
-        text: "Id",
-        value: "id"
-      }
+      
     ].concat(this.headers);
 
     if (!this.readonly)
