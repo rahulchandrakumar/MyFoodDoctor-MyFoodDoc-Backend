@@ -38,9 +38,14 @@
               </material-chart-card>
             </v-col>
           </v-row>
-          <v-row v-if="item.motivation != null">
+          <v-row v-if="item.motivations != null && item.motivations.length > 0">
             <h6 class="font-weight-light">
-              Motivations: {{ item.motivation.join(',') }}
+              Motivations: {{ item.motivations.join(',') }}
+            </h6>
+          </v-row>
+          <v-row v-if="item.indications != null && item.indications.length > 0">
+            <h6 class="font-weight-light">
+              Indications: {{ item.indications.join(',') }}
             </h6>
           </v-row>
         </v-container>

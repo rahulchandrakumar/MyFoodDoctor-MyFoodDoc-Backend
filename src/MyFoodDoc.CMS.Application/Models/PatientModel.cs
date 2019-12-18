@@ -14,9 +14,9 @@ namespace MyFoodDoc.CMS.Application.Models
         public decimal? Height { get; set; }
         public DateTime? Birth { get; set; }
         public IList<HistoryModel<decimal>> Weight { get; set; }
-        //public IList<HistoryModel<int>> BloodSugar { get; set; }
         public IList<HistoryModel<decimal>> AbdominalGirth { get; set; }
-        public IList<string> Motivation { get; set; }
+        public IList<string> Motivations { get; set; }
+        public IList<string> Indications { get; set; }
 
         public static PatientModel FromEntity(User entity)
         {
@@ -30,9 +30,9 @@ namespace MyFoodDoc.CMS.Application.Models
                 Gender = entity.Gender == null ? null : (GenderEnum?)Enum.Parse(typeof(GenderEnum), entity.Gender?.ToString()),
                 Height = entity.Height,
                 AbdominalGirth = entity.AbdominalGirthHistory?.Select(HistoryModel<decimal>.FromEntity).ToList(),
-                //BloodSugar = entity.BloodSugarLevelHistory?.Select(HistoryModel<int>.FromEntity).ToList(),
                 Weight = entity.WeightHistory?.Select(HistoryModel<decimal>.FromEntity).ToList(),
-                Motivation = entity.Motivations?.Select(x => x.Motivation.Name).ToList()
+                Motivations = entity.Motivations?.Select(x => x.Motivation.Name).ToList(),
+                Indications = entity.Indications?.Select(x => x.Indication.Name).ToList()
             };
         }
     }

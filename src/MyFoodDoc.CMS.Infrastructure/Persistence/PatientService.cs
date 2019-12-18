@@ -26,7 +26,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var item = await _context.Users
                                          .Include(x => x.AbdominalGirthHistory)
                                          .Include(x => x.Motivations)
-                                             .ThenInclude(x => x.Motivation)
+                                            .ThenInclude(x => x.Motivation)
+                                         .Include(x => x.Indications)
+                                            .ThenInclude(x => x.Indication)
                                          .Include(x => x.WeightHistory)
                                          .AsNoTracking()
                                          .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -60,6 +62,8 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                         .Include(x => x.AbdominalGirthHistory)
                                         .Include(x => x.Motivations)
                                             .ThenInclude(x => x.Motivation)
+                                        .Include(x => x.Indications)
+                                            .ThenInclude(x => x.Indication)
                                         .Include(x => x.WeightHistory)
                                         .Skip(skip).Take(take)
                                         .AsNoTracking()
