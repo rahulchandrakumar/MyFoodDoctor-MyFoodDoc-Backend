@@ -33,7 +33,7 @@
         <VeeTextField
           v-model="item.password"
           :label="mainHeaders.filter(h => h.value == 'password')[0].text"
-          :rules="(item.Id == null ? 'required|' : '') + 'max:35'"
+          :rules="(item.id == null ? 'required|' : '') + 'max:35'"
           :counter="35"
         />
       </v-row>
