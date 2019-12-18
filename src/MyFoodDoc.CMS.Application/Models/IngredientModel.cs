@@ -10,7 +10,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static IngredientModel FromEntity(Ingredient entity)
         {
-            return new IngredientModel()
+            return entity == null ? null : new IngredientModel()
             {
                 Id = entity.Id,
                 Amount = entity.Amount,

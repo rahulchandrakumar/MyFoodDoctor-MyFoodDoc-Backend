@@ -20,7 +20,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static PatientModel FromEntity(User entity)
         {
-            return new PatientModel()
+            return entity == null ? null : new PatientModel()
             {
                 Id = entity.Id,
                 Birth = entity.Birthday,

@@ -12,7 +12,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static User FromModel(UserModel model)
         {
-            return new User()
+            return model == null ? null : new User()
             {
                 DisplayName = model.Displayname,
                 Id = model.Id,

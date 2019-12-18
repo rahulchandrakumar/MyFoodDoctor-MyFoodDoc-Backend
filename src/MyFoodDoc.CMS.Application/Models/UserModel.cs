@@ -16,7 +16,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static UserModel FromEntity(CmsUser entity)
         {
-            return new UserModel()
+            return entity == null ? null : new UserModel()
             {
                 Id = entity.Id,
                 Displayname = entity.Displayname,

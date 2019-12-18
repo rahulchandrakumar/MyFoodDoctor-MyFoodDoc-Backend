@@ -21,7 +21,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static Patient FromModel(PatientModel model)
         {
-            return new Patient()
+            return model == null ? null : new Patient()
             {
                 Id = model.Id,
                 FullName = model.FullName,

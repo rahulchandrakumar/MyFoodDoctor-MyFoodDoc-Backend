@@ -8,7 +8,7 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public static Insurance FromModel(InsuranceModel model)
         {
-            return new Insurance()
+            return model == null ? null : new Insurance()
             {
                 Id = model.Id,
                 Name = model.Name

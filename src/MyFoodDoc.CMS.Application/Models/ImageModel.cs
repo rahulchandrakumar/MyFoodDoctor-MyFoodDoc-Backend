@@ -15,7 +15,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static ImageModel FromEntity(Image entity)
         {
-            return new ImageModel()
+            return entity == null ? null : new ImageModel()
             {
                 Id = entity.Id,
                 Url = CDN.GetCDNUrl(entity.Url, CdnUrl)

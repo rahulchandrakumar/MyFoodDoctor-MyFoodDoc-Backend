@@ -37,7 +37,7 @@ namespace MyFoodDoc.CMS.Auth.Implementation
 
             var user = await _userService.GetByUsername(username);
 
-            if (user == null && user.Username == _configuration["SuperAdmin:Username"])
+            if (user == null && username == _configuration["SuperAdmin:Username"])
             {
                 user = new UserModel()
                 {

@@ -13,7 +13,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static LexiconModel FromEntity(LexiconEntry entity)
         {
-            return new LexiconModel()
+            return entity == null ? null : new LexiconModel()
             {
                 Text = entity.Text,
                 Id = entity.Id,

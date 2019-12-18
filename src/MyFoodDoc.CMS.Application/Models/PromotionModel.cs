@@ -18,7 +18,7 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public static PromotionModel FromEntity(Promotion entity)
         {
-            return new PromotionModel()
+            return entity == null ? null : new PromotionModel()
             {
                 Id = entity.Id,
                 StartDate = entity.StartDate,
