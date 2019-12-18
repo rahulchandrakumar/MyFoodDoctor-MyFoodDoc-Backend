@@ -11,8 +11,7 @@ RUN dotnet tool install dotnet-ef --tool-path "/tools/dotnet-ef"
 ENV DEFAULT_DATABASE_CONNECTION="1"
 RUN "/tools/dotnet-ef/dotnet-ef" migrations script --idempotent -o "/migrations.sql"
 WORKDIR /
-RUN sed -i "1s/^\xEF\xBB\xBF//" migrations.sql
-RUN sed -i "1s/^/SET QUOTED_IDENTIFIER ON\n\n\GO\n\n/" migrations.sql
+RUN sed -i "1s/^\xEF\xBB\xBF/\xEF\xBB\xBFSET QUOTED_IDENTIFIER ON\n\n\GO\n\n/" migrations.sql
 
 FROM base AS final
 WORKDIR /
