@@ -17,7 +17,7 @@
           v-model="item.username"
           :label="mainHeaders.filter(h => h.value == 'username')[0].text"
           :readonly="item.Id != null"
-          rules="required|max:35"
+          rules="required|email|max:35"
           :counter="35"
         />
       </v-row>
@@ -63,7 +63,7 @@ export default {
       {
         sortable: true,
         value: "username",
-        text: "User Name"
+        text: "Email"
       },
       {
         sortable: true,
