@@ -71,11 +71,6 @@ export default {
         text: "Display Name"
       },
       {
-        sortable: false,
-        value: "password",
-        text: "Password"
-      },
-      {
         sortable: true,
         value: "role",
         text: "Role"
