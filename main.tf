@@ -29,6 +29,9 @@ locals {
   sqlServerName = "${var.project}sqlserver${local.environment}"
   sqlDbName = "${var.project}sqldb${local.environment}"
   storageName = "${var.project}storageacc${local.environment}"
+  keyvaultName = "${var.project}-keyvault-${local.environment}"
+  keyvaultDbKey = "SqlConnection"
+  keyvaultStorKey = "StorageConnection"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -160,13 +163,17 @@ resource "azurerm_app_service" "cms" {
   connection_string {
     name  = "DefaultConnection"
     type  = "SQLServer"
-    value = "Server=tcp:${local.sqlServerName}.database.windows.net,1433;Initial Catalog=${local.sqlDbName};Persist Security Info=False;User ID=${local.dbadmin};Password=${local.dbpassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    value = "@Microsoft.KeyVault(SecretUri=https://${local.keyvaultName}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
   }
 
   connection_string {
     name  = "BlobStorageConnectionString"
     type  = "Custom"
-    value = "DefaultEndpointsProtocol=https;AccountName=${local.storageName};AccountKey=${data.azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"
+    value = "@Microsoft.KeyVault(SecretUri=https://${local.keyvaultName}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 }
 
@@ -189,7 +196,11 @@ resource "azurerm_app_service" "auth" {
     DOCKER_REGISTRY_SERVER_PASSWORD     = data.azurerm_container_registry.acr.admin_password
     DOCKER_CUSTOM_IMAGE_NAME            = "${var.project}-auth-${local.environment}:latest"
     DOCKER_ENABLE_CI                    = "true"
-    DEFAULT_DATABASE_CONNECTION         = "Server=tcp:${local.sqlServerName}.database.windows.net,1433;Initial Catalog=${local.sqlDbName};Persist Security Info=False;User ID=${local.dbadmin};Password=${local.dbpassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    DEFAULT_DATABASE_CONNECTION         = "@Microsoft.KeyVault(SecretUri=https://${local.keyvaultName}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+  }
+
+  identity {
+    type = "SystemAssigned"
   }
 }
 
@@ -212,9 +223,77 @@ resource "azurerm_app_service" "api" {
     DOCKER_REGISTRY_SERVER_PASSWORD     = data.azurerm_container_registry.acr.admin_password
     DOCKER_CUSTOM_IMAGE_NAME            = "${var.project}-api-${local.environment}"
     DOCKER_ENABLE_CI                    = "true"
-    DEFAULT_DATABASE_CONNECTION         = "Server=tcp:${local.sqlServerName}.database.windows.net,1433;Initial Catalog=${local.sqlDbName};Persist Security Info=False;User ID=${local.dbadmin};Password=${local.dbpassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+    DEFAULT_DATABASE_CONNECTION         = "@Microsoft.KeyVault(SecretUri=https://${local.keyvaultName}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
     IDENTITY_SERVER_CLIENT              = "myfooddoc_app"
     IDENTITY_SERVER_SCOPE               = "myfooddoc_api offline_access"
     IDENTITY_SERVER_ADDRESS             = "https://${var.project}auth-${local.environment}.azurewebsites.net"
   }
+
+  identity {
+    type = "SystemAssigned"
+  }
+}
+
+resource "azurerm_key_vault" "keyvault" {
+  name                = local.keyvaultName
+  location            = azurerm_app_service_plan.appserviceplan.location
+  resource_group_name = azurerm_app_service_plan.appserviceplan.resource_group_name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  sku_name            = "standard"
+}
+
+resource "azurerm_key_vault_access_policy" "cms" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  tenant_id    = azurerm_key_vault.keyvault.tenant_id
+
+  object_id = azurerm_app_service.cms.identity.0.principal_id
+
+  secret_permissions = [
+    "get",
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "api" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  tenant_id    = azurerm_key_vault.keyvault.tenant_id
+
+  object_id = azurerm_app_service.api.identity.0.principal_id
+
+  secret_permissions = [
+    "get",
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "auth" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  tenant_id    = azurerm_key_vault.keyvault.tenant_id
+
+  object_id = azurerm_app_service.auth.identity.0.principal_id
+
+  secret_permissions = [
+    "get",
+  ]
+}
+
+resource "azurerm_key_vault_access_policy" "tf" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  tenant_id    = azurerm_key_vault.keyvault.tenant_id
+
+  object_id = data.azurerm_client_config.current.object_id
+
+  secret_permissions = [
+    "set", "get", "delete",
+  ]
+}
+
+resource "azurerm_key_vault_secret" "dbsecret" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  name         = local.keyvaultDbKey
+  value        = "Server=tcp:${local.sqlServerName}.database.windows.net,1433;Initial Catalog=${local.sqlDbName};Persist Security Info=False;User ID=${local.dbadmin};Password=${local.dbpassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"  
+}
+
+resource "azurerm_key_vault_secret" "storsecret" {
+  key_vault_id = azurerm_key_vault.keyvault.id
+  name         = local.keyvaultStorKey
+  value        = "DefaultEndpointsProtocol=https;AccountName=${local.storageName};AccountKey=${data.azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"  
 }
