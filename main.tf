@@ -230,42 +230,38 @@ resource "azurerm_key_vault" "keyvault" {
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
 
+  #cms app policy
   access_policy {
-    tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
+    tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = azurerm_app_service.cms.identity.0.principal_id
-
     secret_permissions = [
       "get",
     ]
   }
 
+  #api app policy
   access_policy {
-    tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
+    tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = azurerm_app_service.api.identity.0.principal_id
-
     secret_permissions = [
       "get",
     ]
   }
 
+  #auth app policy
   access_policy {
-    tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
+    tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = azurerm_app_service.auth.identity.0.principal_id
-
     secret_permissions = [
       "get",
     ]
   }
 
+  #terraform/devops policy
   access_policy {
-    tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
+    tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = data.azurerm_client_config.current.object_id
     application_id = data.azurerm_client_config.current.client_id
-
     secret_permissions = [
       "set", "get", "delete",
     ]
