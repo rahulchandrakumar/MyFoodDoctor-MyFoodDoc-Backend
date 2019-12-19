@@ -24,9 +24,9 @@
         <v-card-title>
           <span class="headline">{{
             `${
-              formItem && formItem.Id != null ? "Edit" : "Add"
+              formItem && formItem.id != null ? "Edit" : "Add"
             } ${titleSuffix} ${
-              formItem && formItem.Id != null ? "(id:" + formItem.Id + ")" : ""
+              formItem && formItem.id != null ? "(id:" + formItem.id + ")" : ""
             }`
           }}</span>
         </v-card-title>
