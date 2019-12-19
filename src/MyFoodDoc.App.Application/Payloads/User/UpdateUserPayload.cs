@@ -7,7 +7,8 @@ namespace MyFoodDoc.App.Application.Payloads.User
 {
     public class UpdateUserPayload
     {
-        public DateTime? Birthday { get; set; }
+        //public DateTime? Birthday { get; set; }
+        public int? Age { get; set; }
 
         public Gender Gender { get; set; }
 

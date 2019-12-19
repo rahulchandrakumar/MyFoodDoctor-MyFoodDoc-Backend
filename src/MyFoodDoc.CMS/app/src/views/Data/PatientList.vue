@@ -5,10 +5,6 @@
     :headers="mainHeaders"
     :readonly="true"
   >
-    <template v-slot:item.birth="{ item }">
-      {{ item.birth | moment(displayDateFormat) }}
-    </template>
-
     <template v-slot:expanded-item="{ headers, item }">
       <td :colspan="headers.length">
         <v-container>
@@ -56,7 +52,6 @@
 
 <script>
 import Gender from "@/enums/Gender";
-import { displayDateFormat } from "@/utils/Consts.js"
 
 export default {
   components: {
@@ -85,12 +80,11 @@ export default {
         }, {
           filterable: false,
           sortable: true,
-          text: "Birth",
-          value: "birth"
+          text: "Age",
+          value: "age"
         }
       ],
       insuranceList: [],
-      displayDateFormat: displayDateFormat
     }
   },
   async created() {

@@ -6,6 +6,6 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
     {
         public DateTime Date { get; set; }
 
-        public int Value { get; set; }
+        public decimal Value { get; set; }
     }
 }
