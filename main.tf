@@ -261,7 +261,6 @@ resource "azurerm_key_vault" "keyvault" {
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id
     object_id = data.azurerm_client_config.current.object_id
-    application_id = data.azurerm_client_config.current.client_id
     secret_permissions = [
       "set", "get", "delete",
     ]
