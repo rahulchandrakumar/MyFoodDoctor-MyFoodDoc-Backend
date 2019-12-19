@@ -5,7 +5,7 @@ provider "azurerm" {
 
 provider "random" {
   version = ">=2.2"
-} 
+}
 
 resource "random_string" "random" {
   length = 16
@@ -32,6 +32,8 @@ locals {
   keyvaultName = "${var.project}-keyvault-${local.environment}"
   keyvaultDbKey = "SqlConnection"
   keyvaultStorKey = "StorageConnection"
+  azureAdminPrincipalName = "nikolai.shmatenkov@appsfactory.de"
+  azureAdminObjectId = "a61e4c72-ad67-4c74-912a-61b5290126ec"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -54,9 +56,6 @@ data "azurerm_container_registry" "acr" {
 }
 
 data "azurerm_client_config" "current" {}
-data "azuread_user" "admin" {
-  user_principal_name = "nikolai.shmatenkov@appsfactory.de"
-}
 
 resource "azurerm_sql_server" "sqlserver" {
   name                         = local.sqlServerName
@@ -71,8 +70,8 @@ resource "azurerm_sql_active_directory_administrator" "sqlserverad" {
   server_name         = azurerm_sql_server.sqlserver.name
   resource_group_name = azurerm_sql_server.sqlserver.resource_group_name
   tenant_id           = data.azurerm_client_config.current.tenant_id
-  login               = data.azuread_user.admin.user_principal_name
-  object_id           = data.azuread_user.admin.id
+  login               = local.azureAdminPrincipalName
+  object_id           = local.azureAdminObjectId
 }
 
 resource "azurerm_sql_firewall_rule" "sqlfirewall" {
