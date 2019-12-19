@@ -32,8 +32,6 @@ locals {
   keyvaultName = "${var.project}-keyvault-${local.environment}"
   keyvaultDbKey = "SqlConnection"
   keyvaultStorKey = "StorageConnection"
-  azureAdminPrincipalName = "nikolai.shmatenkov@appsfactory.de"
-  azureAdminObjectId = "a61e4c72-ad67-4c74-912a-61b5290126ec"
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -64,14 +62,6 @@ resource "azurerm_sql_server" "sqlserver" {
   version                      = "12.0"
   administrator_login          = local.dbadmin
   administrator_login_password = local.dbpassword
-}
-
-resource "azurerm_sql_active_directory_administrator" "sqlserverad" {
-  server_name         = azurerm_sql_server.sqlserver.name
-  resource_group_name = azurerm_sql_server.sqlserver.resource_group_name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  login               = local.azureAdminPrincipalName
-  object_id           = local.azureAdminObjectId
 }
 
 resource "azurerm_sql_firewall_rule" "sqlfirewall" {
@@ -288,11 +278,11 @@ resource "azurerm_key_vault_access_policy" "tf" {
 resource "azurerm_key_vault_secret" "dbsecret" {
   key_vault_id = azurerm_key_vault.keyvault.id
   name         = local.keyvaultDbKey
-  value        = "Server=tcp:${local.sqlServerName}.database.windows.net,1433;Initial Catalog=${local.sqlDbName};Persist Security Info=False;User ID=${local.dbadmin};Password=${local.dbpassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"  
+  value        = "Server=tcp:${local.sqlServerName}.database.windows.net,1433;Initial Catalog=${local.sqlDbName};Persist Security Info=False;User ID=${local.dbadmin};Password=${local.dbpassword};MultipleActiveResultSets=True;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 }
 
 resource "azurerm_key_vault_secret" "storsecret" {
   key_vault_id = azurerm_key_vault.keyvault.id
   name         = local.keyvaultStorKey
-  value        = "DefaultEndpointsProtocol=https;AccountName=${local.storageName};AccountKey=${data.azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"  
+  value        = "DefaultEndpointsProtocol=https;AccountName=${local.storageName};AccountKey=${data.azurerm_storage_account.storage.primary_access_key};EndpointSuffix=core.windows.net"
 }
