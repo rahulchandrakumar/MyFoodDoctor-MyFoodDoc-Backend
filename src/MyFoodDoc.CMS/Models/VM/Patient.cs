@@ -12,7 +12,8 @@ namespace MyFoodDoc.CMS.Models.VM
         public int? InsuranceId { get; set; }
         public byte? Gender { get; set; }
         public decimal Height { get; set; }
-        public DateTime? Birth { get; set; }
+        //public DateTime? Birth { get; set; }
+        public int? Age { get; set; }
         public IList<HistoryBaseModel<decimal>> Weight { get; set; }
         //public IList<HistoryBaseModel<int>> BloodSugar { get; set; }
         public IList<HistoryBaseModel<decimal>> AbdominalGirth { get; set; }
@@ -24,7 +25,8 @@ namespace MyFoodDoc.CMS.Models.VM
             return model == null ? null : new Patient()
             {
                 Id = model.Id,
-                Birth = model.Birth,
+                //Birth = model.Birth,
+                Age = model.Birth == null ? null : (int?)(DateTime.UtcNow.Year - model.Birth.Value.Year),
                 Email = model.Email,
                 InsuranceId = model.InsuranceId,
                 Height = model.Height ?? 0,
