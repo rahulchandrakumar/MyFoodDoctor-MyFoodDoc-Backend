@@ -229,51 +229,42 @@ resource "azurerm_key_vault" "keyvault" {
   resource_group_name = azurerm_app_service_plan.appserviceplan.resource_group_name
   tenant_id           = data.azurerm_client_config.current.tenant_id
   sku_name            = "standard"
-}
 
-resource "azurerm_key_vault_access_policy" "cms" {
-  key_vault_id = azurerm_key_vault.keyvault.id
-  tenant_id    = azurerm_key_vault.keyvault.tenant_id
+  #cms app policy
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_app_service.cms.identity.0.principal_id
+    secret_permissions = [
+      "get",
+    ]
+  }
 
-  object_id = azurerm_app_service.cms.identity.0.principal_id
+  #api app policy
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_app_service.api.identity.0.principal_id
+    secret_permissions = [
+      "get",
+    ]
+  }
 
-  secret_permissions = [
-    "get",
-  ]
-}
+  #auth app policy
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = azurerm_app_service.auth.identity.0.principal_id
+    secret_permissions = [
+      "get",
+    ]
+  }
 
-resource "azurerm_key_vault_access_policy" "api" {
-  key_vault_id = azurerm_key_vault.keyvault.id
-  tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
-  object_id = azurerm_app_service.api.identity.0.principal_id
-
-  secret_permissions = [
-    "get",
-  ]
-}
-
-resource "azurerm_key_vault_access_policy" "auth" {
-  key_vault_id = azurerm_key_vault.keyvault.id
-  tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
-  object_id = azurerm_app_service.auth.identity.0.principal_id
-
-  secret_permissions = [
-    "get",
-  ]
-}
-
-resource "azurerm_key_vault_access_policy" "tf" {
-  key_vault_id = azurerm_key_vault.keyvault.id
-  tenant_id    = azurerm_key_vault.keyvault.tenant_id
-
-  object_id = data.azurerm_client_config.current.object_id
-  application_id = data.azurerm_client_config.current.client_id
-
-  secret_permissions = [
-    "set", "get", "delete",
-  ]
+  #terraform/devops policy
+  access_policy {
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
+    secret_permissions = [
+      "set", "get", "delete",
+    ]
+  }
 }
 
 resource "azurerm_key_vault_secret" "dbsecret" {
