@@ -269,6 +269,7 @@ resource "azurerm_key_vault_access_policy" "tf" {
   tenant_id    = azurerm_key_vault.keyvault.tenant_id
 
   object_id = data.azurerm_client_config.current.object_id
+  application_id = data.azurerm_client_config.current.client_id
 
   secret_permissions = [
     "set", "get", "delete",
