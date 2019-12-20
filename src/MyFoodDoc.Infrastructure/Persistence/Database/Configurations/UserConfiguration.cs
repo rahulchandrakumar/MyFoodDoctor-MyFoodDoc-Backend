@@ -11,6 +11,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.ToTable("Users", "User");
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => new { x.UserName, x.Gender });
+            builder.HasIndex(x => x.Created);
             builder.Property(x => x.Birthday).HasColumnType("Date");
             builder.Property(x => x.Gender).HasConversion<string>().HasMaxLength(6);
             builder.Property(x => x.Height).HasColumnType("decimal(4,1)");
