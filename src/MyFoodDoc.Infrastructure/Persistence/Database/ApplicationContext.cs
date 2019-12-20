@@ -240,57 +240,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Key = "low_fructose",
                         Name = "Frustosearm"
                     }
-                );
-
-                builder.Entity<Image>().HasData(
-                    new Image
-                    {
-                        Id = 1,
-                        Url = "https://myfooddoctormockcmsimgs.blob.core.windows.net/images/253f35f4-f3ac-425c-93ff-6edfdb62a12f.jpg"
-                    },
-                    new Image
-                    {
-                        Id = 2,
-                        Url = "https://myfooddoctormockcmsimgs.blob.core.windows.net/images/a5ec0b6f-d3cc-4a52-8283-2d7dba9a560c.jpg"
-                    }
-                );
-
-                builder.Entity<LexiconEntry>().HasData(
-                    new LexiconEntry
-                    {
-                        Id = 1,
-                        TitleShort = "Eiweiß",
-                        TitleLong = "Eiweiß",
-                        ImageId = 1,
-                        Text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-                    },
-                    new LexiconEntry
-                    {
-                        Id = 2,
-                        TitleShort = "Proteine",
-                        TitleLong = "Proteine",
-                        ImageId = 1,
-                        Text = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-                    }
-                );
-
-                var hasher = new PasswordHasher<User>();
-                builder.Entity<User>().HasData(
-                    new User
-                    {
-                        Id = "3ee857ac-26ee-43d8-8f68-76f1ca7bfa9b",
-                        UserName = "test@appsfactory.de",
-                        NormalizedUserName = "TEST@APPSFACTORY.DE",
-                        Email = "test@appsfactory.de",
-                        NormalizedEmail = "TEST@APPSFACTORY.DE",
-                        EmailConfirmed = true,
-                        PasswordHash = hasher.HashPassword(null, "Wert123+"),
-                        SecurityStamp = string.Empty,
-                        InsuranceId = 1
-                    }
-                );
-
-                
+                );                
 
                 var resourceName = "MyFoodDoc.Infrastructure.Persistence.Database.Seed.Ingredients.csv";
                 var assembly = Assembly.GetExecutingAssembly();
