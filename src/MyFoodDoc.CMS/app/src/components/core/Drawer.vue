@@ -127,37 +127,41 @@ export default {
     let links = [];
     
     if (userRoles.includes(UserRoles.VIEWER)) {
-      let link = {
-        icon: "mdi-table-of-contents",
-        text: "Data",
-        children: [
-          {
-            to: "/patient-list",
-            text: "Patients"
-          }
-        ]
-      }
-      if (userRoles.includes(UserRoles.EDITOR)) {
-        link.children.push({
-            to: "/portion-list",
-            text: "Portions"
-          },{
-            to: "/promotion-list",
-            text: "Promotions"
-          })
-      }
-      if (userRoles.includes(UserRoles.ADMIN))
-        link.children.push({
-          to: "/lexicon-list",
-          text: "Lexicon"
-        },{
-          to: "/webview-list",
-          text: "Web Views"
-        })
-      links.push(link)
+      links.push({
+        to: "/",
+        icon: "mdi-view-dashboard",
+        text: "Dashboard"
+      });
+      links.push({
+        icon: "mdi-account-card-details-outline",
+        to: "/patient-list",
+        text: "Patients"
+      });
     }
 
+    if (userRoles.includes(UserRoles.EDITOR)) {
+      links.push({
+        icon: "mdi-food-fork-drink",
+        to: "/portion-list",
+        text: "Portions"
+      });
+      links.push({
+        icon: "mdi-ticket-percent",
+        to: "/promotion-list",
+        text: "Promotions"
+      });        
+    }
     if (userRoles.includes(UserRoles.ADMIN)) {
+      links.push({
+        icon: "mdi-dictionary",
+        to: "/lexicon-list",
+        text: "Lexicon"
+      });
+      links.push({
+        icon: "mdi-web",
+        to: "/webview-list",
+        text: "Web Views"
+      });
       links.push(
         {
           to: "/users",
