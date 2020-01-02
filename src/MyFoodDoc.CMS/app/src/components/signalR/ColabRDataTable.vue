@@ -16,7 +16,9 @@
               />
               <v-row v-if="filter" class="mt-1 ml-1" wrap>
                 <slot
-                  name="filter" :filter="filter"
+                  name="filter" 
+                  :filter="filter"
+                  :loading="!tableLoaded"
                 />
               </v-row>
             </v-col>
