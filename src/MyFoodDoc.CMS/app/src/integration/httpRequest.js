@@ -1,6 +1,7 @@
 import axios from "axios";
 import qs from "qs"
 import Store from "@/store";
+import router from '@/router'
 
 const contentTypes = {
   json: "application/json",
@@ -31,6 +32,10 @@ axiosInstance.interceptors.response.use(
   },
   // Do something with response error
   error => {
+    if (error.response.status === 401) {
+      Store.dispatch("user/logout")
+      router.push('/login')
+    }
     return Promise.reject(error);
   }
 );
