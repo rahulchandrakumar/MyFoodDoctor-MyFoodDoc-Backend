@@ -18,7 +18,7 @@
           :label="mainHeaders.filter(h => h.value == 'username')[0].text"
           :readonly="item.Id != null"
           rules="required|email|max:50"
-          :counter="35"
+          :counter="50"
         />
       </v-row>
       <v-row>
@@ -26,7 +26,7 @@
           v-model="item.displayName"
           :label="mainHeaders.filter(h => h.value == 'displayName')[0].text"
           rules="required|max:50"
-          :counter="35"
+          :counter="50"
         />
       </v-row>
       <v-row>
