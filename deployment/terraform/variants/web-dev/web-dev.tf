@@ -49,10 +49,10 @@ module "global" {
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"
 
-  keyvault_id            = "" #data.terraform_remote_state.shared.outputs.keyvault_id
-  keyvault_name          = "" #data.terraform_remote_state.shared.outputs.keyvault_name
+  keyvault_id            = "/subscriptions/d3359015-e21d-4560-8542-0eb0655d9f8f/resourceGroups/mfd-shared/providers/Microsoft.KeyVault/vaults/mfd-kv-shared" #data.terraform_remote_state.shared.outputs.keyvault_id
+  keyvault_name          = "mfd-kv-shared" #data.terraform_remote_state.shared.outputs.keyvault_name
 
-  containerregistry_url            = "" #data.terraform_remote_state.shared.outputs.containerregistry_url
-  containerregistry_admin_username = "" #data.terraform_remote_state.shared.outputs.containerregistry_admin_username
-  containerregistry_admin_password = "" #data.terraform_remote_state.shared.outputs.containerregistry_admin_password
+  containerregistry_url            = "mfdcontainers.azurecr.io" #data.terraform_remote_state.shared.outputs.containerregistry_url
+  containerregistry_admin_username = "mfdcontainers" #data.terraform_remote_state.shared.outputs.containerregistry_admin_username
+  containerregistry_admin_password = "PJYUZIkjkME8Ng/9O6qnB6I1X2I1L0Qi" #data.terraform_remote_state.shared.outputs.containerregistry_admin_password
 }
