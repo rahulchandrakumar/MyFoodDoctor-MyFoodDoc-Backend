@@ -152,6 +152,7 @@ resource "azurerm_storage_account" "storage" {
   account_tier             = var.storageaccount_tier
   account_replication_type = var.storageaccount_replication_type
   account_kind             = "BlobStorage"
+  tags                     = local.resource_tags
 }
 
 data "azurerm_storage_account" "storage" {
@@ -164,6 +165,7 @@ resource "azurerm_cdn_profile" "cdnprofile" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   sku                 = "Standard_Microsoft"
+  tags                = local.resource_tags
 }
 
 resource "azurerm_cdn_endpoint" "cdnendpoint" {
@@ -171,6 +173,7 @@ resource "azurerm_cdn_endpoint" "cdnendpoint" {
   profile_name        = azurerm_cdn_profile.cdnprofile.name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
+  tags                = local.resource_tags
 
   origin {
     name      = "StorageCDN"
