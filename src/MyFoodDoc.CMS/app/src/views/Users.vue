@@ -17,16 +17,16 @@
           v-model="item.username"
           :label="mainHeaders.filter(h => h.value == 'username')[0].text"
           :readonly="item.Id != null"
-          rules="required|email|max:35"
-          :counter="35"
+          rules="required|email|max:50"
+          :counter="50"
         />
       </v-row>
       <v-row>
         <VeeTextField
           v-model="item.displayName"
           :label="mainHeaders.filter(h => h.value == 'displayName')[0].text"
-          rules="required|max:35"
-          :counter="35"
+          rules="required|max:50"
+          :counter="50"
         />
       </v-row>
       <v-row>

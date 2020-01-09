@@ -13,7 +13,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasIndex(o => new { o.Username, o.Displayname });
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(o => o.Displayname).IsRequired().HasMaxLength(50);
-            builder.Property(o => o.Username).IsRequired().HasMaxLength(25);
+            builder.Property(o => o.Username).IsRequired().HasMaxLength(50);
             builder.Property(o => o.PasswordHash).HasMaxLength(200);
         }
     }
