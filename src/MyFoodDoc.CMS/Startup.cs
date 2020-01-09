@@ -45,6 +45,7 @@ namespace MyFoodDoc.CMS
             #endregion
 
             #region ASP
+            services.AddResponseCompression();
             services.AddMvc(o => o.EnableEndpointRouting = false);
             #endregion
 
@@ -141,6 +142,7 @@ namespace MyFoodDoc.CMS
             #endregion
 
             #region ASP
+            app.UseResponseCompression();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
