@@ -25,6 +25,7 @@ data "terraform_remote_state" "shared" {
     storage_account_name = "mfdtfstate"
     container_name       = "terraform"
     key                  = "shared.terraform.tfstate"
+    use_msi              = true # required for Azure DevOps Terraform Plugin
   }
 }
 
@@ -35,7 +36,7 @@ module "global" {
   source = "../../modules/web"
 
   projectname = "mfd"
-  stage       = "staging2"
+  stage       = "staging"
 
   apiserver_plantier     = "Basic"
   apiserver_plansize     = "B1"
