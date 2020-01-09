@@ -18,15 +18,15 @@ terraform {
 #######################################################
 # Remote state injection
 #######################################################
-data "terraform_remote_state" "shared" {
-  backend = "azurerm"
-  config = {
-    resource_group_name  = "mfd-terraform"
-    storage_account_name = "mfdtfstate"
-    container_name       = "terraform"
-    key                  = "shared.terraform.tfstate"
-  }
-}
+#data "terraform_remote_state" "shared" {
+#  backend = "azurerm"
+#  config = {
+#    resource_group_name  = "mfd-terraform"
+#    storage_account_name = "mfdtfstate"
+#    container_name       = "terraform"
+#    key                  = "shared.terraform.tfstate"
+#  }
+#}
 
 #######################################################
 # Module + Config
@@ -49,10 +49,10 @@ module "global" {
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"
 
-  keyvault_id            = data.terraform_remote_state.shared.outputs.keyvault_id
-  keyvault_name          = data.terraform_remote_state.shared.outputs.keyvault_name
+  keyvault_id            = "" #data.terraform_remote_state.shared.outputs.keyvault_id
+  keyvault_name          = "" #data.terraform_remote_state.shared.outputs.keyvault_name
 
-  containerregistry_url            = data.terraform_remote_state.shared.outputs.containerregistry_url
-  containerregistry_admin_username = data.terraform_remote_state.shared.outputs.containerregistry_admin_username
-  containerregistry_admin_password = data.terraform_remote_state.shared.outputs.containerregistry_admin_password
+  containerregistry_url            = "" #data.terraform_remote_state.shared.outputs.containerregistry_url
+  containerregistry_admin_username = "" #data.terraform_remote_state.shared.outputs.containerregistry_admin_username
+  containerregistry_admin_password = "" #data.terraform_remote_state.shared.outputs.containerregistry_admin_password
 }
