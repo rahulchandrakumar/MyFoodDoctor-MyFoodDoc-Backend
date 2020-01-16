@@ -142,7 +142,7 @@ resource "azurerm_key_vault_secret" "dbsecret" {
 #######################################################
 locals {
   storageName = "${var.projectname}storageacc${var.stage}"
-  keyvaultStorKey = "StorageConnection"
+  keyvaultStorKey = "StorageConnection-${var.stage}"
 }
 
 resource "azurerm_storage_account" "storage" {
