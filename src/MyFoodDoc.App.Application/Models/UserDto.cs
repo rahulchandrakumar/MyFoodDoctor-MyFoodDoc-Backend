@@ -18,7 +18,7 @@ namespace MyFoodDoc.App.Application.Models
         [Obsolete]
         public virtual bool AnamnesisCompleted => IsAnamnesisCompleted;
 
-        public string Birthday { get; set; }
+        public int? Age { get; set; }
 
         public Gender? Gender { get; set; }
 
@@ -35,6 +35,7 @@ namespace MyFoodDoc.App.Application.Models
         public void Mapping(Profile profile) 
         {
             profile.CreateMap<User, UserDto>()
+                .ForMember(x => x.Age, opt => opt.MapFrom(src => src.Birthday == null ? null : (int?)(DateTime.UtcNow.Year - src.Birthday.Value.Year)))
                 .ForMember(x => x.Indications, opt => opt.MapFrom(src => src.Indications.Select(x => x.Indication.Key)))
                 .ForMember(x => x.Motivations, opt => opt.MapFrom(src => src.Motivations.Select(x => x.Motivation.Key)))
                 .ForMember(x => x.Diets, opt => opt.MapFrom(src => src.Diets.Select(x => x.Diet.Key)));
