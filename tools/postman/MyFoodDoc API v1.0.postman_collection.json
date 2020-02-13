@@ -1,0 +1,2143 @@
+{
+	"info": {
+		"_postman_id": "a95b4462-f274-48a8-8904-d43277cc1e6d",
+		"name": "MyFoodDoc API v1.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "v1.0",
+					"item": [
+						{
+							"name": "common",
+							"item": [
+								{
+									"name": "/api/v1.0/common/register",
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"email\": \"<string>\",\n    \"insuranceId\": \"<integer>\",\n    \"password\": \"<string>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/common/register",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"common",
+												"register"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"email\": \"<string>\",\n    \"insuranceId\": \"<integer>\",\n    \"password\": \"<string>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/common/register",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"common",
+														"register"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"email\": \"<string>\",\n    \"insuranceId\": \"<integer>\",\n    \"password\": \"<string>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/common/register",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"common",
+														"register"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/common/password/reset",
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"email\": \"<string>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/common/password/reset",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"common",
+												"password",
+												"reset"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"email\": \"<string>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/common/password/reset",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"common",
+														"password",
+														"reset"
+													]
+												}
+											},
+											"status": "Accepted",
+											"code": 202,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "diary",
+							"item": [
+								{
+									"name": "meal",
+									"item": [
+										{
+											"name": "{id}",
+											"item": [
+												{
+													"name": "/api/v1.0/diary/meal/:id",
+													"request": {
+														"auth": {
+															"type": "noauth"
+														},
+														"method": "GET",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/v1.0/diary/meal/:id",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1.0",
+																"diary",
+																"meal",
+																":id"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "<integer>",
+																	"description": {
+																		"content": "",
+																		"type": "text/plain"
+																	}
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "Unauthorized",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "Unauthorized",
+															"code": 401,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "text/plain"
+																}
+															],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Success",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n \"meals\": [\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  },\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  }\n ],\n \"exercise\": {\n  \"duration\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n },\n \"liquid\": {\n  \"amount\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n }\n}"
+														}
+													]
+												},
+												{
+													"name": "/api/v1.0/diary/meal/:id",
+													"request": {
+														"auth": {
+															"type": "noauth"
+														},
+														"method": "PUT",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/v1.0/diary/meal/:id",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1.0",
+																"diary",
+																"meal",
+																":id"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "<integer>",
+																	"description": {
+																		"content": "",
+																		"type": "text/plain"
+																	}
+																},
+																{
+																	"key": "date",
+																	"value": "<date>",
+																	"description": {
+																		"content": "",
+																		"type": "text/plain"
+																	}
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "Unauthorized",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "Unauthorized",
+															"code": 401,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "text/plain"
+																}
+															],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+														},
+														{
+															"name": "Success",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n \"meals\": [\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  },\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  }\n ],\n \"exercise\": {\n  \"duration\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n },\n \"liquid\": {\n  \"amount\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n }\n}"
+														},
+														{
+															"name": "Bad Request",
+															"originalRequest": {
+																"method": "PUT",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "/api/v1.0/diary/meal/:id",
+													"request": {
+														"method": "DELETE",
+														"header": [],
+														"url": {
+															"raw": "{{baseUrl}}/api/v1.0/diary/meal/:id",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1.0",
+																"diary",
+																"meal",
+																":id"
+															],
+															"variable": [
+																{
+																	"key": "id",
+																	"value": "18",
+																	"description": {
+																		"content": "",
+																		"type": "text/plain"
+																	}
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "Success",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [],
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "text/plain"
+																}
+															],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [],
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+														},
+														{
+															"name": "Unauthorized",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [],
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1.0/diary/meal/<integer>",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1.0",
+																		"diary",
+																		"meal",
+																		"<integer>"
+																	]
+																}
+															},
+															"status": "Unauthorized",
+															"code": 401,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "text/plain"
+																}
+															],
+															"cookie": [],
+															"body": ""
+														}
+													]
+												}
+											],
+											"protocolProfileBehavior": {},
+											"_postman_isSubFolder": true
+										},
+										{
+											"name": "/api/v1.0/diary/meal",
+											"request": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"date\": \"2019-11-15\",\n    \"time\": \"14:25\",\n    \"type\": \"breakfast\",\n    \"ingredients\": [\n        {\n            \"id\": 1,\n            \"amount\": 2\n        },\n    ],\n    \"mood\": 1\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/meal",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"meal"
+													]
+												}
+											},
+											"response": [
+												{
+													"name": "Unauthorized",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/v1.0/diary/meal",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1.0",
+																"diary",
+																"meal"
+															]
+														}
+													},
+													"status": "Unauthorized",
+													"code": 401,
+													"_postman_previewlanguage": "text",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "text/plain"
+														}
+													],
+													"cookie": [],
+													"body": ""
+												},
+												{
+													"name": "Success",
+													"originalRequest": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n    \"date\": \"<date>\",\n    \"ingredients\": [\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        },\n        {\n            \"ingredientId\": \"<integer>\",\n            \"amount\": \"<integer>\"\n        }\n    ],\n    \"time\": \"<time>\",\n    \"type\": \"<string>\",\n    \"mood\": \"<integer>\"\n}"
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/v1.0/diary/meal",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1.0",
+																"diary",
+																"meal"
+															]
+														}
+													},
+													"status": "OK",
+													"code": 200,
+													"_postman_previewlanguage": "json",
+													"header": [
+														{
+															"key": "Content-Type",
+															"value": "application/json"
+														}
+													],
+													"cookie": [],
+													"body": "{\n \"meals\": [\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  },\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  }\n ],\n \"exercise\": {\n  \"duration\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n },\n \"liquid\": {\n  \"amount\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n }\n}"
+												}
+											]
+										}
+									],
+									"protocolProfileBehavior": {},
+									"_postman_isSubFolder": true
+								},
+								{
+									"name": "/api/v1.0/diary/overview/:date",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjhhRWxIajlrQnFJR1RHNjJaZS1TanciLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE1NzM0NzEyNzQsImV4cCI6MTU3MzQ5NjQ3NCwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1MDM5NiIsImF1ZCI6Im15Zm9vZGRvY19hcGkiLCJjbGllbnRfaWQiOiJteWZvb2Rkb2NfYXBwIiwic3ViIjoiYTVlYjAwMjgtZmY3NS00NmZjLWI1ZGYtMGRkNmNjODVjM2U2IiwiYXV0aF90aW1lIjoxNTczNDcxMjc0LCJpZHAiOiJsb2NhbCIsInNjb3BlIjpbIm15Zm9vZGRvY19hcGkiLCJvZmZsaW5lX2FjY2VzcyJdLCJhbXIiOlsicHdkIl19.Yb9gNwj8tMesWbUTMAiDDrAiog_tp-q2eWliowkYfjBc-SI_-1bZ8uPt9Hx344J0hcaCXzCGbEfqgZg0vIRq4UINRJKyRyBCnaL2MFheqb4PVWmK_JK4NC7shF8Ap0rr2cJF0G1F4LZjsEMoJ_4UImyJreX30xFQbWDGvrFD6E-y3ePcrIo7fXiO1hitUuBDZ6_PR11w0tkEPUFdkE0uUAL1T_nEsz5lFpjcxjthFOcEqa8PLPkhUq-xvRY2Zrz_ryf4JUKUNhI55mcuZX4b3yn9zNgRh5d6Fka8nRnyXz9Yavot2aryr1ZJwZH7yY7tCc5pIYBkJTtQ42Y4-LnKoA",
+													"type": "string"
+												}
+											]
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/diary/overview/:date",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"diary",
+												"overview",
+												":date"
+											],
+											"variable": [
+												{
+													"key": "date",
+													"value": "2019-11-11"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/<date>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"<date>"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"meals\": [\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  },\n  {\n   \"id\": \"<integer>\",\n   \"time\": \"<string>\",\n   \"type\": \"<string>\",\n   \"ingredients\": [\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    },\n    {\n     \"ingredient\": {\n      \"id\": \"<integer>\",\n      \"name\": \"<string>\"\n     },\n     \"amount\": \"<integer>\"\n    }\n   ],\n   \"mood\": \"<integer>\"\n  }\n ],\n \"exercise\": {\n  \"duration\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n },\n \"liquid\": {\n  \"amount\": \"<integer>\",\n  \"lastAdded\": \"<string>\"\n }\n}"
+										},
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/<date>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"<date>"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/diary/exercise",
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"date\": \"<date>\",\n    \"duration\": \"<integer>\",\n    \"time\": \"<time>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/diary/exercise",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"diary",
+												"exercise"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"date\": \"<date>\",\n    \"duration\": \"<integer>\",\n    \"time\": \"<time>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/exercise",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"exercise"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"date\": \"<date>\",\n    \"duration\": \"<integer>\",\n    \"time\": \"<time>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/exercise",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"exercise"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"date\": \"<date>\",\n    \"duration\": \"<integer>\",\n    \"time\": \"<time>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/exercise",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"exercise"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/diary/liquid",
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"amount\": \"<integer>\",\n    \"date\": \"<date>\",\n    \"time\": \"<time>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/diary/liquid",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"diary",
+												"liquid"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"amount\": \"<integer>\",\n    \"date\": \"<date>\",\n    \"time\": \"<time>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/liquid",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"liquid"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Bad Request",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"amount\": \"<integer>\",\n    \"date\": \"<date>\",\n    \"time\": \"<time>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/liquid",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"liquid"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+										},
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"amount\": \"<integer>\",\n    \"date\": \"<date>\",\n    \"time\": \"<time>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/diary/liquid",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"diary",
+														"liquid"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "lexicon",
+							"item": [
+								{
+									"name": "/api/v1.0/lexicon",
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/lexicon",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"lexicon"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/lexicon",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"lexicon"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n {\n  \"id\": \"<integer>\",\n  \"title\": \"<string>\"\n },\n {\n  \"id\": \"<integer>\",\n  \"title\": \"<string>\"\n }\n]"
+										},
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/lexicon",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"lexicon"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/lexicon/:id",
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/lexicon/:id",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"lexicon",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "<integer>",
+													"description": {
+														"content": "",
+														"type": "text/plain"
+													}
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/lexicon/<integer>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"lexicon",
+														"<integer>"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/lexicon/<integer>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"lexicon",
+														"<integer>"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"id\": \"<integer>\",\n \"title\": \"<string>\",\n \"headerUrl\": \"<string>\",\n \"content\": [\n  {\n   \"header\": \"<string>\",\n   \"text\": \"<string>\",\n   \"headline\": \"<string>\",\n   \"value\": \"<string>\"\n  },\n  {\n   \"header\": \"<string>\",\n   \"text\": \"<string>\",\n   \"headline\": \"<string>\",\n   \"value\": \"<string>\"\n  }\n ]\n}"
+										}
+									]
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "user",
+							"item": [
+								{
+									"name": "/api/v1.0/user",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"user"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"email\": \"<string>\",\n \"isAnamnesisCompleted\": \"<boolean>\",\n \"birthday\": \"<string>\",\n \"gender\": \"<string>\",\n \"height\": \"<integer>\",\n \"insuranceId\": \"<integer>\",\n \"motivations\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"indications\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"diets\": [\n  \"<string>\",\n  \"<string>\"\n ]\n}"
+										},
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/user",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"birthday\": \"1986-01-01\",\n    \"diets\": [],\n    \"gender\": \"male\",\n    \"height\": 190,\n    \"indications\": [],\n    \"motivations\": [\n        \"anti_aging\"\n    ],\n    \"insuranceId\": 0\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"user"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"birthday\": \"<dateTime>\",\n    \"diets\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"gender\": \"<string>\",\n    \"height\": \"<integer>\",\n    \"indications\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"motivations\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"insuranceId\": \"<integer>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"birthday\": \"<dateTime>\",\n    \"diets\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"gender\": \"<string>\",\n    \"height\": \"<integer>\",\n    \"indications\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"motivations\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"insuranceId\": \"<integer>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"email\": \"<string>\",\n \"isAnamnesisCompleted\": \"<boolean>\",\n \"birthday\": \"<string>\",\n \"gender\": \"<string>\",\n \"height\": \"<integer>\",\n \"insuranceId\": \"<integer>\",\n \"motivations\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"indications\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"diets\": [\n  \"<string>\",\n  \"<string>\"\n ]\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/user/anamnesis",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"gender\": \"male\",\n    \"height\": 190,\n    \"indications\": [\n        \"adipositas\"\n    ],\n    \"motivations\": [\n        \"anti_aging\"\n    ],\n    \"weight\": 85\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/user/anamnesis",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"user",
+												"anamnesis"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"gender\": \"<string>\",\n    \"height\": \"<integer>\",\n    \"indications\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"motivations\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"weight\": \"<integer>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user/anamnesis",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user",
+														"anamnesis"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"gender\": \"<string>\",\n    \"height\": \"<integer>\",\n    \"indications\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"motivations\": [\n        \"<string>\",\n        \"<string>\"\n    ],\n    \"weight\": \"<integer>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user/anamnesis",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user",
+														"anamnesis"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n \"email\": \"<string>\",\n \"isAnamnesisCompleted\": \"<boolean>\",\n \"birthday\": \"<string>\",\n \"gender\": \"<string>\",\n \"height\": \"<integer>\",\n \"insuranceId\": \"<integer>\",\n \"motivations\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"indications\": [\n  \"<string>\",\n  \"<string>\"\n ],\n \"diets\": [\n  \"<string>\",\n  \"<string>\"\n ]\n}"
+										}
+									]
+								},
+								{
+									"name": "/api/v1.0/user/password",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"newPassword\": \"<string>\",\n    \"oldPassword\": \"<string>\",\n    \"newPasswordConfirmation\": \"<string>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/user/password",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"user",
+												"password"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unauthorized",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"newPassword\": \"<string>\",\n    \"oldPassword\": \"<string>\",\n    \"newPasswordConfirmation\": \"<string>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user/password",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user",
+														"password"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Success",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n    \"newPassword\": \"<string>\",\n    \"oldPassword\": \"<string>\",\n    \"newPasswordConfirmation\": \"<string>\"\n}"
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1.0/user/password",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1.0",
+														"user",
+														"password"
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "text/plain"
+												}
+											],
+											"cookie": [],
+											"body": ""
+										}
+									]
+								}
+							],
+							"protocolProfileBehavior": {},
+							"_postman_isSubFolder": true
+						},
+						{
+							"name": "/api/v1.0/coupon/redeem",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"<string>\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/api/v1.0/coupon/redeem",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1.0",
+										"coupon",
+										"redeem"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Bad Request",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"<string>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/coupon/redeem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"coupon",
+												"redeem"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n \"type\": \"<string>\",\n \"title\": \"<string>\",\n \"status\": \"<integer>\",\n \"detail\": \"<string>\",\n \"instance\": \"<string>\",\n \"extensions\": \"<object>\"\n}"
+								},
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"<string>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/coupon/redeem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"coupon",
+												"redeem"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Unauthorized",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"code\": \"<string>\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/coupon/redeem",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"coupon",
+												"redeem"
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
+							"name": "/api/v1.0/ingredients",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseUrl}}/api/v1.0/ingredients?query=",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"api",
+										"v1.0",
+										"ingredients"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Unauthorized",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/ingredients?query=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"ingredients"
+											],
+											"query": [
+												{
+													"key": "query",
+													"value": "<string>"
+												}
+											]
+										}
+									},
+									"status": "Unauthorized",
+									"code": 401,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/api/v1.0/ingredients?query=<string>",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1.0",
+												"ingredients"
+											],
+											"query": [
+												{
+													"key": "query",
+													"value": "<string>"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "[\n {\n  \"id\": \"<integer>\",\n  \"name\": \"<string>\"\n },\n {\n  \"id\": \"<integer>\",\n  \"name\": \"<string>\"\n }\n]"
+								}
+							]
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "Auth",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "myfooddoc_app",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "myfooddoc_api offline_access",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "myfooddoc_app",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "test@appsfactory.de",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "password",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "text"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{authUrl}}/connect/token",
+							"host": [
+								"{{authUrl}}"
+							],
+							"path": [
+								"connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IkRCR2dvTmNDQXYyc3JkZVRGMGh6ZnciLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE1Nzk1MzY2ODYsImV4cCI6MTU3OTU2MTg4NiwiaXNzIjoiaHR0cDovL215Zm9vZGRvYy1tb2NrLWF1dGgtYXBpLmF6dXJld2Vic2l0ZXMubmV0IiwiYXVkIjoibXlmb29kZG9jX2FwaSIsImNsaWVudF9pZCI6Im15Zm9vZGRvY19hcHAiLCJzdWIiOiIzZWU4NTdhYy0yNmVlLTQzZDgtOGY2OC03NmYxY2E3YmZhOWIiLCJhdXRoX3RpbWUiOjE1Nzk1MzY2ODYsImlkcCI6ImxvY2FsIiwic2NvcGUiOlsibXlmb29kZG9jX2FwaSIsIm9mZmxpbmVfYWNjZXNzIl0sImFtciI6WyJwd2QiXX0.mUUM5ql8quUDp-vw1xdQTcULKd1X44eQgtFqncJOf3JOmS9rYoVwf6nn7HsQ_k1I7XAcb0Ll1tK3xhp3cZPYESilnegVtcBHQxnKUAki0eaXbJt-3H1I8j16xg7RY1yrLvcBziT8GBtp_ZdSio6M5FEPmpFPFzWElpfGTURTPMP51UJnUx54aiMhHX_A-oU0HQjzec5ZVX2zMm5Ma0sN0tHAW3pBY5QUrrzi93eveKx68Wf5443cXHtjyX8zPmigy4gcW7nYxIP-kk2psWZ23RlQXilipuiTse0m00AMIdsGF3o6j53KRDJaUxDQ_EDpRp_q4EUWINaCbhsBfCfQaA",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ca51953d-eb48-45ac-b82b-2ed32727177b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7d011b5d-c307-4ccc-944e-eb40d4d10c20",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "84031d50-d6f8-40db-82f1-26036c349026",
+			"key": "baseUrl",
+			"value": "/",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
