@@ -42,6 +42,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<UserWeight> UserWeights { get; set; }
         public DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<ReportChoiceMethod> ReportChoiceMethods { get; set; }
+        public DbSet<ReportValueMethod> ReportValueMethods { get; set; }
+        public DbSet<ReportValueTarget> ReportValueTargets { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -91,6 +95,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
+            
+            builder.Entity<ReportMethod>().ToQuery(() => ReportValueMethods.Cast<ReportMethod>().AsQueryable().Union(ReportChoiceMethods));
 
             builder.Entity<IdentityRole<string>>(entity => entity.ToTable("Role", "User"));
             builder.Entity<IdentityUserRole<string>>(entity => entity.ToTable("UserRole", "User"));

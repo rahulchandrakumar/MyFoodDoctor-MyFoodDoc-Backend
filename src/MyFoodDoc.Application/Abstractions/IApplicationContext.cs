@@ -16,27 +16,49 @@ namespace MyFoodDoc.Application.Abstractions
     public interface IApplicationContext
     {
         DatabaseFacade Database { get; }
+
+        #region Coupons
+        DbSet<Promotion> Promotions { get; set; }
         DbSet<Coupon> Coupons { get; set; }
+        #endregion
+
+        #region Diary
         DbSet<Meal> Meals { get; set; }
         DbSet<MealIngredient> MealIngredients { get; set; }
         DbSet<Liquid> Liquids { get; set; }
         DbSet<Exercise> Exercises { get; set; }
-        DbSet<Diet> Diets { get; set; }
+        #endregion
+
+        #region System
+        DbSet<Insurance> Insurances { get; set; }
+        DbSet<Image> Images { get; set; }
         DbSet<Motivation> Motivations { get; set; }
         DbSet<Indication> Indications { get; set; }
+        DbSet<Diet> Diets { get; set; }
         DbSet<Ingredient> Ingredients { get; set; }
-        DbSet<Insurance> Insurances { get; set; }
+        #endregion
+
+        #region Lexicon
         DbSet<LexiconEntry> LexiconEntries { get; set; }
-        DbSet<Image> Images { get; set; }
-        DbSet<User> Users { get; set; }
+        #endregion
+
+        #region Cms
         DbSet<CmsUser> CmsUsers { get; set; }
+        DbSet<WebPage> WebPages { get; set; }
+        #endregion
+
+        #region Users
+        DbSet<User> Users { get; set; }
         DbSet<UserMotivation> UserMotivations { get; set; }
         DbSet<UserIndication> UserIndications { get; set; }
         DbSet<UserDiet> UserDiets { get; set; }
-        DbSet<WebPage> WebPages { get; set; }
-        DbSet<Promotion> Promotions { get; set; }
         DbSet<UserWeight> UserWeights { get; set; }
         DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
+        #endregion
+
+        #region Reporting
+        DbSet<Report> Reports { get; set; }
+        #endregion
 
         int SaveChanges();
 
