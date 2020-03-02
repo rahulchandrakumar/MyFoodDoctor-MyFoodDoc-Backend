@@ -4,6 +4,16 @@
     "ClientId": "{IDENTITY_SERVER_CLIENT}",
     "Scope": "{IDENTITY_SERVER_SCOPE}"
   },
+  "FatSecretIdentityServer": {
+    "Address": "{FAT_SECRET_IDENTITY_SERVER_ADDRESS}",
+    "GrantType": "{FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE}",
+    "ClientId": "{FAT_SECRET_IDENTITY_SERVER_CLIENT_ID}",
+    "ClientSecret": "{FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET}",
+    "Scope": "{FAT_SECRET_IDENTITY_SERVER_SCOPE}"
+  },
+  "FatSecret": {
+    "Address": "{FAT_SECRET_ADDRESS}"
+  },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }

@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.App.Application.Models;
-using MyFoodDoc.App.Application.Mock;
 using MyFoodDoc.App.Application.Payloads.Diary;
-using MyFoodDoc.Application.Enums;
 using MyFoodDoc.App.Application.Abstractions;
 using Microsoft.Extensions.Logging;
 using System.Threading;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace MyFoodDoc.App.Api.Controllers
 {

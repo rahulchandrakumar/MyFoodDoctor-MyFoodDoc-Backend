@@ -52,9 +52,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             IQueryable<Ingredient> baseQuery = _context.Ingredients;
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var searchstring = $"%{search}%";
-                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.ExternalKey, searchstring) || EF.Functions.Like(f.Name, searchstring));
+                var searchString = $"%{search}%";
+                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.FoodName, searchString) || EF.Functions.Like(f.ServingDescription, searchString));
             }
+
+            //TODO: Check relevance
+            /*
             if (filter != null)
             {
                 switch (filter.State)
@@ -70,6 +73,8 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                         break;
                 }
             }
+            */
+
             return baseQuery;
         }
 

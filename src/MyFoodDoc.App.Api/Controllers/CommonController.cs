@@ -4,9 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.App.Application.Abstractions;
-using MyFoodDoc.App.Application.Helpers;
+using MyFoodDoc.App.Application.Clients;
 using MyFoodDoc.App.Application.Payloads.User;
-using MyFoodDoc.Application.Api.Helpers;
 using System;
 using System.Net.Mime;
 using System.Threading;
@@ -19,13 +18,13 @@ namespace MyFoodDoc.App.Api.Controllers
     {
         private readonly ICommonService _service;
         private readonly ILogger _logger;
-        private readonly IIdentityServerClient _identityServerclient;
+        private readonly IIdentityServerClient _identityServerClient;
 
         public CommonController(ICommonService service, ILogger<CommonController> logger, IIdentityServerClient identityServerClient)
         {
             _service = service;
             _logger = logger;
-            _identityServerclient = identityServerClient;
+            _identityServerClient = identityServerClient;
         }
 
         [HttpPost("register")]
@@ -36,7 +35,7 @@ namespace MyFoodDoc.App.Api.Controllers
         {
             await _service.RegisterAsync(payload, cancellationToken);
 
-            var response = await _identityServerclient.RequestPasswordTokenAsync(payload.Email, payload.Password);
+            var response = await _identityServerClient.RequestPasswordTokenAsync(payload.Email, payload.Password);
 
             if (response.IsError)
             {

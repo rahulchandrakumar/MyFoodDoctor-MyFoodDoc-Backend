@@ -14,6 +14,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Clients;
+using MyFoodDoc.App.Application.Clients.FatSecret;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -24,11 +26,13 @@ namespace MyFoodDoc.App.Application.Services
 
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
+        private readonly IFatSecretClient _fatSecretClient;
 
-        public DiaryService(IApplicationContext context, IMapper mapper)
+        public DiaryService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient)
         {
             _context = context;
             _mapper = mapper;
+            _fatSecretClient = fatSecretClient;
         }
 
         public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default)
@@ -82,19 +86,17 @@ namespace MyFoodDoc.App.Application.Services
                 throw new BadRequestException("Meal type was already added for today");
 
             _context.Meals.Add(meal);
-
+            
             await _context.SaveChangesAsync(cancellationToken);
 
+            //TODO: Check necessity
             var oldIngredients = _context.MealIngredients.Where(x => x.MealId == meal.Id);
+
             _context.MealIngredients.RemoveRange(oldIngredients);
 
-            if (payload.Ingredients != null)
-            {
-                var mealIngredients = payload.Ingredients.Select(ingredient => new MealIngredient { MealId = meal.Id, IngredientId = ingredient.Id, Amount = ingredient.Amount });
-                _context.MealIngredients.AddRange(mealIngredients);
-            }
-
             await _context.SaveChangesAsync(cancellationToken);
+
+            await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
 
             return meal.Id;
         }
@@ -112,21 +114,20 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
 
             var oldIngredients = _context.MealIngredients.Where(x => x.MealId == mealId);
+            
             _context.MealIngredients.RemoveRange(oldIngredients);
 
-            if (payload.Ingredients != null)
-            {
-                var mealIngredients = payload.Ingredients.Select(ingredient => new MealIngredient { MealId = meal.Id, IngredientId = ingredient.Id, Amount = ingredient.Amount });
-                _context.MealIngredients.AddRange(mealIngredients);
-            }
-
             await _context.SaveChangesAsync(cancellationToken);
+
+            await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
 
             return meal.Id;
         }
 
         public async Task RemoveMealAsync(string userId, int mealId, CancellationToken cancellationToken)
         {
+            //TODO: Check and delete unused ingredients
+
             var meal = await _context.Meals
                 .Where(x => x.UserId == userId && x.Id == mealId)
                 .SingleOrDefaultAsync(cancellationToken);
@@ -216,6 +217,65 @@ namespace MyFoodDoc.App.Application.Services
             exercise.Duration = payload.Duration;
 
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
+        {
+            //TODO: Check and delete unused ingredients
+
+            if (ingredients != null)
+            {
+                var mealIngredients = new List<MealIngredient>();
+
+                foreach (var ingredient in ingredients)
+                {
+                    var existingIngredient = _context.Ingredients.SingleOrDefault(x =>
+                        x.FoodId == ingredient.FoodId && x.ServingId == ingredient.ServingId);
+
+                    if (existingIngredient == null)
+                    {
+                        var food = await _fatSecretClient.GetFoodAsync(ingredient.FoodId);
+
+                        if (food == null)
+                        {
+                            throw new NotFoundException(nameof(Food), ingredient.FoodId);
+                        }
+
+                        var serving = food.Servings.Serving.SingleOrDefault(s => s.Id == ingredient.ServingId);
+
+                        if (serving == null)
+                        {
+                            throw new NotFoundException(nameof(Serving), ingredient.ServingId);
+                        }
+
+                        var newIngredient = new Ingredient
+                        {
+                            FoodId = food.Id,
+                            FoodName = food.Name,
+                            ServingId = serving.Id,
+                            ServingDescription = serving.Description,
+                            MetricServingAmount = serving.MetricServingAmount,
+                            MetricServingUnit = serving.MetricServingUnit,
+                            MeasurementDescription = serving.MeasurementDescription,
+                            LastSynchronized = DateTime.Now
+                        };
+
+                        await _context.Ingredients.AddAsync(newIngredient);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = newIngredient.Id, Amount = ingredient.Amount });
+                    }
+                    else
+                    {
+                        mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = existingIngredient.Id, Amount = ingredient.Amount });
+                    }
+                }
+
+                await _context.MealIngredients.AddRangeAsync(mealIngredients);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
     }
 }

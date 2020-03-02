@@ -6,7 +6,7 @@ namespace MyFoodDoc.App.Application.Models
 {
     public class DiaryEntryDtoMealIngredient : IMapFrom<MealIngredient>
     {
-        public IngredientDto Ingredient { get; set; }
+        public DiaryEntryDtoIngredient Ingredient { get; set; }
 
         public int Amount { get; set; }
 
