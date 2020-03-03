@@ -8,6 +8,7 @@
     :could-remove="false"
   >
     <template v-slot:filter="{ filter, loading }">
+        <!--
       <v-radio-group 
         v-model="filter.state"
         :disabled="loading"
@@ -18,30 +19,106 @@
         <v-radio label="Not specified" value="1" />
         <v-radio label="Specified" value="2" />
       </v-radio-group>
+            -->
     </template>
     <template v-slot:editor="{ item }">
-      <v-row>
-        <VeeTextField
-          v-model="item.blsId"
-          :label="mainHeaders.filter(h => h.value == 'blsId')[0].text"
-          readonly
-        />
-      </v-row>
-      <v-row>
-        <VeeTextField
-          v-model="item.name"
-          :label="mainHeaders.filter(h => h.value == 'name')[0].text"
-          readonly
-        />
-      </v-row>
-      <v-row>
-        <VeeTextField
-          v-model="item.amount"
-          :label="mainHeaders.filter(h => h.value == 'amount')[0].text"
-          rules="required|decimal"
-          number
-        />
-      </v-row>
+        <v-row>
+            <VeeTextField v-model="item.id"
+                          :label="mainHeaders.filter(h => h.value == 'id')[0].text"
+                          readonly />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.foodId"
+                          :label="mainHeaders.filter(h => h.value == 'foodId')[0].text"
+                          readonly />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.foodName"
+                          :label="mainHeaders.filter(h => h.value == 'foodName')[0].text"
+                          readonly />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.servingId"
+                          :label="mainHeaders.filter(h => h.value == 'servingDescription')[0].text"
+                          readonly />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.servingDescription"
+                          :label="mainHeaders.filter(h => h.value == 'servingDescription')[0].text"
+                          readonly />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.calories"
+                          label="Calories"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.carbohydrate"
+                          label="Carbohydrate"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.protein"
+                          label="Protein"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.fat"
+                          label="Fat"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.saturatedFat"
+                          label="Saturated fat"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.polyunsaturatedFat"
+                          label="Polyunsaturated fat"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.monounsaturatedFat"
+                          label="Monounsaturated fat"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.cholesterol"
+                          label="Cholesterol"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.sodium"
+                          label="Sodium"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.potassium"
+                          label="Potassium"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.fiber"
+                          label="Fiber"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
+            <VeeTextField v-model="item.sugar"
+                          label="Sugar"
+                          rules="decimal"
+                          number />
+        </v-row>
     </template>
   </ColabDataTable>
 </template>
@@ -54,21 +131,36 @@ export default {
   },
 
   data: () => ({
-    mainHeaders: [
+      mainHeaders: [
       {
         sortable: true,
-        value: "blsId",
-        text: "BLS Id"
+        value: "id",
+        text: "Id"
       },
       {
         sortable: true,
-        value: "name",
-        text: "Name"
+        value: "foodId",
+        text: "Food Id"
       },
       {
         sortable: true,
-        text: "Amount",
-        value: "amount",
+        value: "foodName",
+        text: "Food name"
+      },
+      {
+        sortable: true,
+        value: "servingId",
+        text: "Serving Id"
+      },
+      {
+        sortable: true,
+        text: "Serving description",
+        value: "servingDescription"
+      },
+      {
+        sortable: true,
+        text: "Last synchronized",
+        value: "lastSynchronized",
         align: "right"
       }
     ]

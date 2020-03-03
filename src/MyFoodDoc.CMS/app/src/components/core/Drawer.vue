@@ -140,13 +140,11 @@ export default {
     }
 
       if (userRoles.includes(UserRoles.EDITOR)) {
-        /*
       links.push({
         icon: "mdi-food-fork-drink",
         to: "/portion-list",
         text: "Portions"
       });
-      */
       links.push({
         icon: "mdi-ticket-percent",
         to: "/promotion-list",
