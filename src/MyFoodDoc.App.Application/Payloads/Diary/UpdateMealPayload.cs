@@ -10,15 +10,8 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
 
         public MealType Type { get; set; }
 
-        public IEnumerable<Ingredient> Ingredients { get; set; }
+        public IEnumerable<IngredientPayload> Ingredients { get; set; }
 
         public int? Mood { get; set; }
-
-        public class Ingredient
-        {
-            public int Id { get; set; }
-
-            public int Amount { get; set; }
-        }
     }
 }

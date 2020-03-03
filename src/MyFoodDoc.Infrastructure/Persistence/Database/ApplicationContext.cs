@@ -242,38 +242,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     }
                 );                
 
-                var resourceName = "MyFoodDoc.Infrastructure.Persistence.Database.Seed.Ingredients.csv";
-                var assembly = Assembly.GetExecutingAssembly();
-
-                foreach (var x in assembly.GetManifestResourceNames())
-                {
-                    Console.WriteLine("1: " + x);
-                }
-
-                using var stream = assembly.GetManifestResourceStream(resourceName);
-                using var reader = new StreamReader(stream, Encoding.UTF8);
-                using var csv = new CsvReader(reader);
-
-                csv.Configuration.RegisterClassMap<IngredientsMap>();
-                csv.Configuration.BadDataFound = null;
-                csv.Configuration.Delimiter = ",";
-
-                var ingredients = csv.GetRecords<Ingredient>().Where(x => !x.ExternalKey.EndsWith("00000")).ToArray();
-                var id = 1;
-                foreach (var ingredient in ingredients)
-                {
-                    ingredient.Id = id++;
-                }
-                builder.Entity<Ingredient>().HasData(ingredients);
-            }
-        }
-
-        class IngredientsMap : ClassMap<Ingredient>
-        {
-            public IngredientsMap()
-            {
-                Map(x => x.ExternalKey).Index(0);
-                Map(x => x.Name).Index(1);
+                
             }
         }
     }

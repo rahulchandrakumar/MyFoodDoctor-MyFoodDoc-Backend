@@ -1,5 +1,4 @@
 using FluentValidation.AspNetCore;
-using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,8 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyFoodDoc.App.Api.DependencyInjection;
 using MyFoodDoc.App.Api.RouteConstraints;
-using MyFoodDoc.App.Application.Helpers;
-using MyFoodDoc.Application.Api.Helpers;
+using MyFoodDoc.App.Application.Clients;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -20,11 +18,11 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
 using Microsoft.IdentityModel.Logging;
 using MyFoodDoc.App.Application.Serialization;
 using MyFoodDoc.App.Api.Middlewares;
+using MyFoodDoc.App.Application.Clients.FatSecret;
+using MyFoodDoc.App.Application.Clients.IdentityServer;
 
 namespace MyFoodDoc.Application.Api
 {
@@ -46,6 +44,7 @@ namespace MyFoodDoc.Application.Api
             services.AddInfrastructure(Configuration, Environment);
             services.AddApplication();
 
+            //IdentityServer
             services.Configure<IdentityServerClientOptions>(Configuration.GetSection("IdentityServer"));
 
             var identityServerUrl = Configuration.GetValue<string>("IdentityServer:Address");
@@ -55,6 +54,29 @@ namespace MyFoodDoc.Application.Api
                 client.BaseAddress = new Uri(identityServerUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
+
+            //FatSecretIdentityServer
+            services.Configure<FatSecretIdentityServerClientOptions>(Configuration.GetSection("FatSecretIdentityServer"));
+
+            var fatSecretIdentityServerUrl = Configuration.GetValue<string>("FatSecretIdentityServer:Address");
+
+            services.AddHttpClient<IFatSecretIdentityServerClient, FatSecretIdentityServerClient>(client =>
+            {
+                client.BaseAddress = new Uri(fatSecretIdentityServerUrl);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+
+            //FatSecret
+            services.Configure<FatSecretClientOptions>(Configuration.GetSection("FatSecret"));
+
+            var fatSecretUrl = Configuration.GetValue<string>("FatSecret:Address");
+
+            services.AddHttpClient<IFatSecretClient, FatSecretClient>(client =>
+            {
+                client.BaseAddress = new Uri(fatSecretUrl);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+            
 
             /*
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();

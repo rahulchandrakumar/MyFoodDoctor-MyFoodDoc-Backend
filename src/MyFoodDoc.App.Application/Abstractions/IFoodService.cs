@@ -7,6 +7,6 @@ namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface IFoodService
     {
-        Task<ICollection<IngredientDto>> GetAllAsync(string query, CancellationToken cancellationTokenl);
+        Task<IngredientDto> GetAsync(int id, CancellationToken cancellationToken);
     }
 }
