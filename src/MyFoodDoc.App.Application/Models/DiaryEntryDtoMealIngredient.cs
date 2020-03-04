@@ -8,7 +8,7 @@ namespace MyFoodDoc.App.Application.Models
     {
         public DiaryEntryDtoIngredient Ingredient { get; set; }
 
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
 
         public void Mapping(Profile profile) => profile.CreateMap(typeof(MealIngredient), GetType());
     }
