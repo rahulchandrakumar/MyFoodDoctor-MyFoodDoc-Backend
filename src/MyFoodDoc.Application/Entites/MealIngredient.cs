@@ -6,7 +6,7 @@
 
         public int IngredientId { get; set; }
 
-        public int Amount { get; set; }
+        public decimal Amount { get; set; }
 
         public Meal Meal { get; set; }
 
