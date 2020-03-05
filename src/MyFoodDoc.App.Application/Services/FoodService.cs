@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
@@ -27,71 +28,13 @@ namespace MyFoodDoc.App.Application.Services
             _fatSecretClient = fatSecretClient;
         }
 
-        public async Task<IngredientDto> GetAsync(int id, CancellationToken cancellationToken)
+        public async Task<ICollection<IngredientDto>> GetAsync(long foodId, CancellationToken cancellationToken)
         {
-            var ingredient = await _context.Ingredients
-                .Where(x => x.Id == id)
-                .ProjectTo<IngredientDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(cancellationToken);
+            var ingredients = await _context.Ingredients
+                .Where(x => x.FoodId == foodId)
+                .ProjectTo<IngredientDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
 
-            if (ingredient == null)
-            {
-                throw new NotFoundException(nameof(Ingredient), id);
-            }
-
-            //TODO: Add/use memory cache for nutritions
-
-            var food = await _fatSecretClient.GetFoodAsync(ingredient.FoodId);
-
-            if (food == null)
-            {
-                throw new NotFoundException(nameof(Food), ingredient.FoodId);
-            }
-
-            var serving = food.Servings.Serving.SingleOrDefault(s => s.Id == ingredient.ServingId);
-
-            if (serving == null)
-            {
-                throw new NotFoundException(nameof(Serving), ingredient.ServingId);
-            }
-
-            if (ingredient.Calories == null)
-                ingredient.Calories = serving.Calories;
-
-            if (ingredient.Carbohydrate == null)
-                ingredient.Carbohydrate = serving.Carbohydrate;
-
-            if (ingredient.Protein == null)
-                ingredient.Protein = serving.Protein;
-
-            if (ingredient.Fat == null)
-                ingredient.Fat = serving.Fat;
-
-            if (ingredient.SaturatedFat == null)
-                ingredient.SaturatedFat = serving.SaturatedFat;
-
-            if (ingredient.PolyunsaturatedFat == null)
-                ingredient.PolyunsaturatedFat = serving.PolyunsaturatedFat;
-
-            if (ingredient.MonounsaturatedFat == null)
-                ingredient.MonounsaturatedFat = serving.MonounsaturatedFat;
-
-            if (ingredient.Cholesterol == null)
-                ingredient.Cholesterol = serving.Cholesterol;
-
-            if (ingredient.Sodium == null)
-                ingredient.Sodium = serving.Sodium;
-
-            if (ingredient.Potassium == null)
-                ingredient.Potassium = serving.Potassium;
-
-            if (ingredient.Fiber == null)
-                ingredient.Fiber = serving.Fiber;
-
-            if (ingredient.Sugar == null)
-                ingredient.Sugar = serving.Sugar;
-
-            return ingredient;
+            return ingredients;
         }
     }
 }
