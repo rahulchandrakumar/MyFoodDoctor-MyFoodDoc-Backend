@@ -99,9 +99,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
             builder.Entity<IdentityRoleClaim<string>>(entity => entity.ToTable("RoleClaim", "User"));
             builder.Entity<IdentityUserToken<string>>(entity => entity.ToTable("UserToken", "User"));
 
-            builder.Entity<Ingredient>()
-                .HasIndex(i => new { i.FoodId, i.ServingId }).IsUnique();
-
             if (WithSeeding)
             {
 
