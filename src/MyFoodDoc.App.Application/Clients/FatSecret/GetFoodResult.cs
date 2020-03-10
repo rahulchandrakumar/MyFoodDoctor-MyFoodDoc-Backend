@@ -32,6 +32,7 @@ namespace MyFoodDoc.App.Application.Clients.FatSecret
 
     public class Servings
     {
+        [JsonConverter(typeof(ServingsConverter))]
         [JsonProperty("serving")]
         public Serving[] Serving { get; set; }
     }
@@ -109,5 +110,28 @@ namespace MyFoodDoc.App.Application.Clients.FatSecret
 
         [JsonProperty("vitamin_c")]
         public decimal VitaminC { get; set; }
+    }
+
+    //TODO: Read fat secret result with JObject
+    public class ServingsConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return false;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.StartArray)
+            {
+                return serializer.Deserialize(reader, objectType);
+            }
+            return new Serving[] { (Serving)serializer.Deserialize(reader, typeof(Serving)) };
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
