@@ -82,9 +82,6 @@ namespace MyFoodDoc.App.Application.Services
                 Mood = payload.Mood,
             };
 
-            if (payload.Type != MealType.Snack && await _context.Meals.CountAsync(x => x.UserId == userId && x.Date == payload.Date && x.Type == payload.Type, cancellationToken) > 0)
-                throw new BadRequestException("Meal type was already added for today");
-
             _context.Meals.Add(meal);
             
             await _context.SaveChangesAsync(cancellationToken);

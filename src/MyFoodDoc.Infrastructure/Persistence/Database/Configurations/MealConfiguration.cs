@@ -13,9 +13,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.ToTable("Meals", "Diary");
             builder.HasKey(o => o.Id);
 
-            builder.HasIndex(p => new { p.UserId, p.Date, p.Type })
-                .IsUnique()
-                .HasFilter($"Type IN ('{nameof(MealType.Breakfast)}', '{nameof(MealType.Lunch)}', '{nameof(MealType.Dinner)}')");
+            builder.HasIndex(p => new { p.UserId, p.Date });
 
             builder.Property(p => p.Id)
                 .IsRequired()

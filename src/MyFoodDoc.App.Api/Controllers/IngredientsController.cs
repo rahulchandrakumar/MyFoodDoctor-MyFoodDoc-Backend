@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,12 +23,11 @@ namespace MyFoodDoc.App.Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(IngredientDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IngredientDto>> Get([FromRoute] int id, CancellationToken cancellationToken = default)
+        [HttpGet("{foodId}")]
+        [ProducesResponseType(typeof(ICollection<IngredientDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ICollection<IngredientDto>>> Get([FromRoute] long foodId, CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAsync(id, cancellationToken);
+            var result = await _service.GetAsync(foodId, cancellationToken);
 
             return Ok(result);
         }

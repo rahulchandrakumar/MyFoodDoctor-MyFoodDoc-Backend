@@ -38,13 +38,20 @@ namespace MyFoodDoc.App.Application.Clients.FatSecret
             var response = await _httpClient.GetAsync($"?method=food.get&format=json&food_id={id}");
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine(response.StatusCode);
+                _logger.LogError(response.StatusCode.ToString());
                 throw new Exception("Failed to get protected resources.");
             }
 
             var content = await response.Content.ReadAsStringAsync();
-            
-            return JsonConvert.DeserializeObject<GetFoodResult>(content).Food;
+
+            var result = JsonConvert.DeserializeObject<GetFoodResult>(content).Food;
+
+            if (result == null)
+            {
+                _logger.LogWarning($"Couldn't deserialize response: {content}");
+            }
+
+            return result;
         }
     }
 }

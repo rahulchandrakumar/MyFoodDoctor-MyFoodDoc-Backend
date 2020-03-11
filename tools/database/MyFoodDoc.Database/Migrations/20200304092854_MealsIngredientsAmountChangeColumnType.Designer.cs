@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20200304092854_MealsIngredientsAmountChangeColumnType")]
+    partial class MealsIngredientsAmountChangeColumnType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -386,9 +388,6 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FoodId", "ServingId")
-                        .IsUnique();
-
                     b.ToTable("Ingredients","Food");
                 });
 
@@ -556,7 +555,9 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId", "Date");
+                    b.HasIndex("UserId", "Date", "Type")
+                        .IsUnique()
+                        .HasFilter("Type IN ('Breakfast', 'Lunch', 'Dinner')");
 
                     b.ToTable("Meals","Diary");
                 });

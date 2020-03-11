@@ -11,7 +11,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
         {
             builder.ToTable("MealsIngredients", "Diary");
             builder.HasKey(x => new { x.MealId, x.IngredientId });
-            builder.Property(p => p.Amount).IsRequired();
+            builder.Property(p => p.Amount).IsRequired().HasColumnType("decimal(18, 2)");
 
             builder.HasOne(x => x.Meal)
                 .WithMany(x => x.Ingredients)
