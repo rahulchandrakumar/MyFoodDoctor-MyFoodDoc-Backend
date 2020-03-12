@@ -3,14 +3,17 @@ using Microsoft.Extensions.DependencyInjection;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Services;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using MyFoodDoc.Application;
+using MyFoodDoc.FatSecretClient;
 
 namespace MyFoodDoc.App.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
+        public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSharedFatSecretClient(configuration);
             services.AddSharedApplication();
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());

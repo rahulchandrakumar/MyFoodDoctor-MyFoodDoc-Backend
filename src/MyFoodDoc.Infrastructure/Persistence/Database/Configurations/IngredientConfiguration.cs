@@ -19,7 +19,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(o => o.MetricServingAmount).IsRequired().HasColumnType(NutritionsDecimal);
             builder.Property(o => o.MetricServingUnit).IsRequired().HasMaxLength(100);
             builder.Property(o => o.MeasurementDescription).IsRequired().HasMaxLength(100);
-            builder.Property(o => o.LastSynchronized).IsRequired().HasColumnType("Date");
+            builder.Property(o => o.LastSynchronized).IsRequired();
             builder.Property(o => o.Calories).HasColumnType(NutritionsDecimal);
             builder.Property(o => o.Carbohydrate).HasColumnType(NutritionsDecimal);
             builder.Property(o => o.Protein).HasColumnType(NutritionsDecimal);
@@ -34,6 +34,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(o => o.Sugar).HasColumnType(NutritionsDecimal);
 
             builder.HasIndex(i => new { i.FoodId, i.ServingId }).IsUnique();
+            builder.HasIndex(i => i.LastSynchronized);
         }
     }
 }

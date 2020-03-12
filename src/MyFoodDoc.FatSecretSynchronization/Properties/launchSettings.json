@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "MyFoodDoc.FatSecretSynchronization": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 33712,
+      "useSSL": false
+    }
+  }
+}

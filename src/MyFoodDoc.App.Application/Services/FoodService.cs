@@ -10,8 +10,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Clients;
-using MyFoodDoc.App.Application.Clients.FatSecret;
 using MyFoodDoc.App.Application.Exceptions;
+using MyFoodDoc.FatSecretClient.Abstractions;
 
 namespace MyFoodDoc.App.Application.Services
 {

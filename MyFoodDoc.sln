@@ -33,11 +33,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cms", "cms", "{36B98B16-7C0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.CMS", "src\MyFoodDoc.CMS\MyFoodDoc.CMS.csproj", "{8441B39D-B7EF-4A92-8598-025CED5CAC28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Application", "src\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj", "{F0B01733-417C-4753-B4F6-939E40EB490A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.CMS.Application", "src\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj", "{F0B01733-417C-4753-B4F6-939E40EB490A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.CMS.Infrastructure", "src\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj", "{FBFFE256-3D84-4792-B018-7E008C93B97B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.CMS.Infrastructure", "src\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj", "{FBFFE256-3D84-4792-B018-7E008C93B97B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.Database", "tools\database\MyFoodDoc.Database\MyFoodDoc.Database.csproj", "{EB9F5AA7-A171-4D43-9F45-BED550340B9B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "func", "func", "{E385B8AF-BAD6-4995-ADE1-70C387983FCB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.FatSecretSynchronization", "src\MyFoodDoc.FatSecretSynchronization\MyFoodDoc.FatSecretSynchronization.csproj", "{F8AA4440-2382-486F-A010-C22351B15494}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.FatSecretClient", "src\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj", "{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +99,14 @@ Global
 		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB9F5AA7-A171-4D43-9F45-BED550340B9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8AA4440-2382-486F-A010-C22351B15494}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8AA4440-2382-486F-A010-C22351B15494}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8AA4440-2382-486F-A010-C22351B15494}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8AA4440-2382-486F-A010-C22351B15494}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +126,9 @@ Global
 		{F0B01733-417C-4753-B4F6-939E40EB490A} = {36B98B16-7C06-4DD7-8F1A-CB6C00C9F2FA}
 		{FBFFE256-3D84-4792-B018-7E008C93B97B} = {36B98B16-7C06-4DD7-8F1A-CB6C00C9F2FA}
 		{EB9F5AA7-A171-4D43-9F45-BED550340B9B} = {77A0EEB2-A6DB-40EE-BEB8-97053A8CC6EC}
+		{E385B8AF-BAD6-4995-ADE1-70C387983FCB} = {537E1F0C-A54C-41F9-ABF2-D43A41B08B17}
+		{F8AA4440-2382-486F-A010-C22351B15494} = {E385B8AF-BAD6-4995-ADE1-70C387983FCB}
+		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364} = {CF039FC0-983B-4984-B713-C5932C91D92A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156771D1-5C1C-4E9F-B531-A625B6AFF31F}

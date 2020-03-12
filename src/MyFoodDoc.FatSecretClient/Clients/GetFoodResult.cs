@@ -4,7 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace MyFoodDoc.App.Application.Clients.FatSecret
+namespace MyFoodDoc.FatSecretClient.Clients
 {
     public class GetFoodResult
     {

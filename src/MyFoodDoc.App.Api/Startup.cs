@@ -21,7 +21,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Logging;
 using MyFoodDoc.App.Application.Serialization;
 using MyFoodDoc.App.Api.Middlewares;
-using MyFoodDoc.App.Application.Clients.FatSecret;
 using MyFoodDoc.App.Application.Clients.IdentityServer;
 
 namespace MyFoodDoc.Application.Api
@@ -42,7 +41,7 @@ namespace MyFoodDoc.Application.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddInfrastructure(Configuration, Environment);
-            services.AddApplication();
+            services.AddApplication(Configuration);
 
             //IdentityServer
             services.Configure<IdentityServerClientOptions>(Configuration.GetSection("IdentityServer"));
@@ -52,28 +51,6 @@ namespace MyFoodDoc.Application.Api
             services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
             {
                 client.BaseAddress = new Uri(identityServerUrl);
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-            });
-
-            //FatSecretIdentityServer
-            services.Configure<FatSecretIdentityServerClientOptions>(Configuration.GetSection("FatSecretIdentityServer"));
-
-            var fatSecretIdentityServerUrl = Configuration.GetValue<string>("FatSecretIdentityServer:Address");
-
-            services.AddHttpClient<IFatSecretIdentityServerClient, FatSecretIdentityServerClient>(client =>
-            {
-                client.BaseAddress = new Uri(fatSecretIdentityServerUrl);
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-            });
-
-            //FatSecret
-            services.Configure<FatSecretClientOptions>(Configuration.GetSection("FatSecret"));
-
-            var fatSecretUrl = Configuration.GetValue<string>("FatSecret:Address");
-
-            services.AddHttpClient<IFatSecretClient, FatSecretClient>(client =>
-            {
-                client.BaseAddress = new Uri(fatSecretUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
             

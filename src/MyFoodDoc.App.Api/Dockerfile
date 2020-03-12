@@ -8,6 +8,7 @@ COPY ["src/MyFoodDoc.App.Api/MyFoodDoc.App.Api.csproj", "src/MyFoodDoc.App.Api/"
 COPY ["src/MyFoodDoc.Core/MyFoodDoc.Core.csproj", "src/MyFoodDoc.Core/"]
 COPY ["src/MyFoodDoc.App.Application/MyFoodDoc.App.Application.csproj", "src/MyFoodDoc.App.Application/"]
 COPY ["src/MyFoodDoc.Application/MyFoodDoc.Application.csproj", "src/MyFoodDoc.Application/"]
+COPY ["src/MyFoodDoc.FatSecretClient/MyFoodDoc.FatSecretClient.csproj", "src/MyFoodDoc.FatSecretClient/"]
 COPY ["src/MyFoodDoc.App.Infrastructure/MyFoodDoc.App.Infrastructure.csproj", "src/MyFoodDoc.App.Infrastructure/"]
 COPY ["src/MyFoodDoc.Infrastructure/MyFoodDoc.Infrastructure.csproj", "src/MyFoodDoc.Infrastructure/"]
 RUN dotnet restore "src/MyFoodDoc.App.Api/MyFoodDoc.App.Api.csproj"

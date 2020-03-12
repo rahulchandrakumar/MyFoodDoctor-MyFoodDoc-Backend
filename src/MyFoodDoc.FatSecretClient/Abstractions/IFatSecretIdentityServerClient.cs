@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using IdentityModel.Client;
 
-namespace MyFoodDoc.App.Application.Clients
+namespace MyFoodDoc.FatSecretClient.Abstractions
 {
     public interface IFatSecretIdentityServerClient
     {
