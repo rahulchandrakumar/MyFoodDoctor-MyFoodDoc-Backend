@@ -22,11 +22,13 @@ namespace MyFoodDoc.FatSecretSynchronization
         }
 
         [FunctionName("Synchronize")]
-        public async Task Run([TimerTrigger("%TimerInterval%")]TimerInfo myTimer, ILogger log, CancellationToken cancellationToken)
+        public async Task Run([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/)]TimerInfo myTimer, ILogger log, CancellationToken cancellationToken)
         {
             var ingredients = _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddDays(-1)).ToList();
 
             log.LogInformation($"{ingredients.Count()} records to update.");
+
+            int updated = 0;
 
             if (ingredients.Any())
             {
@@ -57,11 +59,13 @@ namespace MyFoodDoc.FatSecretSynchronization
                     ingredient.LastSynchronized = DateTime.Now;
 
                     _context.Ingredients.Update(ingredient);
+
+                    updated++;
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                log.LogInformation($"{ingredients.Count()} records updated.");
+                log.LogInformation($"{updated} records updated.");
             }
         }
     }

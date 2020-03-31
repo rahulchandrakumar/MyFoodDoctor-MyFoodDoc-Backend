@@ -25,8 +25,15 @@ namespace MyFoodDoc.FatSecretClient
             services.Configure<FatSecretClientOptions>(configuration.GetSection("FatSecret"));
 
             var fatSecretUrl = configuration.GetValue<string>("FatSecret:Address");
-
-            services.AddHttpClient<IFatSecretClient, Clients.FatSecretClient>(client =>
+            /*
+            TODO: Check relevance. Add switch between O1 and O2 if needed
+            services.AddHttpClient<IFatSecretClient, FatSecretClientO2>(client =>
+            {
+                client.BaseAddress = new Uri(fatSecretUrl);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+            */
+            services.AddHttpClient<IFatSecretClient, FatSecretClientO1>(client =>
             {
                 client.BaseAddress = new Uri(fatSecretUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");

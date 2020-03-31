@@ -1,42 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using IdentityModel.Client;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.FatSecretClient.Abstractions;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.FatSecretClient.Clients
 {
-    public class FatSecretClient : IFatSecretClient
+    public class FatSecretClientO1 : IFatSecretClient
     {
         private readonly HttpClient _httpClient;
         private readonly FatSecretClientOptions _options;
-        private readonly IFatSecretIdentityServerClient _fatSecretIdentityServerClient;
-        private readonly ILogger<FatSecretClient> _logger;
+        private readonly ILogger<FatSecretClientO1> _logger;
 
-        public FatSecretClient(HttpClient httpClient,
+        public FatSecretClientO1(HttpClient httpClient,
             IOptions<FatSecretClientOptions> options,
-            IFatSecretIdentityServerClient fatSecretIdentityServerClient,
-            ILogger<FatSecretClient> logger)
+            ILogger<FatSecretClientO1> logger)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _options = options.Value;
-            _fatSecretIdentityServerClient = fatSecretIdentityServerClient
-                                             ?? throw new ArgumentNullException(nameof(fatSecretIdentityServerClient));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Food> GetFoodAsync(long id)
         {
-            //TODO: Use SessionHandler
-            var accessToken = await _fatSecretIdentityServerClient.RequestClientCredentialsTokenAsync();
-            _httpClient.SetBearerToken(accessToken.AccessToken);
+            string outUrl;
+            string outParms;
+            var baseUri = new Uri(_options.Address + $"?method=food.get&format=json&food_id={id}&region=DE");
 
-            var response = await _httpClient.GetAsync($"?method=food.get&format=json&food_id={id}");
+            //var baseUri = new Uri(_options.Address + $"?barcode=0852684003071&format=json&method=food.find_id_for_barcode");
+
+            OAuthBase oAuth = new OAuthBase();
+
+            var sig = oAuth.GenerateSignature(baseUri, _options.ConsumerKey, _options.ConsumerSecret, "GET", null, null, out outUrl, out outParms);
+
+            var requestUrl = String.Format("{0}?{1}&oauth_signature={2}", outUrl, outParms, HttpUtility.UrlEncode(sig));
+
+            var response = await _httpClient.GetAsync(requestUrl);
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(response.StatusCode.ToString());

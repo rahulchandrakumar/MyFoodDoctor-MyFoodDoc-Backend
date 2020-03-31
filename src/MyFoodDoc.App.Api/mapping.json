@@ -12,7 +12,9 @@
     "Scope": "{FAT_SECRET_IDENTITY_SERVER_SCOPE}"
   },
   "FatSecret": {
-    "Address": "{FAT_SECRET_ADDRESS}"
+    "Address": "{FAT_SECRET_ADDRESS}",
+    "ConsumerKey": "{FAT_SECRET_CONSUMER_KEY}",
+    "ConsumerSecret": "{FAT_SECRET_CONSUMER_SECRET}"
   },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"

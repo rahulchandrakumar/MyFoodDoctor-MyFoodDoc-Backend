@@ -52,6 +52,7 @@ provider "azurerm" {
   # without it, any terraform plan/apply would fail with a 403 on trying to access e.g. Media Services
   # see https://github.com/hashicorp/terraform/issues/18180#issuecomment-394369502
   skip_provider_registration = false
+  subscription_id = "d3359015-e21d-4560-8542-0eb0655d9f8f"
 }
 
 provider "random" {
@@ -174,6 +175,7 @@ resource "azurerm_cdn_endpoint" "cdnendpoint" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   tags                = local.resource_tags
+  origin_host_header  = "${local.storageName}.blob.core.windows.net"
 
   origin {
     name      = "StorageCDN"
@@ -328,18 +330,26 @@ resource "azurerm_app_service" "api" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT              = var.apiapp_aspenv
-    APPINSIGHTS_INSTRUMENTATIONKEY      = azurerm_application_insights.appinsights.instrumentation_key
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
-    DOCKER_REGISTRY_SERVER_URL          = var.containerregistry_url
-    DOCKER_REGISTRY_SERVER_USERNAME     = var.containerregistry_admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD     = var.containerregistry_admin_password
-    DOCKER_CUSTOM_IMAGE_NAME            = "${var.projectname}-api"
-    DOCKER_ENABLE_CI                    = "false"
-    DEFAULT_DATABASE_CONNECTION         = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
-    IDENTITY_SERVER_CLIENT              = "myfooddoc_app"
-    IDENTITY_SERVER_SCOPE               = "myfooddoc_api offline_access"
-    IDENTITY_SERVER_ADDRESS             = "https://${local.authAppName}.azurewebsites.net"
+    ASPNETCORE_ENVIRONMENT                      = var.apiapp_aspenv
+    APPINSIGHTS_INSTRUMENTATIONKEY              = azurerm_application_insights.appinsights.instrumentation_key
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
+    DOCKER_REGISTRY_SERVER_URL                  = var.containerregistry_url
+    DOCKER_REGISTRY_SERVER_USERNAME             = var.containerregistry_admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD             = var.containerregistry_admin_password
+    DOCKER_CUSTOM_IMAGE_NAME                    = "${var.projectname}-api"
+    DOCKER_ENABLE_CI                            = "false"
+    DEFAULT_DATABASE_CONNECTION                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+    IDENTITY_SERVER_CLIENT                      = "myfooddoc_app"
+    IDENTITY_SERVER_SCOPE                       = "myfooddoc_api offline_access"
+    IDENTITY_SERVER_ADDRESS                     = "https://${local.authAppName}.azurewebsites.net"
+    FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
+    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = "ab118ff9a12641e4a6e80407b82f2b16"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
+    FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
+    FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
   }
 
   identity {

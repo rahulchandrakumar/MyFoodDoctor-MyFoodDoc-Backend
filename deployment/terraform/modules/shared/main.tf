@@ -27,6 +27,7 @@ provider "azurerm" {
   # without it, any terraform plan/apply would fail with a 403 on trying to access e.g. Media Services
   # see https://github.com/hashicorp/terraform/issues/18180#issuecomment-394369502
   skip_provider_registration = true
+  subscription_id = "d3359015-e21d-4560-8542-0eb0655d9f8f"
 }
 
 
