@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Clients.FatSecret;
+using MyFoodDoc.FatSecretClient.Clients;
 
-namespace MyFoodDoc.App.Application.Clients
+
+namespace MyFoodDoc.FatSecretClient.Abstractions
 {
     public interface IFatSecretClient
     {

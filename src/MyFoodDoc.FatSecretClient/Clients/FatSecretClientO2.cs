@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 using IdentityModel.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MyFoodDoc.FatSecretClient.Abstractions;
 using Newtonsoft.Json;
 
-namespace MyFoodDoc.App.Application.Clients.FatSecret
+namespace MyFoodDoc.FatSecretClient.Clients
 {
-    public class FatSecretClient : IFatSecretClient
+    public class FatSecretClientO2 : IFatSecretClient
     {
         private readonly HttpClient _httpClient;
         private readonly FatSecretClientOptions _options;
         private readonly IFatSecretIdentityServerClient _fatSecretIdentityServerClient;
-        private readonly ILogger<FatSecretClient> _logger;
+        private readonly ILogger<FatSecretClientO2> _logger;
 
-        public FatSecretClient(HttpClient httpClient,
+        public FatSecretClientO2(HttpClient httpClient,
             IOptions<FatSecretClientOptions> options,
             IFatSecretIdentityServerClient fatSecretIdentityServerClient,
-            ILogger<FatSecretClient> logger)
+            ILogger<FatSecretClientO2> logger)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             _options = options.Value;
@@ -31,15 +32,15 @@ namespace MyFoodDoc.App.Application.Clients.FatSecret
 
         public async Task<Food> GetFoodAsync(long id)
         {
+            //TODO: Use SessionHandler
             var accessToken = await _fatSecretIdentityServerClient.RequestClientCredentialsTokenAsync();
             _httpClient.SetBearerToken(accessToken.AccessToken);
 
-            // request data from our Protected API
             var response = await _httpClient.GetAsync($"?method=food.get&format=json&food_id={id}");
             if (!response.IsSuccessStatusCode)
             {
                 _logger.LogError(response.StatusCode.ToString());
-                throw new Exception("Failed to get protected resources.");
+                throw new Exception("Failed to get resources.");
             }
 
             var content = await response.Content.ReadAsStringAsync();

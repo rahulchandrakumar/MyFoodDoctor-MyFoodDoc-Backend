@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyFoodDoc.App.Application.Clients.FatSecret
+namespace MyFoodDoc.FatSecretClient.Clients
 {
     public class FatSecretIdentityServerClientOptions
     {

@@ -14,8 +14,9 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Clients;
-using MyFoodDoc.App.Application.Clients.FatSecret;
+using MyFoodDoc.FatSecretClient.Abstractions;
+using MyFoodDoc.FatSecretClient.Clients;
+
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -86,7 +87,7 @@ namespace MyFoodDoc.App.Application.Services
             
             await _context.SaveChangesAsync(cancellationToken);
 
-            //TODO: Check necessity
+            //TODO: Check relevance
             var oldIngredients = _context.MealIngredients.Where(x => x.MealId == meal.Id);
 
             _context.MealIngredients.RemoveRange(oldIngredients);

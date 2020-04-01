@@ -1,9 +1,4 @@
 {
-  "IdentityServer": {
-    "Address": "{IDENTITY_SERVER_ADDRESS}",
-    "ClientId": "{IDENTITY_SERVER_CLIENT}",
-    "Scope": "{IDENTITY_SERVER_SCOPE}"
-  },
   "FatSecretIdentityServer": {
     "Address": "{FAT_SECRET_IDENTITY_SERVER_ADDRESS}",
     "GrantType": "{FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE}",
