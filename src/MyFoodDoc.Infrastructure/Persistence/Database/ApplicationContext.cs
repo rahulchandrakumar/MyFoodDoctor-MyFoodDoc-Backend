@@ -175,25 +175,25 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     {
                         Id = 1,
                         Key = "anti_aging",
-                        Name = "Anti-Aging"
+                        Name = "Anti Aging"
                     },
                     new Motivation
                     {
                         Id = 2,
                         Key = "healthier_lifestyle",
-                        Name = "Healthier lifestyle"
+                        Name = "Gesünder leben"
                     },
                     new Motivation
                     {
                         Id = 3,
                         Key = "reduce_weight",
-                        Name = "Reduce weight"
+                        Name = "Abnehmen"
                     },
                     new Motivation
                     {
                         Id = 4,
                         Key = "feel_better",
-                        Name = "Feel better"
+                        Name = "Besser fühlen"
                     }
                 );
 
@@ -207,42 +207,40 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     new Diet
                     {
                         Id = 2,
+                        Key = "mixed_diet",
+                        Name = "Mischkost"
+                    },
+                    new Diet
+                    {
+                        Id = 3,
                         Key = "vegan",
                         Name = "Vegan"
                     },
                     new Diet
                     {
-                        Id = 3,
-                        Key = "interval_fasting",
-                        Name = "Intervallfasten"
-                    },
-                    new Diet
-                    {
                         Id = 4,
-                        Key = "vegetarian_milk",
-                        Name = "Vegetarisch mit Milch, Ei, Fisch"
+                        Key = "less_carbohydrates",
+                        Name = "Wenig Kohlenhydrate"
                     },
                     new Diet
                     {
                         Id = 5,
-                        Key = "lactose_free",
-                        Name = "Laktosefrei"
+                        Key = "lactose_low",
+                        Name = "Laktosearm"
                     },
                     new Diet
                     {
                         Id = 6,
-                        Key = "pescetarian",
-                        Name = "Vegetarisch mit Fisch"
+                        Key = "fructose_low",
+                        Name = "Fruktosearm"
                     },
                     new Diet
                     {
                         Id = 7,
-                        Key = "low_fructose",
-                        Name = "Frustosearm"
+                        Key = "gluten_free",
+                        Name = "Glutenfrei"
                     }
                 );                
-
-                
             }
         }
     }
