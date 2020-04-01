@@ -104,5 +104,16 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpGet("statistics/ready")]
+        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+        public async Task<IActionResult> StatisticsReady(CancellationToken cancellationToken = default)
+        {
+            var user = await _service.GetUserAsync(GetUserId(), cancellationToken);
+
+            //TODO: implement statistics check
+
+            return Ok(false);
+        }
     }
 }
