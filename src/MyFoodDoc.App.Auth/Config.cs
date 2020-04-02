@@ -36,7 +36,7 @@ namespace MyFoodDoc.App.Auth
                     ClientId = "myfooddoc_app",
                     ClientName = "MyFoodDoc.App",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenType = AccessTokenType.Reference,
                     RequireClientSecret = false,
                     AllowedScopes = { "myfooddoc_api", IdentityServerConstants.StandardScopes.OfflineAccess },
                     AccessTokenLifetime = 3600 * 7,
