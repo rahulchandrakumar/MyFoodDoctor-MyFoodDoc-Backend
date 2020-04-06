@@ -1,6 +1,7 @@
 ﻿using MicroElements.Swashbuckle.FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
@@ -15,7 +16,7 @@ namespace MyFoodDoc.App.Api.DependencyInjection
     {
         // Obsolete Setting 'DescribeAllEnumsAsStrings' is required for System.Text.Json. 
         // See: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1269. 
-        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+        public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSwaggerGen(options =>
             {
@@ -31,11 +32,11 @@ namespace MyFoodDoc.App.Api.DependencyInjection
                         {
                             Password = new OpenApiOAuthFlow
                             {
-                                TokenUrl = new Uri("https://myfooddoc-mock-auth-api.azurewebsites.net/connect/token"),
+                                TokenUrl = new Uri(configuration.GetValue<string>("IdentityServer:Address") + "/connect/token"),
                                 Scopes = new Dictionary<string, string>
                                 {
                                     { "myfooddoc_api", "MyFoodDoc.Api" }
-                                },
+                                }
                             }
                         }
                     });

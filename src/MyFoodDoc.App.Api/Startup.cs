@@ -107,7 +107,7 @@ namespace MyFoodDoc.Application.Api
                 //option.ApiVersionReader = new Microsoft.AspNetCore.Mvc.Versioning.UrlSegmentApiVersionReader();
             });
             */
-            services.AddSwaggerDocumentation();
+            services.AddSwaggerDocumentation(Configuration);
 
             services.AddRouting(options => {
                 options.LowercaseUrls = true;
