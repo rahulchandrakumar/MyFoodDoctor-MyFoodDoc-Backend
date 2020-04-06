@@ -56,7 +56,8 @@ namespace MyFoodDoc.App.Auth
             .AddInMemoryClients(Config.GetClients())
             .AddAspNetIdentity<User>();
 
-            if (Environment.IsDevelopment())
+            //TODO: Use builder.AddSigningCredential for Staging and Production
+            if (Environment.IsDevelopment() || Environment.IsStaging() || Environment.IsProduction())
             {
                 builder.AddDeveloperSigningCredential();
             }
