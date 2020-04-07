@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
+    /*
     public class ReportMoodMethodConfiguration : ReportValueMethodConfiguration<ReportMoodMethod>
     {
         public override void Configure(EntityTypeBuilder<ReportMoodMethod> builder)
@@ -16,4 +17,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(reportMethod => reportMethod.Mood).HasColumnName("IntValue");
         }
     }
+    */
 }

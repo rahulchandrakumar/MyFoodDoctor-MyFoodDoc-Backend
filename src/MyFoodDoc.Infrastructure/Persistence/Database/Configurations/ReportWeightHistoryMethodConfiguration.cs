@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ReportWeightHistoryMethodConfiguration : ReportValueMethodConfiguration<ReportWeightHistoryMethod>
     {
         public override void Configure(EntityTypeBuilder<ReportWeightHistoryMethod> builder)
@@ -15,4 +16,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(reportMethod => reportMethod.Weight).HasColumnName("DecimalValue");
         }
     }
+    */
 }

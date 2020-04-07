@@ -6,6 +6,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ReportAnalysisFlagConfiguration : IEntityTypeConfiguration<ReportAnalysisFlag>
     {
         public void Configure(EntityTypeBuilder<ReportAnalysisFlag> builder)
@@ -22,4 +23,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
                 .HasForeignKey(o => o.AnalysisFlagId);
         }
     }
+    */
 }

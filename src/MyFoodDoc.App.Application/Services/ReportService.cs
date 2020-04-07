@@ -29,6 +29,8 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<ReportDto> GetLatestReportAsync(string userId, CancellationToken cancellationToken = default)
         {
+            throw new NotImplementedException();
+            /*
             var result = await _context.Reports
                 .OrderByDescending(report => report.EndDate)
                 .ProjectTo<ReportDto>(_mapper.ConfigurationProvider)
@@ -40,10 +42,14 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             return result;
+            */
         }
 
         public async Task<ReportDto> GetReportByIdAsync(string userId, int reportId, CancellationToken cancellationToken)
         {
+            throw new NotImplementedException();
+            
+            /*
             var result = await _context.Reports
                 .Where(report => report.Id == reportId)
                 .ProjectTo<ReportDto>(_mapper.ConfigurationProvider)
@@ -55,10 +61,14 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             return result;
+            */
         }
 
         public async Task InsertReportOptimizationsAsync(string userId, int reportId, ReportOptimizationPayload payload, CancellationToken cancellationToken)
         {
+            throw new NotImplementedException();
+
+            /*
             var result = await _context.Reports
                 .Where(report => report.Id == reportId)
                 .Include(report => report.Targets)
@@ -91,10 +101,13 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             _context.SaveChanges();
+            */
         }
 
         public async Task<IEnumerable<ReportMethodDto>> GetReportMethodsByDateAsync(string userId, int reportId, DateTime date, CancellationToken cancellationToken)
         {
+            throw new NotImplementedException();
+            /*
             var result = await _context.Reports
                 .Where(report => report.Id == reportId)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -105,12 +118,16 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             return _mapper.Map<IEnumerable<ReportMethodDto>>(result.Methods.Select(m => m.Method));
+            */
         }
 
         
 
         public async Task UpsertReportMethodsByDateAsync(string userId, int reportId, DateTime date, ReportMethodsPayload payload, CancellationToken cancellationToken)
         {
+            throw new NotImplementedException();
+
+            /*
             var result = await _context.Reports
                 .Where(report => report.Id == reportId)
                 .Include(report => report.Methods)
@@ -152,6 +169,7 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             _context.SaveChanges();
+            */
         }
     }
 }

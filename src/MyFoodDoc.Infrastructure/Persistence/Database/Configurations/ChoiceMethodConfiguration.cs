@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Entites.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
 {
+    /*
     public class ChoiceMethodConfiguration : MethodConfiguration<ChoiceMethod>
     {
         public override void Configure(EntityTypeBuilder<ChoiceMethod> builder)
@@ -16,4 +17,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractio
             builder.HasMany(method => method.Choices).WithOne(method => method.Method).HasForeignKey(method => method.MethodId).OnDelete(DeleteBehavior.Cascade);
         }
     }
+    */
 }

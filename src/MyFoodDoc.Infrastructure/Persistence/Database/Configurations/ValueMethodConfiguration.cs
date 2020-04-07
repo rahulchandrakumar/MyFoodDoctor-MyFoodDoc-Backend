@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Entites.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
 {
+    /*
     public abstract class ValueMethodConfiguration : MethodConfiguration<ValueMethod>
     {
         public override void Configure(EntityTypeBuilder<ValueMethod> builder)
@@ -14,4 +15,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractio
             builder.HasDiscriminator(method => method.Type);
         }
     }
+    */
 }

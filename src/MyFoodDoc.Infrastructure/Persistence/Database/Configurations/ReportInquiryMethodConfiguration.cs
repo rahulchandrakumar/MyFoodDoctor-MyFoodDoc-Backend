@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ReportInquiryMethodConfiguration : ReportValueMethodConfiguration<ReportInquiryMethod>
     {
         public override void Configure(EntityTypeBuilder<ReportInquiryMethod> builder)
@@ -15,4 +16,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(reportMethod => reportMethod.IsConfirmed).HasColumnName("BooleanValue");
         }
     }
+    */
 }

@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ReportConfiguration : IEntityTypeConfiguration<Report>
     {
         private readonly ApplicationContext _context;
@@ -33,4 +34,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasMany(report => report.Targets).WithOne(target => target.Report);
         }
     }
+    */
 }

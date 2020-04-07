@@ -57,7 +57,7 @@ namespace MyFoodDoc.Application.Abstractions
         #endregion
 
         #region Reporting
-        DbSet<Report> Reports { get; set; }
+        //DbSet<Report> Reports { get; set; }
         #endregion
 
         int SaveChanges();

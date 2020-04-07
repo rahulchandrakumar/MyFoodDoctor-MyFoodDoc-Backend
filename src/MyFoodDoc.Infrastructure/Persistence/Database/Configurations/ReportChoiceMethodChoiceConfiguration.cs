@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ReportChoiceMethodChoiceConfiguration : IEntityTypeConfiguration<ReportChoiceMethodChoice>
     {
         public void Configure(EntityTypeBuilder<ReportChoiceMethodChoice> builder)
@@ -14,4 +15,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasOne(o => o.Choice).WithMany().HasForeignKey(o => new { o.ChoiceId, o.MethodId }).OnDelete(DeleteBehavior.Restrict);
         }
     }   
+    */
 }

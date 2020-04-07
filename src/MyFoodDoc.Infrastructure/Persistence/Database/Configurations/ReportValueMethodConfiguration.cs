@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ReportValueMethodConfiguration<TMethod> : ReportMethodConfiguration<TMethod> where TMethod : ReportValueMethod
     {
         public override void Configure(EntityTypeBuilder<TMethod> builder)
@@ -16,4 +17,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasOne(reportMethod => reportMethod.Method).WithMany().HasForeignKey(reportMethod => reportMethod.MethodId).OnDelete(DeleteBehavior.Restrict);
         }
     }
+    */
 }

@@ -5,6 +5,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class AnalysisFlagConfiguration : AbstractEnumConfiguration<AnalysisFlag, int>
     {
         public override void Configure(EntityTypeBuilder<AnalysisFlag> builder)
@@ -14,4 +15,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.ToTable("AnalysisFlags", "System");
         }
     }
+    */
 }

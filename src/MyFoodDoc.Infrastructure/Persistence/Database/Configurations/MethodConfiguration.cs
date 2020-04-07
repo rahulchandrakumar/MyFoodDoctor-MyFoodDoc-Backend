@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Entites.Abstractions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
 {
+    /*
     public abstract class MethodConfiguration<TMethod> : IEntityTypeConfiguration<TMethod> where TMethod : Method
     {
         public virtual void Configure(EntityTypeBuilder<TMethod> builder)
@@ -18,4 +19,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractio
             builder.HasOne(method => method.OptimizationArea).WithMany().HasForeignKey(method => method.OptimizationAreaId);
         }
     }
+    */
 }

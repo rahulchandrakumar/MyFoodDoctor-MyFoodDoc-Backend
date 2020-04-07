@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Entites;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public abstract class ReportChoiceMethodConfiguration<TReportMethod> : ReportMethodConfiguration<TReportMethod> where TReportMethod : ReportMethod
     {
         public override void Configure(EntityTypeBuilder<TReportMethod> builder)
@@ -15,4 +16,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(reportMethod => reportMethod.Date).IsRequired().HasColumnType("Date");
         }
     }
+    */
 }

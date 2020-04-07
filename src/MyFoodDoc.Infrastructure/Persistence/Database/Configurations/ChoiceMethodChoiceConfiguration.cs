@@ -5,6 +5,7 @@ using MyFoodDoc.Application.Entites.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {
+    /*
     public class ChoiceMethodChoiceConfiguration : IEntityTypeConfiguration<ChoiceMethodChoice>
     {
         public void Configure(EntityTypeBuilder<ChoiceMethodChoice> builder)
@@ -18,4 +19,5 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.HasOne(page => page.Method).WithMany();
         }
     }   
+    */
 }
