@@ -22,6 +22,11 @@ namespace MyFoodDoc.App.Auth
             return new List<ApiResource>
             {
                 new ApiResource("myfooddoc_api", "MyFoodDoc.Api")
+                {
+                    ApiSecrets = {
+                        new Secret("secret".Sha256()) 
+                    }
+                }
             };
         }
 
