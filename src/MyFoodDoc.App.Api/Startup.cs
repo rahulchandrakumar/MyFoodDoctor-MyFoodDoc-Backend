@@ -99,8 +99,8 @@ namespace MyFoodDoc.Application.Api
                     options.ApiName = "myfooddoc_api";
                     options.RequireHttpsMetadata = false;
                     options.ApiSecret = "secret";
-                    options.EnableCaching = true;
-                    options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
+                    //options.EnableCaching = true;
+                    //options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
                 });
 
             /*
