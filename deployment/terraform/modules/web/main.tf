@@ -300,6 +300,7 @@ resource "azurerm_app_service" "auth" {
     DOCKER_CUSTOM_IMAGE_NAME            = "${var.projectname}-auth"
     DOCKER_ENABLE_CI                    = "false"
     DEFAULT_DATABASE_CONNECTION         = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+    IDENTITY_SERVER_ISSUER_URI          = "https://${local.authAppName}.azurewebsites.net"
   }
 
   identity {

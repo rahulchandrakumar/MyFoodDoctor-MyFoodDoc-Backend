@@ -35,6 +35,9 @@ namespace MyFoodDoc.App.Auth
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
 
+                var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
+
+                options.IssuerUri = identityServerIssuerUri;
 
                 options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 /*

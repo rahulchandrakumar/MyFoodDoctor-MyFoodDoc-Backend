@@ -1,4 +1,7 @@
 {
+  "IdentityServer": {
+    "IssuerUri": "{IDENTITY_SERVER_ISSUER_URI}"
+  },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }
