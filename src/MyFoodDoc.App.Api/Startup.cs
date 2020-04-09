@@ -88,21 +88,20 @@ namespace MyFoodDoc.Application.Api
             IdentityModelEventSource.ShowPII = true;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddDistributedMemoryCache();
+            //services.AddDistributedMemoryCache();
 
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddIdentityServerAuthentication(options =>
+            }).AddIdentityServerAuthentication(options =>
                 {
                     options.Authority = identityServerUrl;
                     options.ApiName = "myfooddoc_api";
                     options.RequireHttpsMetadata = false;
-                    options.ApiSecret = "secret";
-                    options.EnableCaching = true;
-                    options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
+                    //options.ApiSecret = "secret";
+                    //options.EnableCaching = true;
+                    //options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
                 });
 
             /*
