@@ -22,11 +22,11 @@ namespace MyFoodDoc.App.Auth
             return new List<ApiResource>
             {
                 new ApiResource("myfooddoc_api", "MyFoodDoc.Api")
-                //{
-                //    ApiSecrets = {
-                //        new Secret("secret".Sha256()) 
-                //    }
-                //}
+                {              
+                    ApiSecrets = {
+                        new Secret("secret".Sha256())
+                    }
+                }
             };
         }
 
@@ -41,9 +41,9 @@ namespace MyFoodDoc.App.Auth
                     ClientId = "myfooddoc_app",
                     ClientName = "MyFoodDoc.App",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AccessTokenType = AccessTokenType.Jwt,
+                    AccessTokenType = AccessTokenType.Reference,
                     RequireClientSecret = false,
-                    AllowedScopes = { "myfooddoc_api", IdentityServerConstants.StandardScopes.OfflineAccess },
+                    AllowedScopes = {"myfooddoc_api", IdentityServerConstants.StandardScopes.OfflineAccess},
                     AccessTokenLifetime = 3600 * 7,
                     AllowOfflineAccess = true,
                     RefreshTokenExpiration = TokenExpiration.Absolute,
