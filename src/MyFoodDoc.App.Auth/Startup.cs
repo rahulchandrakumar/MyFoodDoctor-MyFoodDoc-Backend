@@ -38,6 +38,7 @@ namespace MyFoodDoc.App.Auth
                 var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
 
                 options.IssuerUri = identityServerIssuerUri;
+                options.PublicOrigin = identityServerIssuerUri;
 
                 options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 /*
