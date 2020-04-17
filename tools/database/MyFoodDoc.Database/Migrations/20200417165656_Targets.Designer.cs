@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200417160812_Targets")]
+    [Migration("20200417165656_Targets")]
     partial class Targets
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -749,7 +749,12 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
 
-                    b.Property<int>("TriggerId")
+                    b.Property<string>("TriggerOperator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(11)")
+                        .HasMaxLength(11);
+
+                    b.Property<int>("TriggerValue")
                         .HasColumnType("int");
 
                     b.Property<string>("Type")
@@ -760,8 +765,6 @@ namespace MyFoodDoc.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OptimizationAreaId");
-
-                    b.HasIndex("TriggerId");
 
                     b.ToTable("Targets","System");
                 });
@@ -796,37 +799,6 @@ namespace MyFoodDoc.Database.Migrations
                     b.HasKey("UserId", "Date");
 
                     b.ToTable("WeightHistory","User");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Trigger", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Operator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(11)")
-                        .HasMaxLength(11);
-
-                    b.Property<int>("OptimizationAreaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OptimizationAreaId");
-
-                    b.ToTable("Triggers","System");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
@@ -1478,12 +1450,6 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .HasForeignKey("OptimizationAreaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MyFoodDoc.Application.Entites.Trigger", "Trigger")
-                        .WithMany()
-                        .HasForeignKey("TriggerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserAbdominalGirth", b =>
@@ -1500,15 +1466,6 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                     b.HasOne("MyFoodDoc.Application.Entites.User", "User")
                         .WithMany("WeightHistory")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Trigger", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.EnumEntities.OptimizationArea", "OptimizationArea")
-                        .WithMany()
-                        .HasForeignKey("OptimizationAreaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

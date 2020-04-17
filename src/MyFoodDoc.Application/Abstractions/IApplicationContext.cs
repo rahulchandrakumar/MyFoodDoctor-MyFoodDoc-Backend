@@ -38,7 +38,6 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<Diet> Diets { get; set; }
         DbSet<Ingredient> Ingredients { get; set; }
         DbSet<OptimizationArea> OptimizationAreas { get; set; }
-        DbSet<Trigger> Triggers { get; set; }
         DbSet<Target> Targets { get; set; }
         DbSet<AdjustmentTarget> AdjustmentTargets { get; set; }
         DbSet<MotivationTarget> MotivationTargets { get; set; }

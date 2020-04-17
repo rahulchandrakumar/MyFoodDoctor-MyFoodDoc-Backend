@@ -43,7 +43,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Diet> Diets { get; set; }
         public DbSet<Ingredient> Ingredients { get; set; }
         public DbSet<OptimizationArea> OptimizationAreas { get; set; }
-        public DbSet<Trigger> Triggers { get; set; }
         public DbSet<Target> Targets { get; set; }
         public DbSet<AdjustmentTarget> AdjustmentTargets { get; set; }
         public DbSet<MotivationTarget> MotivationTargets { get; set; }

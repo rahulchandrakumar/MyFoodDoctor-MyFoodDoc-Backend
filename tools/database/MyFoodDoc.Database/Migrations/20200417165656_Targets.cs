@@ -26,31 +26,6 @@ namespace MyFoodDoc.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Triggers",
-                schema: "System",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Created = table.Column<DateTime>(nullable: false),
-                    LastModified = table.Column<DateTime>(nullable: true),
-                    OptimizationAreaId = table.Column<int>(nullable: false),
-                    Operator = table.Column<string>(maxLength: 11, nullable: false),
-                    Value = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Triggers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Triggers_OptimizationAreas_OptimizationAreaId",
-                        column: x => x.OptimizationAreaId,
-                        principalSchema: "System",
-                        principalTable: "OptimizationAreas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Targets",
                 schema: "System",
                 columns: table => new
@@ -60,7 +35,8 @@ namespace MyFoodDoc.Database.Migrations
                     Created = table.Column<DateTime>(nullable: false),
                     LastModified = table.Column<DateTime>(nullable: true),
                     OptimizationAreaId = table.Column<int>(nullable: false),
-                    TriggerId = table.Column<int>(nullable: false),
+                    TriggerOperator = table.Column<string>(maxLength: 11, nullable: false),
+                    TriggerValue = table.Column<int>(nullable: false),
                     Threshold = table.Column<int>(nullable: false),
                     Priority = table.Column<string>(maxLength: 6, nullable: false),
                     Title = table.Column<string>(maxLength: 1000, nullable: false),
@@ -75,13 +51,6 @@ namespace MyFoodDoc.Database.Migrations
                         column: x => x.OptimizationAreaId,
                         principalSchema: "System",
                         principalTable: "OptimizationAreas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Targets_Triggers_TriggerId",
-                        column: x => x.TriggerId,
-                        principalSchema: "System",
-                        principalTable: "Triggers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -287,18 +256,6 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                 column: "OptimizationAreaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Targets_TriggerId",
-                schema: "System",
-                table: "Targets",
-                column: "TriggerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Triggers_OptimizationAreaId",
-                schema: "System",
-                table: "Triggers",
-                column: "OptimizationAreaId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserTargets_TargetId",
                 schema: "System",
                 table: "UserTargets",
@@ -335,10 +292,6 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
 
             migrationBuilder.DropTable(
                 name: "Targets",
-                schema: "System");
-
-            migrationBuilder.DropTable(
-                name: "Triggers",
                 schema: "System");
 
             migrationBuilder.DropTable(

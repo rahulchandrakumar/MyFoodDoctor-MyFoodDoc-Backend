@@ -17,6 +17,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Property(o => o.TriggerOperator).HasConversion<string>().HasMaxLength(11);
+            builder.Property(o => o.TriggerValue).IsRequired();
             builder.Property(o => o.Threshold).IsRequired();
             builder.Property(o => o.Priority).HasConversion<string>().HasMaxLength(6);
             builder.Property(o => o.Title).IsRequired().HasMaxLength(1000);
@@ -24,7 +26,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.Type).HasConversion<string>().HasMaxLength(10);
 
             builder.HasOne(x => x.OptimizationArea).WithMany().HasForeignKey(x => x.OptimizationAreaId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.Trigger).WithMany().HasForeignKey(x => x.TriggerId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -11,7 +11,9 @@ namespace MyFoodDoc.Application.Entites.Targets
     {
         public int OptimizationAreaId { get; set; }
 
-        public int TriggerId { get; set; }
+        public TriggerOperator TriggerOperator { get; set; }
+
+        public int TriggerValue { get; set; }
 
         public int Threshold { get; set; }
 
@@ -24,8 +26,6 @@ namespace MyFoodDoc.Application.Entites.Targets
         public TargetType Type { get; set; }
 
         public OptimizationArea OptimizationArea { get; set; }
-
-        public Trigger Trigger { get; set; }
 
         public ICollection<MotivationTarget> Motivations { get; set; }
 
