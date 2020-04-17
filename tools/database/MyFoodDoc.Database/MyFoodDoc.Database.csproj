@@ -23,6 +23,10 @@
     <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.Designer.cs" />
     <Compile Remove="Migrations\20191206081031_MotivationTypes.cs" />
     <Compile Remove="Migrations\20191206081031_MotivationTypes.Designer.cs" />
+    <Compile Remove="Migrations\20200417151455_Targets.cs" />
+    <Compile Remove="Migrations\20200417151455_Targets.Designer.cs" />
+    <Compile Remove="Migrations\20200417160034_Targets.cs" />
+    <Compile Remove="Migrations\20200417160034_Targets.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />

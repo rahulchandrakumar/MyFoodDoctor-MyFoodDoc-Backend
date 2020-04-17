@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites.Targets;
 using MyFoodDoc.Application.Entites.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
 
@@ -36,6 +37,15 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<Indication> Indications { get; set; }
         DbSet<Diet> Diets { get; set; }
         DbSet<Ingredient> Ingredients { get; set; }
+        DbSet<OptimizationArea> OptimizationAreas { get; set; }
+        DbSet<Trigger> Triggers { get; set; }
+        DbSet<Target> Targets { get; set; }
+        DbSet<AdjustmentTarget> AdjustmentTargets { get; set; }
+        DbSet<MotivationTarget> MotivationTargets { get; set; }
+        DbSet<IndicationTarget> IndicationTargets { get; set; }
+        DbSet<DietTarget> DietTargets { get; set; }
+        DbSet<UserTarget> UserTargets { get; set; }
+
         #endregion
 
         #region Lexicon
@@ -69,6 +79,5 @@ namespace MyFoodDoc.Application.Abstractions
         EntityEntry Entry([NotNullAttribute] object entity);
 
         EntityEntry<TEntity> Entry<TEntity>([NotNullAttribute] TEntity entity) where TEntity : class;
-
     }
 }

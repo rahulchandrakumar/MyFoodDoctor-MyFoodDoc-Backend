@@ -8,7 +8,7 @@ namespace MyFoodDoc.Application.Entites
 {
     public abstract class ReportValueTarget : ReportTarget
     {
-        public virtual ValueTargetType Type { get; }
+        //public virtual ValueTargetType Type { get; }
 
         public object Value { get; set; }
     }

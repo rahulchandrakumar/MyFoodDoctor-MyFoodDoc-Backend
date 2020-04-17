@@ -5,7 +5,7 @@ namespace MyFoodDoc.Application.Entites
 {
     public class ReportAdjustmentTarget : ReportValueTarget
     {
-        public override ValueTargetType Type { get; } = ValueTargetType.Adjustment;
+       // public override ValueTargetType Type { get; } = ValueTargetType.Adjustment;
 
         public new decimal? Value => TargetValue;
 

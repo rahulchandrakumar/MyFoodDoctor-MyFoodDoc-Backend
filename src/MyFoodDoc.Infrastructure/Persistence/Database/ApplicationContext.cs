@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites.Targets;
 using MyFoodDoc.Application.Entites.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
 using System;
@@ -22,30 +23,59 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
     {
         public bool WithSeeding { get; set; } = false;
 
-        public DbSet<Insurance> Insurances { get; set; }
-        public DbSet<Ingredient> Ingredients { get; set; }
-        public DbSet<Indication> Indications { get; set; }
-        public DbSet<Motivation> Motivations { get; set; }
-        public DbSet<Diet> Diets { get; set; }
+        #region Coupons
+        public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
+        #endregion
+
+        #region Diary
         public DbSet<Meal> Meals { get; set; }
         public DbSet<MealIngredient> MealIngredients { get; set; }
         public DbSet<Liquid> Liquids { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
-        public DbSet<LexiconEntry> LexiconEntries { get; set; }
+        #endregion
+
+        #region System
+        public DbSet<Insurance> Insurances { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<Motivation> Motivations { get; set; }
+        public DbSet<Indication> Indications { get; set; }
+        public DbSet<Diet> Diets { get; set; }
+        public DbSet<Ingredient> Ingredients { get; set; }
+        public DbSet<OptimizationArea> OptimizationAreas { get; set; }
+        public DbSet<Trigger> Triggers { get; set; }
+        public DbSet<Target> Targets { get; set; }
+        public DbSet<AdjustmentTarget> AdjustmentTargets { get; set; }
+        public DbSet<MotivationTarget> MotivationTargets { get; set; }
+        public DbSet<IndicationTarget> IndicationTargets { get; set; }
+        public DbSet<DietTarget> DietTargets { get; set; }
+        public DbSet<UserTarget> UserTargets { get; set; }
+
+        #endregion
+
+        #region Lexicon
+        public DbSet<LexiconEntry> LexiconEntries { get; set; }
+        #endregion
+
+        #region Cms
+        public DbSet<CmsUser> CmsUsers { get; set; }
+        public DbSet<WebPage> WebPages { get; set; }
+        #endregion
+
+        #region Users
         public DbSet<UserMotivation> UserMotivations { get; set; }
         public DbSet<UserIndication> UserIndications { get; set; }
         public DbSet<UserDiet> UserDiets { get; set; }
-        public DbSet<Coupon> Coupons { get; set; }
-        public DbSet<WebPage> WebPages { get; set; }
-        public DbSet<CmsUser> CmsUsers { get; set; }
-        public DbSet<Promotion> Promotions { get; set; }
         public DbSet<UserWeight> UserWeights { get; set; }
         public DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
+        #endregion
+
+        #region Reporting
         //public DbSet<Report> Reports { get; set; }
         //public DbSet<ReportChoiceMethod> ReportChoiceMethods { get; set; }
         //public DbSet<ReportValueMethod> ReportValueMethods { get; set; }
         //public DbSet<ReportValueTarget> ReportValueTargets { get; set; }
+        #endregion
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
@@ -246,7 +276,34 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Key = "gluten_free",
                         Name = "Glutenfrei"
                     }
-                );                
+                );
+
+                builder.Entity<OptimizationArea>().HasData(
+                    new OptimizationArea
+                    {
+                        Id = 1,
+                        Key = "vegetables",
+                        Name = "Gemüse",
+                        Text = "Gemüse und Salat haben einen hohen Wasseranteil, wodurch sie sehr kalorienarm sind. Die enthaltenen Ballaststoffe quellen im Magen-Darm-Trakt auf, wodurch du lange satt bleibst.\n" +
+                                "Die Ballaststoffe aus Gemüse und Salat sorgen für eine gute Verdauung, wodurch dein Darm gesund bleibt.\n" +
+                                "Gemüse und Salat sind reich an Vitaminen und sekundären Pflanzenstoffen. Sie sorgen für ein starkes Immunsystem."
+                    },
+                    new OptimizationArea
+                    {
+                        Id = 2,
+                        Key = "sugar",
+                        Name = "Zucker",
+                        Text = "Zuckerreiche Lebensmittel liefern schnell, aber nur kurzfristige Energie. Es kommt zu einem sehr schnellen Anstieg des Blutzuckers, was zu einer sehr schnellen und starken Insulinausschüttung aus der Bauchspeicheldrüse führt.\n" +
+                                "Dieser Mechanismus fördert Heißhungerattacken und Übergewicht."
+                    },
+                    new OptimizationArea
+                    {
+                        Id = 3,
+                        Key = "protein",
+                        Name = "Proteine",
+                        Text = "Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.\n" +
+                                "Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung."
+                    });
             }
         }
     }

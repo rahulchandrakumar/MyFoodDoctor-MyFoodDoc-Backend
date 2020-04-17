@@ -4,20 +4,6 @@ namespace MyFoodDoc.Application.EnumEntities
 {
     public class OptimizationArea : AbstractEnumEntity
     {
-        
+        public string Text { get; set; }
     }
-
-    /*
-    public void ConfigureDefaultValues(DefaultValueBuilder builder)
-    {
-        var values = new []
-        {
-            new OptimizationArea { Key = "sugar", Name = "Zucker" },
-            new OptimizationArea { Key = "vegetables", Name = "Gemüse" },
-            new OptimizationArea { Key = "protein", Name = "Proteine" },
-        };
-
-        builder.AddMany(values);
-    }
-    */
 }

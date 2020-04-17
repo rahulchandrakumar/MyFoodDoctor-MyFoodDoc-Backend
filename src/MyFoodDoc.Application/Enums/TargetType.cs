@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyFoodDoc.Application.Enums
 {
-    public enum ValueTargetType
+    public enum TargetType
     {
         Adjustment,
         Suggestion,

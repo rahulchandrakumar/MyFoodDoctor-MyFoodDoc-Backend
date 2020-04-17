@@ -1,13 +1,27 @@
-﻿using MyFoodDoc.Application.Entites.Abstractions;
-using MyFoodDoc.Application.Enums;
+﻿using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace MyFoodDoc.Application.Entites.Targets
 {
-    public abstract class AdjustmentTarget : ValueTarget
+    public class AdjustmentTarget : AbstractAuditableEntity
     {
-        public override ValueTargetType Type => ValueTargetType.Adjustment;
+        public int TargetId { get; set; }
+
+        public int TargetValue { get; set; }
+
+        public int Step { get; set; }
+
+        public AdjustmentTargetStepDirection StepDirection { get; set; }
+
+        public string RecommendedText { get; set; }
+
+        public string TargetText { get; set; }
+
+        public string RemainText { get; set; }
+
+        public Target Target { get; set; }
     }
 }
