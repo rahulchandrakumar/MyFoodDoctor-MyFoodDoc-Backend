@@ -21,7 +21,7 @@ namespace MyFoodDoc.App.Api.Controllers
         private readonly IReportService _service;
         private readonly ILogger _logger;
 
-        public ReportController(IReportService service, ILogger<CommonController> logger)
+        public ReportController(IReportService service, ILogger<ReportController> logger)
         {
             _service = service;
             _logger = logger;

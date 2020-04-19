@@ -5,13 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Clients;
-using MyFoodDoc.App.Application.Exceptions;
-using MyFoodDoc.FatSecretClient.Abstractions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -19,13 +15,11 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
-        private readonly IFatSecretClient _fatSecretClient;
 
-        public FoodService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient)
+        public FoodService(IApplicationContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _fatSecretClient = fatSecretClient;
         }
 
         public async Task<ICollection<IngredientDto>> GetAsync(long foodId, CancellationToken cancellationToken)

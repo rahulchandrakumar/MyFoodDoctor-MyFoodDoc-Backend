@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Options\**" />
+    <Content Remove="Options\**" />
+    <EmbeddedResource Remove="Options\**" />
+    <None Remove="Options\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="9.0.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
@@ -33,10 +40,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUi" Version="5.1.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Options\" />
   </ItemGroup>
 
   <ItemGroup>

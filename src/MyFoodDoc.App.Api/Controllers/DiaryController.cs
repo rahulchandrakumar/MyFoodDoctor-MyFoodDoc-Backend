@@ -17,7 +17,7 @@ namespace MyFoodDoc.App.Api.Controllers
         private readonly IDiaryService _service;
         private readonly ILogger _logger;
 
-        public DiaryController(IDiaryService service, ILogger<UserController> logger)
+        public DiaryController(IDiaryService service, ILogger<DiaryController> logger)
         {
             _service = service;
             _logger = logger;

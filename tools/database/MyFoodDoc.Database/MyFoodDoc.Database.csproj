@@ -27,8 +27,6 @@
     <Compile Remove="Migrations\20200417151455_Targets.Designer.cs" />
     <Compile Remove="Migrations\20200417160034_Targets.cs" />
     <Compile Remove="Migrations\20200417160034_Targets.Designer.cs" />
-    <Compile Remove="Migrations\20200417165108_IncludeTriggerInTarget.cs" />
-    <Compile Remove="Migrations\20200417165108_IncludeTriggerInTarget.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />

@@ -1,13 +1,13 @@
 ﻿
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Abstractions;
 using Microsoft.Extensions.Logging;
-using System.Threading;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
@@ -17,7 +17,7 @@ namespace MyFoodDoc.App.Api.Controllers
         private readonly IFoodService _service;
         private readonly ILogger _logger;
 
-        public IngredientsController(IFoodService service, ILogger<CommonController> logger)
+        public IngredientsController(IFoodService service, ILogger<IngredientsController> logger)
         {
             _service = service;
             _logger = logger;
