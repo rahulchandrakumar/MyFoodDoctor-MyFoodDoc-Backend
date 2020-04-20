@@ -19,12 +19,14 @@ namespace MyFoodDoc.App.Api.Controllers
     {
         private IUserService _service;
         private IUserHistoryService _historyService;
+        private IDiaryService _diaryService;
         private readonly ILogger _logger;
 
-        public UserController(IUserService service, IUserHistoryService historyService, ILogger<UserController> logger)
+        public UserController(IUserService service, IUserHistoryService historyService, IDiaryService diaryService, ILogger<UserController> logger)
         {
             _service = service;
             _historyService = historyService;
+            _diaryService = diaryService;
             _logger = logger;
         }
 
@@ -109,7 +111,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(UserStatisticsReadyDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserStatisticsReadyDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
         {
-            var user = await _service.GetUserAsync(GetUserId(), cancellationToken);
+
+            var user = GetUserId();
 
             //TODO: implement statistics check
 
@@ -117,7 +120,7 @@ namespace MyFoodDoc.App.Api.Controllers
             {
                 Statistics = true,
                 SecondStatistics = true,
-                IsDiaryFull = true
+                IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken)
             };
 
             return Ok(result);

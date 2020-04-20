@@ -217,6 +217,15 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
+        public async Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken)
+        {
+            return await _context.Meals
+                    .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-7))
+                    .Select(x => x.Date)
+                    .Distinct()
+                    .CountAsync(cancellationToken) > 1;
+        }
+
         private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
         {
             //TODO: Check and delete unused ingredients
