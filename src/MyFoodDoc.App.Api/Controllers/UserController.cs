@@ -106,14 +106,21 @@ namespace MyFoodDoc.App.Api.Controllers
         }
 
         [HttpGet("statistics/ready")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        public async Task<IActionResult> StatisticsReady(CancellationToken cancellationToken = default)
+        [ProducesResponseType(typeof(UserStatisticsReadyDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserStatisticsReadyDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
         {
             var user = await _service.GetUserAsync(GetUserId(), cancellationToken);
 
             //TODO: implement statistics check
 
-            return Ok(false);
+            var result = new UserStatisticsReadyDto
+            {
+                Statistics = true,
+                SecondStatistics = true,
+                IsDiaryFull = true
+            };
+
+            return Ok(result);
         }
     }
 }
