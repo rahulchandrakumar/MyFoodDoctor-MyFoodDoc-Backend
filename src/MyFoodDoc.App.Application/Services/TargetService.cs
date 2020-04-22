@@ -17,30 +17,112 @@ namespace MyFoodDoc.App.Application.Services
     public class TargetService : ITargetService
     {
         private readonly IApplicationContext _context;
+        private readonly IFoodService _foodService;
 
-        public TargetService(IApplicationContext context)
+        public TargetService(IApplicationContext context, IFoodService foodService)
         {
             _context = context;
+            _foodService = foodService;
         }
 
         public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, CancellationToken cancellationToken)
         {
             var result = new List<OptimizationAreaDto>();
 
-            foreach (var optimizationArea in _context.OptimizationAreas)
+            var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync();
+            var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync();
+            var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync();
+
+            var targetIds = _context.DietTargets.Where(x => userDiets.Contains(x.DietId)).Select(x => x.TargetId)
+                .Union(_context.IndicationTargets.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.TargetId))
+                .Union(_context.MotivationTargets.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.TargetId)).Distinct();
+
+            if (!targetIds.Any())
+                return result;
+
+            var dailyUserIngredients = new Dictionary<DateTime, MealNutritionsDto>();
+
+            foreach (var dailyMeals in _context.Meals
+                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-7)).ToList().GroupBy(g => g.Date))
             {
-                var optimizationAreaDto = new OptimizationAreaDto
+                var dailyNutritions = new MealNutritionsDto
                 {
-                    Key = optimizationArea.Key,
-                    Name = optimizationArea.Name,
-                    Text = optimizationArea.Text,
-                    Targets = new List<TargetDto>()
+                    Protein = 0,
+                    Sugar = 0
                 };
 
-                foreach (var target in await _context.Targets.Where(x => x.OptimizationAreaId == optimizationArea.Id).ToListAsync())
+                foreach (var meal in dailyMeals)
+                {
+                    var mealNutritions = await _foodService.GetMealNutritionsAsync(meal.Id, cancellationToken);
+
+                    dailyNutritions.Protein += mealNutritions.Protein;
+                    dailyNutritions.Sugar += mealNutritions.Sugar;
+                }
+
+                dailyUserIngredients[dailyMeals.Key] = dailyNutritions;
+            }
+
+            if (!dailyUserIngredients.Any())
+                return result;
+
+            var triggeredTargets = new List<TargetDto>();       
+
+            foreach (var target in _context.Targets.Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority))
+            {
+                int triggeredDaysCount = 0;
+                decimal bestValue = 0;
+
+                var optimizationArea = _context.OptimizationAreas.Single(x => x.Id == target.OptimizationAreaId);
+
+                if (optimizationArea.Key == "protein")
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein > target.TriggerValue);
+
+                        triggeredDaysCount = triggeredDays.Count();
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Protein);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein < target.TriggerValue);
+
+                        triggeredDaysCount = triggeredDays.Count();
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Protein);
+                    }
+                }
+                else if (optimizationArea.Key == "sugar")
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar > target.TriggerValue);
+
+                        triggeredDaysCount = triggeredDays.Count();
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Sugar);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
+
+                        triggeredDaysCount = triggeredDays.Count();
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Sugar);
+                    }
+                }
+
+                var frequency = (decimal)triggeredDaysCount * 100 / 7;
+
+                if (frequency > target.Threshold)
                 {
                     var targetDto = new TargetDto
-                    { 
+                    {
                         Id = target.Id,
                         Type = target.Type.ToString(),
                         Title = target.Title,
@@ -52,29 +134,41 @@ namespace MyFoodDoc.App.Application.Services
                     {
                         var adjustmentTarget = await _context.AdjustmentTargets.SingleAsync(x => x.TargetId == target.Id);
 
-                        targetDto.Answers = new[] {
-                            new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, adjustmentTarget.TargetValue)},
-                            new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText},
-                            new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText }
-                        };
+                        decimal recommendedValue = (adjustmentTarget.StepDirection == AdjustmentTargetStepDirection.Ascending)
+                            ? bestValue - bestValue % adjustmentTarget.Step + adjustmentTarget.Step
+                            : bestValue - bestValue % adjustmentTarget.Step;
+
+                        targetDto.Answers = new List<TargetAnswerDto>();
+
+                        if (recommendedValue != adjustmentTarget.TargetValue)
+                            targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
                     }
-                    else {
+                    else
+                    {
                         targetDto.Answers = new[] {
-                            new TargetAnswerDto { Code = "yes", Value ="Ja"},
-                            new TargetAnswerDto { Code = "no", Value = "Nein" }
-                        };
+                                new TargetAnswerDto { Code = "yes", Value ="Ja"},
+                                new TargetAnswerDto { Code = "no", Value = "Nein" }
+                            };
                     }
 
                     var userAnswer = await _context.UserTargets.SingleOrDefaultAsync(x => x.UserId == userId && x.TargetId == target.Id);
 
-                    if (userAnswer != null)
-                        targetDto.UserAnswerCode = userAnswer.TargetAnswerCode;
+                    targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
 
-                    optimizationAreaDto.Targets.Add(targetDto);
+                    if (!result.Any(x => x.Key == optimizationArea.Key))
+                        result.Add(new OptimizationAreaDto
+                        {
+                            Key = optimizationArea.Key,
+                            Name = optimizationArea.Name,
+                            Text = optimizationArea.Text,
+                            Targets = new List<TargetDto>()
+                        });
+
+                    result.Single(x => x.Key == optimizationArea.Key).Targets.Add(targetDto);
                 }
-
-
-                result.Add(optimizationAreaDto);
             }
 
             return result;
@@ -85,6 +179,11 @@ namespace MyFoodDoc.App.Application.Services
             await _context.UserTargets.AddRangeAsync(payload.Targets.Select(x => new UserTarget { UserId = userId, TargetId = x.TargetId, TargetAnswerCode = x.UserAnswerCode }));
 
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        private decimal GetProteins(int mealId)
+        {
+            return _context.MealIngredients.Where(x => x.MealId == mealId).Select(x => x.Amount * (x.Ingredient.Protein ?? 0)).Sum();
         }
     }
 }

@@ -27,7 +27,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(ICollection<IngredientDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<IngredientDto>>> Get([FromRoute] long foodId, CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAsync(foodId, cancellationToken);
+            var result = await _service.GetFoodAsync(foodId, cancellationToken);
 
             return Ok(result);
         }
