@@ -25,6 +25,8 @@ namespace MyFoodDoc.Application.Entites.Targets
 
         public TargetType Type { get; set; }
 
+        public int? ImageId { get; set; }
+
         public OptimizationArea OptimizationArea { get; set; }
 
         public ICollection<MotivationTarget> Motivations { get; set; }
@@ -32,5 +34,7 @@ namespace MyFoodDoc.Application.Entites.Targets
         public ICollection<IndicationTarget> Indications { get; set; }
 
         public ICollection<DietTarget> Diets { get; set; }
+
+        public Image Image { get; set; }
     }
 }

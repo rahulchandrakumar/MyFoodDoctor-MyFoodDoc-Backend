@@ -121,12 +121,15 @@ namespace MyFoodDoc.App.Application.Services
 
                 if (frequency > target.Threshold)
                 {
+                    var targetImage = _context.Images.SingleOrDefault(x => x.Id == target.ImageId);
+
                     var targetDto = new TargetDto
                     {
                         Id = target.Id,
                         Type = target.Type.ToString(),
                         Title = target.Title,
-                        Text = target.Text
+                        Text = target.Text,
+                        ImageUrl = targetImage?.Url
                     };
 
                     //TODO: use constants or enums
@@ -159,13 +162,18 @@ namespace MyFoodDoc.App.Application.Services
                     targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
 
                     if (!result.Any(x => x.Key == optimizationArea.Key))
+                    {
+                        var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == optimizationArea.ImageId);
+
                         result.Add(new OptimizationAreaDto
                         {
                             Key = optimizationArea.Key,
                             Name = optimizationArea.Name,
                             Text = optimizationArea.Text,
+                            ImageUrl = optimizationAreaImage?.Url,
                             Targets = new List<TargetDto>()
                         });
+                    }
 
                     result.Single(x => x.Key == optimizationArea.Key).Targets.Add(targetDto);
                 }

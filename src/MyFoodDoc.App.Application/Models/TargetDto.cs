@@ -16,6 +16,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public string UserAnswerCode { get; set; }
 
+        public string ImageUrl { get; set; }
+
         public ICollection<TargetAnswerDto> Answers { get; set; }
     }
 }

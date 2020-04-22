@@ -14,6 +14,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.ToTable("OptimizationAreas", "System");
 
             builder.Property(o => o.Text).IsRequired().HasMaxLength(1000);
+            //builder.Property(p => p.ImageId).IsRequired();
+
+            builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull); ;
         }
     }
 }
