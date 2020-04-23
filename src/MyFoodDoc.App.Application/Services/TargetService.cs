@@ -184,7 +184,20 @@ namespace MyFoodDoc.App.Application.Services
          
         public async Task InsertAsync(string userId, InsertTargetPayload payload, CancellationToken cancellationToken)
         {
-            await _context.UserTargets.AddRangeAsync(payload.Targets.Select(x => new UserTarget { UserId = userId, TargetId = x.TargetId, TargetAnswerCode = x.UserAnswerCode }));
+            foreach(var answer in payload.Targets)
+            {
+                var userTarget = _context.UserTargets.SingleOrDefault(x => x.UserId == userId && x.TargetId == answer.TargetId);
+
+                if(userTarget == null)
+                {
+                    await _context.UserTargets.AddAsync(new UserTarget { UserId = userId, TargetId = answer.TargetId, TargetAnswerCode = answer.UserAnswerCode }, cancellationToken);
+                }
+                else
+                {
+                    userTarget.TargetAnswerCode = answer.UserAnswerCode;
+                    _context.UserTargets.Update(userTarget);
+                }
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
         }
