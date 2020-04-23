@@ -32,4 +32,9 @@
     <ProjectReference Include="..\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="app\src\integration\modules\optimizationareas\" />
+    <Folder Include="app\src\store\modules\optimizationareas\" />
+  </ItemGroup>
+
 </Project>

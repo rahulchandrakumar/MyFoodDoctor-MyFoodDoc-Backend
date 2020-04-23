@@ -1,0 +1,109 @@
+﻿using Microsoft.EntityFrameworkCore;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.EnumEntities;
+using MyFoodDoc.CMS.Application.Models;
+using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Infrastructure.AzureBlob;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace MyFoodDoc.CMS.Infrastructure.Persistence
+{
+    public class OptimizationAreaService : IOptimizationAreaService
+    {
+        private readonly IApplicationContext _context;
+        private readonly IImageBlobService _imageService;
+
+        public OptimizationAreaService(IApplicationContext context, IImageBlobService imageService)
+        {
+            this._context = context;
+            this._imageService = imageService;
+        }
+
+        public async Task<OptimizationAreaModel> AddItem(OptimizationAreaModel item, CancellationToken cancellationToken = default)
+        {
+            var optimizationAreaEntity = item.ToEntity();
+            await _context.OptimizationAreas.AddAsync(optimizationAreaEntity, cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            optimizationAreaEntity = await _context.OptimizationAreas
+                                            .Include(x => x.Image)
+                                            .FirstOrDefaultAsync(u => u.Id == optimizationAreaEntity.Id, cancellationToken);
+
+            return OptimizationAreaModel.FromEntity(optimizationAreaEntity);
+        }
+
+        public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
+        {
+            var optimizationAreaEntity = await _context.OptimizationAreas
+                                                .Include(x => x.Image)
+                                                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            await _imageService.DeleteImage(optimizationAreaEntity.Image.Url, cancellationToken);
+
+            _context.Images.Remove(optimizationAreaEntity.Image);
+            _context.OptimizationAreas.Remove(optimizationAreaEntity);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return true;
+        }
+
+        public async Task<OptimizationAreaModel> GetItem(int id, CancellationToken cancellationToken = default)
+        {
+            var optimizationAreaEntity = await _context.OptimizationAreas
+                                            .Include(x => x.Image)
+                                            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+            return OptimizationAreaModel.FromEntity(optimizationAreaEntity);
+        }
+
+        public async Task<IList<OptimizationAreaModel>> GetItems(CancellationToken cancellationToken = default)
+        {
+            var optimizationAreaEntities = await _context.OptimizationAreas
+                                                .Include(x => x.Image)
+                                                .ToListAsync(cancellationToken);
+
+            return optimizationAreaEntities.Select(OptimizationAreaModel.FromEntity).ToList();
+        }
+
+        public IQueryable<OptimizationArea> GetBaseQuery(string search)
+        {
+            IQueryable<OptimizationArea> baseQuery = _context.OptimizationAreas;
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchstring = $"%{search}%";
+                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Name, searchstring) || EF.Functions.Like(f.Text, searchstring));
+            }
+            return baseQuery;
+        }
+
+        public async Task<IList<OptimizationAreaModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        {
+            var optimizationAreaEntities = await GetBaseQuery(search)
+                                                .Include(x => x.Image)
+                                                .Skip(skip).Take(take)
+                                                .ToListAsync(cancellationToken);
+
+            return optimizationAreaEntities.Select(OptimizationAreaModel.FromEntity).ToList();
+        }
+
+        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        {
+            return await GetBaseQuery(search).CountAsync(cancellationToken);
+        }
+
+        public async Task<OptimizationAreaModel> UpdateItem(OptimizationAreaModel item, CancellationToken cancellationToken = default)
+        {
+            var optimizationAreaEntity = await _context.OptimizationAreas.FindAsync(new object[] { item.Id }, cancellationToken);
+
+            _context.Entry(optimizationAreaEntity).CurrentValues.SetValues(item.ToEntity());
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return await GetItem(optimizationAreaEntity.Id, cancellationToken);
+        }
+    }
+}

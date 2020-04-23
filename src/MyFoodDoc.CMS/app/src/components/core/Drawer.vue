@@ -158,6 +158,11 @@ export default {
         text: "Lexicon"
       });
       links.push({
+        icon: "mdi-cards",
+        to: "/optimizationarea-list",
+        text: "Optimization Areas"
+      });
+      links.push({
         icon: "mdi-web",
         to: "/webview-list",
         text: "Web Views"

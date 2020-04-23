@@ -63,6 +63,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IInsuranceService, InsuranceService>();
             services.AddTransient<IFileService, FileService>();
             services.AddTransient<IIngredientService, IngredientService>();
+            services.AddTransient<IOptimizationAreaService, OptimizationAreaService>();
             services.AddApplicationDI();
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
