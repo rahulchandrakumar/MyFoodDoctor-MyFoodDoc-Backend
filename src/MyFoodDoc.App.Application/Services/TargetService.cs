@@ -194,8 +194,13 @@ namespace MyFoodDoc.App.Application.Services
                 }
                 else
                 {
-                    userTarget.TargetAnswerCode = answer.UserAnswerCode;
-                    _context.UserTargets.Update(userTarget);
+                    if (string.IsNullOrEmpty(answer.UserAnswerCode))
+                        _context.UserTargets.Remove(userTarget);
+                    else
+                    {
+                        userTarget.TargetAnswerCode = answer.UserAnswerCode;
+                        _context.UserTargets.Update(userTarget);
+                    }
                 }
             }
 
