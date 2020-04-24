@@ -7,16 +7,15 @@ using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.FatSecretClient.Abstractions;
 using MyFoodDoc.FatSecretClient.Clients;
-
+using MyFoodDoc.App.Application.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -28,12 +27,14 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
+        private readonly int _statisticsPeriod;
 
-        public DiaryService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient)
+        public DiaryService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _mapper = mapper;
             _fatSecretClient = fatSecretClient;
+            _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
         public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default)
@@ -220,7 +221,7 @@ namespace MyFoodDoc.App.Application.Services
         public async Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken)
         {
             return await _context.Meals
-                    .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-7))
+                    .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod))
                     .Select(x => x.Date)
                     .Distinct()
                     .CountAsync(cancellationToken) > 1;

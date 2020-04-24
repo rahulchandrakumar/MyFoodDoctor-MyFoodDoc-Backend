@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using MyFoodDoc.Application;
 using MyFoodDoc.FatSecretClient;
+using MyFoodDoc.App.Application.Configuration;
 
 namespace MyFoodDoc.App.Application
 {
@@ -13,6 +14,8 @@ namespace MyFoodDoc.App.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<StatisticsOptions>(configuration.GetSection("Statistics"));
+
             services.AddSharedFatSecretClient(configuration);
             services.AddSharedApplication();
 

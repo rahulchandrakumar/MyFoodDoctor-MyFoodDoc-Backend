@@ -50,25 +50,23 @@ namespace MyFoodDoc.App.Application.Services
                 Sugar = 0
             };
 
-            foreach (var mealIngredient in _context.MealIngredients.Where(x => x.MealId == mealId))
+            foreach (var mealIngredient in _context.MealIngredients.Include(x => x.Ingredient).Where(x => x.MealId == mealId))
             {
-                var ingredient = await _context.Ingredients.SingleAsync(x => x.Id == mealIngredient.IngredientId);
-
-                var cacheKey = cachePrefix + ingredient.FoodId;
+                var cacheKey = cachePrefix + mealIngredient.Ingredient.FoodId;
 
                 var food = await _cache.GetOrCreateAsync(cacheKey, async entry =>
                 {
                     entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
 
-                    var result = await _fatSecretClient.GetFoodAsync(ingredient.FoodId);
+                    var result = await _fatSecretClient.GetFoodAsync(mealIngredient.Ingredient.FoodId);
 
                     return result;
                 });
 
-                var serving = food.Servings.Serving.Single(x => x.Id == ingredient.ServingId);
+                var serving = food.Servings.Serving.Single(x => x.Id == mealIngredient.Ingredient.ServingId);
 
-                result.Protein += (ingredient.Protein ?? serving.Protein) * mealIngredient.Amount;
-                result.Sugar += (ingredient.Sugar ?? serving.Sugar) * mealIngredient.Amount;
+                result.Protein += (mealIngredient.Ingredient.Protein ?? serving.Protein) * mealIngredient.Amount;
+                result.Sugar += (mealIngredient.Ingredient.Sugar ?? serving.Sugar) * mealIngredient.Amount;
             }
 
             return result;

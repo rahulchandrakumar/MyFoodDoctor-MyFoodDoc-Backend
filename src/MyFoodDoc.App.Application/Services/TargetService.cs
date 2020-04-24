@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Configuration;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Target;
 using MyFoodDoc.Application.Abstractions;
@@ -8,7 +10,6 @@ using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,11 +19,13 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IFoodService _foodService;
+        private readonly int _statisticsPeriod;
 
-        public TargetService(IApplicationContext context, IFoodService foodService)
+        public TargetService(IApplicationContext context, IFoodService foodService, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _foodService = foodService;
+            _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
         public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, CancellationToken cancellationToken)
@@ -67,14 +70,13 @@ namespace MyFoodDoc.App.Application.Services
 
             var triggeredTargets = new List<TargetDto>();       
 
-            foreach (var target in _context.Targets.Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority))
+            foreach (var target in _context.Targets.Include(x => x.OptimizationArea).Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority))
             {
                 int triggeredDaysCount = 0;
                 decimal bestValue = 0;
 
-                var optimizationArea = _context.OptimizationAreas.Single(x => x.Id == target.OptimizationAreaId);
-
-                if (optimizationArea.Key == "protein")
+                //TODO: use constants or enums
+                if (target.OptimizationArea.Key == "protein")
                 {
                     if (target.TriggerOperator == TriggerOperator.GreaterThan)
                     {
@@ -95,7 +97,7 @@ namespace MyFoodDoc.App.Application.Services
                             bestValue = triggeredDays.Max(x => x.Protein);
                     }
                 }
-                else if (optimizationArea.Key == "sugar")
+                else if (target.OptimizationArea.Key == "sugar")
                 {
                     if (target.TriggerOperator == TriggerOperator.GreaterThan)
                     {
@@ -117,7 +119,7 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
-                var frequency = (decimal)triggeredDaysCount * 100 / 7;
+                var frequency = (decimal)triggeredDaysCount * 100 / _statisticsPeriod;
 
                 if (frequency > target.Threshold)
                 {
@@ -161,21 +163,21 @@ namespace MyFoodDoc.App.Application.Services
 
                     targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
 
-                    if (!result.Any(x => x.Key == optimizationArea.Key))
+                    if (!result.Any(x => x.Key == target.OptimizationArea.Key))
                     {
-                        var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == optimizationArea.ImageId);
+                        var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
 
                         result.Add(new OptimizationAreaDto
                         {
-                            Key = optimizationArea.Key,
-                            Name = optimizationArea.Name,
-                            Text = optimizationArea.Text,
+                            Key = target.OptimizationArea.Key,
+                            Name = target.OptimizationArea.Name,
+                            Text = target.OptimizationArea.Text,
                             ImageUrl = optimizationAreaImage?.Url,
                             Targets = new List<TargetDto>()
                         });
                     }
 
-                    result.Single(x => x.Key == optimizationArea.Key).Targets.Add(targetDto);
+                    result.Single(x => x.Key == target.OptimizationArea.Key).Targets.Add(targetDto);
                 }
             }
 
@@ -205,11 +207,6 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             await _context.SaveChangesAsync(cancellationToken);
-        }
-
-        private decimal GetProteins(int mealId)
-        {
-            return _context.MealIngredients.Where(x => x.MealId == mealId).Select(x => x.Amount * (x.Ingredient.Protein ?? 0)).Sum();
         }
     }
 }
