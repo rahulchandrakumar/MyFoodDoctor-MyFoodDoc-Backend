@@ -25,7 +25,7 @@ namespace MyFoodDoc.Application.Entites.Targets
 
         public TargetType Type { get; set; }
 
-        public int? ImageId { get; set; }
+        public int ImageId { get; set; }
 
         public OptimizationArea OptimizationArea { get; set; }
 

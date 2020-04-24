@@ -123,7 +123,7 @@ namespace MyFoodDoc.App.Application.Services
 
                 if (frequency > target.Threshold)
                 {
-                    var targetImage = _context.Images.SingleOrDefault(x => x.Id == target.ImageId);
+                    var targetImage = _context.Images.Single(x => x.Id == target.ImageId);
 
                     var targetDto = new TargetDto
                     {
@@ -131,7 +131,7 @@ namespace MyFoodDoc.App.Application.Services
                         Type = target.Type.ToString(),
                         Title = target.Title,
                         Text = target.Text,
-                        ImageUrl = targetImage?.Url
+                        ImageUrl = targetImage.Url
                     };
 
                     //TODO: use constants or enums

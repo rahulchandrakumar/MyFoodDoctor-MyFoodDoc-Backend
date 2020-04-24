@@ -29,6 +29,10 @@
     <Compile Remove="Migrations\20200417160034_Targets.Designer.cs" />
     <Compile Remove="Migrations\20200422144307_TargetsAddImageUrl.cs" />
     <Compile Remove="Migrations\20200422144307_TargetsAddImageUrl.Designer.cs" />
+    <Compile Remove="Migrations\20200424151453_TargetsMandatoryImage.cs" />
+    <Compile Remove="Migrations\20200424151453_TargetsMandatoryImage.Designer.cs" />
+    <Compile Remove="Migrations\20200424152256_TargetsMandatoryImage.cs" />
+    <Compile Remove="Migrations\20200424152256_TargetsMandatoryImage.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />
