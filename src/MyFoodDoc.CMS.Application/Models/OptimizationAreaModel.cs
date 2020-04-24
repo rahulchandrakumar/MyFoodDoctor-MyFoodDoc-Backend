@@ -1,8 +1,4 @@
-﻿using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.EnumEntities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

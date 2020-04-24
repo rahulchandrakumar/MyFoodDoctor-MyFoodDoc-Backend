@@ -1,8 +1,8 @@
 <template>
   <ColabDataTable
-    title="OptimizationAreas"
-    store-name="optimizationareas"
-    editor-title-suffix="optimization area item"
+    title="Targets"
+    store-name="targets"
+    editor-title-suffix="target item"
     :headers="mainHeaders"
     :before-save="beforeSave"
   >
@@ -37,37 +37,18 @@
       </v-row>
       <v-row>
         <VeeTextField
-          v-model="item.key"
-          :label="mainHeaders.filter(h => h.value == 'key')[0].text"
-          readonly
+          v-model="item.title"
+          :label="mainHeaders.filter(h => h.value == 'title')[0].text"
+          rules="required|max:1000"
+          :counter="1000"
         />
       </v-row>
       <v-row>
-        <VeeTextField
-          v-model="item.name"
-          :label="mainHeaders.filter(h => h.value == 'name')[0].text"
-          rules="required|max:100"
-          :counter="100"
-        />
-      </v-row>
-      <v-row>
-        <v-switch
-          v-model="preview"
-          label="HTML"
-        />
-      </v-row>
-      <v-row>
-        <VeeRichTextArea
-          v-if="!preview"
-          v-model="item.text"
-          :label="mainHeaders.filter(h => h.value == 'text')[0].text"
-          rules="required|min:8|max:1000"
-        />
         <VeeTextArea
-          v-else
           v-model="item.text"
           :label="mainHeaders.filter(h => h.value == 'text')[0].text"
-          rules="required|min:1|max:1000"
+          rules="required|max:1000"
+          :counter="1000"
         />
       </v-row>
     </template>
@@ -82,7 +63,6 @@ export default {
   components: {
     ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
     VeeTextField: () => import("@/components/inputs/VeeTextField"),
-    VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
     VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
     VeeImage: () => import("@/components/inputs/VeeImage")
   },
@@ -96,8 +76,8 @@ export default {
         width: "210px"
       }, {
         sortable: true,
-        value: "name",
-        text: "Name"
+        value: "title",
+        text: "Title"
       }, {
         sortable: false,
         value: "text",

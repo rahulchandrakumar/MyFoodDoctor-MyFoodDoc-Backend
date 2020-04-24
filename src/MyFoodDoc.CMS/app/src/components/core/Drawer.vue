@@ -163,6 +163,11 @@ export default {
         text: "Optimization Areas"
       });
       links.push({
+        icon: "mdi-target",
+        to: "/target-list",
+        text: "Targets"
+      });
+      links.push({
         icon: "mdi-web",
         to: "/webview-list",
         text: "Web Views"

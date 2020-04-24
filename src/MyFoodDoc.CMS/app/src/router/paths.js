@@ -48,15 +48,23 @@ export default [
     meta: {
       role: UserRoles.ADMIN
     }
-   },
-   {
-        path: "/optimizationarea-list",
-        name: "Optimization Areas",
-        view: "Data/OptimizationAreaList",
-        meta: {
-            role: UserRoles.ADMIN
-        }
-    },
+  },
+  {
+     path: "/optimizationarea-list",
+     name: "Optimization Areas",
+     view: "Data/OptimizationAreaList",
+     meta: {
+       role: UserRoles.ADMIN
+     }
+  },
+  {
+     path: "/target-list",
+     name: "Targets",
+     view: "Data/TargetList",
+     meta: {
+       role: UserRoles.ADMIN
+     }
+  },
   {
     path: "/webview-list",
     name: "WebView List",
