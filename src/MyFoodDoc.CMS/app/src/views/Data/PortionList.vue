@@ -23,11 +23,6 @@
     </template>
     <template v-slot:editor="{ item }">
         <v-row>
-            <VeeTextField v-model="item.id"
-                          :label="mainHeaders.filter(h => h.value == 'id')[0].text"
-                          readonly />
-        </v-row>
-        <v-row>
             <VeeTextField v-model="item.foodId"
                           :label="mainHeaders.filter(h => h.value == 'foodId')[0].text"
                           readonly />

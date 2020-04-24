@@ -29,16 +29,9 @@
         />
       </v-row>
       <v-row>
-        <VeeTextField 
-          v-model="item.id"
-          :label="mainHeaders.filter(h => h.value == 'id')[0].text"
-          readonly 
-        />
-      </v-row>
-      <v-row>
         <VeeTextField
           v-model="item.key"
-          :label="mainHeaders.filter(h => h.value == 'key')[0].text"
+          label="Key"
           readonly
         />
       </v-row>

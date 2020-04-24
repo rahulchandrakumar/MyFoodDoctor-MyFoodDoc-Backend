@@ -11,28 +11,37 @@
     </template>
     <template v-slot:item.image="{ item }">
       <v-img 
-        v-if="item.image != null"
+        v-if="item.image != null && item.type == 'Adjustment'"
         :aspect-ratio="3/1" 
         :src="item.image.Url" 
         height="70px"         
+      />
+      <v-img 
+        v-else-if="item.image != null"
+        :aspect-ratio="1/1" 
+        :src="item.image.Url" 
+        height="70px"
+        width="70px"
       />
     </template>
 
     <template v-slot:editor="{ item }">
       <v-row>
         <VeeImage
+          v-if="item.type == 'Adjustment'"
           v-model="item.image"
           :label="mainHeaders.filter(h => h.value == 'image')[0].text"            
           rules="required"
           :image-width="900" 
           :image-height="300"
         />
-      </v-row>
-      <v-row>
-        <VeeTextField 
-          v-model="item.id"
-          :label="mainHeaders.filter(h => h.value == 'id')[0].text"
-          readonly 
+        <VeeImage
+          v-else
+          v-model="item.image"
+          :label="mainHeaders.filter(h => h.value == 'image')[0].text"            
+          rules="required"
+          :image-width="300" 
+          :image-height="300"
         />
       </v-row>
       <v-row>
