@@ -5,6 +5,8 @@
     editor-title-suffix="target item"
     :headers="mainHeaders"
     :before-save="beforeSave"
+    :could-add="false"
+    :could-remove="false"
   >
     <template v-slot:item.text="{ item }">
       {{ stripHtml(item.text) | truncate(200) }}
