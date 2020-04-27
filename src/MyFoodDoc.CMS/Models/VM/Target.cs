@@ -13,6 +13,17 @@ namespace MyFoodDoc.CMS.Models.VM
         public int Threshold { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }
+
+        #region Adjustment target
+        public int AdjustmentTargetId { get; set; }
+        public int TargetValue { get; set; }
+        public int Step { get; set; }
+        public string StepDirection { get; set; }
+        public string RecommendedText { get; set; }
+        public string TargetText { get; set; }
+        public string RemainText { get; set; }
+        #endregion
+
         public Image Image { get; set; }
 
         public static Target FromModel(TargetModel model)
@@ -28,6 +39,13 @@ namespace MyFoodDoc.CMS.Models.VM
                 Threshold = model.Threshold,
                 Priority = model.Priority,
                 Type = model.Type,
+                AdjustmentTargetId = model.AdjustmentTargetId,
+                TargetValue = model.TargetValue,
+                Step = model.Step,
+                StepDirection = model.StepDirection,
+                RecommendedText = model.RecommendedText,
+                TargetText = model.TargetText,
+                RemainText = model.RemainText,
                 Image = Image.FromModel(model.Image)
             };
         }
@@ -45,6 +63,13 @@ namespace MyFoodDoc.CMS.Models.VM
                 Threshold = this.Threshold,
                 Priority = this.Priority,
                 Type = this.Type,
+                AdjustmentTargetId = this.AdjustmentTargetId,
+                TargetValue = this.TargetValue,
+                Step = this.Step,
+                StepDirection = this.StepDirection,
+                RecommendedText = this.RecommendedText,
+                TargetText = this.TargetText,
+                RemainText = this.RemainText,
                 Image = this.Image.ToModel()
             };
         }
