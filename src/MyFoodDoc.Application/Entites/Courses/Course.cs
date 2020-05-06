@@ -15,7 +15,7 @@ namespace MyFoodDoc.Application.Entites.Courses
 
         public int Order { get; set; }
 
-        public int? ImageId { get; set; }
+        public int ImageId { get; set; }
 
         public ICollection<Chapter> Chapters { get; set; }
 
