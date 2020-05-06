@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites.Courses;
 using MyFoodDoc.Application.Entites.Targets;
 using MyFoodDoc.Application.Entites.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
@@ -67,6 +68,15 @@ namespace MyFoodDoc.Application.Abstractions
 
         #region Reporting
         //DbSet<Report> Reports { get; set; }
+        #endregion
+
+        #region Courses
+
+        DbSet<Course> Courses { get; set; }
+        DbSet<Chapter> Chapters { get; set; }
+        DbSet<Subchapter> Subchapters { get; set; }
+        DbSet<UserAnswer> UserAnswers { get; set; }
+
         #endregion
 
         int SaveChanges();

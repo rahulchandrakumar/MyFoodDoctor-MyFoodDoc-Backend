@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites.Courses;
 using MyFoodDoc.Application.Entites.Targets;
 using MyFoodDoc.Application.Entites.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
@@ -74,6 +75,15 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         //public DbSet<ReportChoiceMethod> ReportChoiceMethods { get; set; }
         //public DbSet<ReportValueMethod> ReportValueMethods { get; set; }
         //public DbSet<ReportValueTarget> ReportValueTargets { get; set; }
+        #endregion
+
+        #region Courses
+
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Chapter> Chapters { get; set; }
+        public DbSet<Subchapter> Subchapters { get; set; }
+        public DbSet<UserAnswer> UserAnswers { get; set; }
+
         #endregion
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)

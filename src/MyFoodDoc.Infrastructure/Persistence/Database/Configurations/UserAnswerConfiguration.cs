@@ -1,26 +1,25 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Targets;
+using MyFoodDoc.Application.Entites.Courses;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
-    public class UserTargetConfiguration : IEntityTypeConfiguration<UserTarget>
+    public class UserAnswerConfiguration : IEntityTypeConfiguration<UserAnswer>
     {
-        public virtual void Configure(EntityTypeBuilder<UserTarget> builder)
+        public virtual void Configure(EntityTypeBuilder<UserAnswer> builder)
         {
-            builder.ToTable("UserTargets", "System");
+            builder.ToTable("UserAnswers", "Course");
 
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(o => o.UserId).IsRequired().HasMaxLength(450);
-            builder.Property(o => o.TargetAnswerCode).IsRequired();
+            builder.Property(o => o.Answer).IsRequired();
 
             builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.Target).WithMany().HasForeignKey(x => x.TargetId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Chapter).WithMany().HasForeignKey(x => x.ChapterId).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

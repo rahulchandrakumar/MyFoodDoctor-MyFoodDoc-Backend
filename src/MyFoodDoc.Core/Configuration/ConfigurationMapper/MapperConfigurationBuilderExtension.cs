@@ -4,7 +4,7 @@ using System.IO;
 
 namespace MyFoodDoc.Core.Configuration.ConfigurationMapper
 {
-    public static class MapperConfigurationBuilderExntension
+    public static class MapperConfigurationBuilderExtension
     {
         public static IConfigurationBuilder WithJsonMapping(this IConfigurationBuilder builder, string path)
         {
