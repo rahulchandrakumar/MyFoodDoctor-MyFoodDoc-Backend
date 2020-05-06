@@ -37,6 +37,8 @@
     <Compile Remove="Migrations\20200506145950_Courses.Designer.cs" />
     <Compile Remove="Migrations\20200506163110_Courses.cs" />
     <Compile Remove="Migrations\20200506163110_Courses.Designer.cs" />
+    <Compile Remove="Migrations\20200506164659_Courses.cs" />
+    <Compile Remove="Migrations\20200506164659_Courses.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />

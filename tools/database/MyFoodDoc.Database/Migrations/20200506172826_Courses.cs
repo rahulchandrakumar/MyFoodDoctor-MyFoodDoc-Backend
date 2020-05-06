@@ -33,7 +33,7 @@ namespace MyFoodDoc.Database.Migrations
                     Title = table.Column<string>(maxLength: 1000, nullable: false),
                     Text = table.Column<string>(maxLength: 1000, nullable: false),
                     Order = table.Column<int>(nullable: false),
-                    ImageId = table.Column<int>(nullable: false)
+                    ImageId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {

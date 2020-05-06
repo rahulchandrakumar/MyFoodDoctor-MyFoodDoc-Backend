@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200506164659_Courses")]
+    [Migration("20200506172826_Courses")]
     partial class Courses
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -314,7 +314,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ImageId")
+                    b.Property<int?>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -1528,8 +1528,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                     b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Subchapter", b =>

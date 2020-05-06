@@ -312,7 +312,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ImageId")
+                    b.Property<int?>("ImageId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -1526,8 +1526,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                     b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Subchapter", b =>
