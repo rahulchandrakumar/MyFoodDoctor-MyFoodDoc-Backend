@@ -33,8 +33,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="app\src\integration\modules\courses\" />
     <Folder Include="app\src\integration\modules\targets\" />
     <Folder Include="app\src\integration\modules\optimizationareas\" />
+    <Folder Include="app\src\store\modules\courses\" />
     <Folder Include="app\src\store\modules\targets\" />
     <Folder Include="app\src\store\modules\optimizationareas\" />
   </ItemGroup>

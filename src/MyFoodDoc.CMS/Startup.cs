@@ -65,6 +65,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IIngredientService, IngredientService>();
             services.AddTransient<IOptimizationAreaService, OptimizationAreaService>();
             services.AddTransient<ITargetService, TargetService>();
+            services.AddTransient<ICourseService, CourseService>();
             services.AddApplicationDI();
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
