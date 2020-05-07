@@ -19,6 +19,10 @@ namespace MyFoodDoc.Application.Entites.Courses
 
         public string QuestionText { get; set; }
 
+        public string AnswerText1 { get; set; }
+
+        public string AnswerText2 { get; set; }
+
         public bool Answer { get; set; }
 
         public int CourseId { get; set; }
