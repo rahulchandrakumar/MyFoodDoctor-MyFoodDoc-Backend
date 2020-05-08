@@ -23,6 +23,7 @@ namespace MyFoodDoc.App.Application
 
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ICouponService, CouponService>();
+            services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IDiaryService, DiaryService>();
             services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<ILexiconService, LexiconService>();
