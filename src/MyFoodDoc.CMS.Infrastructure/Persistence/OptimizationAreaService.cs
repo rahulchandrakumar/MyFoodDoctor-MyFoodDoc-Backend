@@ -24,28 +24,28 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<OptimizationAreaModel> AddItem(OptimizationAreaModel item, CancellationToken cancellationToken = default)
         {
-            var optimizationAreaEntity = item.ToEntity();
-            await _context.OptimizationAreas.AddAsync(optimizationAreaEntity, cancellationToken);
+            var entity = item.ToEntity();
+            await _context.OptimizationAreas.AddAsync(entity, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            optimizationAreaEntity = await _context.OptimizationAreas
+            entity = await _context.OptimizationAreas
                                             .Include(x => x.Image)
-                                            .FirstOrDefaultAsync(u => u.Id == optimizationAreaEntity.Id, cancellationToken);
+                                            .FirstOrDefaultAsync(u => u.Id == entity.Id, cancellationToken);
 
-            return OptimizationAreaModel.FromEntity(optimizationAreaEntity);
+            return OptimizationAreaModel.FromEntity(entity);
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var optimizationAreaEntity = await _context.OptimizationAreas
+            var entity = await _context.OptimizationAreas
                                                 .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-            await _imageService.DeleteImage(optimizationAreaEntity.Image.Url, cancellationToken);
+            await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
 
-            _context.Images.Remove(optimizationAreaEntity.Image);
-            _context.OptimizationAreas.Remove(optimizationAreaEntity);
+            _context.Images.Remove(entity.Image);
+            _context.OptimizationAreas.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -53,20 +53,20 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<OptimizationAreaModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            var optimizationAreaEntity = await _context.OptimizationAreas
+            var entity = await _context.OptimizationAreas
                                             .Include(x => x.Image)
                                             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            return OptimizationAreaModel.FromEntity(optimizationAreaEntity);
+            return OptimizationAreaModel.FromEntity(entity);
         }
 
         public async Task<IList<OptimizationAreaModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            var optimizationAreaEntities = await _context.OptimizationAreas
+            var entities = await _context.OptimizationAreas
                                                 .Include(x => x.Image)
                                                 .ToListAsync(cancellationToken);
 
-            return optimizationAreaEntities.Select(OptimizationAreaModel.FromEntity).ToList();
+            return entities.Select(OptimizationAreaModel.FromEntity).ToList();
         }
 
         public IQueryable<OptimizationArea> GetBaseQuery(string search)
@@ -82,12 +82,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<IList<OptimizationAreaModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var optimizationAreaEntities = await GetBaseQuery(search)
+            var entities = await GetBaseQuery(search)
                                                 .Include(x => x.Image)
                                                 .Skip(skip).Take(take)
                                                 .ToListAsync(cancellationToken);
 
-            return optimizationAreaEntities.Select(OptimizationAreaModel.FromEntity).ToList();
+            return entities.Select(OptimizationAreaModel.FromEntity).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
@@ -97,13 +97,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<OptimizationAreaModel> UpdateItem(OptimizationAreaModel item, CancellationToken cancellationToken = default)
         {
-            var optimizationAreaEntity = await _context.OptimizationAreas.FindAsync(new object[] { item.Id }, cancellationToken);
+            var entity = await _context.OptimizationAreas.FindAsync(new object[] { item.Id }, cancellationToken);
 
-            _context.Entry(optimizationAreaEntity).CurrentValues.SetValues(item.ToEntity());
+            _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return await GetItem(optimizationAreaEntity.Id, cancellationToken);
+            return await GetItem(entity.Id, cancellationToken);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace MyFoodDoc.CMS.Controllers
 
         // GET: api/v1/Courses
         [HttpGet]
-        public async Task<object> Get([FromQuery] CourseGetPayload payload, CancellationToken cancellationToken = default)
+        public async Task<object> Get([FromQuery] CoursesGetPayload payload, CancellationToken cancellationToken = default)
         {
             return new
             {

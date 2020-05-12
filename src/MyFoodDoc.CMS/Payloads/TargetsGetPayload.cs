@@ -1,8 +1,9 @@
 ﻿using MyFoodDoc.CMS.Payloads.Base;
 
+
 namespace MyFoodDoc.CMS.Payloads
 {
-    public class OptimizationAreaGetPayload : BasePaginatedPayload<object>
+    public class TargetsGetPayload : BasePaginatedPayload<object>
     {
     }
 }

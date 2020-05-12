@@ -1,6 +1,6 @@
 <template>
   <ColabDataTable
-    title="OptimizationAreas"
+    title="Optimization Areas"
     store-name="optimizationareas"
     editor-title-suffix="optimization area item"
     :headers="mainHeaders"

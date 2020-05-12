@@ -28,7 +28,7 @@ namespace MyFoodDoc.CMS.Controllers
 
         // GET: api/v1/OptimizationAreas
         [HttpGet]
-        public async Task<object> Get([FromQuery] OptimizationAreaGetPayload payload, CancellationToken cancellationToken = default)
+        public async Task<object> Get([FromQuery] OptimizationAreasGetPayload payload, CancellationToken cancellationToken = default)
         {
             return new
             {

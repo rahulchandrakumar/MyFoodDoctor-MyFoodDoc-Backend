@@ -24,28 +24,28 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<CourseModel> AddItem(CourseModel item, CancellationToken cancellationToken = default)
         {
-            var CourseEntity = item.ToEntity();
-            await _context.Courses.AddAsync(CourseEntity, cancellationToken);
+            var entity = item.ToEntity();
+            await _context.Courses.AddAsync(entity, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            CourseEntity = await _context.Courses
+            entity = await _context.Courses
                                             .Include(x => x.Image)
-                                            .FirstOrDefaultAsync(u => u.Id == CourseEntity.Id, cancellationToken);
+                                            .FirstOrDefaultAsync(u => u.Id == entity.Id, cancellationToken);
 
-            return CourseModel.FromEntity(CourseEntity);
+            return CourseModel.FromEntity(entity);
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
-            var CourseEntity = await _context.Courses
+            var entity = await _context.Courses
                                                 .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-            await _imageService.DeleteImage(CourseEntity.Image.Url, cancellationToken);
+            await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
 
-            _context.Images.Remove(CourseEntity.Image);
-            _context.Courses.Remove(CourseEntity);
+            _context.Images.Remove(entity.Image);
+            _context.Courses.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -53,20 +53,20 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<CourseModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
-            var CourseEntity = await _context.Courses
+            var course = await _context.Courses
                                             .Include(x => x.Image)
                                             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            return CourseModel.FromEntity(CourseEntity);
+            return CourseModel.FromEntity(course);
         }
 
         public async Task<IList<CourseModel>> GetItems(CancellationToken cancellationToken = default)
         {
-            var CourseEntities = await _context.Courses
+            var entities = await _context.Courses
                                                 .Include(x => x.Image)
                                                 .ToListAsync(cancellationToken);
 
-            return CourseEntities.Select(CourseModel.FromEntity).ToList();
+            return entities.Select(CourseModel.FromEntity).ToList();
         }
 
         public IQueryable<Course> GetBaseQuery(string search)
@@ -74,20 +74,20 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             IQueryable<Course> baseQuery = _context.Courses;
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var searchstring = $"%{search}%";
-                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Title, searchstring) || EF.Functions.Like(f.Text, searchstring));
+                var searchString = $"%{search}%";
+                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Title, searchString) || EF.Functions.Like(f.Text, searchString));
             }
             return baseQuery;
         }
 
         public async Task<IList<CourseModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var CourseEntities = await GetBaseQuery(search)
+            var entities = await GetBaseQuery(search)
                                                 .Include(x => x.Image)
                                                 .Skip(skip).Take(take)
                                                 .ToListAsync(cancellationToken);
 
-            return CourseEntities.Select(CourseModel.FromEntity).ToList();
+            return entities.Select(CourseModel.FromEntity).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
@@ -97,13 +97,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<CourseModel> UpdateItem(CourseModel item, CancellationToken cancellationToken = default)
         {
-            var CourseEntity = await _context.Courses.FindAsync(new object[] { item.Id }, cancellationToken);
+            var entity = await _context.Courses.FindAsync(new object[] { item.Id }, cancellationToken);
 
-            _context.Entry(CourseEntity).CurrentValues.SetValues(item.ToEntity());
+            _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return await GetItem(CourseEntity.Id, cancellationToken);
+            return await GetItem(entity.Id, cancellationToken);
         }
     }
 }
