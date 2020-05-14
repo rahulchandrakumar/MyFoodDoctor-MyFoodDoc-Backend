@@ -15,6 +15,10 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public Image Image { get; set; }
 
+        public int UsersCount { get; set; }
+
+        public int CompletedByUsersCount { get; set; }
+
         public static Course FromModel(CourseModel model)
         {
             return model == null ? null : new Course()
@@ -24,7 +28,9 @@ namespace MyFoodDoc.CMS.Models.VM
                 Title = model.Title,
                 Text = model.Text,
                 Order = model.Order,
-                Image = Image.FromModel(model.Image)
+                Image = Image.FromModel(model.Image),
+                UsersCount = model.UsersCount,
+                CompletedByUsersCount = model.CompletedByUsersCount
             };
         }
 

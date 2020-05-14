@@ -42,7 +42,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 AnswerText1 = model.AnswerText1,
                 AnswerText2 = model.AnswerText2,
                 Answer = model.Answer,
-                Image = Image.FromModel(model.Image),
+                Image = model.Image == null ? null : Image.FromModel(model.Image),
                 CourseId = model.CourseId
             };
         }
@@ -60,7 +60,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 AnswerText1 = this.AnswerText1,
                 AnswerText2 = this.AnswerText2,
                 Answer = this.Answer,
-                Image = this.Image.ToModel(),
+                Image = this.Image?.ToModel(),
                 CourseId = this.CourseId
             };
         }

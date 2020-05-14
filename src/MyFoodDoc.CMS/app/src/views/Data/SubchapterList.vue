@@ -1,31 +1,14 @@
 <template>
-    <ColabDataTable title="Courses"
-                    store-name="courses"
-                    editor-title-suffix="course item"
+    <ColabDataTable title="Subchapters"
+                    store-name="subchapters"
+                    editor-title-suffix="subchapter item"
                     :headers="mainHeaders"
                     :before-save="beforeSave">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
-        <template v-slot:item.image="{ item }">
-            <v-img v-if="item.image != null"
-                   :aspect-ratio="3/1"
-                   :src="item.image.Url"
-                   height="70px" />
-        </template>
 
         <template v-slot:editor="{ item }">
-            <v-row>
-                <VeeImage v-model="item.image"
-                          :label="mainHeaders.filter(h => h.value == 'image')[0].text"
-                          rules="required"
-                          :image-width="900"
-                          :image-height="300" />
-            </v-row>
-            <v-row>
-                <v-switch v-model="item.isActive"
-                          :label="mainHeaders.filter(h => h.value == 'isActive')[0].text" />
-            </v-row>
             <v-row>
                 <VeeTextField v-model="item.title"
                               :label="mainHeaders.filter(h => h.value == 'title')[0].text"
@@ -52,9 +35,6 @@
                               rules="required"
                               number />
             </v-row>
-            <v-row>
-                <v-btn color="blue darken-1" text @click="editChapters(item)">Edit chapters</v-btn>
-            </v-row>
         </template>
     </ColabDataTable>
 </template>
@@ -74,17 +54,6 @@
         data() {
             return {
                 mainHeaders: [{
-                    filterable: false,
-                    sortable: false,
-                    value: "image",
-                    text: "Image",
-                    width: "210px"
-                }, {
-                    sortable: true,
-                    value: "isActive",
-                    text: "Active"
-                },
-                {
                     sortable: true,
                     value: "title",
                     text: "Title"
@@ -92,30 +61,18 @@
                     sortable: true,
                     value: "order",
                     text: "Order"
-                }, {
-                    sortable: true,
-                    value: "usersCount",
-                    text: "Users"
-                }, {
-                    sortable: true,
-                    value: "completedByUsersCount",
-                    text: "Completed by users"
                 }],
                 preview: false
             }
         },
         methods: {
             async beforeSave(item) {
-                if (item.image.Url != null && !item.image.Url.startsWith('http'))
-                    item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
+                item.chapterId = this.$route.params.parentId;
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");
                 tmp.innerHTML = html;
                 return tmp.textContent || tmp.innerText || "";
-            },
-            editChapters(item) {
-                this.$router.push({ name: 'Chapters', params: { parentId: item.id } });
             }
         }
     }

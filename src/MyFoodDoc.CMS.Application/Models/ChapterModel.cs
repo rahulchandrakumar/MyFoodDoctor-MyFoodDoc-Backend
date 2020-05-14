@@ -23,8 +23,6 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public bool Answer { get; set; }
 
-        public int? ImageId { get; set; }
-
         public ImageModel Image { get; set; }
 
         public int CourseId { get; set; }
@@ -42,7 +40,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 AnswerText1 = entity.AnswerText1,
                 AnswerText2 = entity.AnswerText2,
                 Answer = entity.Answer,
-                Image = ImageModel.FromEntity(entity.Image),
+                Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
                 CourseId = entity.CourseId
             };
         }
@@ -60,7 +58,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 AnswerText1 = this.AnswerText1,
                 AnswerText2 = this.AnswerText2,
                 Answer = this.Answer,
-                ImageId = this.Image.Id,
+                ImageId = this.Image?.Id,
                 CourseId = this.CourseId
             };
         }

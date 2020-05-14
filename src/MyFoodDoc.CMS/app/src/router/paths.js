@@ -74,6 +74,22 @@ export default [
         }
     },
     {
+        path: "/chapter-list/:parentId",
+        name: "Chapters",
+        view: "Data/ChapterList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
+        path: "/subchapter-list/:parentId",
+        name: "Subchapters",
+        view: "Data/SubchapterList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
         path: "/webview-list",
         name: "WebView List",
         view: "Data/WebViewList",

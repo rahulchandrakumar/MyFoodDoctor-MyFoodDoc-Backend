@@ -36,7 +36,7 @@ namespace MyFoodDoc.App.Application.Services
                     Text = course.Text,
                     Order = course.Order,
                     ImageUrl = course.Image.Url,
-                    AnsweredChaptersCount = (await _context.UserAnswers.Where(x => x.UserId == userId).ToListAsync()).Count(x => course.Chapters.Any(y => y.Id == x.ChapterId)),
+                    CompletedChaptersCount = (await _context.UserAnswers.Where(x => x.UserId == userId).ToListAsync()).Count(x => course.Chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)),
                     ChaptersCount = course.Chapters.Count()
                 });
             }

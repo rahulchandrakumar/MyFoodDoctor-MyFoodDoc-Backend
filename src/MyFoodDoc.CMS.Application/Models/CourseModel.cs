@@ -17,7 +17,11 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public ImageModel Image { get; set; }
 
-        public static CourseModel FromEntity(Course entity)
+        public int UsersCount { get; set; }
+
+        public int CompletedByUsersCount { get; set; }
+
+        public static CourseModel FromEntity(Course entity, int usersCount, int completedByUsersCount)
         {
             return entity == null ? null : new CourseModel()
             {
@@ -26,7 +30,9 @@ namespace MyFoodDoc.CMS.Application.Models
                 Title = entity.Title,
                 Text = entity.Text,
                 Order = entity.Order,
-                Image = ImageModel.FromEntity(entity.Image)
+                Image = ImageModel.FromEntity(entity.Image),
+                UsersCount = usersCount,
+                CompletedByUsersCount = completedByUsersCount
             };
         }
 

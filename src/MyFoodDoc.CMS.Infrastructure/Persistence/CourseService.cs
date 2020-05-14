@@ -33,7 +33,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                             .Include(x => x.Image)
                                             .FirstOrDefaultAsync(u => u.Id == entity.Id, cancellationToken);
 
-            return CourseModel.FromEntity(entity);
+            return CourseModel.FromEntity(entity, GetUsersCount(entity.Id), GetCompletedByUsersCount(entity.Id));
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
@@ -57,16 +57,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                             .Include(x => x.Image)
                                             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
-            return CourseModel.FromEntity(course);
+            return CourseModel.FromEntity(course, GetUsersCount(course.Id), GetCompletedByUsersCount(course.Id));
         }
-
+        
         public async Task<IList<CourseModel>> GetItems(CancellationToken cancellationToken = default)
         {
             var entities = await _context.Courses
                                                 .Include(x => x.Image)
                                                 .ToListAsync(cancellationToken);
 
-            return entities.Select(CourseModel.FromEntity).ToList();
+            return entities.Select(x => CourseModel.FromEntity(x,  GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).ToList();
         }
 
         public IQueryable<Course> GetBaseQuery(string search)
@@ -87,7 +87,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                                 .Skip(skip).Take(take)
                                                 .ToListAsync(cancellationToken);
 
-            return entities.Select(CourseModel.FromEntity).ToList();
+            return entities.Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
@@ -104,6 +104,26 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             await _context.SaveChangesAsync(cancellationToken);
 
             return await GetItem(entity.Id, cancellationToken);
+        }
+
+        private int GetUsersCount(int courseId)
+        {
+            var chapters = _context.Chapters.Where(x => x.CourseId == courseId).ToList();
+
+            int result = _context.UserAnswers.ToList().Where(x => chapters.Any(y => y.Id == x.ChapterId)).Select(x => x.UserId)
+                .Distinct().Count();
+
+            return result;
+        }
+
+        private int GetCompletedByUsersCount(int courseId)
+        {
+            var chapters = _context.Chapters.Where(x => x.CourseId == courseId).ToList();
+
+            int result = _context.UserAnswers.ToList()
+                .Where(x => chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)).GroupBy(g => g.UserId).Select(x => x.Count()).Count(x => (decimal)x / chapters.Count * 100 >= 80);
+
+            return result;
         }
     }
 }

@@ -27,7 +27,6 @@ namespace MyFoodDoc.CMS.Application.Models
         #endregion
 
         public ImageModel Image { get; set; }
-        public int ImageId { get; set; }
 
         public static TargetModel FromEntity(Target target, AdjustmentTarget adjustmentTarget)
         {

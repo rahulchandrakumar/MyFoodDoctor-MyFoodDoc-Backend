@@ -310,8 +310,15 @@ export default {
     async onRemove(item) {
       var editprops = this.stateDict[item.id];
       if (editprops == null || (editprops.LockDate == null || this.now - editprops.LockDate > editTime))
-        if (await this.$confirm("Do you really want to delete this item?")) {
-          await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id })
+          if (await this.$confirm("Do you really want to delete this item?")) {
+              if (this.$route.params != null && this.$route.params.parentId != null) {
+                  await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id, parentId: this.$route.params.parentId })
+              }
+              else {
+                  await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id })
+              }
+
+
           if (editprops != null)
             await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.id })
         }
@@ -345,8 +352,13 @@ export default {
       }
       this.editItem = {};
     },
-    async loadItems({ page, search, filter }) {
-      await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter })
+      async loadItems({ page, search, filter }) {
+          if (this.$route.params != null && this.$route.params.parentId != null) {
+              await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter, parentId: this.$route.params.parentId })
+          }
+          else {
+              await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter})
+          }
     }
   }
 };

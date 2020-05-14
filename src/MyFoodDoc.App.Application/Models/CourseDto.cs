@@ -16,7 +16,7 @@ namespace MyFoodDoc.App.Application.Models
 
         public string ImageUrl { get; set; }
 
-        public int AnsweredChaptersCount { get; set; }
+        public int CompletedChaptersCount { get; set; }
 
         public int ChaptersCount { get; set; }
     }
