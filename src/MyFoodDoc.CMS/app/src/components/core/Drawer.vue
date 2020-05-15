@@ -144,14 +144,9 @@
                     text: "Lexicon"
                 });
                 links.push({
-                    icon: "mdi-cards",
+                    icon: "mdi-target",
                     to: "/optimizationarea-list",
                     text: "Optimization Areas"
-                });
-                links.push({
-                    icon: "mdi-target",
-                    to: "/target-list",
-                    text: "Targets"
                 });
                 links.push({
                     icon: "mdi-school",

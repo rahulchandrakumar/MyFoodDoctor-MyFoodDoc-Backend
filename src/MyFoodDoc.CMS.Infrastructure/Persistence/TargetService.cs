@@ -85,9 +85,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
         }
 
-        public IQueryable<Target> GetBaseQuery(string search)
+        public IQueryable<Target> GetBaseQuery(int parentId, string search)
         {
-            IQueryable<Target> baseQuery = _context.Targets;
+            IQueryable<Target> baseQuery = _context.Targets.Where(x => x.OptimizationAreaId == parentId);
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
@@ -96,9 +96,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<TargetModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<IList<TargetModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var targetEntities = await GetBaseQuery(search)
+            var targetEntities = await GetBaseQuery(parentId, search)
                                                 .Include(x => x.Image)
                                                 .Skip(skip).Take(take)
                                                 .ToListAsync(cancellationToken);
@@ -109,9 +109,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
         }
 
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
         }
 
         public async Task<TargetModel> UpdateItem(TargetModel item, CancellationToken cancellationToken = default)

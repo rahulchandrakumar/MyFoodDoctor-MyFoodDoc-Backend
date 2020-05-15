@@ -14,6 +14,12 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public ImageModel Image { get; set; }
 
+        public decimal? UpperLimit { get; set; }
+
+        public decimal? LowerLimit { get; set; }
+
+        public decimal? Optimal { get; set; }
+
         public static OptimizationAreaModel FromEntity(OptimizationArea entity)
         {
             return entity == null ? null : new OptimizationAreaModel()
@@ -22,7 +28,10 @@ namespace MyFoodDoc.CMS.Application.Models
                 Key = entity.Key,
                 Name = entity.Name,
                 Text = entity.Text,       
-                Image = ImageModel.FromEntity(entity.Image)
+                Image = ImageModel.FromEntity(entity.Image),
+                UpperLimit = entity.UpperLimit,
+                LowerLimit = entity.LowerLimit,
+                Optimal = entity.Optimal
             };
         }
 
@@ -34,7 +43,10 @@ namespace MyFoodDoc.CMS.Application.Models
                 Key = this.Key,
                 Name = this.Name,
                 Text = this.Text,
-                ImageId = this.Image.Id
+                ImageId = this.Image.Id,
+                UpperLimit = this.UpperLimit,
+                LowerLimit = this.LowerLimit,
+                Optimal = this.Optimal
             };
         }
     }

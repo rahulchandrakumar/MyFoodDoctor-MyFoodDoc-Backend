@@ -14,6 +14,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public string ImageUrl { get; set; }
 
+        public AnalysisDto Analysis { get; set; }
+        
         public ICollection<TargetDto> Targets { get; set; }
     }
 }

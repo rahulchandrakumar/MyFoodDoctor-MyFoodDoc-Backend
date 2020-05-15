@@ -58,7 +58,7 @@ export default [
         }
     },
     {
-        path: "/target-list",
+        path: "/target-list/:parentId",
         name: "Targets",
         view: "Data/TargetList",
         meta: {

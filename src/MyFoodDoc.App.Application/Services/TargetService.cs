@@ -46,7 +46,7 @@ namespace MyFoodDoc.App.Application.Services
             var dailyUserIngredients = new Dictionary<DateTime, MealNutritionsDto>();
 
             foreach (var dailyMeals in _context.Meals
-                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-7)).ToList().GroupBy(g => g.Date))
+                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToList().GroupBy(g => g.Date))
             {
                 var dailyNutritions = new MealNutritionsDto
                 {
@@ -78,9 +78,19 @@ namespace MyFoodDoc.App.Application.Services
                 //TODO: use constants or enums
                 if (target.OptimizationArea.Key == "protein")
                 {
+                    var weightHistory = _context.UserWeights
+                        .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToList();
+
+                    if (!weightHistory.Any())
+                    {
+                        continue;
+                    }
+
+                    var averageWeight = weightHistory.Average(x => x.Value);
+
                     if (target.TriggerOperator == TriggerOperator.GreaterThan)
                     {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein > target.TriggerValue);
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / averageWeight > target.TriggerValue);
 
                         triggeredDaysCount = triggeredDays.Count();
 
@@ -89,7 +99,7 @@ namespace MyFoodDoc.App.Application.Services
                     }
                     else
                     {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein < target.TriggerValue);
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / averageWeight < target.TriggerValue);
 
                         triggeredDaysCount = triggeredDays.Count();
 
@@ -167,12 +177,47 @@ namespace MyFoodDoc.App.Application.Services
                     {
                         var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
 
+                        var analysisDto = new AnalysisDto();
+
+                        if (target.OptimizationArea.Key == "protein")
+                        {
+                            var averageWeight = _context.UserWeights
+                                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).Average(x => x.Value);
+
+                            var height = _context.Users.Single(x => x.Id == userId).Height;
+
+                            if (BMI((double)height, (double) averageWeight) < 25)
+                            {
+                                analysisDto.Optimal = averageWeight * target.OptimizationArea.Optimal;
+                            }
+                            else
+                            {
+                                analysisDto.Optimal = (height - 100) * target.OptimizationArea.Optimal;
+                            }
+
+                            analysisDto.UpperLimit = (decimal)1.1 * analysisDto.Optimal.Value;
+                            analysisDto.LowerLimit = (decimal)0.9 * analysisDto.Optimal.Value;
+
+                            analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                                {Date = x.Key, Value = x.Value.Protein}).ToList();
+                        }
+                        else if (target.OptimizationArea.Key == "sugar")
+                        {
+                            analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
+                            analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
+                            analysisDto.Optimal = target.OptimizationArea.Optimal;
+
+                            analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                                { Date = x.Key, Value = x.Value.Sugar }).ToList();
+                        }
+                        
                         result.Add(new OptimizationAreaDto
                         {
                             Key = target.OptimizationArea.Key,
                             Name = target.OptimizationArea.Name,
                             Text = target.OptimizationArea.Text,
                             ImageUrl = optimizationAreaImage?.Url,
+                            Analysis = analysisDto,
                             Targets = new List<TargetDto>()
                         });
                     }
@@ -182,6 +227,11 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             return result;
+        }
+
+        private double BMI(double height, double weight)
+        {
+            return (double)weight / Math.Pow((double)height / 100, 2);
         }
          
         public async Task InsertAsync(string userId, InsertTargetPayload payload, CancellationToken cancellationToken)
