@@ -140,7 +140,8 @@
 import ColabEdit from "./ColabEdit";
 import debounce from "debounce"
 
-const editTime = 300000;
+//TODO: skip on redirect
+const editTime = 300000; 
 
 export default {
   name: "ColabDataTable",

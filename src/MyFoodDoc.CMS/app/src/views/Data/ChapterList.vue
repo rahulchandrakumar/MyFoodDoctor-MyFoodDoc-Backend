@@ -52,37 +52,37 @@
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.questionTitle"
-                              label="QuestionTitle"
+                              label="Question title"
                               rules="required|max:100"
                               :counter="100" />
             </v-row>
             <v-row>
                 <VeeRichTextArea v-if="!preview"
                                  v-model="item.questionText"
-                                 label="QuestionText"
+                                 label="Question text"
                                  rules="required|min:8|max:1000" />
                 <VeeTextArea v-else
                              v-model="item.questionText"
-                             label="QuestionText"
+                             label="Question text"
                              rules="required|min:1|max:1000" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.answerText1"
-                              label="AnswerText1"
+                              label="Answer 1"
                               rules="required|max:100"
                               :counter="100" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.answerText2"
-                              label="AnswerText2"
+                              label="Answer 2"
                               rules="required|max:100"
                               :counter="100" />
             </v-row>
             <v-row>
                 <v-switch v-model="item.answer"
-                          label="Answer" />
+                          label="Correct answer(1/2)" />
             </v-row>
-            <v-row>
+            <v-row v-if="item.id != null">
                 <v-btn color="blue darken-1" text @click="editSubchapters(item)">Edit subchapters</v-btn>
             </v-row>
         </template>

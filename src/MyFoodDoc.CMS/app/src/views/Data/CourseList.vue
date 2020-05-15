@@ -52,7 +52,7 @@
                               rules="required"
                               number />
             </v-row>
-            <v-row>
+            <v-row v-if="item.id != null">
                 <v-btn color="blue darken-1" text @click="editChapters(item)">Edit chapters</v-btn>
             </v-row>
         </template>
