@@ -16,6 +16,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(o => o.Text).IsRequired().HasMaxLength(1000);
             //builder.Property(p => p.ImageId).IsRequired();
 
+            builder.Property(o => o.UpperLimit).HasColumnType("decimal(18,2)");
+            builder.Property(o => o.LowerLimit).HasColumnType("decimal(18,2)");
+            builder.Property(o => o.Optimal).HasColumnType("decimal(18,2)");
+
             builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
         }
     }

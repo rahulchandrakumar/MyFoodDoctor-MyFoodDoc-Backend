@@ -295,7 +295,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Name = "Gemüse",
                         Text = "Gemüse und Salat haben einen hohen Wasseranteil, wodurch sie sehr kalorienarm sind. Die enthaltenen Ballaststoffe quellen im Magen-Darm-Trakt auf, wodurch du lange satt bleibst.\n" +
                                 "Die Ballaststoffe aus Gemüse und Salat sorgen für eine gute Verdauung, wodurch dein Darm gesund bleibt.\n" +
-                                "Gemüse und Salat sind reich an Vitaminen und sekundären Pflanzenstoffen. Sie sorgen für ein starkes Immunsystem."
+                                "Gemüse und Salat sind reich an Vitaminen und sekundären Pflanzenstoffen. Sie sorgen für ein starkes Immunsystem.",
+                        UpperLimit = null,
+                        LowerLimit = 400,
+                        Optimal = 500
                     },
                     new OptimizationArea
                     {
@@ -303,7 +306,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Key = "sugar",
                         Name = "Zucker",
                         Text = "Zuckerreiche Lebensmittel liefern schnell, aber nur kurzfristige Energie. Es kommt zu einem sehr schnellen Anstieg des Blutzuckers, was zu einer sehr schnellen und starken Insulinausschüttung aus der Bauchspeicheldrüse führt.\n" +
-                                "Dieser Mechanismus fördert Heißhungerattacken und Übergewicht."
+                                "Dieser Mechanismus fördert Heißhungerattacken und Übergewicht.",
+                        UpperLimit = 40,
+                        LowerLimit = null,
+                        Optimal = 30
                     },
                     new OptimizationArea
                     {
@@ -311,7 +317,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Key = "protein",
                         Name = "Proteine",
                         Text = "Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.\n" +
-                                "Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung."
+                                "Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung.",
+                        UpperLimit = null,
+                        LowerLimit = null,
+                        Optimal = 1
                     });
             }
         }

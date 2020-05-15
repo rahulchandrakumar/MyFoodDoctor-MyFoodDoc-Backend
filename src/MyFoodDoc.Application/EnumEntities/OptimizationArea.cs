@@ -10,5 +10,11 @@ namespace MyFoodDoc.Application.EnumEntities
         public int? ImageId { get; set; }
 
         public Image Image { get; set; }
+
+        public decimal? UpperLimit { get; set; }
+
+        public decimal? LowerLimit { get; set; }
+
+        public decimal? Optimal { get; set; }
     }
 }
