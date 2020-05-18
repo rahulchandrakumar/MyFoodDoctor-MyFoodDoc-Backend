@@ -45,7 +45,9 @@ namespace MyFoodDoc.Application.Entites
         public decimal? Fiber { get; set; }
 
         public decimal? Sugar { get; set; }
-        
+
+        public decimal? Vegetables { get; set; }
+
         public ICollection<MealIngredient> Meals { get; set; }
     }
 }
