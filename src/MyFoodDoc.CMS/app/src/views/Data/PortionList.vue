@@ -43,6 +43,12 @@
                           readonly />
         </v-row>
         <v-row>
+            <VeeTextField v-model="item.vegetables"
+                          label="Vegetables"
+                          rules="decimal"
+                          number />
+        </v-row>
+        <v-row>
             <VeeTextField v-model="item.calories"
                           label="Calories"
                           rules="decimal"

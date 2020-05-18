@@ -45,6 +45,8 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public decimal? Sugar { get; set; }
 
+        public decimal? Vegetables { get; set; }
+
         public static Ingredient FromModel(IngredientModel model)
         {
             return model == null ? null : new Ingredient()
@@ -69,7 +71,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Sodium = model.Sodium,
                 Potassium = model.Potassium,
                 Fiber = model.Fiber,
-                Sugar = model.Sugar
+                Sugar = model.Sugar,
+                Vegetables = model.Vegetables
             };
         }
 
@@ -97,7 +100,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Sodium = this.Sodium,
                 Potassium = this.Potassium,
                 Fiber = this.Fiber,
-                Sugar = this.Sugar
+                Sugar = this.Sugar,
+                Vegetables = this.Vegetables
             };
         }
     }

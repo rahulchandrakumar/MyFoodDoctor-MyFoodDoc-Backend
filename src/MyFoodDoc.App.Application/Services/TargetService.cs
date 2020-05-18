@@ -51,7 +51,8 @@ namespace MyFoodDoc.App.Application.Services
                 var dailyNutritions = new MealNutritionsDto
                 {
                     Protein = 0,
-                    Sugar = 0
+                    Sugar = 0,
+                    Vegetables = 0
                 };
 
                 foreach (var meal in dailyMeals)
@@ -60,6 +61,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     dailyNutritions.Protein += mealNutritions.Protein;
                     dailyNutritions.Sugar += mealNutritions.Sugar;
+                    dailyNutritions.Vegetables += mealNutritions.Vegetables;
                 }
 
                 dailyUserIngredients[dailyMeals.Key] = dailyNutritions;
@@ -126,6 +128,27 @@ namespace MyFoodDoc.App.Application.Services
 
                         if (triggeredDays.Any())
                             bestValue = triggeredDays.Max(x => x.Sugar);
+                    }
+                }
+                else if (target.OptimizationArea.Key == "vegetables")
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables > target.TriggerValue);
+
+                        triggeredDaysCount = triggeredDays.Count();
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Vegetables);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
+
+                        triggeredDaysCount = triggeredDays.Count();
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Vegetables);
                     }
                 }
 
@@ -210,7 +233,16 @@ namespace MyFoodDoc.App.Application.Services
                             analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
                                 { Date = x.Key, Value = x.Value.Sugar }).ToList();
                         }
-                        
+                        else if (target.OptimizationArea.Key == "vegetables")
+                        {
+                            analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
+                            analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
+                            analysisDto.Optimal = target.OptimizationArea.Optimal;
+
+                            analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                                { Date = x.Key, Value = x.Value.Vegetables }).ToList();
+                        }
+
                         result.Add(new OptimizationAreaDto
                         {
                             Key = target.OptimizationArea.Key,

@@ -9,5 +9,7 @@ namespace MyFoodDoc.App.Application.Models
         public decimal Protein { get; set; }
 
         public decimal Sugar { get; set; }
+
+        public decimal Vegetables { get; set; }
     }
 }

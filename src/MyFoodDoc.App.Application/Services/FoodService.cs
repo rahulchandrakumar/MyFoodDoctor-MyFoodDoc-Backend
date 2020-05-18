@@ -47,7 +47,8 @@ namespace MyFoodDoc.App.Application.Services
             var result = new MealNutritionsDto
             {
                 Protein = 0,
-                Sugar = 0
+                Sugar = 0,
+                Vegetables = 0
             };
 
             foreach (var mealIngredient in _context.MealIngredients.Include(x => x.Ingredient).Where(x => x.MealId == mealId))
@@ -67,6 +68,7 @@ namespace MyFoodDoc.App.Application.Services
 
                 result.Protein += (mealIngredient.Ingredient.Protein ?? serving.Protein) * mealIngredient.Amount;
                 result.Sugar += (mealIngredient.Ingredient.Sugar ?? serving.Sugar) * mealIngredient.Amount;
+                result.Vegetables += (mealIngredient.Ingredient.Vegetables ?? 0) * mealIngredient.Amount;
             }
 
             return result;
