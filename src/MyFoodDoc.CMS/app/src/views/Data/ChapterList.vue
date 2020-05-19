@@ -47,8 +47,7 @@
             <v-row>
                 <VeeTextField v-model="item.order"
                               :label="mainHeaders.filter(h => h.value == 'order')[0].text"
-                              rules="required"
-                              number />
+                              rules="required|integer|min_value:1" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.questionTitle"
@@ -109,7 +108,7 @@
                     value: "image",
                     text: "Image",
                     width: "210px"
-                }, 
+                },
                 {
                     sortable: true,
                     value: "title",

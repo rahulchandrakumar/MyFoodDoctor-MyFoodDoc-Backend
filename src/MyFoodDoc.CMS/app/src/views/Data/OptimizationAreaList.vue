@@ -52,20 +52,17 @@
             <v-row>
                 <VeeTextField v-model="item.upperLimit"
                               label="Upper limit"
-                              rules="decimal"
-                              number />
+                              rules="decimal" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.lowerLimit"
                               label="Lower limit"
-                              rules="decimal"
-                              number />
+                              rules="decimal" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.optimal"
                               label="Optimal"
-                              rules="decimal"
-                              number />
+                              rules="decimal" />
             </v-row>
             <v-row v-if="item.id != null">
                 <v-btn color="blue darken-1" text @click="editTargets(item)">Edit targets</v-btn>
