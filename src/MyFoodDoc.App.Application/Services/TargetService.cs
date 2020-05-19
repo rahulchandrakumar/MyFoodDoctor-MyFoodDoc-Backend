@@ -178,10 +178,37 @@ namespace MyFoodDoc.App.Application.Services
 
                         targetDto.Answers = new List<TargetAnswerDto>();
 
-                        if (recommendedValue != adjustmentTarget.TargetValue)
-                            targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+                        if (target.OptimizationArea.Key == "protein")
+                        {
+                            var averageWeight = _context.UserWeights
+                                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).Average(x => x.Value);
 
-                        targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
+                            var height = _context.Users.Single(x => x.Id == userId).Height.Value;
+
+                            decimal targetValue = 0;
+
+                            if (BMI((double)height, (double)averageWeight) < 25)
+                            {
+                                targetValue = averageWeight * adjustmentTarget.TargetValue;
+                            }
+                            else
+                            {
+                                targetValue = (height - 100) * adjustmentTarget.TargetValue;
+                            }
+
+                            if (recommendedValue < targetValue)
+                                targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                            targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
+                        }
+                        else
+                        {
+                            if (recommendedValue != adjustmentTarget.TargetValue)
+                                targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                            targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
+                        }
+
                         targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
                     }
                     else
@@ -207,7 +234,7 @@ namespace MyFoodDoc.App.Application.Services
                             var averageWeight = _context.UserWeights
                                 .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).Average(x => x.Value);
 
-                            var height = _context.Users.Single(x => x.Id == userId).Height;
+                            var height = _context.Users.Single(x => x.Id == userId).Height.Value;
 
                             if (BMI((double)height, (double) averageWeight) < 25)
                             {
