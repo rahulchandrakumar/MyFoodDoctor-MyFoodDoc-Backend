@@ -49,7 +49,8 @@
             <v-row>
                 <VeeTextField v-model="item.order"
                               :label="mainHeaders.filter(h => h.value == 'order')[0].text"
-                              rules="required|integer|min_value:1" />
+                              rules="required|integer|min_value:1"
+                              number />
             </v-row>
             <v-row v-if="item.id != null">
                 <v-btn color="blue darken-1" text @click="editChapters(item)">Edit chapters</v-btn>

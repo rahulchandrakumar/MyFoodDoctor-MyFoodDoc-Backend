@@ -43,42 +43,50 @@
             <v-row>
                 <VeeTextField v-model="item.vegetables"
                               label="Vegetables"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.calories"
                               label="Calories"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.carbohydrate"
                               label="Carbohydrate"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.protein"
                               label="Protein"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.fat"
                               label="Fat"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.saturatedFat"
                               label="Saturated fat"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.polyunsaturatedFat"
                               label="Polyunsaturated fat"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.monounsaturatedFat"
                               label="Monounsaturated fat"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.cholesterol"
@@ -88,22 +96,26 @@
             <v-row>
                 <VeeTextField v-model="item.sodium"
                               label="Sodium"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.potassium"
                               label="Potassium"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.fiber"
                               label="Fiber"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.sugar"
                               label="Sugar"
-                              rules="decimal" />
+                              rules="decimal"
+                              number />
             </v-row>
         </template>
     </ColabDataTable>
@@ -150,6 +162,6 @@
                     align: "right"
                 }
             ]
-        }),
+        })
     };
 </script>

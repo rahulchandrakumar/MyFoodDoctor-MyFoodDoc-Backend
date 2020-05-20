@@ -77,22 +77,26 @@
             <v-row>
                 <VeeTextField v-model="item.triggerValue"
                               label="Auslösewert"
-                              rules="required|decimal" />
+                              rules="required|decimal"
+                              number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.threshold"
                               label="Fälle,%"
-                              rules="required|decimal" />
+                              rules="required|decimal"
+                              number />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.targetValue"
                               label="Zielwert"
-                              rules="required|decimal" />
+                              rules="required|decimal"
+                              number />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.step"
                               label="Interval/Schritte"
-                              rules="required|decimal" />
+                              rules="required|decimal"
+                              number />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeSelect v-model="item.stepDirection"

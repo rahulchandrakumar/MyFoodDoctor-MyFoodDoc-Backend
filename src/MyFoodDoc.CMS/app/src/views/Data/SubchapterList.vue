@@ -32,7 +32,8 @@
             <v-row>
                 <VeeTextField v-model="item.order"
                               :label="mainHeaders.filter(h => h.value == 'order')[0].text"
-                              rules="required|integer|min_value:1" />
+                              rules="required|integer|min_value:1"
+                              number />
             </v-row>
         </template>
     </ColabDataTable>
