@@ -67,7 +67,7 @@
         },
         methods: {
             async beforeSave(item) {
-                item.chapterId = this.$route.params.parentId;
+                item.chapterId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");

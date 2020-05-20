@@ -127,7 +127,7 @@
                 if (item.image != null && item.image.Url != null && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
-                item.courseId = this.$route.params.parentId;
+                item.courseId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");
