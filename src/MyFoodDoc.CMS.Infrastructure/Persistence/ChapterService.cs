@@ -44,9 +44,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Include(x => x.Image)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-            await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
+            if (entity.Image != null)
+            {
+                await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
+                _context.Images.Remove(entity.Image);
+            }
 
-            _context.Images.Remove(entity.Image);
             _context.Chapters.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
