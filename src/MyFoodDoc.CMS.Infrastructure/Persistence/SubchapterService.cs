@@ -71,7 +71,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Skip(skip).Take(take)
                 .ToListAsync(cancellationToken);
 
-            return entities.Select(SubchapterModel.FromEntity).ToList();
+            return entities.Select(SubchapterModel.FromEntity).OrderBy(x => x.Order).ToList();
         }
 
         public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)

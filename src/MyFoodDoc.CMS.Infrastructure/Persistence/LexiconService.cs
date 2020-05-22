@@ -42,10 +42,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                                 .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-            await _imageService.DeleteImage(lexiconEntity.Image.Url, cancellationToken);
+            _context.LexiconEntries.Remove(lexiconEntity);
 
             _context.Images.Remove(lexiconEntity.Image);
-            _context.LexiconEntries.Remove(lexiconEntity);
+
+            await _imageService.DeleteImage(lexiconEntity.Image.Url, cancellationToken);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -99,7 +101,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var lexiconEntity = await _context.LexiconEntries.FindAsync(new object[] { item.Id }, cancellationToken);
 
+            var oldImageId = lexiconEntity.ImageId;
+
             _context.Entry(lexiconEntity).CurrentValues.SetValues(item.ToEntity());
+
+            if (item.Image.Id != oldImageId)
+            {
+                var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId);
+                _context.Images.Remove(oldImage);
+
+                await _imageService.DeleteImage(oldImage.Url, cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 

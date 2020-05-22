@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entites.Courses;
 using MyFoodDoc.CMS.Application.Models;
@@ -15,11 +16,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
     {
         private readonly IApplicationContext _context;
         private readonly IImageBlobService _imageService;
+        private readonly IChapterService _chapterService;
 
-        public CourseService(IApplicationContext context, IImageBlobService imageService)
+        public CourseService(IApplicationContext context, IImageBlobService imageService, IChapterService chapterService)
         {
             this._context = context;
             this._imageService = imageService;
+            this._chapterService = chapterService;
         }
 
         public async Task<CourseModel> AddItem(CourseModel item, CancellationToken cancellationToken = default)
@@ -39,13 +42,19 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _context.Courses
-                                                .Include(x => x.Image)
-                                                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+                .Include(x => x.Image)
+                .Include(x => x.Chapters)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            foreach (var chapter in entity.Chapters.ToList())
+                await _chapterService.DeleteItem(chapter.Id);
+
+            _context.Courses.Remove(entity);
+
+            _context.Images.Remove(entity.Image);
 
             await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
 
-            _context.Images.Remove(entity.Image);
-            _context.Courses.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -87,7 +96,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                                 .Skip(skip).Take(take)
                                                 .ToListAsync(cancellationToken);
 
-            return entities.Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).ToList();
+            return entities.Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).OrderBy(x => x.Order).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
@@ -99,7 +108,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Courses.FindAsync(new object[] { item.Id }, cancellationToken);
 
+            var oldImageId = entity.ImageId;
+
             _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
+            
+            if (item.Image.Id != oldImageId)
+            {
+                var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId);
+                _context.Images.Remove(oldImage);
+
+                await _imageService.DeleteImage(oldImage.Url, cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 

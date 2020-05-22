@@ -58,7 +58,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 AnswerText1 = this.AnswerText1,
                 AnswerText2 = this.AnswerText2,
                 Answer = this.Answer,
-                ImageId = this.Image?.Id,
+                ImageId = this.Image == null || string.IsNullOrEmpty(this.Image.Url) ? (int?)null : this.Image.Id,
                 CourseId = this.CourseId
             };
         }

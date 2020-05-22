@@ -17,11 +17,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
     {
         private readonly IApplicationContext _context;
         private readonly IImageBlobService _imageService;
+        private readonly ISubchapterService _subchapterService;
 
-        public ChapterService(IApplicationContext context, IImageBlobService imageService)
+        public ChapterService(IApplicationContext context, IImageBlobService imageService, ISubchapterService subchapterService)
         {
             this._context = context;
             this._imageService = imageService;
+            this._subchapterService = subchapterService;
         }
 
         public async Task<ChapterModel> AddItem(ChapterModel item, CancellationToken cancellationToken = default)
@@ -42,15 +44,21 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Chapters
                 .Include(x => x.Image)
+                .Include(x=> x.Subchapters)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+
+            foreach (var subchapter in entity.Subchapters.ToList())
+                await _subchapterService.DeleteItem(subchapter.Id);
+
+            _context.Chapters.Remove(entity);
 
             if (entity.Image != null)
             {
-                await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
                 _context.Images.Remove(entity.Image);
+
+                await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
             }
 
-            _context.Chapters.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -83,7 +91,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Skip(skip).Take(take)
                 .ToListAsync(cancellationToken);
 
-            return entities.Select(ChapterModel.FromEntity).ToList();
+            return entities.Select(ChapterModel.FromEntity).OrderBy(x => x.Order).ToList();
         }
 
         public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
@@ -95,7 +103,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Chapters.FindAsync(new object[] { item.Id }, cancellationToken);
 
-            _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
+            var newEntity = item.ToEntity();
+
+            if (entity.ImageId != null && (newEntity.Image == null || newEntity.ImageId != entity.ImageId))
+            {
+                var image = await _context.Images.SingleAsync(x => x.Id == entity.ImageId.Value);
+                _context.Images.Remove(image);
+
+                await _imageService.DeleteImage(image.Url, cancellationToken);
+            }
+
+            _context.Entry(entity).CurrentValues.SetValues(newEntity);
 
             await _context.SaveChangesAsync(cancellationToken);
 

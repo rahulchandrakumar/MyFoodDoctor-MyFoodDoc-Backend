@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     async beforeSave(item) {
-      if (item.image.Url != null && !item.image.Url.startsWith('http'))
+      if (item.image.Url && !item.image.Url.startsWith('http'))
         item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
     },
     stripHtml(html) {

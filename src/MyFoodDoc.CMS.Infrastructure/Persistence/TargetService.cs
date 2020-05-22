@@ -48,11 +48,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var targetEntity = await _context.Targets
                                                 .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+            
+            _context.Targets.Remove(targetEntity);
+            
+            _context.Images.Remove(targetEntity.Image);
 
             await _imageService.DeleteImage(targetEntity.Image.Url, cancellationToken);
-
-            _context.Images.Remove(targetEntity.Image);
-            _context.Targets.Remove(targetEntity);
+            
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -120,7 +122,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             {
                 var targetEntity = await _context.Targets.FindAsync(new object[] { item.Id }, cancellationToken);
 
+                var oldImageId = targetEntity.ImageId;
+
                 _context.Entry(targetEntity).CurrentValues.SetValues(item.ToTargetEntity());
+
+                if (item.Image.Id != oldImageId)
+                {
+                    var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId);
+                    _context.Images.Remove(oldImage);
+
+                    await _imageService.DeleteImage(oldImage.Url, cancellationToken);
+                }
 
                 if (targetEntity.Type == TargetType.Adjustment)
                 {

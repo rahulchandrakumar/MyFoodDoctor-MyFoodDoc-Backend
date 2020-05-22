@@ -124,7 +124,7 @@
         },
         methods: {
             async beforeSave(item) {
-                if (item.image != null && item.image.Url != null && item.image.Url != '' && !item.image.Url.startsWith('http'))
+                if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
                 item.courseId = Number.parseInt(this.$route.params.parentId);
