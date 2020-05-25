@@ -3,7 +3,8 @@
                     store-name="chapters"
                     editor-title-suffix="chapter item"
                     :headers="mainHeaders"
-                    :before-save="beforeSave">
+                    :before-save="beforeSave"
+                    :parent="parent">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -119,6 +120,12 @@
                     value: "order",
                     text: "Order"
                 }],
+                parent: {
+                    path: "Courses",
+                    title: "Course",
+                    titleProperty: "title",
+                    storeName: "courses"
+                },
                 preview: false
             }
         },

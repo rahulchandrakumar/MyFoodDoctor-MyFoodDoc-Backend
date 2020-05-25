@@ -5,7 +5,8 @@
                     :headers="mainHeaders"
                     :before-save="beforeSave"
                     :could-add="false"
-                    :could-remove="false">
+                    :could-remove="false"
+                    :parent="parent">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -159,6 +160,12 @@
                     value: "text",
                     text: "Text"
                 }],
+                parent: {
+                    path: "Optimization Areas",
+                    title: "Optimization Area",
+                    titleProperty: "name",
+                    storeName: "optimizationareas"
+                },
                 preview: false,
                 priorities: [],
                 types: [],

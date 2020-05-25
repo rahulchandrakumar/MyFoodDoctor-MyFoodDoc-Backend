@@ -6,7 +6,12 @@
                     <v-row slot="header" wrap>
                         <v-col class="subheading font-weight-light mr-3 align-center">
                             <h4 class="title font-weight-light mb-2">
-                                {{ title }}
+                                <v-tooltip v-if="parent" bottom>
+                                    <template v-slot:activator="{ on }">
+                                        <v-icon @click="navigateToParent()" v-on="on">mdi-arrow-left-bold</v-icon>
+                                    </template>
+                                    <span>{{parent.path}}</span>
+                                </v-tooltip>{{ parentTitle }} {{ title }}
                             </h4>
                             <v-text-field v-model="search"
                                           class="mr-4"
@@ -156,6 +161,10 @@
             beforeSave: {
                 type: Function,
                 default: null
+            },
+            parent: {
+                type: Object,
+                default: null
             }
         },
         data() {
@@ -189,6 +198,8 @@
                 Error: null,
                 errorDialog: false,
                 errorText: null,
+                parentTitle: null,
+                parentPathParam: null
             };
         },
         computed: {
@@ -266,79 +277,100 @@
             await this.loadItems({ page: this.page, search: this.search, filter: this.filter })
             if (!this.readonly)
                 await this.$store.dispatch('edit-state/init', { groupName: this.storeName })
+
+            await this.loadParent()
         },
-        async destroyed() {
-            if (!this.readonly)
-                await this.$store.dispatch('edit-state/removeGroup', { groupName: this.storeName })
-        },
-        methods: {
-            async onBeginEdit(item) {
-                this.editItem = Object.assign({}, item);
-
-                var editprops = this.stateDict[item.id] || {};
-
-                editprops.Id = item.id;
-                editprops.LockDate = Date.now();
-                editprops.Editor = this.username;
-
-                await this.$store.dispatch('edit-state/addEntry', { groupName: this.storeName, entry: editprops })
-                this.dialog = true;
+            async destroyed() {
+                if (!this.readonly)
+                    await this.$store.dispatch('edit-state/removeGroup', { groupName: this.storeName })
             },
-            async onRemove(item) {
-                var editprops = this.stateDict[item.id];
-                if (editprops == null || (editprops.LockDate == null || this.now - editprops.LockDate > editTime))
-                    if (await this.$confirm("Do you really want to delete this item?")) {
-                        if (this.$route.params != null && this.$route.params.parentId != null) {
-                            await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id, parentId: this.$route.params.parentId })
-                        }
-                        else {
-                            await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id })
-                        }
+            methods: {
+                async onBeginEdit(item) {
+                    this.editItem = Object.assign({}, item);
 
+                    var editprops = this.stateDict[item.id] || {};
 
-                        if (editprops != null)
-                            await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.id })
-                    }
-            },
-            async onSave(item) {
-                if (this.beforeSave)
-                    await this.beforeSave(item);
+                    editprops.Id = item.id;
+                    editprops.LockDate = Date.now();
+                    editprops.Editor = this.username;
 
-                if (item.id == null) {
-                    await this.$store.dispatch(this.storeName + "/addItem", { item })
-                }
-                else {
+                    await this.$store.dispatch('edit-state/addEntry', { groupName: this.storeName, entry: editprops })
+                    this.dialog = true;
+                },
+                async onRemove(item) {
                     var editprops = this.stateDict[item.id];
+                    if (editprops == null || (editprops.LockDate == null || this.now - editprops.LockDate > editTime))
+                        if (await this.$confirm("Do you really want to delete this item?")) {
+                            if (this.$route.params != null && this.$route.params.parentId != null) {
+                                await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id, parentId: this.$route.params.parentId })
+                            }
+                            else {
+                                await this.$store.dispatch(this.storeName + "/deleteItem", { id: item.id })
+                            }
 
-                    await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.Id })
-                    await this.$store.dispatch(this.storeName + "/updateItem", { item })
-                }
 
-                this.editItem = {};
-            },
-            async onCancel() {
-                if (this.editItem && this.editItem.id) {
-                    var editprops = this.stateDict[this.editItem.id]
-                    if (
-                        editprops.LockDate != null &&
-                        this.now - editprops.LockDate <= editTime &&
-                        editprops.Editor == this.username
-                    ) {
-                        await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.Id })
+                            if (editprops != null)
+                                await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.id })
+                        }
+                },
+                async onSave(item) {
+                    if (this.beforeSave)
+                        await this.beforeSave(item);
+
+                    if (item.id == null) {
+                        await this.$store.dispatch(this.storeName + "/addItem", { item })
                     }
-                }
-                this.editItem = {};
-            },
-            async loadItems({ page, search, filter }) {
-                if (this.$route.params != null && this.$route.params.parentId != null) {
-                    await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter, parentId: this.$route.params.parentId })
-                }
-                else {
-                    await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter })
+                    else {
+                        var editprops = this.stateDict[item.id];
+
+                        await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.Id })
+                        await this.$store.dispatch(this.storeName + "/updateItem", { item })
+                    }
+
+                    this.editItem = {};
+                },
+                async onCancel() {
+                    if (this.editItem && this.editItem.id) {
+                        var editprops = this.stateDict[this.editItem.id]
+                        if (
+                            editprops.LockDate != null &&
+                            this.now - editprops.LockDate <= editTime &&
+                            editprops.Editor == this.username
+                        ) {
+                            await this.$store.dispatch('edit-state/removeEntry', { groupName: this.storeName, id: editprops.Id })
+                        }
+                    }
+                    this.editItem = {};
+                },
+                async loadItems({ page, search, filter }) {
+                    if (this.$route.params != null && this.$route.params.parentId != null) {
+                        await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter, parentId: this.$route.params.parentId })
+                    }
+                    else {
+                        await this.$store.dispatch(this.storeName + "/loadItems", { page: this.page, search: this.search, filter: this.filter })
+                    }
+                },
+                async loadParent() {
+                    if (this.$route.params != null && this.$route.params.parentId != null && this.parent != null) {
+                        var parentItem = await this.$store.dispatch(this.parent.storeName + "/loadItem", { id: this.$route.params.parentId })
+                        this.parentTitle = `${this.parent.title}:  ${parentItem[this.parent.titleProperty]}.`
+
+                        debugger;
+                        if (this.parent.parentIdProperty)
+                            this.parentPathParam = parentItem[this.parent.parentIdProperty]
+                        debugger;
+                    }
+                },
+                navigateToParent() {
+                    if (this.parentPathParam) {
+                        this.$router.push({ name: this.parent.path, params: { parentId: this.parentPathParam } });
+                    }
+                    else {
+                        this.$router.push({ name: this.parent.path })
+                    }
                 }
             }
-        }
-    };
+        };
 </script>
 
 <style lang="scss">

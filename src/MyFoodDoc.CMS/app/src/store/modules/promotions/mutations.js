@@ -16,7 +16,7 @@ export default {
   deleteItem: (state, data) => {
     state.items = state.items.filter((i) => i.id != data.Id)
     if (state.item)
-      state.ipems.push(item)
+      state.items.push(item)
     state.loaded = true
   }
 };

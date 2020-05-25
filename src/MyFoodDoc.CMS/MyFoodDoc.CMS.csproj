@@ -13,6 +13,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="app\src\store\modules\images\**" />
+    <Content Remove="app\src\store\modules\images\**" />
+    <EmbeddedResource Remove="app\src\store\modules\images\**" />
+    <None Remove="app\src\store\modules\images\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="3.1.2" />
