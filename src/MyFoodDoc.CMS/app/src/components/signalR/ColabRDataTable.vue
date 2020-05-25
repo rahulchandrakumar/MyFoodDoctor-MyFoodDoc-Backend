@@ -355,10 +355,8 @@
                         var parentItem = await this.$store.dispatch(this.parent.storeName + "/loadItem", { id: this.$route.params.parentId })
                         this.parentTitle = `${this.parent.title}:  ${parentItem[this.parent.titleProperty]}.`
 
-                        debugger;
                         if (this.parent.parentIdProperty)
                             this.parentPathParam = parentItem[this.parent.parentIdProperty]
-                        debugger;
                     }
                 },
                 navigateToParent() {
