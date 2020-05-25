@@ -4,7 +4,8 @@
                     editor-title-suffix="chapter item"
                     :headers="mainHeaders"
                     :before-save="beforeSave"
-                    :parent="parent">
+                    :parent="parent"
+                    :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -83,9 +84,6 @@
                 <v-switch v-model="item.answer"
                           label="Correct answer(1/2)" />
             </v-row>
-            <v-row v-if="item.id != null">
-                <v-btn color="blue darken-1" text @click="editSubchapters(item)">Edit subchapters</v-btn>
-            </v-row>
         </template>
     </ColabDataTable>
 </template>
@@ -126,6 +124,10 @@
                     titleProperty: "title",
                     storeName: "courses"
                 },
+                childLinks: [{
+                    path: "Subchapters",
+                    title: "Edit subchapters",
+                }],
                 preview: false
             }
         },
@@ -140,9 +142,6 @@
                 var tmp = document.createElement("div");
                 tmp.innerHTML = html;
                 return tmp.textContent || tmp.innerText || "";
-            },
-            editSubchapters(item) {
-                this.$router.push({ name: 'Subchapters', params: { parentId: item.id } });
             }
         }
     }

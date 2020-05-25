@@ -5,7 +5,8 @@
                     :headers="mainHeaders"
                     :before-save="beforeSave"
                     :could-add="false"
-                    :could-remove="false">
+                    :could-remove="false"
+                    :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -67,9 +68,6 @@
                               rules="decimal"
                               number />
             </v-row>
-            <v-row v-if="item.id != null">
-                <v-btn color="blue darken-1" text @click="editTargets(item)">Edit targets</v-btn>
-            </v-row>
         </template>
     </ColabDataTable>
 </template>
@@ -103,6 +101,10 @@
                     value: "text",
                     text: "Text"
                 }],
+                childLinks: [{
+                    path: "Targets",
+                    title: "Edit targets",
+                }],
                 preview: false
             }
         },
@@ -115,9 +117,6 @@
                 var tmp = document.createElement("div");
                 tmp.innerHTML = html;
                 return tmp.textContent || tmp.innerText || "";
-            },
-            editTargets(item) {
-                this.$router.push({ name: 'Targets', params: { parentId: item.id } });
             }
         }
     }

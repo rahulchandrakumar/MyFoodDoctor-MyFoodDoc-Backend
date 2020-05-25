@@ -31,7 +31,8 @@
                                        :edit-time="editTime"
                                        :could-add="couldAdd && !readonly"
                                        @cancel="onCancel"
-                                       @save="onSave">
+                                       @save="onSave"
+                                       :childLinks="childLinks">
                                 <template slot-scope="scope">
                                     <slot name="editor" v-bind="scope" />
                                 </template>
@@ -164,6 +165,10 @@
             },
             parent: {
                 type: Object,
+                default: null
+            },
+            childLinks: {
+                type: Array,
                 default: null
             }
         },

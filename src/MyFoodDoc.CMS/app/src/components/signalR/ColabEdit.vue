@@ -35,7 +35,15 @@
 
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn color="blue darken-1" text @click="close">
+                    <v-btn v-if="formItem.id" v-for="link in childLinks" :key="link.path"
+                           color="blue darken-1"
+                           text
+                           @click="navigateToChild(link.path)">
+                        {{ link.title }}
+                    </v-btn>
+                    <v-btn color="blue darken-1"
+                           text
+                           @click="close">
                         Cancel
                     </v-btn>
                     <v-btn color="blue darken-1"
@@ -72,6 +80,10 @@
                 type: Boolean,
                 default: true
             },
+            childLinks: {
+                type: Array,
+                default: null
+            }
         },
         data() {
             return {
@@ -111,6 +123,10 @@
                 clearInterval(this.timeout);
                 this.$emit("update:dialog", false);
                 this.$emit("cancel");
+            },
+            navigateToChild(path) {
+                this.close();
+                this.$router.push({ name: path, params: { parentId: this.item.id } });
             }
         }
     };

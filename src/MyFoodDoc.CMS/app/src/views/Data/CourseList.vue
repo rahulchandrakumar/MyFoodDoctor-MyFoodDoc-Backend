@@ -3,7 +3,8 @@
                     store-name="courses"
                     editor-title-suffix="course item"
                     :headers="mainHeaders"
-                    :before-save="beforeSave">
+                    :before-save="beforeSave"
+                    :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -52,9 +53,6 @@
                               rules="required|integer|min_value:1"
                               number />
             </v-row>
-            <v-row v-if="item.id != null">
-                <v-btn color="blue darken-1" text @click="editChapters(item)">Edit chapters</v-btn>
-            </v-row>
         </template>
     </ColabDataTable>
 </template>
@@ -101,6 +99,10 @@
                     value: "completedByUsersCount",
                     text: "Completed by users"
                 }],
+                childLinks: [{
+                    path: "Chapters",
+                    title: "Edit chapters",
+                }],
                 preview: false
             }
         },
@@ -113,9 +115,6 @@
                 var tmp = document.createElement("div");
                 tmp.innerHTML = html;
                 return tmp.textContent || tmp.innerText || "";
-            },
-            editChapters(item) {
-                this.$router.push({ name: 'Chapters', params: { parentId: item.id } });
             }
         }
     }
