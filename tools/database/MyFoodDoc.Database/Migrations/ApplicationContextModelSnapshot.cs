@@ -1199,8 +1199,6 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasIndex("MethodId");
 
-                    b.HasIndex("MethodMultipleChoiceId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("UserMethods","System");
@@ -1891,11 +1889,6 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("MyFoodDoc.Application.Entites.Methods.MethodMultipleChoice", "MethodMultipleChoice")
-                        .WithMany()
-                        .HasForeignKey("MethodMultipleChoiceId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("MyFoodDoc.Application.Entites.User", "User")
                         .WithMany()

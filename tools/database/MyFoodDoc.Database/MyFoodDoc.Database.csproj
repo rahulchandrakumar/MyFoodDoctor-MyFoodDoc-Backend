@@ -41,6 +41,8 @@
     <Compile Remove="Migrations\20200506164659_Courses.Designer.cs" />
     <Compile Remove="Migrations\20200526100333_Methods.cs" />
     <Compile Remove="Migrations\20200526100333_Methods.Designer.cs" />
+    <Compile Remove="Migrations\20200526100705_Methods.cs" />
+    <Compile Remove="Migrations\20200526100705_Methods.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />

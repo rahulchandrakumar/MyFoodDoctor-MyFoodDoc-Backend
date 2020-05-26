@@ -20,7 +20,5 @@ namespace MyFoodDoc.Application.Entites
         public User User { get; set; }
 
         public Method Method { get; set; }
-
-        public MethodMultipleChoice MethodMultipleChoice { get; set; }
     }
 }

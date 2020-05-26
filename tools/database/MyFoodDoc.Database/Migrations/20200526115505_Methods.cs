@@ -83,13 +83,6 @@ namespace MyFoodDoc.Database.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserMethods_MethodMultipleChoice_MethodMultipleChoiceId",
-                        column: x => x.MethodMultipleChoiceId,
-                        principalSchema: "System",
-                        principalTable: "MethodMultipleChoice",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
                         name: "FK_UserMethods_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "User",
@@ -117,12 +110,6 @@ namespace MyFoodDoc.Database.Migrations
                 column: "MethodId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserMethods_MethodMultipleChoiceId",
-                schema: "System",
-                table: "UserMethods",
-                column: "MethodMultipleChoiceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_UserMethods_UserId",
                 schema: "System",
                 table: "UserMethods",
@@ -132,11 +119,11 @@ namespace MyFoodDoc.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserMethods",
+                name: "MethodMultipleChoice",
                 schema: "System");
 
             migrationBuilder.DropTable(
-                name: "MethodMultipleChoice",
+                name: "UserMethods",
                 schema: "System");
 
             migrationBuilder.DropTable(
