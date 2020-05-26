@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200526115505_Methods")]
+    [Migration("20200526163134_Methods")]
     partial class Methods
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -833,11 +833,11 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Answer")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -845,10 +845,10 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<int>("MethodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Question")
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("Id");
 

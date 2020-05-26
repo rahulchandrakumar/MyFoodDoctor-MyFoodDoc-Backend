@@ -10,9 +10,9 @@ namespace MyFoodDoc.Application.Entites.Methods
     {
         public int MethodId { get; set; }
 
-        public string Question { get; set; }
+        public string Title { get; set; }
 
-        public bool Answer { get; set; }
+        public bool IsCorrect { get; set; }
 
         public Method Method { get; set; }
     }

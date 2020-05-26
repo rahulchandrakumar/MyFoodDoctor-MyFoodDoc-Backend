@@ -15,8 +15,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Property(o => o.Question).IsRequired().HasMaxLength(1000);
-            builder.Property(o => o.Answer).IsRequired();
+            builder.Property(o => o.Title).IsRequired().HasMaxLength(100);
+            builder.Property(o => o.IsCorrect).IsRequired();
 
             builder.HasOne(x => x.Method).WithMany().HasForeignKey(x => x.MethodId).OnDelete(DeleteBehavior.Cascade);
         }

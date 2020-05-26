@@ -831,11 +831,11 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Answer")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
@@ -843,10 +843,10 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<int>("MethodId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Question")
+                    b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1000)")
-                        .HasMaxLength(1000);
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("Id");
 

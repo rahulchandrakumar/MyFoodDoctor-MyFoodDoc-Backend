@@ -43,8 +43,8 @@ namespace MyFoodDoc.Database.Migrations
                     Created = table.Column<DateTime>(nullable: false),
                     LastModified = table.Column<DateTime>(nullable: true),
                     MethodId = table.Column<int>(nullable: false),
-                    Question = table.Column<string>(maxLength: 1000, nullable: false),
-                    Answer = table.Column<bool>(nullable: false)
+                    Title = table.Column<string>(maxLength: 100, nullable: false),
+                    IsCorrect = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -91,6 +91,34 @@ namespace MyFoodDoc.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.UpdateData(
+                schema: "System",
+                table: "OptimizationAreas",
+                keyColumn: "Id",
+                keyValue: 1,
+                column: "Text",
+                value: @"Gemüse und Salat haben einen hohen Wasseranteil, wodurch sie sehr kalorienarm sind. Die enthaltenen Ballaststoffe quellen im Magen-Darm-Trakt auf, wodurch du lange satt bleibst.
+Die Ballaststoffe aus Gemüse und Salat sorgen für eine gute Verdauung, wodurch dein Darm gesund bleibt.
+Gemüse und Salat sind reich an Vitaminen und sekundären Pflanzenstoffen. Sie sorgen für ein starkes Immunsystem.");
+
+            migrationBuilder.UpdateData(
+                schema: "System",
+                table: "OptimizationAreas",
+                keyColumn: "Id",
+                keyValue: 2,
+                column: "Text",
+                value: @"Zuckerreiche Lebensmittel liefern schnell, aber nur kurzfristige Energie. Es kommt zu einem sehr schnellen Anstieg des Blutzuckers, was zu einer sehr schnellen und starken Insulinausschüttung aus der Bauchspeicheldrüse führt.
+Dieser Mechanismus fördert Heißhungerattacken und Übergewicht.");
+
+            migrationBuilder.UpdateData(
+                schema: "System",
+                table: "OptimizationAreas",
+                keyColumn: "Id",
+                keyValue: 3,
+                column: "Text",
+                value: @"Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.
+Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung.");
+
             migrationBuilder.CreateIndex(
                 name: "IX_MethodMultipleChoice_MethodId",
                 schema: "System",
@@ -129,6 +157,34 @@ namespace MyFoodDoc.Database.Migrations
             migrationBuilder.DropTable(
                 name: "Methods",
                 schema: "System");
+
+            migrationBuilder.UpdateData(
+                schema: "System",
+                table: "OptimizationAreas",
+                keyColumn: "Id",
+                keyValue: 1,
+                column: "Text",
+                value: @"Gemüse und Salat haben einen hohen Wasseranteil, wodurch sie sehr kalorienarm sind. Die enthaltenen Ballaststoffe quellen im Magen-Darm-Trakt auf, wodurch du lange satt bleibst.
+Die Ballaststoffe aus Gemüse und Salat sorgen für eine gute Verdauung, wodurch dein Darm gesund bleibt.
+Gemüse und Salat sind reich an Vitaminen und sekundären Pflanzenstoffen. Sie sorgen für ein starkes Immunsystem.");
+
+            migrationBuilder.UpdateData(
+                schema: "System",
+                table: "OptimizationAreas",
+                keyColumn: "Id",
+                keyValue: 2,
+                column: "Text",
+                value: @"Zuckerreiche Lebensmittel liefern schnell, aber nur kurzfristige Energie. Es kommt zu einem sehr schnellen Anstieg des Blutzuckers, was zu einer sehr schnellen und starken Insulinausschüttung aus der Bauchspeicheldrüse führt.
+Dieser Mechanismus fördert Heißhungerattacken und Übergewicht.");
+
+            migrationBuilder.UpdateData(
+                schema: "System",
+                table: "OptimizationAreas",
+                keyColumn: "Id",
+                keyValue: 3,
+                column: "Text",
+                value: @"Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.
+Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung.");
         }
     }
 }
