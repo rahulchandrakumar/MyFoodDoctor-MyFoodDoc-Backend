@@ -17,6 +17,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entites.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -50,6 +52,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<IndicationTarget> IndicationTargets { get; set; }
         public DbSet<DietTarget> DietTargets { get; set; }
         public DbSet<UserTarget> UserTargets { get; set; }
+        public DbSet<Method> Methods { get; set; }
+        public DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
+        public DbSet<UserMethod> UserMethods { get; set; }
 
         #endregion
 

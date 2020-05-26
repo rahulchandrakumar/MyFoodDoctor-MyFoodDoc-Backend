@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entites.Abstractions;
 using MyFoodDoc.Application.Entites.Courses;
+using MyFoodDoc.Application.Entites.Methods;
 using MyFoodDoc.Application.Entites.Targets;
 using MyFoodDoc.Application.Entites.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
@@ -45,6 +47,9 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<IndicationTarget> IndicationTargets { get; set; }
         DbSet<DietTarget> DietTargets { get; set; }
         DbSet<UserTarget> UserTargets { get; set; }
+        DbSet<Method> Methods { get; set; }
+        DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
+        DbSet<UserMethod> UserMethods { get; set; }
 
         #endregion
 
