@@ -77,7 +77,8 @@
                     value: "image",
                     text: "Image",
                     width: "210px"
-                }, {
+                },
+                {
                     sortable: true,
                     value: "isActive",
                     text: "Active"

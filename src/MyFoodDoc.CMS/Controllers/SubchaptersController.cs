@@ -62,7 +62,7 @@ namespace MyFoodDoc.CMS.Controllers
             await _hubContext.Clients.Group(_groupName).SendAsync(EditStateHub.ItemUpdatedMsg, _groupName, item.Id, cancellationToken);
         }
 
-        // DELETE: api/v1/ChSubchaptersapters/5
+        // DELETE: api/v1/Subchapters/5
         [HttpDelete("{id}")]
         public async Task Delete(int id, CancellationToken cancellationToken = default)
         {

@@ -70,7 +70,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             if (targetEntity.Type == TargetType.Adjustment)
                 adjustmentTargetEntity = await _context.AdjustmentTargets
-                                            .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+                                            .FirstOrDefaultAsync(x => x.TargetId == id, cancellationToken);
 
             return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity);
         }

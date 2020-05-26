@@ -1,7 +1,7 @@
 <template>
-    <ColabDataTable title="Subchapters"
-                    store-name="subchapters"
-                    editor-title-suffix="subchapter item"
+    <ColabDataTable title="Method Multiple Choices"
+                    store-name="methodmultiplechoices"
+                    editor-title-suffix="method multiple choice item"
                     :headers="mainHeaders"
                     :before-save="beforeSave"
                     :parent="parent">
@@ -17,24 +17,8 @@
                               :counter="100" />
             </v-row>
             <v-row>
-                <v-switch v-model="preview"
-                          label="HTML" />
-            </v-row>
-            <v-row>
-                <VeeRichTextArea v-if="!preview"
-                                 v-model="item.text"
-                                 label="Text"
-                                 rules="required|min:8|max:1000" />
-                <VeeTextArea v-else
-                             v-model="item.text"
-                             label="Text"
-                             rules="required|min:1|max:1000" />
-            </v-row>
-            <v-row>
-                <VeeTextField v-model="item.order"
-                              :label="mainHeaders.filter(h => h.value == 'order')[0].text"
-                              rules="required|integer|min_value:1"
-                              number />
+                <v-checkbox v-model="item.isCorrect"
+                          :label="mainHeaders.filter(h => h.value == 'isCorrect')[0].text" />
             </v-row>
         </template>
     </ColabDataTable>
@@ -47,9 +31,7 @@
     export default {
         components: {
             ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
-            VeeTextField: () => import("@/components/inputs/VeeTextField"),
-            VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
-            VeeTextArea: () => import("@/components/inputs/VeeTextArea")
+            VeeTextField: () => import("@/components/inputs/VeeTextField")
         },
         data() {
             return {
@@ -57,24 +39,25 @@
                     sortable: true,
                     value: "title",
                     text: "Title"
-                }, {
+                },
+                {
                     sortable: true,
-                    value: "order",
-                    text: "Order"
+                    value: "isCorrect",
+                    text: "Correct"
                 }],
                 parent: {
-                    path: "Chapters",
-                    parentIdProperty: "courseId",
-                    title: "Chapter",
+                    path: "Methods",
+                    parentIdProperty: "targetId",
+                    title: "Method",
                     titleProperty: "title",
-                    storeName: "chapters"
+                    storeName: "methods"
                 },
                 preview: false
             }
         },
         methods: {
             async beforeSave(item) {
-                item.chapterId = Number.parseInt(this.$route.params.parentId);
+                item.methodId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");

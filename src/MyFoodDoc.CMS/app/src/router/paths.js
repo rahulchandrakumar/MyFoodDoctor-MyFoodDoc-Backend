@@ -66,6 +66,22 @@ export default [
         }
     },
     {
+        path: "/method-list/:parentId",
+        name: "Methods",
+        view: "Data/MethodList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
+        path: "/methodmultiplechoice-list/:parentId",
+        name: "Method Multiple Choices",
+        view: "Data/MethodMultipleChoiceList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
         path: "/course-list",
         name: "Courses",
         view: "Data/CourseList",

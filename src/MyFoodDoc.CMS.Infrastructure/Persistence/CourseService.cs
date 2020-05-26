@@ -47,7 +47,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             foreach (var chapter in entity.Chapters.ToList())
-                await _chapterService.DeleteItem(chapter.Id);
+                await _chapterService.DeleteItem(chapter.Id, cancellationToken);
 
             _context.Courses.Remove(entity);
 

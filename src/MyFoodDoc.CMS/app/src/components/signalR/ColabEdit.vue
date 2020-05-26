@@ -35,7 +35,7 @@
 
                 <v-card-actions>
                     <v-spacer />
-                    <v-btn v-if="formItem.id" v-for="link in childLinks" :key="link.path"
+                    <v-btn v-if="formItem.id && (!link.visible || link.visible(formItem))" v-for="link in childLinks" :key="link.path"
                            color="blue darken-1"
                            text
                            @click="navigateToChild(link.path)">
@@ -124,8 +124,8 @@
                 this.$emit("update:dialog", false);
                 this.$emit("cancel");
             },
-            navigateToChild(path) {
-                this.close();
+            async navigateToChild(path) {
+                await this.checkSave();
                 this.$router.push({ name: path, params: { parentId: this.item.id } });
             }
         }

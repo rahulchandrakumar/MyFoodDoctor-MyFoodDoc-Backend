@@ -1,10 +1,11 @@
 <template>
-    <ColabDataTable title="Subchapters"
-                    store-name="subchapters"
-                    editor-title-suffix="subchapter item"
+    <ColabDataTable title="Methods"
+                    store-name="methods"
+                    editor-title-suffix="method item"
                     :headers="mainHeaders"
                     :before-save="beforeSave"
-                    :parent="parent">
+                    :parent="parent"
+                    :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -31,10 +32,10 @@
                              rules="required|min:1|max:1000" />
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.order"
-                              :label="mainHeaders.filter(h => h.value == 'order')[0].text"
-                              rules="required|integer|min_value:1"
-                              number />
+                <VeeSelect v-model="item.type"
+                           :items="types"
+                           label="Type"
+                           rules="required" />
             </v-row>
         </template>
     </ColabDataTable>
@@ -43,13 +44,15 @@
 <script>
     import Vue from 'vue'
     import integration from "@/integration";
+    import MethodType from "@/enums/MethodType";
 
     export default {
         components: {
             ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
             VeeTextField: () => import("@/components/inputs/VeeTextField"),
             VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
-            VeeTextArea: () => import("@/components/inputs/VeeTextArea")
+            VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
+            VeeSelect: () => import("@/components/inputs/VeeSelect")
         },
         data() {
             return {
@@ -57,24 +60,28 @@
                     sortable: true,
                     value: "title",
                     text: "Title"
-                }, {
-                    sortable: true,
-                    value: "order",
-                    text: "Order"
                 }],
                 parent: {
-                    path: "Chapters",
-                    parentIdProperty: "courseId",
-                    title: "Chapter",
+                    path: "Targets",
+                    parentIdProperty: "optimizationAreaId",
+                    title: "Target",
                     titleProperty: "title",
-                    storeName: "chapters"
+                    storeName: "targets"
                 },
+                childLinks: [{
+                    path: "Method Multiple Choices",
+                    title: "Edit multiple choices",
+                    visible: (item) => item.type == 'MultipleChoice'
+                }],
                 preview: false
             }
         },
+        created() {
+            this.types = Object.values(MethodType);
+        },
         methods: {
             async beforeSave(item) {
-                item.chapterId = Number.parseInt(this.$route.params.parentId);
+                item.targetId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");
