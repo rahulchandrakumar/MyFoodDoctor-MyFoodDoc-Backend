@@ -28,6 +28,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<ILexiconService, LexiconService>();
             services.AddScoped<ITargetService, TargetService>();
+            services.AddScoped<IMethodService, MethodService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserHistoryService, UserHistoryService>();
 
