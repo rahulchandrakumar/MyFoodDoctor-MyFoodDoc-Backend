@@ -13,7 +13,7 @@ namespace MyFoodDoc.Application.Entites
 
         public int MethodId { get; set; }
 
-        public bool Answer { get; set; }
+        public bool? Answer { get; set; }
 
         public int? MethodMultipleChoiceId { get; set; }
 

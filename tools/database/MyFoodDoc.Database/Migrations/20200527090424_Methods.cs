@@ -69,7 +69,7 @@ namespace MyFoodDoc.Database.Migrations
                     LastModified = table.Column<DateTime>(nullable: true),
                     UserId = table.Column<string>(maxLength: 450, nullable: false),
                     MethodId = table.Column<int>(nullable: false),
-                    Answer = table.Column<bool>(nullable: false),
+                    Answer = table.Column<bool>(nullable: true),
                     MethodMultipleChoiceId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>

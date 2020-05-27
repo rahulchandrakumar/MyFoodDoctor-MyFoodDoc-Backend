@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20200526163134_Methods")]
+    [Migration("20200527090424_Methods")]
     partial class Methods
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1177,7 +1177,7 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Answer")
+                    b.Property<bool?>("Answer")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("Created")

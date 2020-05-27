@@ -1175,7 +1175,7 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Answer")
+                    b.Property<bool?>("Answer")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("Created")
