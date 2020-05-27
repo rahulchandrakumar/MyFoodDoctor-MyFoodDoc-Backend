@@ -60,67 +60,67 @@
                            readonly />
                     -->
                 <VeeTextField v-model="item.type"
-                              label="Typ"
+                              label="Type"
                               rules="required"
                               readonly />
             </v-row>
             <v-row>
                 <VeeSelect v-model="item.priority"
                            :items="priorities"
-                           label="Priorität"
+                           label="Priority"
                            rules="required" />
             </v-row>
             <v-row>
                 <VeeSelect v-model="item.triggerOperator"
                            :items="operators"
-                           label="Auslöseoperator"
+                           label="Trigger operator"
                            rules="required" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.triggerValue"
-                              label="Auslösewert"
+                              label="Trigger value"
                               rules="required|decimal"
                               number />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.threshold"
-                              label="Fälle,%"
+                              label="Cases,%"
                               rules="required|decimal"
                               number />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.targetValue"
-                              label="Zielwert"
+                              label="Target value"
                               rules="required|decimal"
                               number />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.step"
-                              label="Interval/Schritte"
+                              label="Step"
                               rules="required|decimal"
                               number />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeSelect v-model="item.stepDirection"
                            :items="stepDirections"
-                           label="Intervalsteigung"
+                           label="Step direction"
                            rules="required" />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.recommendedText"
-                              label="Antwort(empfohlen)"
+                              label="Answer(recommended)"
                               rules="required|max:1000"
                               :counter="1000" />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.targetText"
-                              label="Antwort(Ziel)"
+                              label="Answer(Target)"
                               rules="required|max:1000"
                               :counter="1000" />
             </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.remainText"
-                              label="Antwort(Beibehalten)"
+                              label="Anwer(Remain)"
                               rules="required|max:1000"
                               :counter="1000" />
             </v-row>
