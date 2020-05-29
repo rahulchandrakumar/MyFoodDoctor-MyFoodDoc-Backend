@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using MyFoodDoc.Core.Configuration.ConfigurationMapper;
+using System.Reflection;
 
 namespace MyFoodDoc.CMS
 {
@@ -12,9 +15,15 @@ namespace MyFoodDoc.CMS
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            .ConfigureAppConfiguration((builderContext, config) =>
+            {
+                config.AddUserSecrets(Assembly.GetExecutingAssembly())
+                .WithJsonMapping("mapping.json");
+                //.WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json"));
+            })
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>();
+            });
     }
 }

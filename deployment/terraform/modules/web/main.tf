@@ -240,27 +240,25 @@ resource "azurerm_app_service" "cms" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT              = var.apiapp_aspenv
-    APPINSIGHTS_INSTRUMENTATIONKEY      = azurerm_application_insights.appinsights.instrumentation_key
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE = "false"
-    DOCKER_REGISTRY_SERVER_URL          = var.containerregistry_url
-    DOCKER_REGISTRY_SERVER_USERNAME     = var.containerregistry_admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD     = var.containerregistry_admin_password
-    DOCKER_CUSTOM_IMAGE_NAME            = "${var.projectname}-cms"
-    DOCKER_ENABLE_CI                    = "false"
-    CDN                                 = "https://${var.projectname}-cdnendpoint-${var.stage}.azureedge.net"
-  }
-
-  connection_string {
-    name  = "DefaultConnection"
-    type  = "SQLServer"
-    value = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
-  }
-
-  connection_string {
-    name  = "BlobStorageConnectionString"
-    type  = "Custom"
-    value = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+    ASPNETCORE_ENVIRONMENT                      = var.apiapp_aspenv
+    APPINSIGHTS_INSTRUMENTATIONKEY              = azurerm_application_insights.appinsights.instrumentation_key
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
+    BLOB_STORAGE_CONNECTION                     = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+    CDN                                         = "https://${var.projectname}-cdnendpoint-${var.stage}.azureedge.net"
+    DEFAULT_DATABASE_CONNECTION                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+    DOCKER_REGISTRY_SERVER_URL                  = var.containerregistry_url
+    DOCKER_REGISTRY_SERVER_USERNAME             = var.containerregistry_admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD             = var.containerregistry_admin_password
+    DOCKER_CUSTOM_IMAGE_NAME                    = "${var.projectname}-cms"
+    DOCKER_ENABLE_CI                            = "false"
+    FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
+    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = "ab118ff9a12641e4a6e80407b82f2b16"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
+    FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
+    FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
   }
 
   identity {

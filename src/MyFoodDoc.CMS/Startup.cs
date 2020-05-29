@@ -71,7 +71,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IMethodService, MethodService>();
             services.AddTransient<IMethodMultipleChoiceService, MethodMultipleChoiceService>();
             services.AddApplicationDI();
-            services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnectionString"), Configuration.GetValue<Uri>("CDN"));
+            services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnection"), Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
             #endregion
 
