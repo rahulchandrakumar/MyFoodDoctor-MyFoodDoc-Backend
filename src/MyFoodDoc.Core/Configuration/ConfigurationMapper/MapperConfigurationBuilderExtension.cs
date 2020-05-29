@@ -30,5 +30,29 @@ namespace MyFoodDoc.Core.Configuration.ConfigurationMapper
 
             return builder;
         }
+
+        public static IConfigurationBuilder WithJsonMapping(this IConfigurationBuilder builder, Stream stream)
+        {
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            var unmappedConfig = builder.Build();
+
+            var mappingBuilder = new ConfigurationBuilder()
+                .AddJsonStream(stream);
+
+            builder.Sources.Clear();
+            builder.AddConfiguration(unmappedConfig);
+            builder.Add(new MapperConfigurationSource { Mapping = mappingBuilder.Build(), Configuration = unmappedConfig });
+
+            return builder;
+        }
     }
 }
