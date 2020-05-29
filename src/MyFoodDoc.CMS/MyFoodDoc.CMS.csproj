@@ -20,6 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="mapping.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="mapping.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.4" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.Json" Version="3.1.4" />
