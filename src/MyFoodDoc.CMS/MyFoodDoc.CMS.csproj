@@ -45,10 +45,12 @@
     <ProjectReference Include="..\MyFoodDoc.CMS.Application\MyFoodDoc.CMS.Application.csproj" />
     <ProjectReference Include="..\MyFoodDoc.CMS.Infrastructure\MyFoodDoc.CMS.Infrastructure.csproj" />
     <ProjectReference Include="..\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="app\src\integration\modules\courses\" />
+    <Folder Include="app\src\integration\modules\servings\" />
     <Folder Include="app\src\integration\modules\targets\" />
     <Folder Include="app\src\integration\modules\optimizationareas\" />
     <Folder Include="app\src\store\modules\courses\" />

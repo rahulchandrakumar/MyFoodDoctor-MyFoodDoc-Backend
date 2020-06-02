@@ -3,6 +3,7 @@
                     editor-title-suffix="portion"
                     store-name="portions"
                     :headers="mainHeaders"
+                    :before-edit="beforeEdit"
                     :could-add="false"
                     :could-remove="false">
         <template v-slot:filter="{ filter, loading }">
@@ -32,7 +33,7 @@
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.servingId"
-                              :label="mainHeaders.filter(h => h.value == 'servingDescription')[0].text"
+                              :label="mainHeaders.filter(h => h.value == 'servingId')[0].text"
                               readonly />
             </v-row>
             <v-row>
@@ -51,77 +52,92 @@
                               label="Calories"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.calories : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.carbohydrate"
                               label="Carbohydrate"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.carbohydrate : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.protein"
                               label="Protein"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.protein : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.fat"
                               label="Fat"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.fat : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.saturatedFat"
                               label="Saturated fat"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.saturatedFat : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.polyunsaturatedFat"
                               label="Polyunsaturated fat"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.polyunsaturatedFat : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.monounsaturatedFat"
                               label="Monounsaturated fat"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.monounsaturatedFat : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.cholesterol"
                               label="Cholesterol"
                               rules="decimal" />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.cholesterol : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.sodium"
                               label="Sodium"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.sodium : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.potassium"
                               label="Potassium"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.potassium : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.fiber"
                               label="Fiber"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.fiber : null}}</span>
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.sugar"
                               label="Sugar"
                               rules="decimal"
                               number />
+                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.sugar : null}}</span>
             </v-row>
         </template>
     </ColabDataTable>
 </template>
 
 <script>
+    import Vue from 'vue'
+    import integration from "@/integration";
+
     export default {
         components: {
             ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
@@ -162,6 +178,16 @@
                     align: "right"
                 }
             ]
-        })
-    };
+        }),
+        methods: {
+            async beforeEdit(item) {
+                let response = await integration.servings.get({ foodId: item.foodId, servingId: item.servingId });
+                if (response.status !== 200) {
+                    throw new Error(`undefined error in backend (${response.status})`);
+                }
+
+                item.fatSecretServing = response.data;
+            }
+        }
+    }
 </script>

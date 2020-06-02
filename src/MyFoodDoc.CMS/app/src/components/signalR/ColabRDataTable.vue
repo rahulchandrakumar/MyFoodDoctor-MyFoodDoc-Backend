@@ -163,6 +163,10 @@
                 type: Function,
                 default: null
             },
+            beforeEdit: {
+                type: Function,
+                default: null
+            },
             parent: {
                 type: Object,
                 default: null
@@ -291,6 +295,9 @@
             },
             methods: {
                 async onBeginEdit(item) {
+                    if (this.beforeEdit)
+                        await this.beforeEdit(item);
+
                     this.editItem = Object.assign({}, item);
 
                     var editprops = this.stateDict[item.id] || {};

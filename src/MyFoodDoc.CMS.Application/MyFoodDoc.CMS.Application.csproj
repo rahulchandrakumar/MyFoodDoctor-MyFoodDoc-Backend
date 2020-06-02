@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MyFoodDoc.Application\MyFoodDoc.Application.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj" />
   </ItemGroup>
 
 </Project>

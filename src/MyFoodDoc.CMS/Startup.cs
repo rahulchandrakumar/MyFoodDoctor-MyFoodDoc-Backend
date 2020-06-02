@@ -70,7 +70,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<ISubchapterService, SubchapterService>();
             services.AddTransient<IMethodService, MethodService>();
             services.AddTransient<IMethodMultipleChoiceService, MethodMultipleChoiceService>();
-            services.AddApplicationDI();
+            services.AddApplicationDI(Configuration);
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnection"), Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
             #endregion
