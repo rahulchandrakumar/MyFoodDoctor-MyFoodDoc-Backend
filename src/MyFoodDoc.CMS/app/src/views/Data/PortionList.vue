@@ -48,87 +48,170 @@
                               number />
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.calories"
-                              label="Calories"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.calories : null}}</span>
+                <v-col>
+                    <span>FoodDoc value</span>
+                </v-col>
+                <v-col>
+                    <span>FatSecret value</span>
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.carbohydrate"
-                              label="Carbohydrate"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.carbohydrate : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.calories"
+                                  label="Calories"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.calories"
+                                  :disabled="true"/>
+
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.protein"
-                              label="Protein"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.protein : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.carbohydrate"
+                                  label="Carbohydrate"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.carbohydrate"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.fat"
-                              label="Fat"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.fat : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.protein"
+                                  label="Protein"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.protein"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.saturatedFat"
-                              label="Saturated fat"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.saturatedFat : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.fat"
+                                  label="Fat"
+                                  rules="decimal"
+                                  number />
+
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.fat"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.polyunsaturatedFat"
-                              label="Polyunsaturated fat"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.polyunsaturatedFat : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.saturatedFat"
+                                  label="Saturated fat"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.saturatedFat"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.monounsaturatedFat"
-                              label="Monounsaturated fat"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.monounsaturatedFat : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.polyunsaturatedFat"
+                                  label="Polyunsaturated fat"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.polyunsaturatedFat"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.cholesterol"
-                              label="Cholesterol"
-                              rules="decimal" />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.cholesterol : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.monounsaturatedFat"
+                                  label="Monounsaturated fat"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.monounsaturatedFat"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.sodium"
-                              label="Sodium"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.sodium : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.cholesterol"
+                                  label="Cholesterol"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.cholesterol"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.potassium"
-                              label="Potassium"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.potassium : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.sodium"
+                                  label="Sodium"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.sodium"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.fiber"
-                              label="Fiber"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.fiber : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.potassium"
+                                  label="Potassium"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.potassium"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.sugar"
-                              label="Sugar"
-                              rules="decimal"
-                              number />
-                <span>Fat secret value: {{item.fatSecretServing ? item.fatSecretServing.sugar : null}}</span>
+                <v-col>
+                    <VeeTextField v-model="item.fiber"
+                                  label="Fiber"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.fiber"
+                                  :disabled="true" />
+                </v-col>
+            </v-row>
+            <v-row>
+                <v-col>
+                    <VeeTextField v-model="item.sugar"
+                                  label="Sugar"
+                                  rules="decimal"
+                                  number />
+                </v-col>
+                <v-col>
+                    <v-text-field v-if="item.fatSecretServing"
+                                  v-model="item.fatSecretServing.sugar"
+                                  :disabled="true" />
+                </v-col>
             </v-row>
         </template>
     </ColabDataTable>
