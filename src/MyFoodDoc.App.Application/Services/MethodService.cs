@@ -82,7 +82,7 @@ namespace MyFoodDoc.App.Application.Services
                             x.UserId == userId && x.MethodId == methodToShow.Id &&
                             x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
                         .ToListAsync(cancellationToken))
-                    .GroupBy(g => g.MethodId)
+                    .GroupBy(g => g.MethodMultipleChoiceId)
                     .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value).ToList();
 
                 foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
