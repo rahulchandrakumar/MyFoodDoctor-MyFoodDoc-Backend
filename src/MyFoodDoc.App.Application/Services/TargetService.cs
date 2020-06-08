@@ -480,5 +480,16 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task<bool> IsStatisticsReady(string userId, CancellationToken cancellationToken)
+        {
+            return await _context.UserTargets.AnyAsync(x=> x.UserId == userId, cancellationToken);
+        }
+
+        public async Task<bool> IsSecondStatisticsReady(string userId, CancellationToken cancellationToken)
+        {
+            return !await _context.UserTargets.AnyAsync(x =>
+                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
+        }
     }
 }

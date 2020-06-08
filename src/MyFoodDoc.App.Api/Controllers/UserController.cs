@@ -17,16 +17,18 @@ namespace MyFoodDoc.App.Api.Controllers
     [Authorize]
     public class UserController : BaseController
     {
-        private IUserService _service;
-        private IUserHistoryService _historyService;
-        private IDiaryService _diaryService;
+        private readonly IUserService _service;
+        private readonly IUserHistoryService _historyService;
+        private readonly IDiaryService _diaryService;
+        private readonly ITargetService _targetService;
         private readonly ILogger _logger;
 
-        public UserController(IUserService service, IUserHistoryService historyService, IDiaryService diaryService, ILogger<UserController> logger)
+        public UserController(IUserService service, IUserHistoryService historyService, IDiaryService diaryService, ITargetService targetService, ILogger<UserController> logger)
         {
             _service = service;
             _historyService = historyService;
             _diaryService = diaryService;
+            _targetService = targetService;
             _logger = logger;
         }
 
@@ -118,8 +120,8 @@ namespace MyFoodDoc.App.Api.Controllers
 
             var result = new UserStatisticsReadyDto
             {
-                Statistics = true,
-                SecondStatistics = true,
+                Statistics = await _targetService.IsStatisticsReady(user, cancellationToken),
+                SecondStatistics = await _targetService.IsSecondStatisticsReady(user, cancellationToken),
                 IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken)
             };
 
