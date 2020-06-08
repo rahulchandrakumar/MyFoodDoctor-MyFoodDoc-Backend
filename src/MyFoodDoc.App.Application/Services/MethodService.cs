@@ -4,7 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Configuration;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Method;
@@ -19,61 +21,88 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly ITargetService _targetService;
+        private readonly int _statisticsPeriod;
 
-        public MethodService(IApplicationContext context, ITargetService targetService)
+        public MethodService(IApplicationContext context, ITargetService targetService, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _targetService = targetService;
+            _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
         public async Task<ICollection<MethodDto>> GetAsync(string userId, CancellationToken cancellationToken)
         {
             var result = new List<MethodDto>();
 
-            var triggered = await _targetService.GetAsync(userId, cancellationToken);
+            var triggeredTargetIds = (await _targetService.GetAsync(userId, cancellationToken)).SelectMany(x => x.Targets).Select(x=> x.Id).ToList();
 
-            foreach (var target in triggered.SelectMany(x => x.Targets))
+            var methods = await _context.Methods.Where(x => triggeredTargetIds.Contains(x.TargetId))
+                .ToListAsync(cancellationToken);
+
+            if (!methods.Any())
+                return result;
+
+            var methodIds = methods.Select(x => x.Id);
+            
+            var userMethodShowHistory = (await _context.UserMethodShowHistory
+                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod) &&
+                            methodIds.Contains(x.MethodId))
+                .ToListAsync(cancellationToken))
+                .GroupBy(g => g.MethodId)
+                .Select(x => new { x.Key, Count = x.Count() });
+
+            Method methodToShow = methods.FirstOrDefault(x => userMethodShowHistory.All(y => y.Key != x.Id));
+
+            if (methodToShow == null)
             {
-                foreach (var method in await _context.Methods.Where(x => x.TargetId == target.Id)
-                    .ToListAsync(cancellationToken))
+                var userMethodShowHistoryItem = userMethodShowHistory.OrderBy(x => x.Count).First();
+
+                methodToShow = methods.First(x => x.Id == userMethodShowHistoryItem.Key);
+            }
+
+            var methodDto = new MethodDto
+            {
+                Id = methodToShow.Id,
+                Title = methodToShow.Title,
+                Text = methodToShow.Text,
+                Type = methodToShow.Type.ToString()
+            };
+
+            if (methodToShow.Type == MethodType.YesNo)
+            {
+                var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == methodToShow.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                methodDto.UserAnswer = userMethod?.Answer;
+            }
+            else
+            {
+                methodDto.Choices = new List<MethodMultipleChoiceDto>();
+
+                var userMethods = (await _context.UserMethods.Where(x =>
+                            x.UserId == userId && x.MethodId == methodToShow.Id &&
+                            x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+                        .ToListAsync(cancellationToken))
+                    .GroupBy(g => g.MethodId)
+                    .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value).ToList();
+
+                foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
+                    .Where(x => x.MethodId == methodToShow.Id).ToListAsync(cancellationToken))
                 {
-                    var methodDto = new MethodDto
+                    methodDto.Choices.Add(new MethodMultipleChoiceDto
                     {
-                        Id = method.Id,
-                        Title = method.Title,
-                        Text = method.Text,
-                        Type = method.Type.ToString()
-                    };
-
-                    if (method.Type == MethodType.YesNo)
-                    {
-                        var userMethod = await _context.UserMethods.SingleOrDefaultAsync(x => x.UserId == userId && x.MethodId == method.Id, cancellationToken);
-
-                        methodDto.UserAnswer = userMethod?.Answer;
-                    }
-                    else
-                    {
-                        methodDto.Choices = new List<MethodMultipleChoiceDto>();
-
-                        var userMethods = await _context.UserMethods
-                            .Where(x => x.UserId == userId && x.MethodId == method.Id).Select(x => x.MethodMultipleChoiceId.Value).ToListAsync(cancellationToken);
-
-                        foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
-                            .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
-                        {
-                            methodDto.Choices.Add(new MethodMultipleChoiceDto
-                            {
-                                Id = methodMultipleChoice.Id,
-                                Title = methodMultipleChoice.Title,
-                                IsCorrect = methodMultipleChoice.IsCorrect,
-                                CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
-                            });
-                        }
-                    }
-
-                    result.Add(methodDto);
+                        Id = methodMultipleChoice.Id,
+                        Title = methodMultipleChoice.Title,
+                        IsCorrect = methodMultipleChoice.IsCorrect,
+                        CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
+                    });
                 }
             }
+
+            result.Add(methodDto);
+
+            await _context.UserMethodShowHistory.AddAsync(new UserMethodShowHistoryItem { MethodId = methodToShow.Id, UserId = userId }, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
 
             return result;
         }
@@ -93,7 +122,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     if (item.UserAnswer != null)
                     {
-                        var userMethod = await _context.UserMethods.SingleOrDefaultAsync(x => x.UserId == userId && x.MethodId == method.Id, cancellationToken);
+                        var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                         if (userMethod == null)
                         {
@@ -108,7 +137,11 @@ namespace MyFoodDoc.App.Application.Services
                 }
                 else
                 {
-                    foreach (var userMethod in await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken))
+                    foreach (var userMethod in (await _context.UserMethods.Where(x =>
+                        x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+                        .ToListAsync(cancellationToken))
+                        .GroupBy(g => g.MethodMultipleChoiceId)
+                        .Select(x => x.OrderBy(y => y.Created).Last()))
                     {
                         _context.UserMethods.Remove(userMethod);
                     }

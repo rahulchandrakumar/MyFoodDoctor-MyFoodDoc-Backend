@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Exceptions;
+using MyFoodDoc.Application.Entites.Targets;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -32,21 +34,398 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<OptimizationAreaDto>();
 
-            var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync();
-            var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync();
-            var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync();
+            var triggeredTargets = new List<TargetDto>();
 
-            var targetIds = _context.DietTargets.Where(x => userDiets.Contains(x.DietId)).Select(x => x.TargetId)
-                .Union(_context.IndicationTargets.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.TargetId))
-                .Union(_context.MotivationTargets.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.TargetId)).Distinct();
+            List<UserTarget> userTargets = new List<UserTarget>();
 
-            if (!targetIds.Any())
-                return result;
+            if (await _context.UserTargets.AnyAsync(x =>
+                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken))
+            {
+                userTargets = (await _context.UserTargets.Where(x =>
+                        x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).ToListAsync(cancellationToken))
+                    .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).ToList();
+            }
+            else
+            {
+                var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
+                var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
+                var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
 
-            var dailyUserIngredients = new Dictionary<DateTime, MealNutritionsDto>();
+                var targetIds = _context.DietTargets.Where(x => userDiets.Contains(x.DietId)).Select(x => x.TargetId)
+                    .Union(_context.IndicationTargets.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.TargetId))
+                    .Union(_context.MotivationTargets.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.TargetId)).Distinct();
+
+                if (!targetIds.Any())
+                    return result;
+
+                var dailyUserIngredients = await GetDailyUserIngredients(userId, DateTime.Now, cancellationToken);
+
+                foreach (var dailyMeals in _context.Meals
+                    .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToList().GroupBy(g => g.Date))
+                {
+                    var dailyNutritions = new MealNutritionsDto
+                    {
+                        Protein = 0,
+                        Sugar = 0,
+                        Vegetables = 0
+                    };
+
+                    foreach (var meal in dailyMeals)
+                    {
+                        var mealNutritions = await _foodService.GetMealNutritionsAsync(meal.Id, cancellationToken);
+
+                        dailyNutritions.Protein += mealNutritions.Protein;
+                        dailyNutritions.Sugar += mealNutritions.Sugar;
+                        dailyNutritions.Vegetables += mealNutritions.Vegetables;
+                    }
+
+                    dailyUserIngredients[dailyMeals.Key] = dailyNutritions;
+                }
+
+                if (!dailyUserIngredients.Any())
+                    return result;
+
+                foreach (var target in _context.Targets.Include(x => x.OptimizationArea).Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority))
+                {
+                    int triggeredDaysCount = 0;
+
+                    //TODO: use constants or enums
+                    if (target.OptimizationArea.Key == "protein")
+                    {
+                        var weightHistory = await _context.UserWeights
+                            .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToListAsync(cancellationToken);
+
+                        decimal weight = 0;
+
+                        if (weightHistory.Any())
+                        {
+                            weight = weightHistory.Average(x => x.Value);
+                        }
+                        else
+                        {
+                            var userWeight = _context.UserWeights.Where(x => x.Date < DateTime.Now.AddDays(-_statisticsPeriod))
+                                .OrderBy(x => x.Date).LastOrDefault();
+
+                            if (userWeight == null)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                weight = userWeight.Value;
+                            }
+                        }
+
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight > target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                        else
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight < target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                    }
+                    else if (target.OptimizationArea.Key == "sugar")
+                    {
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar > target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                        else
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                    }
+                    else if (target.OptimizationArea.Key == "vegetables")
+                    {
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables > target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                        else
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                    }
+
+                    var frequency = (decimal)triggeredDaysCount * 100 / _statisticsPeriod;
+
+                    if (frequency > target.Threshold)
+                    {
+                        var userTarget = new UserTarget { UserId = userId, TargetId = target.Id };
+
+                        await _context.UserTargets.AddAsync(userTarget, cancellationToken);
+
+                        userTargets.Add(userTarget);
+                    }
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            foreach (var userTarget in userTargets)
+            {
+                var target = await _context.Targets.Include(x => x.OptimizationArea).SingleAsync(x => x.Id == userTarget.TargetId, cancellationToken);
+
+                var targetImage = _context.Images.Single(x => x.Id == target.ImageId);
+
+                var targetDto = new TargetDto
+                {
+                    Id = target.Id,
+                    Type = target.Type.ToString(),
+                    Title = target.Title,
+                    Text = target.Text,
+                    ImageUrl = targetImage.Url
+                };
+
+                var dailyUserIngredients = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
+
+                //TODO: use constants or enums
+                if (target.Type == TargetType.Adjustment)
+                {
+                    var adjustmentTarget = await _context.AdjustmentTargets.SingleAsync(x => x.TargetId == target.Id, cancellationToken);
+
+                    decimal bestValue = 0;
+
+                    //TODO: use constants or enums
+                    if (target.OptimizationArea.Key == "protein")
+                    {
+                        var weightHistory = await _context.UserWeights
+                            .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToListAsync(cancellationToken);
+
+                        decimal weight = 0;
+
+                        if (weightHistory.Any())
+                        {
+                            weight = weightHistory.Average(x => x.Value);
+                        }
+                        else
+                        {
+                            var userWeight = await _context.UserWeights.Where(x => x.Date < userTarget.Created.AddDays(-_statisticsPeriod))
+                                .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+                            if (userWeight == null)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                weight = userWeight.Value;
+                            }
+                        }
+
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight > target.TriggerValue);
+
+                            if (triggeredDays.Any())
+                                bestValue = triggeredDays.Min(x => x.Protein);
+                        }
+                        else
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight < target.TriggerValue);
+
+                            if (triggeredDays.Any())
+                                bestValue = triggeredDays.Max(x => x.Protein);
+                        }
+                    }
+                    else if (target.OptimizationArea.Key == "sugar")
+                    {
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar > target.TriggerValue);
+
+                            if (triggeredDays.Any())
+                                bestValue = triggeredDays.Min(x => x.Sugar);
+                        }
+                        else
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
+
+                            if (triggeredDays.Any())
+                                bestValue = triggeredDays.Max(x => x.Sugar);
+                        }
+                    }
+                    else if (target.OptimizationArea.Key == "vegetables")
+                    {
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables > target.TriggerValue);
+
+                            if (triggeredDays.Any())
+                                bestValue = triggeredDays.Min(x => x.Vegetables);
+                        }
+                        else
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
+
+                            if (triggeredDays.Any())
+                                bestValue = triggeredDays.Max(x => x.Vegetables);
+                        }
+                    }
+
+                    decimal recommendedValue = (adjustmentTarget.StepDirection == AdjustmentTargetStepDirection.Ascending)
+                        ? bestValue - bestValue % adjustmentTarget.Step + adjustmentTarget.Step
+                        : bestValue - bestValue % adjustmentTarget.Step;
+
+                    targetDto.Answers = new List<TargetAnswerDto>();
+
+                    if (target.OptimizationArea.Key == "protein")
+                    {
+                        var weightHistory = await _context.UserWeights
+                            .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToListAsync(cancellationToken);
+
+                        decimal weight = 0;
+
+                        if (weightHistory.Any())
+                        {
+                            weight = weightHistory.Average(x => x.Value);
+                        }
+                        else
+                        {
+                            weight = (await _context.UserWeights.Where(x => x.Date < userTarget.Created.AddDays(-_statisticsPeriod))
+                                .OrderBy(x => x.Date).LastAsync(cancellationToken)).Value;
+                        }
+
+                        var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
+
+                        decimal targetValue = 0;
+
+                        if (BMI((double)height, (double)weight) < 25)
+                        {
+                            targetValue = weight * adjustmentTarget.TargetValue;
+                        }
+                        else
+                        {
+                            targetValue = (height - 100) * adjustmentTarget.TargetValue;
+                        }
+
+                        if (recommendedValue < targetValue)
+                            targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
+                    }
+                    else
+                    {
+                        if (recommendedValue != adjustmentTarget.TargetValue)
+                            targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
+                    }
+
+                    targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
+                }
+                else
+                {
+                    targetDto.Answers = new[] {
+                                new TargetAnswerDto { Code = "yes", Value ="Ja"},
+                                new TargetAnswerDto { Code = "no", Value = "Nein" }
+                            };
+                }
+
+                var userAnswer = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == target.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
+
+                if (!result.Any(x => x.Key == target.OptimizationArea.Key))
+                {
+                    var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
+
+                    var analysisDto = new AnalysisDto();
+
+                    if (target.OptimizationArea.Key == "protein")
+                    {
+                        var weightHistory = _context.UserWeights
+                            .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToList();
+
+                        decimal weight = 0;
+
+                        if (weightHistory.Any())
+                        {
+                            weight = weightHistory.Average(x => x.Value);
+                        }
+                        else
+                        {
+                            weight = _context.UserWeights.Where(x => x.Date < userTarget.Created.AddDays(-_statisticsPeriod))
+                                .OrderBy(x => x.Date).Last().Value;
+                        }
+
+                        var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
+
+                        if (BMI((double)height, (double)weight) < 25)
+                        {
+                            analysisDto.Optimal = weight * target.OptimizationArea.Optimal;
+                        }
+                        else
+                        {
+                            analysisDto.Optimal = (height - 100) * target.OptimizationArea.Optimal;
+                        }
+
+                        analysisDto.UpperLimit = (decimal)1.1 * analysisDto.Optimal.Value;
+                        analysisDto.LowerLimit = (decimal)0.9 * analysisDto.Optimal.Value;
+
+                        analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                        { Date = x.Key, Value = x.Value.Protein }).ToList();
+                    }
+                    else if (target.OptimizationArea.Key == "sugar")
+                    {
+                        analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
+                        analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
+                        analysisDto.Optimal = target.OptimizationArea.Optimal;
+
+                        analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                        { Date = x.Key, Value = x.Value.Sugar }).ToList();
+                    }
+                    else if (target.OptimizationArea.Key == "vegetables")
+                    {
+                        analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
+                        analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
+                        analysisDto.Optimal = target.OptimizationArea.Optimal;
+
+                        analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                        { Date = x.Key, Value = x.Value.Vegetables }).ToList();
+                    }
+
+                    result.Add(new OptimizationAreaDto
+                    {
+                        Key = target.OptimizationArea.Key,
+                        Name = target.OptimizationArea.Name,
+                        Text = target.OptimizationArea.Text,
+                        ImageUrl = optimizationAreaImage?.Url,
+                        Analysis = analysisDto,
+                        Targets = new List<TargetDto>()
+                    });
+                }
+
+                result.Single(x => x.Key == target.OptimizationArea.Key).Targets.Add(targetDto);
+            }
+
+            return result;
+        }
+
+        private double BMI(double height, double weight)
+        {
+            return (double)weight / Math.Pow((double)height / 100, 2);
+        }
+
+        private async Task<Dictionary<DateTime, MealNutritionsDto>> GetDailyUserIngredients(string userId, DateTime onDate, CancellationToken cancellationToken)
+        {
+            var result = new Dictionary<DateTime, MealNutritionsDto>();
 
             foreach (var dailyMeals in _context.Meals
-                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToList().GroupBy(g => g.Date))
+                .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod)).ToList().GroupBy(g => g.Date))
             {
                 var dailyNutritions = new MealNutritionsDto
                 {
@@ -64,242 +443,26 @@ namespace MyFoodDoc.App.Application.Services
                     dailyNutritions.Vegetables += mealNutritions.Vegetables;
                 }
 
-                dailyUserIngredients[dailyMeals.Key] = dailyNutritions;
-            }
-
-            if (!dailyUserIngredients.Any())
-                return result;
-
-            var triggeredTargets = new List<TargetDto>();       
-
-            foreach (var target in _context.Targets.Include(x => x.OptimizationArea).Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority))
-            {
-                int triggeredDaysCount = 0;
-                decimal bestValue = 0;
-
-                //TODO: use constants or enums
-                if (target.OptimizationArea.Key == "protein")
-                {
-                    var weightHistory = _context.UserWeights
-                        .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToList();
-
-                    if (!weightHistory.Any())
-                    {
-                        continue;
-                    }
-
-                    var averageWeight = weightHistory.Average(x => x.Value);
-
-                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                    {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / averageWeight > target.TriggerValue);
-
-                        triggeredDaysCount = triggeredDays.Count();
-
-                        if (triggeredDays.Any())
-                            bestValue = triggeredDays.Min(x => x.Protein);
-                    }
-                    else
-                    {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / averageWeight < target.TriggerValue);
-
-                        triggeredDaysCount = triggeredDays.Count();
-
-                        if (triggeredDays.Any())
-                            bestValue = triggeredDays.Max(x => x.Protein);
-                    }
-                }
-                else if (target.OptimizationArea.Key == "sugar")
-                {
-                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                    {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar > target.TriggerValue);
-
-                        triggeredDaysCount = triggeredDays.Count();
-
-                        if (triggeredDays.Any())
-                            bestValue = triggeredDays.Min(x => x.Sugar);
-                    }
-                    else
-                    {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
-
-                        triggeredDaysCount = triggeredDays.Count();
-
-                        if (triggeredDays.Any())
-                            bestValue = triggeredDays.Max(x => x.Sugar);
-                    }
-                }
-                else if (target.OptimizationArea.Key == "vegetables")
-                {
-                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                    {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables > target.TriggerValue);
-
-                        triggeredDaysCount = triggeredDays.Count();
-
-                        if (triggeredDays.Any())
-                            bestValue = triggeredDays.Min(x => x.Vegetables);
-                    }
-                    else
-                    {
-                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
-
-                        triggeredDaysCount = triggeredDays.Count();
-
-                        if (triggeredDays.Any())
-                            bestValue = triggeredDays.Max(x => x.Vegetables);
-                    }
-                }
-
-                var frequency = (decimal)triggeredDaysCount * 100 / _statisticsPeriod;
-
-                if (frequency > target.Threshold)
-                {
-                    var targetImage = _context.Images.Single(x => x.Id == target.ImageId);
-
-                    var targetDto = new TargetDto
-                    {
-                        Id = target.Id,
-                        Type = target.Type.ToString(),
-                        Title = target.Title,
-                        Text = target.Text,
-                        ImageUrl = targetImage.Url
-                    };
-
-                    //TODO: use constants or enums
-                    if (target.Type == TargetType.Adjustment)
-                    {
-                        var adjustmentTarget = await _context.AdjustmentTargets.SingleAsync(x => x.TargetId == target.Id);
-
-                        decimal recommendedValue = (adjustmentTarget.StepDirection == AdjustmentTargetStepDirection.Ascending)
-                            ? bestValue - bestValue % adjustmentTarget.Step + adjustmentTarget.Step
-                            : bestValue - bestValue % adjustmentTarget.Step;
-
-                        targetDto.Answers = new List<TargetAnswerDto>();
-
-                        if (target.OptimizationArea.Key == "protein")
-                        {
-                            var averageWeight = _context.UserWeights
-                                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).Average(x => x.Value);
-
-                            var height = _context.Users.Single(x => x.Id == userId).Height.Value;
-
-                            decimal targetValue = 0;
-
-                            if (BMI((double)height, (double)averageWeight) < 25)
-                            {
-                                targetValue = averageWeight * adjustmentTarget.TargetValue;
-                            }
-                            else
-                            {
-                                targetValue = (height - 100) * adjustmentTarget.TargetValue;
-                            }
-
-                            if (recommendedValue < targetValue)
-                                targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
-
-                            targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
-                        }
-                        else
-                        {
-                            if (recommendedValue != adjustmentTarget.TargetValue)
-                                targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
-
-                            targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
-                        }
-
-                        targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
-                    }
-                    else
-                    {
-                        targetDto.Answers = new[] {
-                                new TargetAnswerDto { Code = "yes", Value ="Ja"},
-                                new TargetAnswerDto { Code = "no", Value = "Nein" }
-                            };
-                    }
-
-                    var userAnswer = await _context.UserTargets.SingleOrDefaultAsync(x => x.UserId == userId && x.TargetId == target.Id);
-
-                    targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
-
-                    if (!result.Any(x => x.Key == target.OptimizationArea.Key))
-                    {
-                        var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
-
-                        var analysisDto = new AnalysisDto();
-
-                        if (target.OptimizationArea.Key == "protein")
-                        {
-                            var averageWeight = _context.UserWeights
-                                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).Average(x => x.Value);
-
-                            var height = _context.Users.Single(x => x.Id == userId).Height.Value;
-
-                            if (BMI((double)height, (double) averageWeight) < 25)
-                            {
-                                analysisDto.Optimal = averageWeight * target.OptimizationArea.Optimal;
-                            }
-                            else
-                            {
-                                analysisDto.Optimal = (height - 100) * target.OptimizationArea.Optimal;
-                            }
-
-                            analysisDto.UpperLimit = (decimal)1.1 * analysisDto.Optimal.Value;
-                            analysisDto.LowerLimit = (decimal)0.9 * analysisDto.Optimal.Value;
-
-                            analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
-                                {Date = x.Key, Value = x.Value.Protein}).ToList();
-                        }
-                        else if (target.OptimizationArea.Key == "sugar")
-                        {
-                            analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
-                            analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
-                            analysisDto.Optimal = target.OptimizationArea.Optimal;
-
-                            analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
-                                { Date = x.Key, Value = x.Value.Sugar }).ToList();
-                        }
-                        else if (target.OptimizationArea.Key == "vegetables")
-                        {
-                            analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
-                            analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
-                            analysisDto.Optimal = target.OptimizationArea.Optimal;
-
-                            analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
-                                { Date = x.Key, Value = x.Value.Vegetables }).ToList();
-                        }
-
-                        result.Add(new OptimizationAreaDto
-                        {
-                            Key = target.OptimizationArea.Key,
-                            Name = target.OptimizationArea.Name,
-                            Text = target.OptimizationArea.Text,
-                            ImageUrl = optimizationAreaImage?.Url,
-                            Analysis = analysisDto,
-                            Targets = new List<TargetDto>()
-                        });
-                    }
-
-                    result.Single(x => x.Key == target.OptimizationArea.Key).Targets.Add(targetDto);
-                }
+                result[dailyMeals.Key] = dailyNutritions;
             }
 
             return result;
         }
 
-        private double BMI(double height, double weight)
-        {
-            return (double)weight / Math.Pow((double)height / 100, 2);
-        }
-         
         public async Task InsertAsync(string userId, InsertTargetPayload payload, CancellationToken cancellationToken)
         {
-            foreach(var answer in payload.Targets)
+            foreach (var answer in payload.Targets)
             {
-                var userTarget = _context.UserTargets.SingleOrDefault(x => x.UserId == userId && x.TargetId == answer.TargetId);
+                var target = await _context.Targets.SingleOrDefaultAsync(x => x.Id == answer.TargetId, cancellationToken);
 
-                if(userTarget == null)
+                if (target == null)
+                {
+                    throw new NotFoundException(nameof(Target), answer.TargetId);
+                }
+
+                var userTarget = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == answer.TargetId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                if (userTarget == null)
                 {
                     await _context.UserTargets.AddAsync(new UserTarget { UserId = userId, TargetId = answer.TargetId, TargetAnswerCode = answer.UserAnswerCode }, cancellationToken);
                 }
