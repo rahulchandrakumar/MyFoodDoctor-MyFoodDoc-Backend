@@ -109,23 +109,30 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("statistics/ready")]
-        [ProducesResponseType(typeof(UserStatisticsReadyDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserStatisticsReadyDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
+        [HttpGet("statistics")]
+        [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
         {
-
             var user = GetUserId();
 
-            //TODO: implement statistics check
-
-            var result = new UserStatisticsReadyDto
+            var result = new UserStatisticsDto
             {
-                Statistics = await _targetService.IsStatisticsReady(user, cancellationToken),
-                SecondStatistics = await _targetService.IsSecondStatisticsReady(user, cancellationToken),
-                IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken)
+                HasSubscription = (await _service.GetUserAsync(user, cancellationToken)).HasSubscription,
+                IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken),
+                HasTargetsTriggered = await _targetService.AnyTriggered(user, cancellationToken)
             };
 
             return Ok(result);
+        }
+
+        [HttpPost("subscription/{hasSubscription}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateUserHasSubscription([FromRoute] bool hasSubscription, CancellationToken cancellationToken = default)
+        {
+            await _service.UpdateUserHasSubscription(GetUserId(), hasSubscription, cancellationToken);
+
+            return Ok();
         }
     }
 }

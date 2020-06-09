@@ -26,6 +26,10 @@ namespace MyFoodDoc.App.Application.Models
 
         public int? InsuranceId { get; set; }
 
+        public bool HasSubscription { get; set; }
+
+        public DateTime? HasSubscriptionUpdated { get; set; }
+
         public ICollection<string> Motivations { get; set; }
 
         public ICollection<string> Indications { get; set; }

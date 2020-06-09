@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.App.Application.Models
+﻿namespace MyFoodDoc.App.Application.Models
 {
-    public class UserStatisticsReadyDto
+    public class UserStatisticsDto
     {
-        public bool Statistics { get; set; }
-        public bool SecondStatistics { get; set; }
+        public bool HasSubscription { get; set; }
         public bool IsDiaryFull { get; set; }
-
+        public bool HasTargetsTriggered { get; set; }
     }
 }

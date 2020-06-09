@@ -251,5 +251,22 @@ namespace MyFoodDoc.App.Application.Services
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, newPassword);
         }
+
+        public async Task UpdateUserHasSubscription(string userId, bool hasSubscription, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            user.HasSubscription = hasSubscription;
+            user.HasSubscriptionUpdated = DateTime.Now;
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
