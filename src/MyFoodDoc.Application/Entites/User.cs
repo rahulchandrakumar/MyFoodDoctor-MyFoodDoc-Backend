@@ -19,6 +19,10 @@ namespace MyFoodDoc.Application.Entites
 
         public int? InsuranceId { get; set; }
 
+        public bool HasSubscription { get; set; }
+
+        public DateTime? HasSubscriptionUpdated { get; set; }
+
         public Insurance Insurance { get; set; }
 
         public DateTime Created { get; set; }
