@@ -47,6 +47,8 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public decimal? Vegetables { get; set; }
 
+        public bool ContainsPlantProtein { get; set; }
+
         public static Ingredient FromModel(IngredientModel model)
         {
             return model == null ? null : new Ingredient()
@@ -72,7 +74,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Potassium = model.Potassium,
                 Fiber = model.Fiber,
                 Sugar = model.Sugar,
-                Vegetables = model.Vegetables
+                Vegetables = model.Vegetables,
+                ContainsPlantProtein = model.ContainsPlantProtein
             };
         }
 
@@ -101,7 +104,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Potassium = this.Potassium,
                 Fiber = this.Fiber,
                 Sugar = this.Sugar,
-                Vegetables = this.Vegetables
+                Vegetables = this.Vegetables,
+                ContainsPlantProtein = this.ContainsPlantProtein
             };
         }
     }

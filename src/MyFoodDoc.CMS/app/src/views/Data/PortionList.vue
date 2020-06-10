@@ -48,6 +48,10 @@
                               number />
             </v-row>
             <v-row>
+                <v-switch v-model="item.containsPlantProtein"
+                          label="Animal/Plant proteins" />
+            </v-row>
+            <v-row>
                 <v-col>
                     <span>FoodDoc value</span>
                 </v-col>
@@ -65,7 +69,7 @@
                 <v-col>
                     <v-text-field v-if="item.fatSecretServing"
                                   v-model="item.fatSecretServing.calories"
-                                  :disabled="true"/>
+                                  :disabled="true" />
 
                 </v-col>
             </v-row>
