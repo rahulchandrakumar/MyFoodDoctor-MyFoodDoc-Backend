@@ -46,7 +46,8 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new MealNutritionsDto
             {
-                Protein = 0,
+                AnimalProtein = 0,
+                PlantProtein = 0,
                 Sugar = 0,
                 Vegetables = 0
             };
@@ -66,7 +67,13 @@ namespace MyFoodDoc.App.Application.Services
 
                 var serving = food.Servings.Serving.Single(x => x.Id == mealIngredient.Ingredient.ServingId);
 
-                result.Protein += (mealIngredient.Ingredient.Protein ?? serving.Protein) * mealIngredient.Amount;
+                decimal protein = (mealIngredient.Ingredient.Protein ?? serving.Protein) * mealIngredient.Amount;
+
+                if (mealIngredient.Ingredient.ContainsPlantProtein)
+                    result.PlantProtein += protein;
+                else
+                    result.AnimalProtein += protein;
+
                 result.Sugar += (mealIngredient.Ingredient.Sugar ?? serving.Sugar) * mealIngredient.Amount;
                 result.Vegetables += (mealIngredient.Ingredient.Vegetables ?? 0) * mealIngredient.Amount;
             }

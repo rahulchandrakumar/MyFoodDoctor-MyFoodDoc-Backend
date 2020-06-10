@@ -65,7 +65,8 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     var dailyNutritions = new MealNutritionsDto
                     {
-                        Protein = 0,
+                        AnimalProtein = 0,
+                        PlantProtein = 0,
                         Sugar = 0,
                         Vegetables = 0
                     };
@@ -74,7 +75,8 @@ namespace MyFoodDoc.App.Application.Services
                     {
                         var mealNutritions = await _foodService.GetMealNutritionsAsync(meal.Id, cancellationToken);
 
-                        dailyNutritions.Protein += mealNutritions.Protein;
+                        dailyNutritions.AnimalProtein += mealNutritions.AnimalProtein;
+                        dailyNutritions.PlantProtein += mealNutritions.PlantProtein;
                         dailyNutritions.Sugar += mealNutritions.Sugar;
                         dailyNutritions.Vegetables += mealNutritions.Vegetables;
                     }
@@ -312,6 +314,7 @@ namespace MyFoodDoc.App.Application.Services
                             targetValue = (height - 100) * adjustmentTarget.TargetValue;
                         }
 
+                        //TODO: use constants or enums
                         if (recommendedValue < targetValue)
                             targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
 
@@ -329,6 +332,7 @@ namespace MyFoodDoc.App.Application.Services
                 }
                 else
                 {
+                    //TODO: use constants or enums
                     targetDto.Answers = new[] {
                                 new TargetAnswerDto { Code = "yes", Value ="Ja"},
                                 new TargetAnswerDto { Code = "no", Value = "Nein" }
@@ -376,8 +380,22 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.UpperLimit = (decimal)1.1 * analysisDto.Optimal.Value;
                         analysisDto.LowerLimit = (decimal)0.9 * analysisDto.Optimal.Value;
 
-                        analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                        analysisDto.DailyData = dailyUserIngredients.Select(x => new AnalysisDailyDataDto
                         { Date = x.Key, Value = x.Value.Protein }).ToList();
+
+                        var protein = dailyUserIngredients.Sum(x => x.Value.Protein);
+
+                        if (protein > 0)
+                        {
+                            var animalProtein = dailyUserIngredients.Sum(x => x.Value.AnimalProtein);
+
+                            //TODO: use constants or enums
+                            analysisDto.DiagramData = new []
+                            {
+                                new AnalysisDiagramDataDto { Key = "animal", Value = (int)Math.Round(animalProtein * 100 / protein) },
+                                new AnalysisDiagramDataDto { Key = "plant", Value = 100 - (int)Math.Round(animalProtein * 100 / protein) }
+                            };
+                        }
                     }
                     else if (target.OptimizationArea.Key == "sugar")
                     {
@@ -385,7 +403,7 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
                         analysisDto.Optimal = target.OptimizationArea.Optimal;
 
-                        analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                        analysisDto.DailyData = dailyUserIngredients.Select(x => new AnalysisDailyDataDto
                         { Date = x.Key, Value = x.Value.Sugar }).ToList();
                     }
                     else if (target.OptimizationArea.Key == "vegetables")
@@ -394,7 +412,7 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
                         analysisDto.Optimal = target.OptimizationArea.Optimal;
 
-                        analysisDto.Data = dailyUserIngredients.Select(x => new AnalysisDataDto
+                        analysisDto.DailyData = dailyUserIngredients.Select(x => new AnalysisDailyDataDto
                         { Date = x.Key, Value = x.Value.Vegetables }).ToList();
                     }
 
@@ -429,7 +447,8 @@ namespace MyFoodDoc.App.Application.Services
             {
                 var dailyNutritions = new MealNutritionsDto
                 {
-                    Protein = 0,
+                    AnimalProtein = 0,
+                    PlantProtein = 0,
                     Sugar = 0,
                     Vegetables = 0
                 };
@@ -437,8 +456,9 @@ namespace MyFoodDoc.App.Application.Services
                 foreach (var meal in dailyMeals)
                 {
                     var mealNutritions = await _foodService.GetMealNutritionsAsync(meal.Id, cancellationToken);
-
-                    dailyNutritions.Protein += mealNutritions.Protein;
+                    
+                    dailyNutritions.AnimalProtein += mealNutritions.AnimalProtein;
+                    dailyNutritions.PlantProtein += mealNutritions.PlantProtein;
                     dailyNutritions.Sugar += mealNutritions.Sugar;
                     dailyNutritions.Vegetables += mealNutritions.Vegetables;
                 }

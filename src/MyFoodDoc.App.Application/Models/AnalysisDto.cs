@@ -12,6 +12,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public decimal? Optimal { get; set; }
 
-        public ICollection<AnalysisDataDto> Data { get; set; }
+        public ICollection<AnalysisDailyDataDto> DailyData { get; set; }
+
+        public ICollection<AnalysisDiagramDataDto> DiagramData { get; set; }
     }
 }

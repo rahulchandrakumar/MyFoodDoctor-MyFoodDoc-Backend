@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyFoodDoc.App.Application.Models
 {
-    public class AnalysisDataDto
+    public class AnalysisDailyDataDto
     {
         public DateTime Date { get; set; }
 
