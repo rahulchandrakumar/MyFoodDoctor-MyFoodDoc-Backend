@@ -48,6 +48,8 @@ namespace MyFoodDoc.Application.Entites
 
         public decimal? Vegetables { get; set; }
 
+        public bool ContainsPlantProtein { get; set; }
+
         public ICollection<MealIngredient> Meals { get; set; }
     }
 }

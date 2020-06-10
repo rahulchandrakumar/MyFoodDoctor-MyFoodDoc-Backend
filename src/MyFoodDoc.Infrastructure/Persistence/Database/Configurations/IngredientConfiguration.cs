@@ -33,6 +33,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
             builder.Property(o => o.Fiber).HasColumnType(NutritionsDecimal);
             builder.Property(o => o.Sugar).HasColumnType(NutritionsDecimal);
             builder.Property(o => o.Vegetables).HasColumnType(NutritionsDecimal);
+            builder.Property(x => x.ContainsPlantProtein).HasDefaultValue(false);
 
             builder.HasIndex(i => new { i.FoodId, i.ServingId }).IsUnique();
             builder.HasIndex(i => i.LastSynchronized);
