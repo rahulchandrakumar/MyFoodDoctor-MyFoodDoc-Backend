@@ -125,8 +125,10 @@
                 this.$emit("cancel");
             },
             async navigateToChild(path) {
-                await this.checkSave();
-                this.$router.push({ name: path, params: { parentId: this.item.id } });
+                if ((await this.$refs.observer.validate()) && !this.$refs.observer.invalid) {
+                    this.save();
+                    this.$router.push({ name: path, params: { parentId: this.item.id } });
+                }
             }
         }
     };

@@ -107,9 +107,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
 
-            if (oldImageId != null && (item.Image == null || string.IsNullOrEmpty(item.Image.Url) || item.Image.Id != oldImageId))
+            if (item.Image.Id != oldImageId)
             {
-                var image = await _context.Images.SingleAsync(x => x.Id == oldImageId.Value);
+                var image = await _context.Images.SingleAsync(x => x.Id == oldImageId, cancellationToken);
                 _context.Images.Remove(image);
 
                 await _imageService.DeleteImage(image.Url, cancellationToken);

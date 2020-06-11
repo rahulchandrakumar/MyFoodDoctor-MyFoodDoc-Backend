@@ -107,7 +107,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             if (item.Image.Id != oldImageId)
             {
-                var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId);
+                var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId, cancellationToken);
                 _context.Images.Remove(oldImage);
 
                 await _imageService.DeleteImage(oldImage.Url, cancellationToken);

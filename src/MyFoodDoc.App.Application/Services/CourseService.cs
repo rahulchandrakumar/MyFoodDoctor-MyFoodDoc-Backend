@@ -27,7 +27,7 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<CourseDto>();
 
-            foreach(var course in await _context.Courses.Where(x => x.IsActive).Include(x => x.Image).Include(x => x.Chapters).OrderBy(x => x.Order).ToListAsync())
+            foreach(var course in await _context.Courses.Where(x => x.IsActive).Include(x => x.Image).Include(x => x.Chapters).OrderBy(x => x.Order).ToListAsync(cancellationToken))
             {
                 result.Add(new CourseDto
                 {
@@ -36,7 +36,7 @@ namespace MyFoodDoc.App.Application.Services
                     Text = course.Text,
                     Order = course.Order,
                     ImageUrl = course.Image.Url,
-                    CompletedChaptersCount = (await _context.UserAnswers.Where(x => x.UserId == userId).ToListAsync()).Count(x => course.Chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)),
+                    CompletedChaptersCount = (await _context.UserAnswers.Where(x => x.UserId == userId).ToListAsync(cancellationToken)).Count(x => course.Chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)),
                     ChaptersCount = course.Chapters.Count()
                 });
             }
@@ -52,7 +52,7 @@ namespace MyFoodDoc.App.Application.Services
 
             foreach (var chapter in course.Chapters.OrderBy(x => x.Order))
             {
-                var userAnswer = await _context.UserAnswers.SingleOrDefaultAsync(x => x.UserId == userId && x.ChapterId == chapter.Id);
+                var userAnswer = await _context.UserAnswers.SingleOrDefaultAsync(x => x.UserId == userId && x.ChapterId == chapter.Id, cancellationToken);
 
                 chapters.Add(new ChapterDto
                 {
@@ -60,7 +60,7 @@ namespace MyFoodDoc.App.Application.Services
                     Title = chapter.Title,
                     Text = chapter.Text,
                     Order = chapter.Order,
-                    ImageUrl = chapter.ImageId == null ? null : (await _context.Images.Where(x => x.Id == chapter.ImageId).SingleAsync()).Url,
+                    ImageUrl = (await _context.Images.Where(x => x.Id == chapter.ImageId).SingleAsync(cancellationToken)).Url,
                     Subchapters = chapter.Subchapters.Select(x => new SubchapterDto
                     {
                         Title = x.Title,
@@ -88,7 +88,7 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task InsertAnswerAsync(string userId, int courseId, AnswerPayload payload, CancellationToken cancellationToken)
         {
-            var userAnswer = await _context.UserAnswers.SingleOrDefaultAsync(x => x.UserId == userId && x.ChapterId == payload.ChapterId);
+            var userAnswer = await _context.UserAnswers.SingleOrDefaultAsync(x => x.UserId == userId && x.ChapterId == payload.ChapterId, cancellationToken);
 
             if (userAnswer == null)
             {

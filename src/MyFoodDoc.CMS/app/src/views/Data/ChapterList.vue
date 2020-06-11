@@ -23,6 +23,7 @@
             <v-row>
                 <VeeImage v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
+                          rules="required"
                           :image-width="900"
                           :image-height="300" />
             </v-row>
@@ -133,7 +134,7 @@
         },
         methods: {
             async beforeSave(item) {
-                if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
+                if (item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
                 item.courseId = Number.parseInt(this.$route.params.parentId);
