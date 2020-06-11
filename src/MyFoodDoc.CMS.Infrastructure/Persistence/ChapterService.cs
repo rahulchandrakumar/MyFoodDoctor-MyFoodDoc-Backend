@@ -103,17 +103,17 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Chapters.FindAsync(new object[] { item.Id }, cancellationToken);
 
-            var newEntity = item.ToEntity();
+            var oldImageId = entity.ImageId;
 
-            if (entity.ImageId != null && (newEntity.Image == null || newEntity.ImageId != entity.ImageId))
+            _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
+
+            if (oldImageId != null && (item.Image == null || string.IsNullOrEmpty(item.Image.Url) || item.Image.Id != oldImageId))
             {
-                var image = await _context.Images.SingleAsync(x => x.Id == entity.ImageId.Value);
+                var image = await _context.Images.SingleAsync(x => x.Id == oldImageId.Value);
                 _context.Images.Remove(image);
 
                 await _imageService.DeleteImage(image.Url, cancellationToken);
             }
-
-            _context.Entry(entity).CurrentValues.SetValues(newEntity);
 
             await _context.SaveChangesAsync(cancellationToken);
 
