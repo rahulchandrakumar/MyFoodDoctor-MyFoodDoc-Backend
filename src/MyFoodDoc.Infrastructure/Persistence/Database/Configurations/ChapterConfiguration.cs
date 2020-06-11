@@ -23,6 +23,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.AnswerText1).IsRequired().HasMaxLength(100);
             builder.Property(o => o.AnswerText2).IsRequired().HasMaxLength(100);
             builder.Property(o => o.Answer).IsRequired();
+            builder.Property(o => o.ImageId).IsRequired();
 
             builder.HasOne(x => x.Course).WithMany(x => x.Chapters).HasForeignKey(x => x.CourseId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);

@@ -13,7 +13,7 @@ namespace MyFoodDoc.Application.Entites.Courses
 
         public int Order { get; set; }
 
-        public int? ImageId { get; set; }
+        public int ImageId { get; set; }
 
         public string QuestionTitle { get; set; }
 
