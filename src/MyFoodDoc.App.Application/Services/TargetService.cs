@@ -506,5 +506,11 @@ namespace MyFoodDoc.App.Application.Services
             return await _context.UserTargets.AnyAsync(x =>
                 x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
         }
+
+        public async Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken)
+        {
+            return await _context.UserTargets.AnyAsync(x =>
+                x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode), cancellationToken);
+        }
     }
 }
