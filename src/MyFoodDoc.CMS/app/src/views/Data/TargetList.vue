@@ -4,8 +4,6 @@
                     editor-title-suffix="target item"
                     :headers="mainHeaders"
                     :before-save="beforeSave"
-                    :could-add="false"
-                    :could-remove="false"
                     :parent="parent"
                     :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
@@ -51,18 +49,11 @@
                              :counter="1000" />
             </v-row>
             <v-row>
-                <!--
                 <VeeSelect v-model="item.type"
                            :items="types"
-                           label="Typ"
+                           label="Type"
                            rules="required"
-                           disabled="true"
                            readonly />
-                    -->
-                <VeeTextField v-model="item.type"
-                              label="Type"
-                              rules="required"
-                              readonly />
             </v-row>
             <v-row>
                 <VeeSelect v-model="item.priority"
@@ -188,6 +179,8 @@
             async beforeSave(item) {
                 if (item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
+
+                item.optimizationAreaId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");

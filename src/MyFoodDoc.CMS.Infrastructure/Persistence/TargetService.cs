@@ -29,13 +29,19 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var targetEntity = item.ToTargetEntity();
             await _context.Targets.AddAsync(targetEntity, cancellationToken);
 
+            await _context.SaveChangesAsync(cancellationToken);
+            
             var adjustmentTargetEntity = item.ToAdjustmentTargetEntity();
 
             if (adjustmentTargetEntity != null)
+            {
+                adjustmentTargetEntity.TargetId = targetEntity.Id;
+
                 await _context.AdjustmentTargets.AddAsync(adjustmentTargetEntity, cancellationToken);
 
-            await _context.SaveChangesAsync(cancellationToken);
-
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            
             targetEntity = await _context.Targets
                                             .Include(x => x.Image)
                                             .FirstOrDefaultAsync(u => u.Id == targetEntity.Id, cancellationToken);
@@ -118,38 +124,49 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<TargetModel> UpdateItem(TargetModel item, CancellationToken cancellationToken = default)
         {
-            try
+            var targetEntity = await _context.Targets.FindAsync(new object[] { item.Id }, cancellationToken);
+
+            var newTargetEntity = item.ToTargetEntity();
+
+            var oldImageId = targetEntity.ImageId;
+
+            if (item.Image.Id != oldImageId)
             {
-                var targetEntity = await _context.Targets.FindAsync(new object[] { item.Id }, cancellationToken);
+                var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId, cancellationToken);
+                _context.Images.Remove(oldImage);
 
-                var oldImageId = targetEntity.ImageId;
-
-                _context.Entry(targetEntity).CurrentValues.SetValues(item.ToTargetEntity());
-
-                if (item.Image.Id != oldImageId)
+                await _imageService.DeleteImage(oldImage.Url, cancellationToken);
+            }
+            
+            if (targetEntity.Type == TargetType.Adjustment)
+            {
+                if (newTargetEntity.Type == TargetType.Adjustment)
                 {
-                    var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId, cancellationToken);
-                    _context.Images.Remove(oldImage);
-
-                    await _imageService.DeleteImage(oldImage.Url, cancellationToken);
-                }
-
-                if (targetEntity.Type == TargetType.Adjustment)
-                {
-                    var adjustmentTargetEntity = await _context.AdjustmentTargets.FindAsync(new object[] { item.AdjustmentTargetId }, cancellationToken);
+                    var adjustmentTargetEntity =
+                        await _context.AdjustmentTargets.FindAsync(new object[] { item.AdjustmentTargetId },
+                            cancellationToken);
 
                     _context.Entry(adjustmentTargetEntity).CurrentValues.SetValues(item.ToAdjustmentTargetEntity());
                 }
+                else
+                {
+                    var adjustmentTargetEntity = await _context.AdjustmentTargets.FirstOrDefaultAsync(x => x.Id == item.AdjustmentTargetId, cancellationToken);
 
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return await GetItem(targetEntity.Id, cancellationToken);
+                    _context.AdjustmentTargets.Remove(adjustmentTargetEntity);
+                }
             }
-            catch (Exception e)
+            else if (newTargetEntity.Type == TargetType.Adjustment)
             {
-                string s = e.Message;
-                throw;
+                var adjustmentTargetEntity = item.ToAdjustmentTargetEntity();
+
+                await _context.AdjustmentTargets.AddAsync(adjustmentTargetEntity, cancellationToken);
             }
+
+            _context.Entry(targetEntity).CurrentValues.SetValues(newTargetEntity);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return await GetItem(targetEntity.Id, cancellationToken);
         }
     }
 }
