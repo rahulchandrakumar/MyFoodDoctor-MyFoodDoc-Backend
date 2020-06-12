@@ -21,12 +21,14 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IFoodService _foodService;
+        private readonly IDiaryService _diaryService;
         private readonly int _statisticsPeriod;
 
-        public TargetService(IApplicationContext context, IFoodService foodService, IOptions<StatisticsOptions> statisticsOptions)
+        public TargetService(IApplicationContext context, IFoodService foodService, IDiaryService diaryService, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _foodService = foodService;
+            _diaryService = diaryService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
@@ -34,7 +36,8 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<OptimizationAreaDto>();
 
-            var triggeredTargets = new List<TargetDto>();
+            if (!await _diaryService.IsDiaryFull(userId, cancellationToken))
+                return result;
 
             List<UserTarget> userTargets = new List<UserTarget>();
 
@@ -167,8 +170,6 @@ namespace MyFoodDoc.App.Application.Services
                     if (frequency > target.Threshold)
                     {
                         var userTarget = new UserTarget { UserId = userId, TargetId = target.Id };
-
-                        await _context.UserTargets.AddAsync(userTarget, cancellationToken);
 
                         userTargets.Add(userTarget);
                     }
@@ -501,12 +502,11 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> AnyTriggered(string userId, CancellationToken cancellationToken)
+        public async Task<bool> NewTriggered(string userId, CancellationToken cancellationToken)
         {
-            return await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
+            return !(await _context.UserTargets.AnyAsync(x =>
+                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken)) && (await GetAsync(userId, cancellationToken)).Any();
         }
-
         public async Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken)
         {
             return await _context.UserTargets.AnyAsync(x =>

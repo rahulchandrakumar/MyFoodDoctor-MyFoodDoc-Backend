@@ -8,7 +8,7 @@ namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface ITargetService
     {
-        Task<bool> AnyTriggered(string userId, CancellationToken cancellationToken);
+        Task<bool> NewTriggered(string userId, CancellationToken cancellationToken);
         Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken);
         Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, CancellationToken cancellationToken);
         Task InsertAsync(string userId, InsertTargetPayload payload, CancellationToken cancellationToken);

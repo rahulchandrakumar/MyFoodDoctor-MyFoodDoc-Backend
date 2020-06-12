@@ -224,7 +224,7 @@ namespace MyFoodDoc.App.Application.Services
                     .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod))
                     .Select(x => x.Date)
                     .Distinct()
-                    .CountAsync(cancellationToken) > 1;
+                    .CountAsync(cancellationToken) > 2;//TODO: Create configuration parameter
         }
 
         private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
