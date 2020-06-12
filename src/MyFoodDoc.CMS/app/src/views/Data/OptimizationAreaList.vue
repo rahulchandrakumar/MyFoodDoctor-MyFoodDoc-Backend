@@ -51,22 +51,120 @@
                              rules="required|min:1|max:1000" />
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.upperLimit"
-                              label="Upper limit"
+                <VeeTextField v-model="item.lineGraphUpperLimit"
+                              label="Line graph upper limit"
                               rules="decimal"
                               number />
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.lowerLimit"
-                              label="Lower limit"
+                <VeeTextField v-model="item.lineGraphLowerLimit"
+                              label="Line graph lower limit"
                               rules="decimal"
                               number />
             </v-row>
             <v-row>
-                <VeeTextField v-model="item.optimal"
-                              label="Optimal"
+                <VeeTextField v-model="item.lineGraphOptimal"
+                              label="Line graph optimal"
                               rules="decimal"
                               number />
+            </v-row>
+
+            <v-row>
+                <VeeTextField v-model="item.optimalLineGraphTitle"
+                              label="Optimal line graph title"
+                              rules="max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.optimalLineGraphText"
+                                 label="Optimal line graph text"
+                                 rules="max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.optimalLineGraphText"
+                             label="Optimal line graph text"
+                             rules="max:1000" />
+            </v-row>
+            <v-row>
+                <VeeTextField v-model="item.belowOptimalLineGraphTitle"
+                              label="Below optimal line graph title"
+                              rules="max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.belowOptimalLineGraphText"
+                                 label="Below optimal line graph text"
+                                 rules="max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.belowOptimalLineGraphText"
+                             label="Below optimal line graph text"
+                             rules="max:1000" />
+            </v-row>
+            <v-row>
+                <VeeTextField v-model="item.aboveOptimalLineGraphTitle"
+                              label="Above optimal line graph title"
+                              rules="max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.aboveOptimalLineGraphText"
+                                 label="Above optimal line graph text"
+                                 rules="max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.aboveOptimalLineGraphText"
+                             label="Above optimal line graph text"
+                             rules="max:1000" />
+            </v-row>
+
+            <v-row>
+                <VeeTextField v-model="item.OptimalPieChartTitle"
+                              label="Optimal pie chart title"
+                              rules="max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.optimalPieChartText"
+                                 label="Optimal pie chart text"
+                                 rules="max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.optimalPieChartText"
+                             label="Optimal pie chart text"
+                             rules="max:1000" />
+            </v-row>
+            <v-row>
+                <VeeTextField v-model="item.belowOptimalPieChartTitle"
+                              label="Below optimal pie chart title"
+                              rules="max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.belowOptimalPieChartText"
+                                 label="Below optimal pie chart text"
+                                 rules="max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.belowOptimalPieChartText"
+                             label="Below optimal pie chart text"
+                             rules="max:1000" />
+            </v-row>
+            <v-row>
+                <VeeTextField v-model="item.aboveOptimalPieChartTitle"
+                              label="Above optimal pie chart title"
+                              rules="max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.aboveOptimalPieChartText"
+                                 label="Above optimal pie chart text"
+                                 rules="max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.aboveOptimalPieChartText"
+                             label="Above optimal pie chart text"
+                             rules="max:1000" />
             </v-row>
         </template>
     </ColabDataTable>

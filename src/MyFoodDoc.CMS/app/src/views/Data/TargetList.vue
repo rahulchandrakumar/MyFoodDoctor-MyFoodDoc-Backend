@@ -43,10 +43,18 @@
                               :counter="1000" />
             </v-row>
             <v-row>
-                <VeeTextArea v-model="item.text"
+                <v-switch v-model="preview"
+                          label="HTML" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.text"
+                                 :label="mainHeaders.filter(h => h.value == 'text')[0].text"
+                                 rules="required|min:8|max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.text"
                              :label="mainHeaders.filter(h => h.value == 'text')[0].text"
-                             rules="required|max:1000"
-                             :counter="1000" />
+                             rules="required|min:1|max:1000" />
             </v-row>
             <v-row>
                 <VeeSelect v-model="item.type"
@@ -131,6 +139,7 @@
         components: {
             ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),
             VeeTextField: () => import("@/components/inputs/VeeTextField"),
+            VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
             VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
             VeeSelect: () => import("@/components/inputs/VeeSelect"),
             VeeImage: () => import("@/components/inputs/VeeImage")

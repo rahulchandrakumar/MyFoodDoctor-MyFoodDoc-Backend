@@ -36,9 +36,6 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<OptimizationAreaDto>();
 
-            if (!await _diaryService.IsDiaryFull(userId, cancellationToken))
-                return result;
-
             List<UserTarget> userTargets = new List<UserTarget>();
 
             if (await _context.UserTargets.AnyAsync(x =>
@@ -50,6 +47,9 @@ namespace MyFoodDoc.App.Application.Services
             }
             else
             {
+                if (!await _diaryService.IsDiaryFull(userId, cancellationToken))
+                    return result;
+
                 var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
                 var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
                 var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
@@ -350,6 +350,8 @@ namespace MyFoodDoc.App.Application.Services
 
                     var analysisDto = new AnalysisDto();
 
+                    analysisDto.LineGraph = new AnalysisLineGraphDto();
+
                     if (target.OptimizationArea.Key == "protein")
                     {
                         var weightHistory = _context.UserWeights
@@ -371,50 +373,123 @@ namespace MyFoodDoc.App.Application.Services
 
                         if (BMI((double)height, (double)weight) < 25)
                         {
-                            analysisDto.Optimal = weight * target.OptimizationArea.Optimal;
+                            analysisDto.LineGraph.Optimal = weight * target.OptimizationArea.LineGraphOptimal;
                         }
                         else
                         {
-                            analysisDto.Optimal = (height - 100) * target.OptimizationArea.Optimal;
+                            analysisDto.LineGraph.Optimal = (height - 100) * target.OptimizationArea.LineGraphOptimal;
                         }
 
-                        analysisDto.UpperLimit = (decimal)1.1 * analysisDto.Optimal.Value;
-                        analysisDto.LowerLimit = (decimal)0.9 * analysisDto.Optimal.Value;
+                        analysisDto.LineGraph.UpperLimit = (decimal)1.1 * analysisDto.LineGraph.Optimal.Value;
+                        analysisDto.LineGraph.LowerLimit = (decimal)0.9 * analysisDto.LineGraph.Optimal.Value;
 
-                        analysisDto.DailyData = dailyUserIngredients.Select(x => new AnalysisDailyDataDto
+                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                         { Date = x.Key, Value = x.Value.Protein }).ToList();
 
-                        var protein = dailyUserIngredients.Sum(x => x.Value.Protein);
+                        var totalProtein = dailyUserIngredients.Sum(x => x.Value.Protein);
 
-                        if (protein > 0)
+                        if (totalProtein > 0)
                         {
-                            var animalProtein = dailyUserIngredients.Sum(x => x.Value.AnimalProtein);
+                            var average = dailyUserIngredients.Average(x => x.Value.Protein);
+
+                            if (average > analysisDto.LineGraph.UpperLimit)
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                            }
+                            else if (average < analysisDto.LineGraph.LowerLimit)
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                            }
+                            else
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                            }
+                            
+                            analysisDto.PieChart = new AnalysisPieChartDto();
+                            
+                            var plantProteinPercent = (int)Math.Round(dailyUserIngredients.Sum(x => x.Value.PlantProtein) * 100 / totalProtein);
 
                             //TODO: use constants or enums
-                            analysisDto.DiagramData = new []
+                            if (plantProteinPercent > 65)
                             {
-                                new AnalysisDiagramDataDto { Key = "animal", Value = (int)Math.Round(animalProtein * 100 / protein) },
-                                new AnalysisDiagramDataDto { Key = "plant", Value = 100 - (int)Math.Round(animalProtein * 100 / protein) }
+                                analysisDto.PieChart.Title = target.OptimizationArea.AboveOptimalPieChartTitle;
+                                analysisDto.PieChart.Text = target.OptimizationArea.AboveOptimalPieChartText;
+                            }
+                            else if (plantProteinPercent < 45)
+                            {
+                                analysisDto.PieChart.Title = target.OptimizationArea.BelowOptimalPieChartTitle;
+                                analysisDto.PieChart.Text = target.OptimizationArea.BelowOptimalPieChartText;
+                            }
+                            else
+                            {
+                                analysisDto.PieChart.Title = target.OptimizationArea.OptimalPieChartTitle;
+                                analysisDto.PieChart.Text = target.OptimizationArea.OptimalPieChartText;
+                            }
+
+                            //TODO: use constants or enums
+                            analysisDto.PieChart.Data = new []
+                            {
+                                new AnalysisPieChartDataDto { Key = "animal", Value = 100 - plantProteinPercent },
+                                new AnalysisPieChartDataDto { Key = "plant", Value = plantProteinPercent }
                             };
                         }
                     }
                     else if (target.OptimizationArea.Key == "sugar")
                     {
-                        analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
-                        analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
-                        analysisDto.Optimal = target.OptimizationArea.Optimal;
+                        analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
+                        analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
+                        analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
 
-                        analysisDto.DailyData = dailyUserIngredients.Select(x => new AnalysisDailyDataDto
+                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                         { Date = x.Key, Value = x.Value.Sugar }).ToList();
+
+                        var totalSugar = dailyUserIngredients.Sum(x => x.Value.Sugar);
+
+                        if (totalSugar > 0)
+                        {
+                            var average = dailyUserIngredients.Average(x => x.Value.Sugar);
+
+                            if (average > target.OptimizationArea.LineGraphUpperLimit)
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                            }
+                            else
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                            }
+                        }
                     }
                     else if (target.OptimizationArea.Key == "vegetables")
                     {
-                        analysisDto.UpperLimit = target.OptimizationArea.UpperLimit;
-                        analysisDto.LowerLimit = target.OptimizationArea.LowerLimit;
-                        analysisDto.Optimal = target.OptimizationArea.Optimal;
+                        analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
+                        analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
+                        analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
 
-                        analysisDto.DailyData = dailyUserIngredients.Select(x => new AnalysisDailyDataDto
+                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                         { Date = x.Key, Value = x.Value.Vegetables }).ToList();
+
+                        var totalVegetables = dailyUserIngredients.Sum(x => x.Value.Vegetables);
+
+                        if (totalVegetables > 0)
+                        {
+                            var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
+
+                            if (average < target.OptimizationArea.LineGraphLowerLimit)
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                            }
+                            else
+                            {
+                                analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                                analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                            }
+                        }
                     }
 
                     result.Add(new OptimizationAreaDto

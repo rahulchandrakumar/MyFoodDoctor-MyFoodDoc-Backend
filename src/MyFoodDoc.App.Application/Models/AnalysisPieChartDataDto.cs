@@ -4,10 +4,10 @@ using System.Text;
 
 namespace MyFoodDoc.App.Application.Models
 {
-    public class AnalysisDailyDataDto
+    public class AnalysisPieChartDataDto
     {
-        public DateTime Date { get; set; }
+        public string Key { get; set; }
 
-        public decimal Value { get; set; }
+        public int Value { get; set; }
     }
 }

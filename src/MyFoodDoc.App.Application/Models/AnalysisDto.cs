@@ -6,14 +6,8 @@ namespace MyFoodDoc.App.Application.Models
 {
     public class AnalysisDto
     {
-        public decimal? UpperLimit { get; set; }
+        public AnalysisLineGraphDto LineGraph { get; set; }
 
-        public decimal? LowerLimit { get; set; }
-
-        public decimal? Optimal { get; set; }
-
-        public ICollection<AnalysisDailyDataDto> DailyData { get; set; }
-
-        public ICollection<AnalysisDiagramDataDto> DiagramData { get; set; }
+        public AnalysisPieChartDto PieChart { get; set; }
     }
 }
