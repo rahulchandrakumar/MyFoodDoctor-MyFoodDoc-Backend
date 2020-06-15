@@ -128,27 +128,27 @@
                 <v-col>
                     <span>Diets</span>
                     <ul>
-                        <li v-for="(element, index) in item.diets">
-                            <input type="checkbox" v-model="element.checked" v-bind:id="element.id" />
-                            <label :for="element.id">{{ element.name }}</label>
+                        <li v-for="(diet, index) in item.diets">
+                            <input type="checkbox" v-model="diet.checked" v-bind:id="diet.id" />
+                            <label>{{ diet.name }}</label>
                         </li>
                     </ul>
                 </v-col>
                 <v-col>
                     <span>Indications</span>
                     <ul>
-                        <li v-for="(element, index) in item.indications">
-                            <input type="checkbox" v-model="element.checked" v-bind:id="element.id" />
-                            <label :for="element.id">{{ element.name }}</label>
+                        <li v-for="(indication, index) in item.indications">
+                            <input type="checkbox" v-model="indication.checked" v-bind:id="indication.id" />
+                            <label>{{ indication.name }}</label>
                         </li>
                     </ul>
                 </v-col>
                 <v-col>
                     <span>Motivations</span>
                     <ul>
-                        <li v-for="(element, index) in item.motivations">
-                            <input type="checkbox" v-model="element.checked" v-bind:id="element.id" />
-                            <label :for="element.id">{{ element.name }}</label>
+                        <li v-for="(motivation, index) in item.motivations">
+                            <input type="checkbox" v-model="motivation.checked" v-bind:id="motivation.id" />
+                            <label>{{ motivation.name }}</label>
                         </li>
                     </ul>
                 </v-col>
