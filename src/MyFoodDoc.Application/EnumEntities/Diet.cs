@@ -7,5 +7,7 @@ namespace MyFoodDoc.Application.EnumEntities
     public class Diet : AbstractEnumEntity
     {
         public ICollection<DietTarget> Targets { get; set; }
+
+        public ICollection<DietMethod> Methods { get; set; }
     }
 }

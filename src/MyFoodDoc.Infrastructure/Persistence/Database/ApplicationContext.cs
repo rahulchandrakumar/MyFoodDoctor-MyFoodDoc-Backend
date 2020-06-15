@@ -56,6 +56,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
         public DbSet<UserMethod> UserMethods { get; set; }
         public DbSet<UserMethodShowHistoryItem> UserMethodShowHistory { get; set; }
+        public DbSet<MotivationMethod> MotivationMethods { get; set; }
+        public DbSet<IndicationMethod> IndicationMethods { get; set; }
+        public DbSet<DietMethod> DietMethods { get; set; }
 
         #endregion
 

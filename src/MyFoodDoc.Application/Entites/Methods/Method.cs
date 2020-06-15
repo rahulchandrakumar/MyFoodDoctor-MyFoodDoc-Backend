@@ -18,7 +18,12 @@ namespace MyFoodDoc.Application.Entites.Abstractions
 
         public string Text { get; set; }
 
-        public Target Target { get; set; }
+        public ICollection<MotivationMethod> Motivations { get; set; }
 
+        public ICollection<IndicationMethod> Indications { get; set; }
+
+        public ICollection<DietMethod> Diets { get; set; }
+
+        public Target Target { get; set; }
     }
 }

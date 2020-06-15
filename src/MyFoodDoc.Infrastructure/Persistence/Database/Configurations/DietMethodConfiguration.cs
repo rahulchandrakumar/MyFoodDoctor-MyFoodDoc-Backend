@@ -1,0 +1,28 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using MyFoodDoc.Application.Entites;
+
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
+{
+    public class DietMethodConfiguration : IEntityTypeConfiguration<DietMethod>
+    {
+        public void Configure(EntityTypeBuilder<DietMethod> builder)
+        {
+            builder.ToTable("DietMethods", "System");
+            builder.HasKey(x => new { x.DietId, x.MethodId });
+
+            builder.HasOne(x => x.Diet)
+                .WithMany(x => x.Methods)
+                .HasForeignKey(x => x.DietId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.Method)
+                .WithMany(x => x.Diets)
+                .HasForeignKey(x => x.MethodId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
+    }
+}

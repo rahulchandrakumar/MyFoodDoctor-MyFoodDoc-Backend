@@ -51,6 +51,9 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
         DbSet<UserMethod> UserMethods { get; set; }
         DbSet<UserMethodShowHistoryItem> UserMethodShowHistory { get; set; }
+        DbSet<MotivationMethod> MotivationMethods { get; set; }
+        DbSet<IndicationMethod> IndicationMethods { get; set; }
+        DbSet<DietMethod> DietMethods { get; set; }
 
         #endregion
 
