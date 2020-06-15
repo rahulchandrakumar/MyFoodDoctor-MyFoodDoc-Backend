@@ -16,6 +16,10 @@ namespace MyFoodDoc.App.Application.Models
 
         public bool? UserAnswer { get; set; }
 
+        public DateTime? DateAnswered { get; set; }
+
+        public TimeSpan? TimeAnswered { get; set; }
+
         public ICollection<MethodMultipleChoiceDto> Choices { get; set; }
 
     }

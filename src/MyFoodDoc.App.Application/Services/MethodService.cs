@@ -72,7 +72,12 @@ namespace MyFoodDoc.App.Application.Services
             {
                 var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == methodToShow.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
-                methodDto.UserAnswer = userMethod?.Answer;
+                if (userMethod?.Answer != null)
+                {
+                    methodDto.UserAnswer = userMethod.Answer;
+                    methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                    methodDto.TimeAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                }
             }
             else
             {
@@ -84,6 +89,14 @@ namespace MyFoodDoc.App.Application.Services
                         .ToListAsync(cancellationToken))
                     .GroupBy(g => g.MethodMultipleChoiceId)
                     .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value).ToList();
+
+                if (userMethods.Any())
+                {
+                    var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == methodToShow.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                    methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                    methodDto.TimeAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                }
 
                 foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
                     .Where(x => x.MethodId == methodToShow.Id).ToListAsync(cancellationToken))
