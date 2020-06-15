@@ -26,11 +26,14 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<TargetModel> AddItem(TargetModel item, CancellationToken cancellationToken = default)
         {
+            //Target
             var targetEntity = item.ToTargetEntity();
+
             await _context.Targets.AddAsync(targetEntity, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
-            
+
+            //AdjustmentTarget
             var adjustmentTargetEntity = item.ToAdjustmentTargetEntity();
 
             if (adjustmentTargetEntity != null)
@@ -46,7 +49,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                             .Include(x => x.Image)
                                             .FirstOrDefaultAsync(u => u.Id == targetEntity.Id, cancellationToken);
 
-            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity);
+            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity, _context);
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
@@ -78,7 +81,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 adjustmentTargetEntity = await _context.AdjustmentTargets
                                             .FirstOrDefaultAsync(x => x.TargetId == id, cancellationToken);
 
-            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity);
+            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity, _context);
         }
 
         public async Task<IList<TargetModel>> GetItems(CancellationToken cancellationToken = default)
@@ -90,7 +93,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var adjustmentTargetEntities = await _context.AdjustmentTargets
                                                 .ToListAsync(cancellationToken);
 
-            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
+            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id), _context)).ToList();
         }
 
         public IQueryable<Target> GetBaseQuery(int parentId, string search)
@@ -114,7 +117,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var adjustmentTargetEntities = await _context.AdjustmentTargets
                                                 .ToListAsync(cancellationToken);
 
-            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
+            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id), _context)).ToList();
         }
 
         public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
@@ -124,10 +127,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<TargetModel> UpdateItem(TargetModel item, CancellationToken cancellationToken = default)
         {
+            //Target
             var targetEntity = await _context.Targets.FindAsync(new object[] { item.Id }, cancellationToken);
 
             var newTargetEntity = item.ToTargetEntity();
 
+            //Image
             var oldImageId = targetEntity.ImageId;
 
             if (item.Image.Id != oldImageId)
@@ -137,7 +142,8 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
                 await _imageService.DeleteImage(oldImage.Url, cancellationToken);
             }
-            
+
+            //AdjustmentTarget
             if (targetEntity.Type == TargetType.Adjustment)
             {
                 if (newTargetEntity.Type == TargetType.Adjustment)
@@ -165,6 +171,54 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             _context.Entry(targetEntity).CurrentValues.SetValues(newTargetEntity);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            //DietTargets
+            var existingTargetDiets = await _context.DietTargets.Where(x => x.TargetId == item.Id).ToListAsync(cancellationToken);
+
+            _context.DietTargets.RemoveRange(existingTargetDiets);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var targetDiets = item.ToDietTargetEntities();
+
+            if (targetDiets != null)
+            {
+                await _context.DietTargets.AddRangeAsync(targetDiets, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //IndicationTargets
+            var existingTargetIndications = await _context.IndicationTargets.Where(x => x.TargetId == item.Id).ToListAsync(cancellationToken);
+
+            _context.IndicationTargets.RemoveRange(existingTargetIndications);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var targetIndications = item.ToIndicationTargetEntities();
+
+            if (targetIndications != null)
+            {
+                await _context.IndicationTargets.AddRangeAsync(targetIndications, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //MotivationTargets
+            var existingTargetMotivations = await _context.MotivationTargets.Where(x => x.TargetId == item.Id).ToListAsync(cancellationToken);
+
+            _context.MotivationTargets.RemoveRange(existingTargetMotivations);
+
+            await _context.SaveChangesAsync(cancellationToken);
+            
+            var targetMotivations = item.ToMotivationTargetEntities();
+
+            if (targetMotivations != null)
+            {
+                await _context.MotivationTargets.AddRangeAsync(targetMotivations, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
             return await GetItem(targetEntity.Id, cancellationToken);
         }

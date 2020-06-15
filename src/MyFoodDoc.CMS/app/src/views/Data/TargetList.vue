@@ -123,6 +123,36 @@
                               rules="required|max:1000"
                               :counter="1000" />
             </v-row>
+
+            <v-row v-if="item.diets">
+                <v-col>
+                    <span>Diets</span>
+                    <ul>
+                        <li v-for="(element, index) in item.diets">
+                            <input type="checkbox" v-model="element.checked" v-bind:id="element.id" />
+                            <label :for="element.id">{{ element.name }}</label>
+                        </li>
+                    </ul>
+                </v-col>
+                <v-col>
+                    <span>Indications</span>
+                    <ul>
+                        <li v-for="(element, index) in item.indications">
+                            <input type="checkbox" v-model="element.checked" v-bind:id="element.id" />
+                            <label :for="element.id">{{ element.name }}</label>
+                        </li>
+                    </ul>
+                </v-col>
+                <v-col>
+                    <span>Motivations</span>
+                    <ul>
+                        <li v-for="(element, index) in item.motivations">
+                            <input type="checkbox" v-model="element.checked" v-bind:id="element.id" />
+                            <label :for="element.id">{{ element.name }}</label>
+                        </li>
+                    </ul>
+                </v-col>
+            </v-row>
         </template>
     </ColabDataTable>
 </template>

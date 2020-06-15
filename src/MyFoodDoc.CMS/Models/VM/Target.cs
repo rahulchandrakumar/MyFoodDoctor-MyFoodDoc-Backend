@@ -1,4 +1,6 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Models.VMBase;
 
 namespace MyFoodDoc.CMS.Models.VM
@@ -24,6 +26,10 @@ namespace MyFoodDoc.CMS.Models.VM
         public string RemainText { get; set; }
         #endregion
 
+        public IList<CheckListItem<int>> Diets { get; set; }
+        public IList<CheckListItem<int>> Indications { get; set; }
+        public IList<CheckListItem<int>> Motivations { get; set; }
+
         public Image Image { get; set; }
 
         public static Target FromModel(TargetModel model)
@@ -46,7 +52,10 @@ namespace MyFoodDoc.CMS.Models.VM
                 RecommendedText = model.RecommendedText,
                 TargetText = model.TargetText,
                 RemainText = model.RemainText,
-                Image = Image.FromModel(model.Image)
+                Image = Image.FromModel(model.Image),
+                Diets = model.Diets?.ToList(),
+                Indications = model.Indications?.ToList(),
+                Motivations = model.Motivations?.ToList()
             };
         }
 
@@ -70,7 +79,10 @@ namespace MyFoodDoc.CMS.Models.VM
                 RecommendedText = this.RecommendedText,
                 TargetText = this.TargetText,
                 RemainText = this.RemainText,
-                Image = this.Image.ToModel()
+                Image = this.Image.ToModel(),
+                Diets = this.Diets?.ToList(),
+                Indications = this.Indications?.ToList(),
+                Motivations = this.Motivations?.ToList()
             };
         }
     }

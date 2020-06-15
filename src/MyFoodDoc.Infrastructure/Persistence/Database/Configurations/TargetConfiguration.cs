@@ -28,6 +28,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 
             builder.HasOne(x => x.OptimizationArea).WithMany().HasForeignKey(x => x.OptimizationAreaId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasMany(x => x.Indications).WithOne(x => x.Target).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.Motivations).WithOne(x => x.Target).OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(x => x.Diets).WithOne(x => x.Target).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
