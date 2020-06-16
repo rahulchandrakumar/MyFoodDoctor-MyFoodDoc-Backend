@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using MyFoodDoc.Application.Entites;
 using MyFoodDoc.Application.Entites.Abstractions;
 using MyFoodDoc.Application.Enums;
 
@@ -12,6 +14,9 @@ namespace MyFoodDoc.CMS.Application.Models
         public string Title { get; set; }
         public string Text { get; set; }
         public int TargetId { get; set; }
+        public IList<int> Diets { get; set; }
+        public IList<int> Indications { get; set; }
+        public IList<int> Motivations { get; set; }
 
         public static MethodModel FromEntity(Method entity)
         {
@@ -21,7 +26,10 @@ namespace MyFoodDoc.CMS.Application.Models
                 Type = entity.Type.ToString(),
                 Title = entity.Title,
                 Text = entity.Text,
-                TargetId = entity.TargetId
+                TargetId = entity.TargetId,
+                Diets = entity.Diets?.Select(x => x.DietId).ToList(),
+                Indications = entity.Indications?.Select(x => x.IndicationId).ToList(),
+                Motivations = entity.Motivations?.Select(x => x.MotivationId).ToList()
             };
         }
 
@@ -35,6 +43,21 @@ namespace MyFoodDoc.CMS.Application.Models
                 Text = this.Text,
                 TargetId = this.TargetId
             };
+        }
+
+        public IList<DietMethod> ToDietMethodEntities()
+        {
+            return this.Diets?.Select(x => new DietMethod { DietId = x, MethodId = this.Id }).ToList();
+        }
+
+        public IList<IndicationMethod> ToIndicationMethodEntities()
+        {
+            return this.Indications?.Select(x => new IndicationMethod { IndicationId = x, MethodId = this.Id }).ToList();
+        }
+
+        public IList<MotivationMethod> ToMotivationMethodEntities()
+        {
+            return this.Motivations?.Select(x => new MotivationMethod { MotivationId = x, MethodId = this.Id }).ToList();
         }
     }
 }

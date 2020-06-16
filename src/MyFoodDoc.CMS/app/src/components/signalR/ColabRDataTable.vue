@@ -30,6 +30,7 @@
                                        :title-suffix="editorTitleSuffix"
                                        :edit-time="editTime"
                                        :could-add="couldAdd && !readonly"
+                                       :before-add="beforeAdd"
                                        @cancel="onCancel"
                                        @save="onSave"
                                        :childLinks="childLinks">
@@ -160,6 +161,10 @@
                 default: true
             },
             beforeSave: {
+                type: Function,
+                default: null
+            },
+            beforeAdd: {
                 type: Function,
                 default: null
             },

@@ -14,7 +14,7 @@ namespace MyFoodDoc.CMS.Controllers
     [Authorize(Roles = "Editor")]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class CoursesController
+    public class CoursesController : ControllerBase
     {
         private readonly ICourseService _courseService;
         private readonly IHubContext<EditStateHub> _hubContext;

@@ -169,7 +169,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     if (frequency > target.Threshold)
                     {
-                        var userTarget = new UserTarget { UserId = userId, TargetId = target.Id };
+                        var userTarget = new UserTarget { UserId = userId, TargetId = target.Id, Created = DateTime.Now};
 
                         userTargets.Add(userTarget);
                     }
@@ -532,7 +532,7 @@ namespace MyFoodDoc.App.Application.Services
                 foreach (var meal in dailyMeals)
                 {
                     var mealNutritions = await _foodService.GetMealNutritionsAsync(meal.Id, cancellationToken);
-                    
+
                     dailyNutritions.AnimalProtein += mealNutritions.AnimalProtein;
                     dailyNutritions.PlantProtein += mealNutritions.PlantProtein;
                     dailyNutritions.Sugar += mealNutritions.Sugar;

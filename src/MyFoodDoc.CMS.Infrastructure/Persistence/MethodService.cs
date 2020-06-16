@@ -30,7 +30,42 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             await _context.SaveChangesAsync(cancellationToken);
 
+            item.Id = entity.Id;
+
+            //DietMethods
+            var methodDiets = item.ToDietMethodEntities();
+
+            if (methodDiets != null)
+            {
+                await _context.DietMethods.AddRangeAsync(methodDiets, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //IndicationMethods
+            var methodIndications = item.ToIndicationMethodEntities();
+
+            if (methodIndications != null)
+            {
+                await _context.IndicationMethods.AddRangeAsync(methodIndications, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //MotivationMethods
+            var methodMotivations = item.ToMotivationMethodEntities();
+
+            if (methodMotivations != null)
+            {
+                await _context.MotivationMethods.AddRangeAsync(methodMotivations, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
             entity = await _context.Methods
+                .Include(x => x.Diets)
+                .Include(x => x.Indications)
+                .Include(x => x.Motivations)
                 .FirstOrDefaultAsync(u => u.Id == entity.Id, cancellationToken);
 
             return MethodModel.FromEntity(entity);
@@ -55,6 +90,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<MethodModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _context.Methods
+                .Include(x => x.Diets)
+                .Include(x => x.Indications)
+                .Include(x => x.Motivations)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return MethodModel.FromEntity(entity);
@@ -74,6 +112,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<IList<MethodModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
             var entities = await GetBaseQuery(parentId, search)
+                .Include(x => x.Diets)
+                .Include(x => x.Indications)
+                .Include(x => x.Motivations)
                 .Skip(skip).Take(take)
                 .ToListAsync(cancellationToken);
 
@@ -97,6 +138,54 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             _context.Entry(entity).CurrentValues.SetValues(newEntity);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            //DietMethods
+            var existingMethodDiets = await _context.DietMethods.Where(x => x.MethodId == item.Id).ToListAsync(cancellationToken);
+
+            _context.DietMethods.RemoveRange(existingMethodDiets);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var methodDiets = item.ToDietMethodEntities();
+
+            if (methodDiets != null)
+            {
+                await _context.DietMethods.AddRangeAsync(methodDiets, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //IndicationMethods
+            var existingMethodIndications = await _context.IndicationMethods.Where(x => x.MethodId == item.Id).ToListAsync(cancellationToken);
+
+            _context.IndicationMethods.RemoveRange(existingMethodIndications);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var methodIndications = item.ToIndicationMethodEntities();
+
+            if (methodIndications != null)
+            {
+                await _context.IndicationMethods.AddRangeAsync(methodIndications, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //MotivationMethods
+            var existingMethodMotivations = await _context.MotivationMethods.Where(x => x.MethodId == item.Id).ToListAsync(cancellationToken);
+
+            _context.MotivationMethods.RemoveRange(existingMethodMotivations);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var methodMotivations = item.ToMotivationMethodEntities();
+
+            if (methodMotivations != null)
+            {
+                await _context.MotivationMethods.AddRangeAsync(methodMotivations, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
             return await GetItem(entity.Id, cancellationToken);
         }

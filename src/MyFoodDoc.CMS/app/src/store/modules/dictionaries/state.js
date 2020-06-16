@@ -1,3 +1,6 @@
 export default {
-  insuranceList: null,
+    dietList: null,
+    indicationList: null,
+    insuranceList: null,
+    motivationList: null
 };

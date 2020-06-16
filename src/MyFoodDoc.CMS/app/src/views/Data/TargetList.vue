@@ -3,6 +3,8 @@
                     store-name="targets"
                     editor-title-suffix="target item"
                     :headers="mainHeaders"
+                    :before-add="init"
+                    :before-edit="beforeEdit"
                     :before-save="beforeSave"
                     :parent="parent"
                     :childLinks="childLinks">
@@ -123,34 +125,21 @@
                               rules="required|max:1000"
                               :counter="1000" />
             </v-row>
-
-            <v-row v-if="item.diets">
+            <v-row>
                 <v-col>
-                    <span>Diets</span>
-                    <ul>
-                        <li v-for="(diet, index) in item.diets">
-                            <input type="checkbox" v-model="diet.checked" v-bind:id="diet.id" />
-                            <label>{{ diet.name }}</label>
-                        </li>
-                    </ul>
+                    <VeeCheckList title="Diets"
+                                  :availableItems="dietList"
+                                  :checkedItems="item.diets" />
                 </v-col>
                 <v-col>
-                    <span>Indications</span>
-                    <ul>
-                        <li v-for="(indication, index) in item.indications">
-                            <input type="checkbox" v-model="indication.checked" v-bind:id="indication.id" />
-                            <label>{{ indication.name }}</label>
-                        </li>
-                    </ul>
+                    <VeeCheckList title="Indications"
+                                  :availableItems="indicationList"
+                                  :checkedItems="item.indications" />
                 </v-col>
                 <v-col>
-                    <span>Motivations</span>
-                    <ul>
-                        <li v-for="(motivation, index) in item.motivations">
-                            <input type="checkbox" v-model="motivation.checked" v-bind:id="motivation.id" />
-                            <label>{{ motivation.name }}</label>
-                        </li>
-                    </ul>
+                    <VeeCheckList title="Motivations"
+                                  :availableItems="motivationList"
+                                  :checkedItems="item.motivations" />
                 </v-col>
             </v-row>
         </template>
@@ -172,7 +161,8 @@
             VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
             VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
             VeeSelect: () => import("@/components/inputs/VeeSelect"),
-            VeeImage: () => import("@/components/inputs/VeeImage")
+            VeeImage: () => import("@/components/inputs/VeeImage"),
+            VeeCheckList: () => import("@/components/inputs/VeeCheckList")
         },
         data() {
             return {
@@ -205,16 +195,31 @@
                 priorities: [],
                 types: [],
                 operators: [],
-                stepDirections: []
+                stepDirections: [],
+                dietList: [],
+                indicationList: [],
+                motivationList: [],
             }
         },
-        created() {
+        async created() {
             this.priorities = Object.values(TargetPriority);
             this.types = Object.values(TargetType);
             this.operators = Object.values(TriggerOperator);
             this.stepDirections = Object.values(AdjustmentTargetStepDirection);
+
+            this.dietList = await this.$store.dispatch("dictionaries/getDietList");
+            this.indicationList = await this.$store.dispatch("dictionaries/getIndicationList");
+            this.motivationList = await this.$store.dispatch("dictionaries/getMotivationList");
         },
         methods: {
+            async init(item) {
+                if (!item.diets) item.diets = [];
+                if (!item.indications) item.indications = [];
+                if (!item.motivations) item.motivations = [];
+            },
+            async beforeEdit(item) {
+                this.init(item);
+            },
             async beforeSave(item) {
                 if (item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));

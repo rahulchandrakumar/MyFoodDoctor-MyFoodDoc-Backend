@@ -76,6 +76,10 @@
                 type: Object,
                 default: null
             },
+            beforeAdd: {
+                type: Function,
+                default: null
+            },
             couldAdd: {
                 type: Boolean,
                 default: true
@@ -105,9 +109,13 @@
             }
         },
         methods: {
-            add() {
+            async add() {
                 this.formItem = null;
                 this.formItem = {};
+
+                if (this.beforeAdd)
+                    await this.beforeAdd(this.formItem);
+
                 this.$emit("update:dialog", true);
             },
             async checkSave() {

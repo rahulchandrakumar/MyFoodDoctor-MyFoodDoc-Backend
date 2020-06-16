@@ -15,7 +15,7 @@ namespace MyFoodDoc.CMS.Controllers
     [Authorize(Roles = "Editor")]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class MethodMultipleChoicesController
+    public class MethodMultipleChoicesController : ControllerBase
     {
         private readonly IMethodMultipleChoiceService _methodMultipleChoiceService;
         private readonly IHubContext<EditStateHub> _hubContext;

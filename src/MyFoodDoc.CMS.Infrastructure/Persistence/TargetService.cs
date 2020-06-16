@@ -44,12 +44,47 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            
+
+            item.Id = targetEntity.Id;
+
+            //DietTargets
+            var targetDiets = item.ToDietTargetEntities();
+
+            if (targetDiets != null)
+            {
+                await _context.DietTargets.AddRangeAsync(targetDiets, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //IndicationTargets
+            var targetIndications = item.ToIndicationTargetEntities();
+
+            if (targetIndications != null)
+            {
+                await _context.IndicationTargets.AddRangeAsync(targetIndications, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            //MotivationTargets
+            var targetMotivations = item.ToMotivationTargetEntities();
+
+            if (targetMotivations != null)
+            {
+                await _context.MotivationTargets.AddRangeAsync(targetMotivations, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
             targetEntity = await _context.Targets
                                             .Include(x => x.Image)
+                                            .Include(x => x.Diets)
+                                            .Include(x => x.Indications)
+                                            .Include(x => x.Motivations)
                                             .FirstOrDefaultAsync(u => u.Id == targetEntity.Id, cancellationToken);
 
-            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity, _context);
+            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity);
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
@@ -73,6 +108,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var targetEntity = await _context.Targets
                                             .Include(x => x.Image)
+                                            .Include(x => x.Diets)
+                                            .Include(x => x.Indications)
+                                            .Include(x => x.Motivations)
                                             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             AdjustmentTarget adjustmentTargetEntity = null;
@@ -81,19 +119,22 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 adjustmentTargetEntity = await _context.AdjustmentTargets
                                             .FirstOrDefaultAsync(x => x.TargetId == id, cancellationToken);
 
-            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity, _context);
+            return TargetModel.FromEntity(targetEntity, adjustmentTargetEntity);
         }
 
         public async Task<IList<TargetModel>> GetItems(CancellationToken cancellationToken = default)
         {
             var targetEntities = await _context.Targets
                                                 .Include(x => x.Image)
+                                                .Include(x => x.Diets)
+                                                .Include(x => x.Indications)
+                                                .Include(x => x.Motivations)
                                                 .ToListAsync(cancellationToken);
 
             var adjustmentTargetEntities = await _context.AdjustmentTargets
                                                 .ToListAsync(cancellationToken);
 
-            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id), _context)).ToList();
+            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
         }
 
         public IQueryable<Target> GetBaseQuery(int parentId, string search)
@@ -111,13 +152,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var targetEntities = await GetBaseQuery(parentId, search)
                                                 .Include(x => x.Image)
+                                                .Include(x => x.Diets)
+                                                .Include(x => x.Indications)
+                                                .Include(x => x.Motivations)
                                                 .Skip(skip).Take(take)
                                                 .ToListAsync(cancellationToken);
 
             var adjustmentTargetEntities = await _context.AdjustmentTargets
                                                 .ToListAsync(cancellationToken);
 
-            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id), _context)).ToList();
+            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
         }
 
         public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)

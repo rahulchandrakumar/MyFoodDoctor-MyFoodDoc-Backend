@@ -16,7 +16,7 @@ namespace MyFoodDoc.CMS.Controllers
     [Authorize(Roles = "Editor")]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class SubchaptersController
+    public class SubchaptersController : ControllerBase
     {
         private readonly ISubchapterService _subchapterService;
         private readonly IHubContext<EditStateHub> _hubContext;

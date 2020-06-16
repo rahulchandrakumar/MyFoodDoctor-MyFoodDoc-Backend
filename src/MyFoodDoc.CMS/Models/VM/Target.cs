@@ -26,9 +26,9 @@ namespace MyFoodDoc.CMS.Models.VM
         public string RemainText { get; set; }
         #endregion
 
-        public IList<CheckListItem<int>> Diets { get; set; }
-        public IList<CheckListItem<int>> Indications { get; set; }
-        public IList<CheckListItem<int>> Motivations { get; set; }
+        public IList<int> Diets { get; set; }
+        public IList<int> Indications { get; set; }
+        public IList<int> Motivations { get; set; }
 
         public Image Image { get; set; }
 

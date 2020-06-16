@@ -1,4 +1,6 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using System.Collections.Generic;
+using System.Linq;
+using MyFoodDoc.CMS.Application.Models;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
@@ -12,6 +14,10 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public int TargetId { get; set; }
 
+        public IList<int> Diets { get; set; }
+        public IList<int> Indications { get; set; }
+        public IList<int> Motivations { get; set; }
+
         public static Method FromModel(MethodModel model)
         {
             return model == null ? null : new Method()
@@ -20,7 +26,10 @@ namespace MyFoodDoc.CMS.Models.VM
                 Type = model.Type,
                 Title = model.Title,
                 Text = model.Text,
-                TargetId = model.TargetId
+                TargetId = model.TargetId,
+                Diets = model.Diets?.ToList(),
+                Indications = model.Indications?.ToList(),
+                Motivations = model.Motivations?.ToList()
             };
         }
 
@@ -32,7 +41,10 @@ namespace MyFoodDoc.CMS.Models.VM
                 Type = this.Type,
                 Title = this.Title,
                 Text = this.Text,
-                TargetId = this.TargetId
+                TargetId = this.TargetId,
+                Diets = this.Diets?.ToList(),
+                Indications = this.Indications?.ToList(),
+                Motivations = this.Motivations?.ToList()
             };
         }
     }

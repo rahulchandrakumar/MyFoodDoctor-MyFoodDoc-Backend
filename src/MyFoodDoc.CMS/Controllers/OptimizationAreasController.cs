@@ -14,7 +14,7 @@ namespace MyFoodDoc.CMS.Controllers
     [Authorize(Roles = "Editor")]
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class OptimizationAreasController
+    public class OptimizationAreasController : ControllerBase
     {
         private readonly IOptimizationAreaService _optimizationAreaService;
         private readonly IHubContext<EditStateHub> _hubContext;
