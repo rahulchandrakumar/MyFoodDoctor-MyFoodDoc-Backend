@@ -220,6 +220,13 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken)
         {
+            var user = await _context.Users
+                .Where(x => x.Id == userId)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (!user.HasSubscription || user.HasSubscriptionUpdated.Value > DateTime.Now.AddDays(-_statisticsPeriod))
+                return false;
+
             return await _context.Meals
                     .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod))
                     .Select(x => x.Date)
