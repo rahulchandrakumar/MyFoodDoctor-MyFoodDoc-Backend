@@ -17,6 +17,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractio
             builder.Property(o => o.Type).HasConversion<string>().HasMaxLength(14);
 
             builder.HasOne(x => x.Target).WithMany().HasForeignKey(x => x.TargetId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
