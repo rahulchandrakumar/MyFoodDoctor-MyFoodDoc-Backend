@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MyFoodDoc.CMS.Application.Models;
+using MyFoodDoc.CMS.Models.VMBase;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
@@ -14,8 +15,12 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public int TargetId { get; set; }
 
+        public Image Image { get; set; }
+
         public IList<int> Diets { get; set; }
+
         public IList<int> Indications { get; set; }
+
         public IList<int> Motivations { get; set; }
 
         public static Method FromModel(MethodModel model)
@@ -27,6 +32,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Title = model.Title,
                 Text = model.Text,
                 TargetId = model.TargetId,
+                Image = model.Image == null ? null : Image.FromModel(model.Image),
                 Diets = model.Diets?.ToList(),
                 Indications = model.Indications?.ToList(),
                 Motivations = model.Motivations?.ToList()
@@ -42,6 +48,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Title = this.Title,
                 Text = this.Text,
                 TargetId = this.TargetId,
+                Image = this.Image?.ToModel(),
                 Diets = this.Diets?.ToList(),
                 Indications = this.Indications?.ToList(),
                 Motivations = this.Motivations?.ToList()

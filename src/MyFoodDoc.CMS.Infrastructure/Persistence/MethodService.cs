@@ -10,17 +10,20 @@ using MyFoodDoc.Application.Entites.Abstractions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
     public class MethodService : IMethodService
     {
         private readonly IApplicationContext _context;
+        private readonly IImageBlobService _imageService;
         private readonly IMethodMultipleChoiceService _methodMultipleChoiceService;
 
-        public MethodService(IApplicationContext context, IMethodMultipleChoiceService methodMultipleChoiceService)
+        public MethodService(IApplicationContext context, IImageBlobService imageService, IMethodMultipleChoiceService methodMultipleChoiceService)
         {
             this._context = context;
+            this._imageService = imageService;
             this._methodMultipleChoiceService = methodMultipleChoiceService;
         }
         public async Task<MethodModel> AddItem(MethodModel item, CancellationToken cancellationToken = default)
@@ -63,6 +66,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             }
 
             entity = await _context.Methods
+                .Include(x => x.Image)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
@@ -74,6 +78,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _context.Methods
+                .Include(x => x.Image)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             if (entity.Type == MethodType.MultipleChoice)
@@ -81,6 +86,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                     await _methodMultipleChoiceService.DeleteItem(methodMultipleChoice.Id, cancellationToken);
 
             _context.Methods.Remove(entity);
+
+            if (entity.Image != null)
+            {
+                _context.Images.Remove(entity.Image);
+
+                await _imageService.DeleteImage(entity.Image.Url, cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -90,6 +102,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<MethodModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
             var entity = await _context.Methods
+                .Include(x => x.Image)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
@@ -112,6 +125,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<IList<MethodModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
             var entities = await GetBaseQuery(parentId, search)
+                .Include(x => x.Image)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
@@ -129,13 +143,26 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<MethodModel> UpdateItem(MethodModel item, CancellationToken cancellationToken = default)
         {
             var entity = await _context.Methods.FindAsync(new object[] { item.Id }, cancellationToken);
+
+            var oldImageId = entity.ImageId;
+
             var newEntity = item.ToEntity();
 
+            //MethodMultipleChoice
             if (newEntity.Type != MethodType.MultipleChoice && entity.Type == MethodType.MultipleChoice)
                 foreach (var methodMultipleChoice in await _context.MethodMultipleChoice.Where(x => x.MethodId == entity.Id).ToListAsync(cancellationToken))
                     await _methodMultipleChoiceService.DeleteItem(methodMultipleChoice.Id, cancellationToken);
 
             _context.Entry(entity).CurrentValues.SetValues(newEntity);
+
+            //Image
+            if (oldImageId != null && (item.Image == null || string.IsNullOrEmpty(item.Image.Url) || item.Image.Id != oldImageId))
+            {
+                var image = await _context.Images.SingleAsync(x => x.Id == oldImageId.Value, cancellationToken);
+                _context.Images.Remove(image);
+
+                await _imageService.DeleteImage(image.Url, cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 

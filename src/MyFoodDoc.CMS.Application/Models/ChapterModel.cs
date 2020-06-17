@@ -40,7 +40,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 AnswerText1 = entity.AnswerText1,
                 AnswerText2 = entity.AnswerText2,
                 Answer = entity.Answer,
-                Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
+                Image = ImageModel.FromEntity(entity.Image),
                 CourseId = entity.CourseId
             };
         }

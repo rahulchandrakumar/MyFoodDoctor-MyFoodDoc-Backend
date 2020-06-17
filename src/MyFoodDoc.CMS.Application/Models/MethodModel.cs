@@ -14,6 +14,7 @@ namespace MyFoodDoc.CMS.Application.Models
         public string Title { get; set; }
         public string Text { get; set; }
         public int TargetId { get; set; }
+        public ImageModel Image { get; set; }
         public IList<int> Diets { get; set; }
         public IList<int> Indications { get; set; }
         public IList<int> Motivations { get; set; }
@@ -27,6 +28,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Title = entity.Title,
                 Text = entity.Text,
                 TargetId = entity.TargetId,
+                Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
                 Diets = entity.Diets?.Select(x => x.DietId).ToList(),
                 Indications = entity.Indications?.Select(x => x.IndicationId).ToList(),
                 Motivations = entity.Motivations?.Select(x => x.MotivationId).ToList()
@@ -41,7 +43,8 @@ namespace MyFoodDoc.CMS.Application.Models
                 Type = (MethodType)Enum.Parse(typeof(MethodType), this.Type),
                 Title = this.Title,
                 Text = this.Text,
-                TargetId = this.TargetId
+                TargetId = this.TargetId,
+                ImageId = this.Image == null || string.IsNullOrEmpty(this.Image.Url) ? (int?)null : this.Image.Id,
             };
         }
 

@@ -180,9 +180,9 @@ namespace MyFoodDoc.App.Application.Services
 
             foreach (var userTarget in userTargets)
             {
-                var target = await _context.Targets.Include(x => x.OptimizationArea).SingleAsync(x => x.Id == userTarget.TargetId, cancellationToken);
-
-                var targetImage = _context.Images.Single(x => x.Id == target.ImageId);
+                var target = await _context.Targets.Include(x => x.OptimizationArea)
+                                                    .Include(x => x.Image)
+                                                    .SingleAsync(x => x.Id == userTarget.TargetId, cancellationToken);
 
                 var targetDto = new TargetDto
                 {
@@ -190,7 +190,7 @@ namespace MyFoodDoc.App.Application.Services
                     Type = target.Type.ToString(),
                     Title = target.Title,
                     Text = target.Text,
-                    ImageUrl = targetImage.Url
+                    ImageUrl = target.Image.Url
                 };
 
                 var dailyUserIngredients = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);

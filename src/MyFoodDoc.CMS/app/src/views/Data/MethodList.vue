@@ -11,8 +11,19 @@
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
-
+        <template v-slot:item.image="{ item }">
+            <v-img v-if="item.image != null"
+                   :aspect-ratio="3/1"
+                   :src="item.image.Url"
+                   height="70px" />
+        </template>
         <template v-slot:editor="{ item }">
+            <v-row>
+                <VeeImage v-model="item.image"
+                          :label="mainHeaders.filter(h => h.value == 'image')[0].text"
+                          :image-width="900"
+                          :image-height="300" />
+            </v-row>
             <v-row>
                 <VeeTextField v-model="item.title"
                               :label="mainHeaders.filter(h => h.value == 'title')[0].text"
@@ -73,11 +84,18 @@ import { toggle } from '../../utils/vuex';
             VeeRichTextArea: () => import("@/components/inputs/VeeRichTextArea"),
             VeeTextArea: () => import("@/components/inputs/VeeTextArea"),
             VeeSelect: () => import("@/components/inputs/VeeSelect"),
-            VeeCheckList: () => import("@/components/inputs/VeeCheckList")
+            VeeCheckList: () => import("@/components/inputs/VeeCheckList"),
+            VeeImage: () => import("@/components/inputs/VeeImage")
         },
         data() {
             return {
                 mainHeaders: [{
+                    filterable: false,
+                    sortable: false,
+                    value: "image",
+                    text: "Image",
+                    width: "210px"
+                },{
                     sortable: true,
                     value: "title",
                     text: "Title"
@@ -117,6 +135,9 @@ import { toggle } from '../../utils/vuex';
                 this.init(item);
             },
             async beforeSave(item) {
+                if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
+                    item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
+
                 item.targetId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {

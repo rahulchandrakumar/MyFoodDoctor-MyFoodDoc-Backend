@@ -14,6 +14,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public string Text { get; set; }
 
+        public string ImageUrl { get; set; }
+
         public bool? UserAnswer { get; set; }
 
         public DateTime? DateAnswered { get; set; }

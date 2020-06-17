@@ -45,7 +45,7 @@ namespace MyFoodDoc.App.Application.Services
                 .Union(_context.MotivationMethods.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)).Distinct();
 
 
-            var methods = await _context.Methods.Where(x => availableMethodIds.Contains(x.Id) && triggeredTargetIds.Contains(x.TargetId))
+            var methods = await _context.Methods.Include(x=> x.Image).Where(x => availableMethodIds.Contains(x.Id) && triggeredTargetIds.Contains(x.TargetId))
                 .ToListAsync(cancellationToken);
 
             if (!methods.Any())
@@ -74,7 +74,8 @@ namespace MyFoodDoc.App.Application.Services
                 Id = methodToShow.Id,
                 Title = methodToShow.Title,
                 Text = methodToShow.Text,
-                Type = methodToShow.Type.ToString()
+                Type = methodToShow.Type.ToString(),
+                ImageUrl = methodToShow.Image?.Url
             };
 
             if (methodToShow.Type == MethodType.YesNo)
