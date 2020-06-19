@@ -224,7 +224,7 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.Id == userId)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (!user.HasSubscription || user.HasSubscriptionUpdated.Value > DateTime.Now.AddDays(-_statisticsPeriod))
+            if (user.Created > DateTime.Now.AddDays(-_statisticsPeriod))
                 return false;
 
             return await _context.Meals
