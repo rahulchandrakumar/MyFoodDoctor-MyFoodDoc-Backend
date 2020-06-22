@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using MyFoodDoc.Application.Entites.Courses;
+using MyFoodDoc.Application.Entities.Courses;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;

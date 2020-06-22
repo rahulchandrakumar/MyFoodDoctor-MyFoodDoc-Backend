@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValus;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
 {

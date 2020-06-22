@@ -5,7 +5,7 @@ using MyFoodDoc.App.Application.Configuration;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Target;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Exceptions;
-using MyFoodDoc.Application.Entites.Targets;
+using MyFoodDoc.Application.Entities.Targets;
 
 namespace MyFoodDoc.App.Application.Services
 {

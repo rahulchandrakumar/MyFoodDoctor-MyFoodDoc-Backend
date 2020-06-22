@@ -11,8 +11,8 @@ using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Method;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Services

@@ -6,7 +6,7 @@ using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Report;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

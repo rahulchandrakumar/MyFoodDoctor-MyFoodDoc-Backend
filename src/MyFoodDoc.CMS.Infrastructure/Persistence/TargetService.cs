@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites.Targets;
+using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;

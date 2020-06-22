@@ -2,7 +2,7 @@
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Payloads.Coupon;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using System;
 using System.Linq;
 using System.Threading;

@@ -1,5 +1,5 @@
 ﻿using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using System.Collections.Generic;
 
 namespace MyFoodDoc.Application.EnumEntities

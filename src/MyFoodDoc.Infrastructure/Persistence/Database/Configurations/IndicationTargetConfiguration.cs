@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;

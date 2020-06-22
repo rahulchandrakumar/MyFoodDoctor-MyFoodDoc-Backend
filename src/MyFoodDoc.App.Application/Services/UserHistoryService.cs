@@ -5,7 +5,7 @@ using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValus;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -49,6 +49,12 @@
     <Compile Remove="Migrations\20200526163134_Methods.Designer.cs" />
     <Compile Remove="Migrations\20200617081600_MethodsAddImage.cs" />
     <Compile Remove="Migrations\20200617081600_MethodsAddImage.Designer.cs" />
+    <Compile Remove="Migrations\20200622154032_TargetMethods.cs" />
+    <Compile Remove="Migrations\20200622154032_TargetMethods.Designer.cs" />
+    <Compile Remove="Migrations\20200622161721_TargetMethods.cs" />
+    <Compile Remove="Migrations\20200622161721_TargetMethods.Designer.cs" />
+    <Compile Remove="Migrations\20200622164146_Test.cs" />
+    <Compile Remove="Migrations\20200622164146_Test.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />

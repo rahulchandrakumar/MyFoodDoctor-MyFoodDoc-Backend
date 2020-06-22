@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites.Methods;
+using MyFoodDoc.Application.Entities.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {

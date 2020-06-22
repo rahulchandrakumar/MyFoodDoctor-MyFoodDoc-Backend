@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Application.Mappings;
 using System;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValus;
 using System.Collections.Generic;
 using System.Linq;
 using MyFoodDoc.Core;

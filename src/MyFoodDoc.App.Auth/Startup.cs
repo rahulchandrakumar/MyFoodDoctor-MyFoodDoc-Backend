@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Infrastructure;
 using IdentityServer4;
 

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.CMS.Application.Models

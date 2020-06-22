@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MyFoodDoc.App.Application.Mappings;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using Newtonsoft.Json;
 using System;

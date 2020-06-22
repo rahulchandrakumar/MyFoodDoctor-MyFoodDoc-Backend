@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities.Abstractions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
@@ -16,7 +16,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.Text).IsRequired().HasMaxLength(1000);
             builder.Property(o => o.Type).HasConversion<string>().HasMaxLength(14);
 
-            builder.HasOne(x => x.Target).WithMany().HasForeignKey(x => x.TargetId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
         }
     }

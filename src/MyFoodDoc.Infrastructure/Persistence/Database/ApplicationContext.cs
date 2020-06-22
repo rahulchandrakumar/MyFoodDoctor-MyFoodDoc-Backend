@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Courses;
-using MyFoodDoc.Application.Entites.Targets;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Courses;
+using MyFoodDoc.Application.Entities.Targets;
+using MyFoodDoc.Application.Entities.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.IO;
@@ -17,8 +17,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.Application.Entites.Abstractions;
-using MyFoodDoc.Application.Entites.Methods;
+using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {

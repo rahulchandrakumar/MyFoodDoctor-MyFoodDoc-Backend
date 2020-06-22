@@ -169,7 +169,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserToken","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Abstractions.Method", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Abstractions.Method", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -212,7 +212,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Methods","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.CmsUser", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.CmsUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -249,7 +249,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Users","CMS");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Coupon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -291,7 +291,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Coupons","Coupon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Chapter", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Chapter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -355,7 +355,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Chapters","Course");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Course", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Course", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -394,7 +394,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Courses","Course");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Subchapter", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Subchapter", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -430,7 +430,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Subchapters","Course");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.UserAnswer", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.UserAnswer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -463,7 +463,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserAnswers","Course");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DietMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
                 {
                     b.Property<int>("DietId")
                         .HasColumnType("int");
@@ -478,7 +478,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("DietMethods","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DietTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietTarget", b =>
                 {
                     b.Property<int>("DietId")
                         .HasColumnType("int");
@@ -493,7 +493,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("DietTargets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Exercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Exercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -525,7 +525,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Exercises","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Image", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -548,7 +548,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Images","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.IndicationMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationMethod", b =>
                 {
                     b.Property<int>("IndicationId")
                         .HasColumnType("int");
@@ -563,7 +563,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("IndicationMethods","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.IndicationTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationTarget", b =>
                 {
                     b.Property<int>("IndicationId")
                         .HasColumnType("int");
@@ -578,7 +578,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("IndicationTargets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Ingredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -677,7 +677,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Ingredients","Food");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Insurance", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Insurance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -738,7 +738,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.LexiconEntry", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -777,7 +777,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Entries","Lexicon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Liquid", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Liquid", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -809,7 +809,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Liquids","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Meal", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Meal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -846,7 +846,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Meals","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MealIngredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MealIngredient", b =>
                 {
                     b.Property<int>("MealId")
                         .HasColumnType("int");
@@ -864,7 +864,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("MealsIngredients","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Methods.MethodMultipleChoice", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.MethodMultipleChoice", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -895,7 +895,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("MethodMultipleChoice","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MotivationMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationMethod", b =>
                 {
                     b.Property<int>("MotivationId")
                         .HasColumnType("int");
@@ -910,7 +910,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("MotivationMethods","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MotivationTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationTarget", b =>
                 {
                     b.Property<int>("MotivationId")
                         .HasColumnType("int");
@@ -925,7 +925,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("MotivationTargets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Promotion", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Promotion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -963,22 +963,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Promotions","Coupon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TargetMethod", b =>
-                {
-                    b.Property<int>("TargetId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MethodId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TargetId", "MethodId");
-
-                    b.HasIndex("MethodId");
-
-                    b.ToTable("TargetMethods","System");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Targets.AdjustmentTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.AdjustmentTarget", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1027,7 +1012,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("AdjustmentTargets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Targets.Target", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.Target", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1086,7 +1071,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Targets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserAbdominalGirth", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1102,7 +1087,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("AbdonimalGirthHistory","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1118,7 +1103,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("WeightHistory","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -1216,7 +1201,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Users","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserDiet", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserDiet", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1231,7 +1216,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserDiets","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserIndication", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1246,7 +1231,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserIndications","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethod", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1282,7 +1267,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserMethods","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMethodShowHistoryItem", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethodShowHistoryItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1311,7 +1296,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserMethodShowHistory","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMotivation", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1326,7 +1311,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserMotivations","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserTarget", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1359,7 +1344,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserTargets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.WebPage", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.WebPage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1740,7 +1725,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1749,7 +1734,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1764,7 +1749,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1773,89 +1758,89 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Abstractions.Method", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Abstractions.Method", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Coupon", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "Redeemer")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "Redeemer")
                         .WithMany()
                         .HasForeignKey("RedeemedBy");
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Promotion", "Promotion")
+                    b.HasOne("MyFoodDoc.Application.Entities.Promotion", "Promotion")
                         .WithMany("Coupons")
                         .HasForeignKey("PromotionId", "InsuranceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Chapter", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Chapter", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Courses.Course", "Course")
+                    b.HasOne("MyFoodDoc.Application.Entities.Courses.Course", "Course")
                         .WithMany("Chapters")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Course", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Course", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.Subchapter", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Subchapter", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Courses.Chapter", "Chapter")
+                    b.HasOne("MyFoodDoc.Application.Entities.Courses.Chapter", "Chapter")
                         .WithMany("Subchapters")
                         .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Courses.UserAnswer", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.UserAnswer", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Courses.Chapter", "Chapter")
+                    b.HasOne("MyFoodDoc.Application.Entities.Courses.Chapter", "Chapter")
                         .WithMany()
                         .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DietMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
                         .WithMany("Methods")
@@ -1863,14 +1848,14 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
+                    b.HasOne("MyFoodDoc.Application.Entities.Abstractions.Method", "Method")
                         .WithMany("Diets")
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DietTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietTarget", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
                         .WithMany("Targets")
@@ -1878,21 +1863,21 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
                         .WithMany("Diets")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Exercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Exercise", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.IndicationMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationMethod", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
                         .WithMany("Methods")
@@ -1900,14 +1885,14 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
+                    b.HasOne("MyFoodDoc.Application.Entities.Abstractions.Method", "Method")
                         .WithMany("Indications")
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.IndicationTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationTarget", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
                         .WithMany("Targets")
@@ -1915,63 +1900,63 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
                         .WithMany("Indications")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.LexiconEntry", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Liquid", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Liquid", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Meal", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Meal", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MealIngredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MealIngredient", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Ingredient", "Ingredient")
+                    b.HasOne("MyFoodDoc.Application.Entities.Ingredient", "Ingredient")
                         .WithMany("Meals")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Meal", "Meal")
+                    b.HasOne("MyFoodDoc.Application.Entities.Meal", "Meal")
                         .WithMany("Ingredients")
                         .HasForeignKey("MealId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Methods.MethodMultipleChoice", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.MethodMultipleChoice", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
+                    b.HasOne("MyFoodDoc.Application.Entities.Abstractions.Method", "Method")
                         .WithMany()
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MotivationMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationMethod", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
+                    b.HasOne("MyFoodDoc.Application.Entities.Abstractions.Method", "Method")
                         .WithMany("Motivations")
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1984,7 +1969,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MotivationTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationTarget", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Motivation", "Motivation")
                         .WithMany("Targets")
@@ -1992,49 +1977,34 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
                         .WithMany("Motivations")
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Promotion", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Promotion", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                    b.HasOne("MyFoodDoc.Application.Entities.Insurance", "Insurance")
                         .WithMany()
                         .HasForeignKey("InsuranceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TargetMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.AdjustmentTarget", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
-                        .WithMany("Targets")
-                        .HasForeignKey("MethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
-                        .WithMany("Methods")
-                        .HasForeignKey("TargetId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Targets.AdjustmentTarget", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Targets.Target", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.Target", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull)
@@ -2047,32 +2017,32 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserAbdominalGirth", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("AbdominalGirthHistory")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("WeightHistory")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.User", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                    b.HasOne("MyFoodDoc.Application.Entities.Insurance", "Insurance")
                         .WithMany()
                         .HasForeignKey("InsuranceId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserDiet", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserDiet", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
                         .WithMany()
@@ -2080,14 +2050,14 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Diets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserIndication", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
                         .WithMany()
@@ -2095,44 +2065,44 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Indications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMethod", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethod", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
+                    b.HasOne("MyFoodDoc.Application.Entities.Abstractions.Method", "Method")
                         .WithMany()
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMethodShowHistoryItem", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethodShowHistoryItem", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Abstractions.Method", "Method")
+                    b.HasOne("MyFoodDoc.Application.Entities.Abstractions.Method", "Method")
                         .WithMany()
                         .HasForeignKey("MethodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMotivation", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Motivation", "Motivation")
                         .WithMany()
@@ -2140,22 +2110,22 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Motivations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserTarget", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserTarget", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Targets.Target", "Target")
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2164,7 +2134,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
 
             modelBuilder.Entity("MyFoodDoc.Application.EnumEntities.OptimizationArea", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.SetNull);

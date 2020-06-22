@@ -3,7 +3,7 @@ using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Course;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites.Courses;
+using MyFoodDoc.Application.Entities.Courses;
 using System;
 using System.Collections.Generic;
 using System.Linq;

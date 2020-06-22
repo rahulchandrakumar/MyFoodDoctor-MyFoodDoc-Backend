@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites.Courses;
+using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;

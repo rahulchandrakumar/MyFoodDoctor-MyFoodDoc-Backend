@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;

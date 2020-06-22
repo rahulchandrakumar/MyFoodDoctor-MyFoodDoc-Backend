@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Abstractions;
-using MyFoodDoc.Application.Entites.Courses;
-using MyFoodDoc.Application.Entites.Methods;
-using MyFoodDoc.Application.Entites.Targets;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Courses;
+using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.Entities.Targets;
+using MyFoodDoc.Application.Entities.TrackedValus;
 using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.Application.Abstractions

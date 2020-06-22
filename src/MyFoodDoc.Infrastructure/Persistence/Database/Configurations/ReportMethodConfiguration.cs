@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions;
 using System.Linq;

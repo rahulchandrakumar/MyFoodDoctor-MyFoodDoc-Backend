@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Targets;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.Collections.Generic;
