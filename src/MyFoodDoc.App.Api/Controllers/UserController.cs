@@ -120,7 +120,8 @@ namespace MyFoodDoc.App.Api.Controllers
                 HasSubscription = (await _service.GetUserAsync(user, cancellationToken)).HasSubscription,
                 IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken),
                 HasNewTargetsTriggered = await _targetService.NewTriggered(user, cancellationToken),
-                IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(user, cancellationToken))
+                IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(user, cancellationToken)),
+                HasTargetsActivated = await _targetService.AnyActivated(user, cancellationToken)
             };
 
             return Ok(result);
