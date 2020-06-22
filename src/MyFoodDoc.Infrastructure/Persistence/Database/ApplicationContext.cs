@@ -59,6 +59,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<MotivationMethod> MotivationMethods { get; set; }
         public DbSet<IndicationMethod> IndicationMethods { get; set; }
         public DbSet<DietMethod> DietMethods { get; set; }
+        public DbSet<TargetMethod> TargetMethods { get; set; }
 
         #endregion
 

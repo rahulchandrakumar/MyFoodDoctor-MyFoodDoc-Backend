@@ -17,6 +17,8 @@ namespace MyFoodDoc.Application.Entites.Abstractions
 
         public int? ImageId { get; set; }
 
+        public ICollection<TargetMethod> Targets { get; set; }
+
         public ICollection<MotivationMethod> Motivations { get; set; }
 
         public ICollection<IndicationMethod> Indications { get; set; }

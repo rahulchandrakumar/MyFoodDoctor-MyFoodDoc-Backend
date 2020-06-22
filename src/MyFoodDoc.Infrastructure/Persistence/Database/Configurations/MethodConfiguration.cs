@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entites.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
     public class MethodConfiguration : IEntityTypeConfiguration<Method>
     {

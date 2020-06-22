@@ -29,6 +29,8 @@ namespace MyFoodDoc.Application.Entites.Targets
 
         public OptimizationArea OptimizationArea { get; set; }
 
+        public ICollection<TargetMethod> Methods { get; set; }
+
         public ICollection<MotivationTarget> Motivations { get; set; }
 
         public ICollection<IndicationTarget> Indications { get; set; }
