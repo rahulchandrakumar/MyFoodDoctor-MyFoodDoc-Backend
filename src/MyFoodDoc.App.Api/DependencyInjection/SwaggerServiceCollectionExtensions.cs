@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Linq;
 
 namespace MyFoodDoc.App.Api.DependencyInjection
 {
-    public static class SwaggerApplicationBuilderExtensions
+    public static class SwaggerServiceCollectionExtensions
     {
         // Obsolete Setting 'DescribeAllEnumsAsStrings' is required for System.Text.Json. 
         // See: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/1269. 

@@ -80,13 +80,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
         #endregion
 
-        #region Reporting
-        //public DbSet<Report> Reports { get; set; }
-        //public DbSet<ReportChoiceMethod> ReportChoiceMethods { get; set; }
-        //public DbSet<ReportValueMethod> ReportValueMethods { get; set; }
-        //public DbSet<ReportValueTarget> ReportValueTargets { get; set; }
-        #endregion
-
         #region Courses
 
         public DbSet<Course> Courses { get; set; }

@@ -23,7 +23,7 @@ using MyFoodDoc.App.Application.Serialization;
 using MyFoodDoc.App.Api.Middlewares;
 using MyFoodDoc.App.Application.Clients.IdentityServer;
 
-namespace MyFoodDoc.Application.Api
+namespace MyFoodDoc.App.Api
 {
     public class Startup
     {

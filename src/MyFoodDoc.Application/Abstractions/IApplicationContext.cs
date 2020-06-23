@@ -76,10 +76,6 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
         #endregion
 
-        #region Reporting
-        //DbSet<Report> Reports { get; set; }
-        #endregion
-
         #region Courses
 
         DbSet<Course> Courses { get; set; }
