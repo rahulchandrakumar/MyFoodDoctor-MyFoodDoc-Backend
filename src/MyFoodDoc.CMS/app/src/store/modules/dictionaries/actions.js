@@ -48,5 +48,17 @@ export default {
         commit("setMotivationList", response.data);
 
         return state.motivationList;
+    },
+    getTargetList: async ({ commit, state }) => {
+        if (state.targetList != null)
+            return state.targetList;
+
+        let response = await integration.dictionaries.target();
+        if (response.status !== 200) {
+            throw new Error(`undefined error in backend (${response.status})`);
+        }
+        commit("setTargetList", response.data);
+
+        return state.targetList;
     }
 };

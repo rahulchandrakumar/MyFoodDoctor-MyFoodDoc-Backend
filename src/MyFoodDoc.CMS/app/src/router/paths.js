@@ -66,7 +66,7 @@ export default [
         }
     },
     {
-        path: "/method-list/:parentId",
+        path: "/method-list",
         name: "Methods",
         view: "Data/MethodList",
         meta: {

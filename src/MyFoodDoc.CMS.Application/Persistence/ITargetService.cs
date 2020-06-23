@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface ITargetService : IServiceBasePaginatedChildrenRead<TargetModel, int, int>, IServiceBaseWrite<TargetModel, int>
+    public interface ITargetService : IServiceBasePaginatedChildrenRead<TargetModel, int, int>, IServiceBaseWrite<TargetModel, int>, IServiceBaseReadItems<TargetModel>
     {
     }
 }

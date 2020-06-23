@@ -1,4 +1,4 @@
-﻿using MyFoodDoc.Application.Entities.Abstractions;
+﻿using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.Application.Entities

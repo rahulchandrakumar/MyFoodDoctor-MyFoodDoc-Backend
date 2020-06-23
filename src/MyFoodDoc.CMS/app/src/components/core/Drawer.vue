@@ -149,6 +149,11 @@
                     text: "Optimization Areas"
                 });
                 links.push({
+                    icon: "mdi-cards",
+                    to: "/method-list",
+                    text: "Methods"
+                });
+                links.push({
                     icon: "mdi-school",
                     to: "/course-list",
                     text: "Courses"

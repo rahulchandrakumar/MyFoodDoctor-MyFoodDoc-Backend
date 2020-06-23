@@ -10,5 +10,8 @@ export default {
     },
     setMotivationList: (state, data) => {
         state.motivationList = data
+    },
+    setTargetList: (state, data) => {
+        state.targetList = data
     }
 };

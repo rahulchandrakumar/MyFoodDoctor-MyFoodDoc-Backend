@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
@@ -34,6 +32,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             await _context.SaveChangesAsync(cancellationToken);
 
             item.Id = entity.Id;
+
+            //TargetMethods
+            var targetMethods = item.ToTargetMethodEntities();
+
+            if (targetMethods != null)
+            {
+                await _context.TargetMethods.AddRangeAsync(targetMethods, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
 
             //DietMethods
             var methodDiets = item.ToDietMethodEntities();
@@ -67,6 +75,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             entity = await _context.Methods
                 .Include(x => x.Image)
+                .Include(x => x.Targets)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
@@ -103,6 +112,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Methods
                 .Include(x => x.Image)
+                .Include(x => x.Targets)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
@@ -111,9 +121,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return MethodModel.FromEntity(entity);
         }
 
-        public IQueryable<Method> GetBaseQuery(int parentId, string search)
+        public IQueryable<Method> GetBaseQuery(string search)
         {
-            IQueryable<Method> baseQuery = _context.Methods.Where(x => x.TargetId == parentId);
+            IQueryable<Method> baseQuery = _context.Methods;
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchString = $"%{search}%";
@@ -122,10 +132,11 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<MethodModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<IList<MethodModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(parentId, search)
+            var entities = await GetBaseQuery(search)
                 .Include(x => x.Image)
+                .Include(x => x.Targets)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
@@ -135,9 +146,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return entities.Select(MethodModel.FromEntity).ToList();
         }
 
-        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
+        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
+            return await GetBaseQuery(search).CountAsync(cancellationToken);
         }
 
         public async Task<MethodModel> UpdateItem(MethodModel item, CancellationToken cancellationToken = default)
@@ -166,6 +177,22 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             await _context.SaveChangesAsync(cancellationToken);
 
+            //TargetMethods
+            var existingTargetMethods = await _context.TargetMethods.Where(x => x.MethodId == item.Id).ToListAsync(cancellationToken);
+
+            _context.TargetMethods.RemoveRange(existingTargetMethods);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var targetMethods = item.ToTargetMethodEntities();
+
+            if (targetMethods != null)
+            {
+                await _context.TargetMethods.AddRangeAsync(targetMethods, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+            
             //DietMethods
             var existingMethodDiets = await _context.DietMethods.Where(x => x.MethodId == item.Id).ToListAsync(cancellationToken);
 

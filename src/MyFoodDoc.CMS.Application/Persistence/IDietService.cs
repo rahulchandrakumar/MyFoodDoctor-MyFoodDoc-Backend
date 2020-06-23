@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IDietService : IServiceBaseRead<DietModel, int>
+    public interface IDietService : IServiceBaseReadItems<DietModel>
     {
     }
 }

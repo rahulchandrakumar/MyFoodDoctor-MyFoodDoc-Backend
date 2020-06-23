@@ -18,11 +18,6 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             this._context = context;
         }
 
-        public async Task<IndicationModel> GetItem(int id, CancellationToken cancellationToken = default)
-        {
-            return IndicationModel.FromEntity(await _context.Indications.FindAsync(new object[] { id }, cancellationToken));
-        }
-
         public async Task<IList<IndicationModel>> GetItems(CancellationToken cancellationToken = default)
         {
             return (await _context.Indications.ToListAsync(cancellationToken)).Select(IndicationModel.FromEntity).ToList();

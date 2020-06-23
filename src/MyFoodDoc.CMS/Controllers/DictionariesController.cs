@@ -17,13 +17,20 @@ namespace MyFoodDoc.CMS.Controllers
         private readonly IIndicationService _indicationService;
         private readonly IInsuranceService _insuranceService;
         private readonly IMotivationService _motivationService;
+        private readonly ITargetService _targetService;
 
-        public DictionariesController(IDietService dietService, IIndicationService indicationService, IInsuranceService insuranceService, IMotivationService motivationService)
+
+        public DictionariesController(IDietService dietService, 
+            IIndicationService indicationService, 
+            IInsuranceService insuranceService, 
+            IMotivationService motivationService, 
+            ITargetService targetService)
         {
             this._dietService = dietService;
             this._indicationService = indicationService;
             this._insuranceService = insuranceService;
             this._motivationService = motivationService;
+            this._targetService = targetService;
         }
 
         [HttpGet("diet")]
@@ -48,6 +55,12 @@ namespace MyFoodDoc.CMS.Controllers
         public async Task<IList<Motivation>> GetMotivationList(CancellationToken cancellationToken = default)
         {
             return (await _motivationService.GetItems(cancellationToken)).Select(Motivation.FromModel).ToList();
+        }
+
+        [HttpGet("target")]
+        public async Task<IList<Target>> GetTargetList(CancellationToken cancellationToken = default)
+        {
+            return (await _targetService.GetItems(cancellationToken)).Select(Target.FromModel).ToList();
         }
     }
 }

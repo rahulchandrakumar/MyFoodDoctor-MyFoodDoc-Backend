@@ -1,14 +1,11 @@
 ﻿using MyFoodDoc.Application.Abstractions;
 using System.Collections.Generic;
-using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Enums;
 
-namespace MyFoodDoc.Application.Entities.Abstractions
+namespace MyFoodDoc.Application.Entities.Methods
 {
     public class Method : AbstractAuditableEntity
     {
-        public int TargetId { get; set; }
-
         public MethodType Type { get; set; }
 
         public string Title { get; set; }
@@ -24,8 +21,6 @@ namespace MyFoodDoc.Application.Entities.Abstractions
         public ICollection<IndicationMethod> Indications { get; set; }
 
         public ICollection<DietMethod> Diets { get; set; }
-
-        public Target Target { get; set; }
 
         public Image Image { get; set; }
     }

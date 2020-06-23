@@ -32,8 +32,8 @@ namespace MyFoodDoc.CMS.Controllers
         {
             return new
             {
-                values = (await _methodService.GetItems(payload.TargetId, payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(Method.FromModel),
-                total = await _methodService.GetItemsCount(payload.TargetId, payload.Search, cancellationToken)
+                values = (await _methodService.GetItems(payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(Method.FromModel),
+                total = await _methodService.GetItemsCount(payload.Search, cancellationToken)
             };
         }
 

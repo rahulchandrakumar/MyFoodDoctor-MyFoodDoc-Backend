@@ -13,6 +13,7 @@ using MyFoodDoc.App.Application.Payloads.Method;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Services
@@ -45,7 +46,10 @@ namespace MyFoodDoc.App.Application.Services
                 .Union(_context.MotivationMethods.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)).Distinct();
 
 
-            var methods = await _context.Methods.Include(x=> x.Image).Where(x => availableMethodIds.Contains(x.Id) && triggeredTargetIds.Contains(x.TargetId))
+            var methods = await _context.Methods
+                .Include(x => x.Targets)
+                .Include(x=> x.Image)
+                .Where(x => availableMethodIds.Contains(x.Id) && x.Targets.Any(y=> triggeredTargetIds.Contains(y.TargetId)))
                 .ToListAsync(cancellationToken);
 
             if (!methods.Any())

@@ -6,8 +6,7 @@
                     :before-add="init"
                     :before-edit="beforeEdit"
                     :before-save="beforeSave"
-                    :parent="parent"
-                    :childLinks="childLinks">
+                    :parent="parent">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
@@ -187,10 +186,6 @@
                     titleProperty: "name",
                     storeName: "optimizationareas"
                 },
-                childLinks: [{
-                    path: "Methods",
-                    title: "Edit methods",
-                }],
                 preview: false,
                 priorities: [],
                 types: [],

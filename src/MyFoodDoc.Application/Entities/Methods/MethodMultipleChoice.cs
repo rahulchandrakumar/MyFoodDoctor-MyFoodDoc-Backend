@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities.Abstractions;
+﻿using MyFoodDoc.Application.Abstractions;
 
 namespace MyFoodDoc.Application.Entities.Methods
 {

@@ -13,9 +13,9 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public string Text { get; set; }
 
-        public int TargetId { get; set; }
-
         public Image Image { get; set; }
+
+        public IList<int> Targets { get; set; }
 
         public IList<int> Diets { get; set; }
 
@@ -31,8 +31,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Type = model.Type,
                 Title = model.Title,
                 Text = model.Text,
-                TargetId = model.TargetId,
                 Image = model.Image == null ? null : Image.FromModel(model.Image),
+                Targets = model.Targets?.ToList(),
                 Diets = model.Diets?.ToList(),
                 Indications = model.Indications?.ToList(),
                 Motivations = model.Motivations?.ToList()
@@ -47,8 +47,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Type = this.Type,
                 Title = this.Title,
                 Text = this.Text,
-                TargetId = this.TargetId,
                 Image = this.Image?.ToModel(),
+                Targets = this.Targets?.ToList(),
                 Diets = this.Diets?.ToList(),
                 Indications = this.Indications?.ToList(),
                 Motivations = this.Motivations?.ToList()

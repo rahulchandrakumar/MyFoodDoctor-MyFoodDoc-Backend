@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {

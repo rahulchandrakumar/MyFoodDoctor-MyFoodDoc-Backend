@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IIndicationService : IServiceBaseRead<IndicationModel, int>
+    public interface IIndicationService : IServiceBaseReadItems<IndicationModel>
     {
     }
 }

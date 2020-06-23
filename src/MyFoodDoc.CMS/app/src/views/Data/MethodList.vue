@@ -6,7 +6,6 @@
                     :before-add="init"
                     :before-edit="beforeEdit"
                     :before-save="beforeSave"
-                    :parent="parent"
                     :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
@@ -51,6 +50,11 @@
                            rules="required" />
             </v-row>
             <v-row>
+                <v-col>
+                    <VeeCheckList title="Targets"
+                                  :availableItems="targetList"
+                                  :checkedItems="item.targets" />
+                </v-col>
                 <v-col>
                     <VeeCheckList title="Diets"
                                   :availableItems="dietList"
@@ -100,18 +104,12 @@ import { toggle } from '../../utils/vuex';
                     value: "title",
                     text: "Title"
                 }],
-                parent: {
-                    path: "Targets",
-                    parentIdProperty: "optimizationAreaId",
-                    title: "Target",
-                    titleProperty: "title",
-                    storeName: "targets"
-                },
                 childLinks: [{
                     path: "Method Multiple Choices",
                     title: "Edit multiple choices",
                     visible: (item) => item.type == 'MultipleChoice'
                 }],
+                targetList: [],
                 dietList: [],
                 indicationList: [],
                 motivationList: [],
@@ -121,12 +119,14 @@ import { toggle } from '../../utils/vuex';
         async created() {
             this.types = Object.values(MethodType);
 
+            this.targetList = await this.$store.dispatch("dictionaries/getTargetList");
             this.dietList = await this.$store.dispatch("dictionaries/getDietList");
             this.indicationList = await this.$store.dispatch("dictionaries/getIndicationList");
             this.motivationList = await this.$store.dispatch("dictionaries/getMotivationList");
         },
         methods: {
             async init(item) {
+                if (!item.targets) item.targets = [];
                 if (!item.diets) item.diets = [];
                 if (!item.indications) item.indications = [];
                 if (!item.motivations) item.motivations = [];
@@ -137,8 +137,6 @@ import { toggle } from '../../utils/vuex';
             async beforeSave(item) {
                 if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
-
-                item.targetId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");

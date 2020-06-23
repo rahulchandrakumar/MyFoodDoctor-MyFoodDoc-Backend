@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.CMS.Application.Models
@@ -13,8 +12,8 @@ namespace MyFoodDoc.CMS.Application.Models
         public string Type { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
-        public int TargetId { get; set; }
         public ImageModel Image { get; set; }
+        public IList<int> Targets { get; set; }
         public IList<int> Diets { get; set; }
         public IList<int> Indications { get; set; }
         public IList<int> Motivations { get; set; }
@@ -27,8 +26,8 @@ namespace MyFoodDoc.CMS.Application.Models
                 Type = entity.Type.ToString(),
                 Title = entity.Title,
                 Text = entity.Text,
-                TargetId = entity.TargetId,
                 Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
+                Targets = entity.Targets?.Select(x => x.TargetId).ToList(),
                 Diets = entity.Diets?.Select(x => x.DietId).ToList(),
                 Indications = entity.Indications?.Select(x => x.IndicationId).ToList(),
                 Motivations = entity.Motivations?.Select(x => x.MotivationId).ToList()
@@ -43,9 +42,13 @@ namespace MyFoodDoc.CMS.Application.Models
                 Type = (MethodType)Enum.Parse(typeof(MethodType), this.Type),
                 Title = this.Title,
                 Text = this.Text,
-                TargetId = this.TargetId,
                 ImageId = this.Image == null || string.IsNullOrEmpty(this.Image.Url) ? (int?)null : this.Image.Id,
             };
+        }
+
+        public IList<TargetMethod> ToTargetMethodEntities()
+        {
+            return this.Targets?.Select(x => new TargetMethod { TargetId = x, MethodId = this.Id }).ToList();
         }
 
         public IList<DietMethod> ToDietMethodEntities()

@@ -1,13 +1,13 @@
 import integration from "@/integration";
 
 export default {
-    loadItems: async ({ commit, state }, { page, search, parentId }) => {
+    loadItems: async ({ commit, state }, { page, search }) => {
         state.loaded = false
 
         state.skip = (page - 1) * state.take;
         state.search = search;
 
-        let response = await integration.methods.getAll({ targetId: parentId, take: state.take, skip: state.skip, search: state.search });
+        let response = await integration.methods.getAll({ take: state.take, skip: state.skip, search: state.search });
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -25,10 +25,10 @@ export default {
 
         return response.data;
     },
-    loadOneMoreItem: async ({ state }, { parentId }) => {
+    loadOneMoreItem: async ({ state }) => {
         state.loaded = false
 
-        let response = await integration.methods.getAll({ targetId: parentId, take: 1, skip: state.skip + state.take - 1, search: state.search });
+        let response = await integration.methods.getAll({ take: 1, skip: state.skip + state.take - 1, search: state.search });
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -78,10 +78,10 @@ export default {
             commit("setItem", item)
         }
     },
-    itemDeleted: async ({ state, commit }, { Id, ParentId }) => {
+    itemDeleted: async ({ state, commit }, { Id }) => {
         var item = null;
         if (state.items.filter(i => i.id == Id).length > 0 && state.total > state.take) {
-            item = await dispatch('loadOneMoreItem', { parentId: ParentId })
+            item = await dispatch('loadOneMoreItem')
         }
         commit("deleteItem", { Id, item })
         state.total--

@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IMotivationService : IServiceBaseRead<MotivationModel, int>
+    public interface IMotivationService : IServiceBaseReadItems<MotivationModel>
     {
     }
 }
