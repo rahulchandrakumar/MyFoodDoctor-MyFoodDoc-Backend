@@ -12,7 +12,6 @@ using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Method;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Enums;
 
@@ -21,13 +20,11 @@ namespace MyFoodDoc.App.Application.Services
     public class MethodService : IMethodService
     {
         private readonly IApplicationContext _context;
-        private readonly ITargetService _targetService;
         private readonly int _statisticsPeriod;
 
-        public MethodService(IApplicationContext context, ITargetService targetService, IOptions<StatisticsOptions> statisticsOptions)
+        public MethodService(IApplicationContext context, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
-            _targetService = targetService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
@@ -35,7 +32,10 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<MethodDto>();
 
-            var triggeredTargetIds = (await _targetService.GetAsync(userId, cancellationToken)).SelectMany(x => x.Targets).Select(x=> x.Id).ToList();
+            var userTargetIds = (await _context.UserTargets.Where(x =>
+                        x.UserId == userId)
+                    .ToListAsync(cancellationToken))
+                .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList();
 
             var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
             var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
@@ -49,7 +49,7 @@ namespace MyFoodDoc.App.Application.Services
             var methods = await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x=> x.Image)
-                .Where(x => availableMethodIds.Contains(x.Id) && x.Targets.Any(y=> triggeredTargetIds.Contains(y.TargetId)))
+                .Where(x => availableMethodIds.Contains(x.Id) && x.Targets.Any(y=> userTargetIds.Contains(y.TargetId)))
                 .ToListAsync(cancellationToken);
 
             if (!methods.Any())
