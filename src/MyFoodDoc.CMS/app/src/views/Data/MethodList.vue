@@ -12,16 +12,30 @@
         </template>
         <template v-slot:item.image="{ item }">
             <v-img v-if="item.image != null"
-                   :aspect-ratio="3/1"
                    :src="item.image.Url"
-                   height="70px" />
+                   contain="true"
+                   height="70px"
+                   width="210px" />
         </template>
         <template v-slot:editor="{ item }">
             <v-row>
-                <VeeImage v-model="item.image"
+                <VeeImage v-if="squareImage"
+                          v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
+                          rules="required"
+                          :image-width="300"
+                          :image-height="300" />
+                <VeeImage v-else
+                          v-model="item.image"
+                          :label="mainHeaders.filter(h => h.value == 'image')[0].text"
+                          rules="required"
                           :image-width="900"
                           :image-height="300" />
+
+            </v-row>
+            <v-row>
+                <v-switch v-model="squareImage"
+                          label="Square" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.title"
@@ -54,7 +68,7 @@
                     <VeeCheckList title="Targets"
                                   :availableItems="targetList"
                                   :checkedItems="item.targets"
-                                  labelField="title"/>
+                                  labelField="title" />
                 </v-col>
                 <v-col>
                     <VeeCheckList title="Diets"
@@ -114,7 +128,8 @@ import { toggle } from '../../utils/vuex';
                 dietList: [],
                 indicationList: [],
                 motivationList: [],
-                preview: false
+                preview: false,
+                squareImage: false
             }
         },
         async created() {

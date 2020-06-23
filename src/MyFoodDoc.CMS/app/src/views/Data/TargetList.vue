@@ -11,15 +11,11 @@
             {{ stripHtml(item.text) | truncate(200) }}
         </template>
         <template v-slot:item.image="{ item }">
-            <v-img v-if="item.image != null && item.type == 'Adjustment'"
-                   :aspect-ratio="3/1"
+            <v-img v-if="item.image != null"
                    :src="item.image.Url"
-                   height="70px" />
-            <v-img v-else-if="item.image != null"
-                   :aspect-ratio="1/1"
-                   :src="item.image.Url"
+                   contain="true"
                    height="70px"
-                   width="70px" />
+                   width="210px" />
         </template>
 
         <template v-slot:editor="{ item }">
