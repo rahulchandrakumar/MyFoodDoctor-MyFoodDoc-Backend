@@ -4,7 +4,7 @@
         <ul>
             <li v-for="availableItem in availableItems">
                 <input type="checkbox" v-bind:checked="isListItemChecked(availableItem.id)" v-on:change="toggleListItemCheckBox($event)" v-bind:id="availableItem.id" />
-                <label>{{ availableItem.name }}</label>
+                <label>{{ getLabel(availableItem) }}</label>
             </li>
         </ul>
     </div>
@@ -16,6 +16,9 @@
             title: {
                 type: String,
                 required: true
+            },
+            labelField: {
+                type: String
             },
             availableItems: {
                 type: Array
@@ -51,6 +54,13 @@
                         this.checkedItems.splice(i, 1);
                     }
                 }
+            },
+            getLabel(item) {
+                if (this.labelField) {
+                    return item[this.labelField]
+                }
+
+                return item.name;
             }
         }
     };

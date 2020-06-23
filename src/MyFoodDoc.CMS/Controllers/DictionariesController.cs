@@ -36,31 +36,31 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpGet("diet")]
         public async Task<IList<Diet>> GetDietList(CancellationToken cancellationToken = default)
         {
-            return (await _dietService.GetItems(cancellationToken)).Select(Diet.FromModel).ToList();
+            return (await _dietService.GetItems(cancellationToken)).Select(Diet.FromModel).OrderBy(x => x.Name).ToList();
         }
 
         [HttpGet("indication")]
         public async Task<IList<Indication>> GetIndicationList(CancellationToken cancellationToken = default)
         {
-            return (await _indicationService.GetItems(cancellationToken)).Select(Indication.FromModel).ToList();
+            return (await _indicationService.GetItems(cancellationToken)).Select(Indication.FromModel).OrderBy(x => x.Name).ToList();
         }
 
         [HttpGet("insurance")]
         public async Task<IList<Insurance>> GetInsuranceList(CancellationToken cancellationToken = default)
         {
-            return (await _insuranceService.GetItems(cancellationToken)).Select(Insurance.FromModel).ToList();
+            return (await _insuranceService.GetItems(cancellationToken)).Select(Insurance.FromModel).OrderBy(x => x.Name).ToList();
         }
 
         [HttpGet("motivation")]
         public async Task<IList<Motivation>> GetMotivationList(CancellationToken cancellationToken = default)
         {
-            return (await _motivationService.GetItems(cancellationToken)).Select(Motivation.FromModel).ToList();
+            return (await _motivationService.GetItems(cancellationToken)).Select(Motivation.FromModel).OrderBy(x => x.Name).ToList();
         }
 
         [HttpGet("target")]
         public async Task<IList<Target>> GetTargetList(CancellationToken cancellationToken = default)
         {
-            return (await _targetService.GetItems(cancellationToken)).Select(Target.FromModel).ToList();
+            return (await _targetService.GetItems(cancellationToken)).Select(Target.FromModel).OrderBy(x => x.Title).ToList();
         }
     }
 }

@@ -53,7 +53,8 @@
                 <v-col>
                     <VeeCheckList title="Targets"
                                   :availableItems="targetList"
-                                  :checkedItems="item.targets" />
+                                  :checkedItems="item.targets"
+                                  labelField="title"/>
                 </v-col>
                 <v-col>
                     <VeeCheckList title="Diets"
