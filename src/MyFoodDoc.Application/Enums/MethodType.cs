@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.Application.Enums
+﻿namespace MyFoodDoc.Application.Enums
 {
     public enum MethodType
     {
-        YesNo,
-        MultipleChoice
+        AbdominalGirth,
+        Change,
+        Drink,
+        Information,
+        Knowledge,
+        Meals,
+        Mood,
+        Sport,
+        Weight
     }
 }

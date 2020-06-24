@@ -90,7 +90,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Include(x => x.Image)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
-            if (entity.Type == MethodType.MultipleChoice)
+            if (entity.Type == MethodType.Knowledge)
                 foreach (var methodMultipleChoice in await _context.MethodMultipleChoice.Where(x => x.MethodId == id).ToListAsync(cancellationToken))
                     await _methodMultipleChoiceService.DeleteItem(methodMultipleChoice.Id, cancellationToken);
 
@@ -160,7 +160,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var newEntity = item.ToEntity();
 
             //MethodMultipleChoice
-            if (newEntity.Type != MethodType.MultipleChoice && entity.Type == MethodType.MultipleChoice)
+            if (newEntity.Type != MethodType.Knowledge && entity.Type == MethodType.Knowledge)
                 foreach (var methodMultipleChoice in await _context.MethodMultipleChoice.Where(x => x.MethodId == entity.Id).ToListAsync(cancellationToken))
                     await _methodMultipleChoiceService.DeleteItem(methodMultipleChoice.Id, cancellationToken);
 

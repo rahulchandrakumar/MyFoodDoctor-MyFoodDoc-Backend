@@ -122,7 +122,7 @@ import { toggle } from '../../utils/vuex';
                 childLinks: [{
                     path: "Method Multiple Choices",
                     title: "Edit multiple choices",
-                    visible: (item) => item.type == 'MultipleChoice'
+                    visible: (item) => item.type == 'Knowledge'
                 }],
                 targetList: [],
                 dietList: [],

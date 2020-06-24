@@ -10,6 +10,10 @@ namespace MyFoodDoc.App.Application.Payloads.Method
 
         public bool? UserAnswer { get; set; }
 
+        public int? IntegerValue { get; set; }
+
+        public decimal? DecimalValue { get; set; }
+
         public IEnumerable<MethodMultipleChoicePayload> Choices { get; set; }
     }
 }

@@ -15,6 +15,10 @@ namespace MyFoodDoc.Application.Entities
 
         public bool? Answer { get; set; }
 
+        public int? IntegerValue { get; set; }
+
+        public decimal? DecimalValue { get; set; }
+
         public int? MethodMultipleChoiceId { get; set; }
 
         public User User { get; set; }

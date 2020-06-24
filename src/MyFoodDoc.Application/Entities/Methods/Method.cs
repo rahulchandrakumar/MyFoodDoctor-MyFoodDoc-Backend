@@ -1,4 +1,5 @@
-﻿using MyFoodDoc.Application.Abstractions;
+﻿using System;
+using MyFoodDoc.Application.Abstractions;
 using System.Collections.Generic;
 using MyFoodDoc.Application.Enums;
 
@@ -13,6 +14,10 @@ namespace MyFoodDoc.Application.Entities.Methods
         public string Text { get; set; }
 
         public int? ImageId { get; set; }
+
+        public int? Frequency { get; set; }
+
+        public MethodFrequencyPeriod? FrequencyPeriod { get; set; }
 
         public ICollection<TargetMethod> Targets { get; set; }
 

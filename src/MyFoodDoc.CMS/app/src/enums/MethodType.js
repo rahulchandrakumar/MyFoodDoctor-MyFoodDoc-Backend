@@ -1,6 +1,6 @@
 ﻿const TargetType = Object.freeze({
-    YESNO: "YesNo",
-    MULTIPLECHOICE: "MultipleChoice"
+    MEALS: "Meals",
+    KNOWLEDGE: "Knowledge"
 });
 
 export default TargetType;

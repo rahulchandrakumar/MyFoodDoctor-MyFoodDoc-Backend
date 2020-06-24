@@ -82,7 +82,7 @@ namespace MyFoodDoc.App.Application.Services
                 ImageUrl = methodToShow.Image?.Url
             };
 
-            if (methodToShow.Type == MethodType.YesNo)
+            if (methodToShow.Type == MethodType.Meals)
             {
                 var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == methodToShow.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
@@ -145,7 +145,7 @@ namespace MyFoodDoc.App.Application.Services
                     throw new NotFoundException(nameof(Method), (item.Id));
                 }
 
-                if (method.Type == MethodType.YesNo)
+                if (method.Type == MethodType.Meals)
                 {
                     if (item.UserAnswer != null)
                     {

@@ -15,6 +15,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.Title).IsRequired().HasMaxLength(100);
             builder.Property(o => o.Text).IsRequired().HasMaxLength(1000);
             builder.Property(o => o.Type).HasConversion<string>().HasMaxLength(14);
+            builder.Property(o => o.FrequencyPeriod).HasConversion<string>().HasMaxLength(5);
 
             builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
         }
