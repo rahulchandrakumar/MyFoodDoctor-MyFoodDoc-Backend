@@ -13,7 +13,7 @@
         <template v-slot:item.image="{ item }">
             <v-img v-if="item.image != null"
                    :src="item.image.Url"
-                   contain="true"
+                   contain
                    height="70px"
                    width="210px" />
         </template>

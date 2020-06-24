@@ -13,29 +13,24 @@
         <template v-slot:item.image="{ item }">
             <v-img v-if="item.image != null"
                    :src="item.image.Url"
-                   contain="true"
+                   contain
                    height="70px"
                    width="210px" />
         </template>
         <template v-slot:editor="{ item }">
             <v-row>
-                <VeeImage v-if="squareImage"
-                          v-model="item.image"
-                          :label="mainHeaders.filter(h => h.value == 'image')[0].text"
-                          rules="required"
-                          :image-width="300"
-                          :image-height="300" />
-                <VeeImage v-else
+                <VeeImage v-if="item.type == 'Meals' || item.type == 'Knowledge'"
                           v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
                           rules="required"
                           :image-width="900"
                           :image-height="300" />
-
-            </v-row>
-            <v-row>
-                <v-switch v-model="squareImage"
-                          label="Square" />
+                <VeeImage v-else
+                          v-model="item.image"
+                          :label="mainHeaders.filter(h => h.value == 'image')[0].text"
+                          rules="required"
+                          :image-width="300"
+                          :image-height="300" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.title"
@@ -60,7 +55,7 @@
             <v-row>
                 <VeeSelect v-model="item.type"
                            :items="types"
-                           label="Type"
+                           :label="mainHeaders.filter(h => h.value == 'type')[0].text"
                            rules="required" />
             </v-row>
             <v-row>
@@ -114,7 +109,11 @@ import { toggle } from '../../utils/vuex';
                     value: "image",
                     text: "Image",
                     width: "210px"
-                },{
+                }, {
+                    sortable: true,
+                    value: "type",
+                    text: "Type"
+                }, {
                     sortable: true,
                     value: "title",
                     text: "Title"
@@ -128,8 +127,7 @@ import { toggle } from '../../utils/vuex';
                 dietList: [],
                 indicationList: [],
                 motivationList: [],
-                preview: false,
-                squareImage: false
+                preview: false
             }
         },
         async created() {
