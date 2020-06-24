@@ -59,6 +59,15 @@
                            rules="required" />
             </v-row>
             <v-row>
+                <VeeTextField v-model="item.frequency"
+                              label="Frequency"
+                              rules="integer|min_value:1"
+                              number />
+                <VeeSelect v-model="item.frequencyPeriod"
+                           :items="methodFrequencyPeriods"
+                           label="Frequency period" />
+            </v-row>
+            <v-row>
                 <v-col>
                     <VeeCheckList title="Targets"
                                   :availableItems="targetList"
@@ -89,6 +98,7 @@
     import Vue from 'vue'
     import integration from "@/integration";
     import MethodType from "@/enums/MethodType";
+    import MethodFrequencyPeriod from "@/enums/MethodFrequencyPeriod";
 import { toggle } from '../../utils/vuex';
 
     export default {
@@ -133,6 +143,9 @@ import { toggle } from '../../utils/vuex';
         async created() {
             this.types = Object.values(MethodType);
 
+            this.methodFrequencyPeriods = [''];
+            this.methodFrequencyPeriods = this.methodFrequencyPeriods.concat(Object.values(MethodFrequencyPeriod));
+
             this.targetList = await this.$store.dispatch("dictionaries/getTargetList");
             this.dietList = await this.$store.dispatch("dictionaries/getDietList");
             this.indicationList = await this.$store.dispatch("dictionaries/getIndicationList");
@@ -151,6 +164,11 @@ import { toggle } from '../../utils/vuex';
             async beforeSave(item) {
                 if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
+
+                if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
+                    item.frequency = null;
+                    item.frequencyPeriod = null;
+                }
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");

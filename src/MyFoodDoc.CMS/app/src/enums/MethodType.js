@@ -1,4 +1,4 @@
-﻿const TargetType = Object.freeze({
+﻿const MethodType = Object.freeze({
     CHANGE: "Change",
     DRINK: "Drink",
     MEALS: "Meals",
@@ -6,4 +6,4 @@
     SPORT: "Sport"
 });
 
-export default TargetType;
+export default MethodType;

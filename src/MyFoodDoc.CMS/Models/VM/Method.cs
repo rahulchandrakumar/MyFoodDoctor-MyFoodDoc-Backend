@@ -13,6 +13,10 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public string Text { get; set; }
 
+        public int? Frequency { get; set; }
+
+        public string FrequencyPeriod { get; set; }
+
         public Image Image { get; set; }
 
         public IList<int> Targets { get; set; }
@@ -31,6 +35,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Type = model.Type,
                 Title = model.Title,
                 Text = model.Text,
+                Frequency = model.Frequency,
+                FrequencyPeriod = model.FrequencyPeriod,
                 Image = model.Image == null ? null : Image.FromModel(model.Image),
                 Targets = model.Targets?.ToList(),
                 Diets = model.Diets?.ToList(),
@@ -47,6 +53,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Type = this.Type,
                 Title = this.Title,
                 Text = this.Text,
+                Frequency = this.Frequency,
+                FrequencyPeriod = this.FrequencyPeriod,
                 Image = this.Image?.ToModel(),
                 Targets = this.Targets?.ToList(),
                 Diets = this.Diets?.ToList(),
