@@ -32,11 +32,6 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<MethodDto>();
 
-            var userTargetIds = (await _context.UserTargets.Where(x =>
-                        x.UserId == userId)
-                    .ToListAsync(cancellationToken))
-                .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList();
-
             var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
             var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
             var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
@@ -44,38 +39,52 @@ namespace MyFoodDoc.App.Application.Services
             var availableMethodIds = _context.DietMethods.Where(x => userDiets.Contains(x.DietId)).Select(x => x.MethodId)
                 .Union(_context.IndicationMethods.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId))
                 .Union(_context.MotivationMethods.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)).Distinct();
-            
-            var methods = await _context.Methods
-                .Include(x => x.Targets)
-                .Include(x=> x.Image)
-                .Where(x => availableMethodIds.Contains(x.Id) && x.Targets.Any(y=> userTargetIds.Contains(y.TargetId)))
-                .ToListAsync(cancellationToken);
 
-            if (!methods.Any())
+            if (!availableMethodIds.Any())
                 return result;
 
-            /*
-            var methodIds = methods.Select(x => x.Id);
-            
-            var userMethodShowHistory = (await _context.UserMethodShowHistory
-                .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod) &&
-                            methodIds.Contains(x.MethodId))
+            var userTargetIds = (await _context.UserTargets.Where(x =>
+                        x.UserId == userId)
+                    .ToListAsync(cancellationToken))
+                .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList();
+
+            foreach (var method in await _context.Methods
+                .Include(x => x.Targets)
+                .Include(x => x.Image)
+                .Where(x => availableMethodIds.Contains(x.Id))
                 .ToListAsync(cancellationToken))
-                .GroupBy(g => g.MethodId)
-                .Select(x => new { x.Key, Count = x.Count() });
-
-            Method methodToShow = methods.FirstOrDefault(x => userMethodShowHistory.All(y => y.Key != x.Id));
-
-            if (methodToShow == null)
             {
-                var userMethodShowHistoryItem = userMethodShowHistory.OrderBy(x => x.Count).First();
+                if (method.Targets.Any() && !method.Targets.Any(x =>  userTargetIds.Contains(x.TargetId)))
+                    continue;
+                
+                if (method.Frequency != null && method.FrequencyPeriod != null)
+                {
+                    int daysInPeriod;
 
-                methodToShow = methods.First(x => x.Id == userMethodShowHistoryItem.Key);
-            }
-            */
+                    switch (method.FrequencyPeriod.Value)
+                    {
+                        case MethodFrequencyPeriod.Day:
+                            daysInPeriod = 1;
+                            break;
+                        case MethodFrequencyPeriod.Week:
+                            daysInPeriod = 7;
+                            break;
+                        case MethodFrequencyPeriod.Month:
+                            daysInPeriod = 30;
+                            break;
+                        default:
+                            daysInPeriod = 0;
+                            break;
+                    }
+                    
+                    var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
 
-            foreach (var method in methods)
-            {
+                    if ((await _context.UserMethodShowHistory.Where(x => x.UserId == userId && x.MethodId == method.Id)
+                        .ToListAsync(cancellationToken))
+                        .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                        continue;
+                }
+                
                 var methodDto = new MethodDto
                 {
                     Id = method.Id,
