@@ -44,8 +44,7 @@ namespace MyFoodDoc.App.Application.Services
             var availableMethodIds = _context.DietMethods.Where(x => userDiets.Contains(x.DietId)).Select(x => x.MethodId)
                 .Union(_context.IndicationMethods.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId))
                 .Union(_context.MotivationMethods.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)).Distinct();
-
-
+            
             var methods = await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x=> x.Image)
@@ -55,6 +54,7 @@ namespace MyFoodDoc.App.Application.Services
             if (!methods.Any())
                 return result;
 
+            /*
             var methodIds = methods.Select(x => x.Id);
             
             var userMethodShowHistory = (await _context.UserMethodShowHistory
@@ -72,64 +72,77 @@ namespace MyFoodDoc.App.Application.Services
 
                 methodToShow = methods.First(x => x.Id == userMethodShowHistoryItem.Key);
             }
+            */
 
-            var methodDto = new MethodDto
+            foreach (var method in methods)
             {
-                Id = methodToShow.Id,
-                Title = methodToShow.Title,
-                Text = methodToShow.Text,
-                Type = methodToShow.Type.ToString(),
-                ImageUrl = methodToShow.Image?.Url
-            };
-
-            if (methodToShow.Type != MethodType.Knowledge)
-            {
-                var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == methodToShow.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
-
-                if (userMethod?.Answer != null)
+                var methodDto = new MethodDto
                 {
-                    methodDto.UserAnswer = userMethod.Answer;
-                    methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                    methodDto.TimeAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                }
-            }
-            else
-            {
-                methodDto.Choices = new List<MethodMultipleChoiceDto>();
+                    Id = method.Id,
+                    Title = method.Title,
+                    Text = method.Text,
+                    Type = method.Type.ToString(),
+                    ImageUrl = method.Image?.Url
+                };
 
-                var userMethods = (await _context.UserMethods.Where(x =>
-                            x.UserId == userId && x.MethodId == methodToShow.Id &&
-                            x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
-                        .ToListAsync(cancellationToken))
-                    .GroupBy(g => g.MethodMultipleChoiceId)
-                    .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value).ToList();
-
-                if (userMethods.Any())
+                if (method.Type != MethodType.Knowledge)
                 {
-                    var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == methodToShow.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+                    var userMethod = await _context.UserMethods
+                        .Where(x => x.UserId == userId && x.MethodId == method.Id &&
+                                    x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created)
+                        .LastOrDefaultAsync(cancellationToken);
 
-                    methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                    methodDto.TimeAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                }
-
-                foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
-                    .Where(x => x.MethodId == methodToShow.Id).ToListAsync(cancellationToken))
-                {
-                    methodDto.Choices.Add(new MethodMultipleChoiceDto
+                    if (userMethod?.Answer != null)
                     {
-                        Id = methodMultipleChoice.Id,
-                        Title = methodMultipleChoice.Title,
-                        IsCorrect = methodMultipleChoice.IsCorrect,
-                        CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
-                    });
+                        methodDto.UserAnswer = userMethod.Answer;
+                        methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                        methodDto.TimeAnswered =
+                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                    }
                 }
+                else
+                {
+                    methodDto.Choices = new List<MethodMultipleChoiceDto>();
+
+                    var userMethods = (await _context.UserMethods.Where(x =>
+                                x.UserId == userId && x.MethodId == method.Id &&
+                                x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+                            .ToListAsync(cancellationToken))
+                        .GroupBy(g => g.MethodMultipleChoiceId)
+                        .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
+                        .ToList();
+
+                    if (userMethods.Any())
+                    {
+                        var userMethod = await _context.UserMethods
+                            .Where(x => x.UserId == userId && x.MethodId == method.Id &&
+                                        x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created)
+                            .LastOrDefaultAsync(cancellationToken);
+
+                        methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                        methodDto.TimeAnswered =
+                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                    }
+
+                    foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
+                        .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
+                    {
+                        methodDto.Choices.Add(new MethodMultipleChoiceDto
+                        {
+                            Id = methodMultipleChoice.Id,
+                            Title = methodMultipleChoice.Title,
+                            IsCorrect = methodMultipleChoice.IsCorrect,
+                            CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
+                        });
+                    }
+                }
+
+                result.Add(methodDto);
+
+                await _context.UserMethodShowHistory.AddAsync(new UserMethodShowHistoryItem { MethodId = method.Id, UserId = userId }, cancellationToken);
             }
 
-            result.Add(methodDto);
-
-            await _context.UserMethodShowHistory.AddAsync(new UserMethodShowHistoryItem { MethodId = methodToShow.Id, UserId = userId }, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
-
 
             return result;
         }
