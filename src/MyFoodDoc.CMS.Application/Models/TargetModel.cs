@@ -85,11 +85,11 @@ namespace MyFoodDoc.CMS.Application.Models
                 OptimizationAreaId = this.OptimizationAreaId,
                 Title = this.Title,
                 Text = this.Text,
-                TriggerOperator = (TriggerOperator)Enum.Parse(typeof(TriggerOperator), this.TriggerOperator),
+                TriggerOperator = Enum.Parse<TriggerOperator>(this.TriggerOperator),
                 TriggerValue = this.TriggerValue,
                 Threshold = this.Threshold,
-                Priority = (TargetPriority)Enum.Parse(typeof(TargetPriority), this.Priority),
-                Type = (TargetType)Enum.Parse(typeof(TargetType), this.Type),
+                Priority = Enum.Parse<TargetPriority>(this.Priority),
+                Type = Enum.Parse<TargetType>(this.Type),
                 ImageId = this.Image.Id,
             };
         }
@@ -103,7 +103,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 TargetId = this.Id,
                 TargetValue = this.TargetValue,
                 Step = this.Step,
-                StepDirection = (AdjustmentTargetStepDirection)Enum.Parse(typeof(AdjustmentTargetStepDirection), this.StepDirection),
+                StepDirection = Enum.Parse<AdjustmentTargetStepDirection>(this.StepDirection),
                 RecommendedText = this.RecommendedText,
                 TargetText = this.TargetText,
                 RemainText = this.RemainText,

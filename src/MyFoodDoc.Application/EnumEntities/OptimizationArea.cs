@@ -1,5 +1,7 @@
-﻿using MyFoodDoc.Application.Abstractions;
+﻿using System;
+using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.Application.EnumEntities
 {
@@ -40,5 +42,7 @@ namespace MyFoodDoc.Application.EnumEntities
         public string AboveOptimalPieChartTitle { get; set; }
 
         public string AboveOptimalPieChartText { get; set; }
+
+        public OptimizationAreaType Type => Enum.Parse<OptimizationAreaType>(Key, true);
     }
 }

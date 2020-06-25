@@ -27,7 +27,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Email = entity.Email,
                 FullName = entity.UserName,
                 InsuranceId = entity.InsuranceId,
-                Gender = entity.Gender == null ? null : (GenderEnum?)Enum.Parse(typeof(GenderEnum), entity.Gender?.ToString()),
+                Gender = entity.Gender == null ? null : (GenderEnum?)Enum.Parse<GenderEnum>(entity.Gender.ToString()),
                 Height = entity.Height,
                 AbdominalGirth = entity.AbdominalGirthHistory?.Select(HistoryModel<decimal>.FromEntity).ToList(),
                 Weight = entity.WeightHistory?.Select(HistoryModel<decimal>.FromEntity).ToList(),

@@ -43,11 +43,11 @@ namespace MyFoodDoc.CMS.Application.Models
             return new Method()
             {
                 Id = this.Id,
-                Type = (MethodType)Enum.Parse(typeof(MethodType), this.Type),
+                Type = Enum.Parse<MethodType>(this.Type),
                 Title = this.Title,
                 Text = this.Text,
                 Frequency = this.Frequency,
-                FrequencyPeriod = string.IsNullOrEmpty(this.FrequencyPeriod) ? (MethodFrequencyPeriod?)null : (MethodFrequencyPeriod)Enum.Parse(typeof(MethodFrequencyPeriod), this.FrequencyPeriod),
+                FrequencyPeriod = string.IsNullOrEmpty(this.FrequencyPeriod) ? (MethodFrequencyPeriod?)null : Enum.Parse<MethodFrequencyPeriod>(this.FrequencyPeriod),
                 ImageId = this.Image == null || string.IsNullOrEmpty(this.Image.Url) ? (int?)null : this.Image.Id,
             };
         }

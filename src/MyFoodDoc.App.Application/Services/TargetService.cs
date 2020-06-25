@@ -94,8 +94,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     int triggeredDaysCount = 0;
 
-                    //TODO: use constants or enums
-                    if (target.OptimizationArea.Key == "protein")
+                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
                         var weightHistory = await _context.UserWeights
                             .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod)).ToListAsync(cancellationToken);
@@ -134,7 +133,7 @@ namespace MyFoodDoc.App.Application.Services
                             triggeredDaysCount = triggeredDays.Count();
                         }
                     }
-                    else if (target.OptimizationArea.Key == "sugar")
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
                     {
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
@@ -149,7 +148,7 @@ namespace MyFoodDoc.App.Application.Services
                             triggeredDaysCount = triggeredDays.Count();
                         }
                     }
-                    else if (target.OptimizationArea.Key == "vegetables")
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
                     {
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
@@ -195,15 +194,13 @@ namespace MyFoodDoc.App.Application.Services
 
                 var dailyUserIngredients = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
 
-                //TODO: use constants or enums
                 if (target.Type == TargetType.Adjustment)
                 {
                     var adjustmentTarget = await _context.AdjustmentTargets.SingleAsync(x => x.TargetId == target.Id, cancellationToken);
 
                     decimal bestValue = 0;
 
-                    //TODO: use constants or enums
-                    if (target.OptimizationArea.Key == "protein")
+                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
                         var weightHistory = await _context.UserWeights
                             .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToListAsync(cancellationToken);
@@ -244,7 +241,7 @@ namespace MyFoodDoc.App.Application.Services
                                 bestValue = triggeredDays.Max(x => x.Protein);
                         }
                     }
-                    else if (target.OptimizationArea.Key == "sugar")
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
                     {
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
@@ -261,7 +258,7 @@ namespace MyFoodDoc.App.Application.Services
                                 bestValue = triggeredDays.Max(x => x.Sugar);
                         }
                     }
-                    else if (target.OptimizationArea.Key == "vegetables")
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
                     {
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
@@ -285,7 +282,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     targetDto.Answers = new List<TargetAnswerDto>();
 
-                    if (target.OptimizationArea.Key == "protein")
+                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
                         var weightHistory = await _context.UserWeights
                             .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToListAsync(cancellationToken);
@@ -352,7 +349,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     analysisDto.LineGraph = new AnalysisLineGraphDto();
 
-                    if (target.OptimizationArea.Key == "protein")
+                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
                         var weightHistory = _context.UserWeights
                             .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToList();
@@ -437,7 +434,7 @@ namespace MyFoodDoc.App.Application.Services
                             };
                         }
                     }
-                    else if (target.OptimizationArea.Key == "sugar")
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
                     {
                         analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
                         analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
@@ -459,7 +456,7 @@ namespace MyFoodDoc.App.Application.Services
                             analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
                         }
                     }
-                    else if (target.OptimizationArea.Key == "vegetables")
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
                     {
                         analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
                         analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
