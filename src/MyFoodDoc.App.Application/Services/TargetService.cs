@@ -386,28 +386,28 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                         { Date = x.Key, Value = x.Value.Protein }).ToList();
 
+                        var average = dailyUserIngredients.Average(x => x.Value.Protein);
+
+                        if (average > analysisDto.LineGraph.UpperLimit)
+                        {
+                            analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                        }
+                        else if (average < analysisDto.LineGraph.LowerLimit)
+                        {
+                            analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                        }
+                        else
+                        {
+                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                        }
+
                         var totalProtein = dailyUserIngredients.Sum(x => x.Value.Protein);
 
                         if (totalProtein > 0)
                         {
-                            var average = dailyUserIngredients.Average(x => x.Value.Protein);
-
-                            if (average > analysisDto.LineGraph.UpperLimit)
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
-                            }
-                            else if (average < analysisDto.LineGraph.LowerLimit)
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
-                            }
-                            else
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                            }
-                            
                             analysisDto.PieChart = new AnalysisPieChartDto();
                             
                             var plantProteinPercent = (int)Math.Round(dailyUserIngredients.Sum(x => x.Value.PlantProtein) * 100 / totalProtein);
@@ -444,24 +444,19 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
 
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                        { Date = x.Key, Value = x.Value.Sugar }).ToList();
+                            { Date = x.Key, Value = x.Value.Sugar }).ToList();
 
-                        var totalSugar = dailyUserIngredients.Sum(x => x.Value.Sugar);
+                        var average = dailyUserIngredients.Average(x => x.Value.Sugar);
 
-                        if (totalSugar > 0)
+                        if (average > target.OptimizationArea.LineGraphUpperLimit)
                         {
-                            var average = dailyUserIngredients.Average(x => x.Value.Sugar);
-
-                            if (average > target.OptimizationArea.LineGraphUpperLimit)
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
-                            }
-                            else
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                            }
+                            analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                        }
+                        else
+                        {
+                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
                         }
                     }
                     else if (target.OptimizationArea.Key == "vegetables")
@@ -471,24 +466,19 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
 
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                        { Date = x.Key, Value = x.Value.Vegetables }).ToList();
+                            { Date = x.Key, Value = x.Value.Vegetables }).ToList();
 
-                        var totalVegetables = dailyUserIngredients.Sum(x => x.Value.Vegetables);
+                        var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
 
-                        if (totalVegetables > 0)
+                        if (average < target.OptimizationArea.LineGraphLowerLimit)
                         {
-                            var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
-
-                            if (average < target.OptimizationArea.LineGraphLowerLimit)
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
-                            }
-                            else
-                            {
-                                analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                                analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                            }
+                            analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                        }
+                        else
+                        {
+                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
                         }
                     }
 
