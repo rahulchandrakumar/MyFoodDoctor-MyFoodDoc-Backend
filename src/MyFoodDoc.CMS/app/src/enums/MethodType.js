@@ -1,9 +1,13 @@
 ﻿const MethodType = Object.freeze({
+    ABDOMINALGIRTH: "AbdominalGirth",
     CHANGE: "Change",
     DRINK: "Drink",
-    MEALS: "Meals",
+    INFORMATION: "Information",
     KNOWLEDGE: "Knowledge",
-    SPORT: "Sport"
+    MEALS: "Meals",
+    MOOD: "Mood",
+    SPORT: "Sport",
+    WEIGHT: "Weight"
 });
 
 export default MethodType;

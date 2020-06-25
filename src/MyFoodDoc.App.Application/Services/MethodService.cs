@@ -9,6 +9,7 @@ using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Configuration;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.Method;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
@@ -20,11 +21,13 @@ namespace MyFoodDoc.App.Application.Services
     public class MethodService : IMethodService
     {
         private readonly IApplicationContext _context;
+        private readonly IUserHistoryService _userHistoryService;
         private readonly int _statisticsPeriod;
 
-        public MethodService(IApplicationContext context, IOptions<StatisticsOptions> statisticsOptions)
+        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
+            _userHistoryService = userHistoryService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
@@ -54,12 +57,15 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => availableMethodIds.Contains(x.Id))
                 .ToListAsync(cancellationToken))
             {
+                if (!method.Targets.Any() && method.Frequency == null && method.FrequencyPeriod == null)
+                    continue;
+                
                 if (method.Targets.Any() && !method.Targets.Any(x =>  userTargetIds.Contains(x.TargetId)))
                     continue;
                 
                 if (method.Frequency != null && method.FrequencyPeriod != null)
                 {
-                    int daysInPeriod;
+                    int daysInPeriod = 0;
 
                     switch (method.FrequencyPeriod.Value)
                     {
@@ -72,9 +78,6 @@ namespace MyFoodDoc.App.Application.Services
                         case MethodFrequencyPeriod.Month:
                             daysInPeriod = 30;
                             break;
-                        default:
-                            daysInPeriod = 0;
-                            break;
                     }
                     
                     var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
@@ -83,6 +86,34 @@ namespace MyFoodDoc.App.Application.Services
                         .ToListAsync(cancellationToken))
                         .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                         continue;
+
+                    switch (method.Type)
+                    {
+                        case MethodType.AbdominalGirth:
+
+                            if ((await _context.UserAbdominalGirths.Where(x => x.UserId == userId)
+                                    .ToListAsync(cancellationToken))
+                                .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                continue;
+
+                            break;
+                        case MethodType.Mood:
+
+                            if ((await _context.Meals.Where(x => x.UserId == userId && x.Mood != null)
+                                    .ToListAsync(cancellationToken))
+                                .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                continue;
+
+                            break;
+                        case MethodType.Weight:
+
+                            if ((await _context.UserWeights.Where(x => x.UserId == userId)
+                                    .ToListAsync(cancellationToken))
+                                .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                continue;
+
+                            break;
+                    }
                 }
                 
                 var methodDto = new MethodDto
@@ -94,56 +125,59 @@ namespace MyFoodDoc.App.Application.Services
                     ImageUrl = method.Image?.Url
                 };
 
-                if (method.Type != MethodType.Knowledge)
+                var userMethod = await _context.UserMethods
+                    .Where(x => x.UserId == userId && x.MethodId == method.Id &&
+                                x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created)
+                    .LastOrDefaultAsync(cancellationToken);
+
+                switch (method.Type)
                 {
-                    var userMethod = await _context.UserMethods
-                        .Where(x => x.UserId == userId && x.MethodId == method.Id &&
-                                    x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created)
-                        .LastOrDefaultAsync(cancellationToken);
+                    case MethodType.Change:
+                    case MethodType.Drink:
+                    case MethodType.Meals:
+                    case MethodType.Sport:
 
-                    if (userMethod?.Answer != null)
-                    {
-                        methodDto.UserAnswer = userMethod.Answer;
-                        methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                        methodDto.TimeAnswered =
-                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                    }
-                }
-                else
-                {
-                    methodDto.Choices = new List<MethodMultipleChoiceDto>();
-
-                    var userMethods = (await _context.UserMethods.Where(x =>
-                                x.UserId == userId && x.MethodId == method.Id &&
-                                x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
-                            .ToListAsync(cancellationToken))
-                        .GroupBy(g => g.MethodMultipleChoiceId)
-                        .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
-                        .ToList();
-
-                    if (userMethods.Any())
-                    {
-                        var userMethod = await _context.UserMethods
-                            .Where(x => x.UserId == userId && x.MethodId == method.Id &&
-                                        x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created)
-                            .LastOrDefaultAsync(cancellationToken);
-
-                        methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                        methodDto.TimeAnswered =
-                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                    }
-
-                    foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
-                        .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
-                    {
-                        methodDto.Choices.Add(new MethodMultipleChoiceDto
+                        if (userMethod?.Answer != null)
                         {
-                            Id = methodMultipleChoice.Id,
-                            Title = methodMultipleChoice.Title,
-                            IsCorrect = methodMultipleChoice.IsCorrect,
-                            CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
-                        });
-                    }
+                            methodDto.UserAnswer = userMethod.Answer;
+                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                            methodDto.TimeAnswered =
+                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                        }
+
+                        break;
+                    case MethodType.Knowledge:
+
+                        methodDto.Choices = new List<MethodMultipleChoiceDto>();
+
+                        var userMethods = (await _context.UserMethods.Where(x =>
+                                    x.UserId == userId && x.MethodId == method.Id &&
+                                    x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+                                .ToListAsync(cancellationToken))
+                            .GroupBy(g => g.MethodMultipleChoiceId)
+                            .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
+                            .ToList();
+
+                        if (userMethods.Any())
+                        {
+                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                            methodDto.TimeAnswered =
+                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                        }
+
+                        foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
+                            .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
+                        {
+                            methodDto.Choices.Add(new MethodMultipleChoiceDto
+                            {
+                                Id = methodMultipleChoice.Id,
+                                Title = methodMultipleChoice.Title,
+                                IsCorrect = methodMultipleChoice.IsCorrect,
+                                CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
+                            });
+                        }
+
+                        break;
                 }
 
                 result.Add(methodDto);
@@ -166,39 +200,76 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     throw new NotFoundException(nameof(Method), (item.Id));
                 }
-
-                if (method.Type != MethodType.Knowledge)
+                
+                switch (method.Type)
                 {
-                    if (item.UserAnswer != null)
-                    {
-                        var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
-
-                        if (userMethod == null)
+                    case MethodType.AbdominalGirth:
+                        if (item.DecimalValue != null)
                         {
-                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswer }, cancellationToken);
-                        }
-                        else
-                        {
-                            userMethod.Answer = item.UserAnswer;
-                            _context.UserMethods.Update(userMethod);
-                        }
-                    }
-                }
-                else
-                {
-                    foreach (var userMethod in (await _context.UserMethods.Where(x =>
-                        x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
-                        .ToListAsync(cancellationToken))
-                        .GroupBy(g => g.MethodMultipleChoiceId)
-                        .Select(x => x.OrderBy(y => y.Created).Last()))
-                    {
-                        _context.UserMethods.Remove(userMethod);
-                    }
+                            await _userHistoryService.UpsertAbdonimalGirthHistoryAsync(userId,
+                                new AbdominalGirthHistoryPayload { Date = DateTime.Now, Value = item.DecimalValue.Value }, cancellationToken);
 
-                    foreach (var choice in item.Choices)
-                    {
-                        await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, MethodMultipleChoiceId = choice.Id }, cancellationToken);
-                    }
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.DecimalValue }, cancellationToken);
+                        }
+
+                        break;
+                    case MethodType.Change:
+                    case MethodType.Drink:
+                    case MethodType.Meals:
+                    case MethodType.Sport:
+
+                        if (item.UserAnswer != null)
+                        {
+                            var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                            if (userMethod == null)
+                            {
+                                await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswer }, cancellationToken);
+                            }
+                            else
+                            {
+                                userMethod.Answer = item.UserAnswer;
+                                _context.UserMethods.Update(userMethod);
+                            }
+                        }
+
+                        break;
+                    case MethodType.Mood:
+
+                        if (item.IntegerValue != null)
+                        {
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, IntegerValue = item.IntegerValue }, cancellationToken);
+                        }
+
+                        break;
+                    case MethodType.Knowledge:
+
+                        foreach (var userMethod in (await _context.UserMethods.Where(x =>
+                                    x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+                                .ToListAsync(cancellationToken))
+                            .GroupBy(g => g.MethodMultipleChoiceId)
+                            .Select(x => x.OrderBy(y => y.Created).Last()))
+                        {
+                            _context.UserMethods.Remove(userMethod);
+                        }
+
+                        foreach (var choice in item.Choices)
+                        {
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, MethodMultipleChoiceId = choice.Id }, cancellationToken);
+                        }
+
+                        break;
+                    case MethodType.Weight:
+
+                        if (item.DecimalValue != null)
+                        {
+                            await _userHistoryService.UpsertWeightHistoryAsync(userId,
+                                new WeightHistoryPayload {Date = DateTime.Now, Value = item.DecimalValue.Value}, cancellationToken);
+
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.DecimalValue }, cancellationToken);
+                        }
+
+                        break;
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);

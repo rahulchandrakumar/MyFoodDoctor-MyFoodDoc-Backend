@@ -18,7 +18,7 @@
                    width="210px" />
         </template>
         <template v-slot:editor="{ item }">
-            <v-row>
+            <v-row v-if="item.type != 'Mood'">
                 <VeeImage v-if="item.type == 'Meals' || item.type == 'Knowledge'"
                           v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
@@ -162,7 +162,9 @@ import { toggle } from '../../utils/vuex';
                 this.init(item);
             },
             async beforeSave(item) {
-                if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
+                if (item.type == 'Mood')
+                    item.image = null;
+                else if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
                 if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
