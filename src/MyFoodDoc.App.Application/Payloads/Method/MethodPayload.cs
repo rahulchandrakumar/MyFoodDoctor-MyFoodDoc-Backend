@@ -8,11 +8,11 @@ namespace MyFoodDoc.App.Application.Payloads.Method
     {
         public int Id { get; set; }
 
-        public bool? UserAnswer { get; set; }
+        public bool? UserAnswerBoolean { get; set; }
 
-        public int? IntegerValue { get; set; }
+        public decimal? UserAnswerDecimal { get; set; }
 
-        public decimal? DecimalValue { get; set; }
+        public int? UserAnswerInteger { get; set; }
 
         public IEnumerable<MethodMultipleChoicePayload> Choices { get; set; }
     }

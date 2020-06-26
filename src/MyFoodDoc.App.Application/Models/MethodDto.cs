@@ -16,11 +16,11 @@ namespace MyFoodDoc.App.Application.Models
 
         public string ImageUrl { get; set; }
 
-        public bool? UserAnswer { get; set; }
-
-        public int? UserAnswerInteger { get; set; }
+        public bool? UserAnswerBoolean { get; set; }
 
         public decimal? UserAnswerDecimal { get; set; }
+
+        public int? UserAnswerInteger { get; set; }
 
         public DateTime? DateAnswered { get; set; }
 

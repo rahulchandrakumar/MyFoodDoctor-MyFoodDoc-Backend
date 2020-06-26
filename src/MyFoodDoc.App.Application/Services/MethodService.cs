@@ -162,7 +162,7 @@ namespace MyFoodDoc.App.Application.Services
 
                         if (userMethod?.Answer != null)
                         {
-                            methodDto.UserAnswer = userMethod.Answer;
+                            methodDto.UserAnswerBoolean = userMethod.Answer;
                             methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
                             methodDto.TimeAnswered =
                                 (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
@@ -262,12 +262,12 @@ namespace MyFoodDoc.App.Application.Services
                 switch (method.Type)
                 {
                     case MethodType.AbdominalGirth:
-                        if (item.DecimalValue != null)
+                        if (item.UserAnswerDecimal != null)
                         {
                             await _userHistoryService.UpsertAbdonimalGirthHistoryAsync(userId,
-                                new AbdominalGirthHistoryPayload { Date = DateTime.Now, Value = item.DecimalValue.Value }, cancellationToken);
+                                new AbdominalGirthHistoryPayload { Date = DateTime.Now, Value = item.UserAnswerDecimal.Value }, cancellationToken);
 
-                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.DecimalValue }, cancellationToken);
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.UserAnswerDecimal }, cancellationToken);
                         }
 
                         break;
@@ -276,17 +276,17 @@ namespace MyFoodDoc.App.Application.Services
                     case MethodType.Meals:
                     case MethodType.Sport:
 
-                        if (item.UserAnswer != null)
+                        if (item.UserAnswerBoolean != null)
                         {
                             var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                             if (userMethod == null)
                             {
-                                await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswer }, cancellationToken);
+                                await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswerBoolean }, cancellationToken);
                             }
                             else
                             {
-                                userMethod.Answer = item.UserAnswer;
+                                userMethod.Answer = item.UserAnswerBoolean;
                                 _context.UserMethods.Update(userMethod);
                             }
                         }
@@ -294,9 +294,9 @@ namespace MyFoodDoc.App.Application.Services
                         break;
                     case MethodType.Mood:
 
-                        if (item.IntegerValue != null)
+                        if (item.UserAnswerInteger != null)
                         {
-                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, IntegerValue = item.IntegerValue }, cancellationToken);
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, IntegerValue = item.UserAnswerInteger }, cancellationToken);
                         }
 
                         break;
@@ -319,12 +319,12 @@ namespace MyFoodDoc.App.Application.Services
                         break;
                     case MethodType.Weight:
 
-                        if (item.DecimalValue != null)
+                        if (item.UserAnswerDecimal != null)
                         {
                             await _userHistoryService.UpsertWeightHistoryAsync(userId,
-                                new WeightHistoryPayload {Date = DateTime.Now, Value = item.DecimalValue.Value}, cancellationToken);
+                                new WeightHistoryPayload {Date = DateTime.Now, Value = item.UserAnswerDecimal.Value}, cancellationToken);
 
-                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.DecimalValue }, cancellationToken);
+                            await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.UserAnswerDecimal }, cancellationToken);
                         }
 
                         break;
