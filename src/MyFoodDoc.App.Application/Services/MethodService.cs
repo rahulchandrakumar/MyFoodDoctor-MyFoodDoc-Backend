@@ -82,37 +82,48 @@ namespace MyFoodDoc.App.Application.Services
                     
                     var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
 
-                    if ((await _context.UserMethodShowHistory.Where(x => x.UserId == userId && x.MethodId == method.Id)
-                        .ToListAsync(cancellationToken))
-                        .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                        continue;
-
-                    switch (method.Type)
+                    if (method.Type == MethodType.Information)
                     {
-                        case MethodType.AbdominalGirth:
+                        if (result.Any(x => Enum.Parse<MethodType>(x.Type) == MethodType.Information) || 
+                            (await _context.UserMethodShowHistory.Where(x => x.UserId == userId && x.MethodId == method.Id)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                            continue;
+                    }
+                    else
+                    {
+                        if ((await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => (x.LastModified ?? x.Created).ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                            continue;
 
-                            if ((await _context.UserAbdominalGirths.Where(x => x.UserId == userId)
-                                    .ToListAsync(cancellationToken))
-                                .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                                continue;
+                        switch (method.Type)
+                        {
+                            case MethodType.AbdominalGirth:
 
-                            break;
-                        case MethodType.Mood:
+                                if ((await _context.UserAbdominalGirths.Where(x => x.UserId == userId)
+                                        .ToListAsync(cancellationToken))
+                                    .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                    continue;
 
-                            if ((await _context.Meals.Where(x => x.UserId == userId && x.Mood != null)
-                                    .ToListAsync(cancellationToken))
-                                .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                                continue;
+                                break;
+                            case MethodType.Mood:
 
-                            break;
-                        case MethodType.Weight:
+                                if ((await _context.Meals.Where(x => x.UserId == userId && x.Mood != null)
+                                        .ToListAsync(cancellationToken))
+                                    .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                    continue;
 
-                            if ((await _context.UserWeights.Where(x => x.UserId == userId)
-                                    .ToListAsync(cancellationToken))
-                                .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                                continue;
+                                break;
+                            case MethodType.Weight:
 
-                            break;
+                                if ((await _context.UserWeights.Where(x => x.UserId == userId)
+                                        .ToListAsync(cancellationToken))
+                                    .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                    continue;
+
+                                break;
+                        }
                     }
                 }
                 
@@ -132,6 +143,18 @@ namespace MyFoodDoc.App.Application.Services
 
                 switch (method.Type)
                 {
+                    case MethodType.AbdominalGirth:
+
+                        var userAbdominalGirth = await _context.UserAbdominalGirths.Where(x => x.UserId == userId)
+                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+                        if (userAbdominalGirth != null)
+                        {
+                            methodDto.UserAnswerDecimal = userAbdominalGirth.Value;
+                            methodDto.DateAnswered = userAbdominalGirth.Date.ToLocalTime().Date;
+                        }
+
+                        break;
                     case MethodType.Change:
                     case MethodType.Drink:
                     case MethodType.Meals:
@@ -175,6 +198,41 @@ namespace MyFoodDoc.App.Application.Services
                                 IsCorrect = methodMultipleChoice.IsCorrect,
                                 CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
                             });
+                        }
+
+                        break;
+                    case MethodType.Mood:
+
+                        if (userMethod?.IntegerValue != null)
+                        {
+                            methodDto.UserAnswerInteger = userMethod.IntegerValue;
+                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                            methodDto.TimeAnswered =
+                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                        }
+                        else
+                        {
+                            var userMeal = await _context.Meals.Where(x => x.UserId == userId && x.Mood != null)
+                                .OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                            if (userMeal != null)
+                            {
+                                methodDto.UserAnswerInteger = userMeal.Mood;
+                                methodDto.DateAnswered = userMeal.Date;
+                                methodDto.TimeAnswered = userMeal.Time;
+                            }
+                        }
+
+                        break;
+                    case MethodType.Weight:
+
+                        var userWeight = await _context.UserWeights.Where(x => x.UserId == userId)
+                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+                        if (userWeight != null)
+                        {
+                            methodDto.UserAnswerDecimal = userWeight.Value;
+                            methodDto.DateAnswered = userWeight.Date.ToLocalTime().Date;
                         }
 
                         break;

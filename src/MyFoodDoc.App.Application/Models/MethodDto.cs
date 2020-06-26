@@ -18,6 +18,10 @@ namespace MyFoodDoc.App.Application.Models
 
         public bool? UserAnswer { get; set; }
 
+        public int? UserAnswerInteger { get; set; }
+
+        public decimal? UserAnswerDecimal { get; set; }
+
         public DateTime? DateAnswered { get; set; }
 
         public TimeSpan? TimeAnswered { get; set; }
