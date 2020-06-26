@@ -34,6 +34,15 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("overview/{date:Date}")]
+        [ProducesResponseType(typeof(ICollection<MethodDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ICollection<MethodDto>>> GetByDate([FromRoute] DateTime date, CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetByDateAsync(GetUserId(), date, cancellationToken);
+
+            return Ok(result);
+        }
+
         [HttpPost("method")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
