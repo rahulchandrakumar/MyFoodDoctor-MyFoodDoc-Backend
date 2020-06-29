@@ -621,7 +621,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Promotions","Coupon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserAbdominalGirth", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -637,7 +637,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("AbdonimalGirthHistory","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1144,7 +1144,7 @@ namespace MyFoodDoc.Database.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserAbdominalGirth", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("AbdominalGirthHistory")
@@ -1153,7 +1153,7 @@ namespace MyFoodDoc.Database.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("WeightHistory")

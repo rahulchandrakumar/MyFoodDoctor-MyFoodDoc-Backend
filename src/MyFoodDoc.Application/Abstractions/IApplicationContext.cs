@@ -12,7 +12,7 @@ using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Targets;
-using MyFoodDoc.Application.Entities.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.Application.Abstractions

@@ -8,7 +8,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.Application.Entities.Targets;
-using MyFoodDoc.Application.Entities.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.IO;

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace MyFoodDoc.Application.Entities.TrackedValus
+namespace MyFoodDoc.Application.Entities.TrackedValues
 {
     public class UserAbdominalGirth : AbstractUserTrackedValue<decimal>
     {

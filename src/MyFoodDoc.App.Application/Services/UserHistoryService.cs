@@ -5,7 +5,7 @@ using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +56,7 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task UpsertAbdonimalGirthHistoryAsync(string userId, AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
+        public async Task UpsertAbdominalGirthHistoryAsync(string userId, AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
         {
             var entry = await _context.UserAbdominalGirths.SingleOrDefaultAsync(x => x.UserId == userId && x.Date == payload.Date, cancellationToken);
 
@@ -85,7 +85,7 @@ namespace MyFoodDoc.App.Application.Services
             return _mapper.Map<UserHistoryDtoWeight>(weights);
         }
 
-        public async Task<UserHistoryDtoAbdominalGirth> GetAbdonimalGirthHistoryAsync(string userId, CancellationToken cancellationToken)
+        public async Task<UserHistoryDtoAbdominalGirth> GetAbdominalGirthHistoryAsync(string userId, CancellationToken cancellationToken)
         {
             var abdominalGirths = await _context.UserAbdominalGirths
                 .Where(x => x.UserId == userId)

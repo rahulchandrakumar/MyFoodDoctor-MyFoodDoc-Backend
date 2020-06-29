@@ -1180,7 +1180,7 @@ namespace MyFoodDoc.Database.Migrations
                         .WithMany()
                         .HasForeignKey("InsuranceId");
 
-                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValus.UserAbdonimalGirth", "AbdonimalGirthHistory", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValues.UserAbdonimalGirth", "AbdonimalGirthHistory", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");
@@ -1199,7 +1199,7 @@ namespace MyFoodDoc.Database.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValus.UserBloodSugarLevel", "BloodSugarLevelHistory", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValues.UserBloodSugarLevel", "BloodSugarLevelHistory", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");
@@ -1218,7 +1218,7 @@ namespace MyFoodDoc.Database.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", "WeightHistory", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", "WeightHistory", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");

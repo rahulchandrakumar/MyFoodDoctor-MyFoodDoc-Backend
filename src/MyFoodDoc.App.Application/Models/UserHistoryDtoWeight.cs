@@ -2,7 +2,7 @@
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Application.Mappings;
 using System;
-using MyFoodDoc.Application.Entities.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using System.Collections.Generic;
 using System.Linq;
 using MyFoodDoc.Core;

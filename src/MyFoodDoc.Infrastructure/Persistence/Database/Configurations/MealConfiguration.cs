@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Enums;
-using MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions;
+using MyFoodDoc.Infrastructure.Persistence.Database.Configurations.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
     public class MealConfiguration : AbstractDiaryConfiguration<Meal, string>
     {

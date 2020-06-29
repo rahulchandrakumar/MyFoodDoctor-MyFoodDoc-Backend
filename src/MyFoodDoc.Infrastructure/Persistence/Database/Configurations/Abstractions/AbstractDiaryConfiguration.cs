@@ -4,7 +4,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations.Abstractions
 {
     public abstract class AbstractDiaryConfiguration<TEntity, TKey> : IEntityTypeConfiguration<TEntity> where TEntity : class, IDiaryEntity<TKey>
     {

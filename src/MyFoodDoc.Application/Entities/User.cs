@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 using System;

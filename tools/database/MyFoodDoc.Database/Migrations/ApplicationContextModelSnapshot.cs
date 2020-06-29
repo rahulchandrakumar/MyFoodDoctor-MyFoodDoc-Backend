@@ -1088,7 +1088,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Targets","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserAbdominalGirth", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -1101,10 +1101,10 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("UserId", "Date");
 
-                    b.ToTable("AbdonimalGirthHistory","User");
+                    b.ToTable("AbdominalGirthHistory","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -2049,7 +2049,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserAbdominalGirth", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("AbdominalGirthHistory")
@@ -2058,7 +2058,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("WeightHistory")

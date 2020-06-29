@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Entities;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
     public class WebPageConfiguration : IEntityTypeConfiguration<WebPage>
     {

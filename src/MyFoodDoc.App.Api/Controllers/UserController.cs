@@ -102,9 +102,9 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<UserHistoryDtoAbdominalGirth>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<UserHistoryDtoAbdominalGirth>>> UpdateUserHistoryAbdominalGirth([FromBody] AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
         {
-            await _historyService.UpsertAbdonimalGirthHistoryAsync(GetUserId(), payload, cancellationToken);
+            await _historyService.UpsertAbdominalGirthHistoryAsync(GetUserId(), payload, cancellationToken);
 
-            var result = await _historyService.GetAbdonimalGirthHistoryAsync(GetUserId(), cancellationToken);
+            var result = await _historyService.GetAbdominalGirthHistoryAsync(GetUserId(), cancellationToken);
 
             return Ok(result);
         }

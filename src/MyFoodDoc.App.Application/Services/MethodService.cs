@@ -124,131 +124,9 @@ namespace MyFoodDoc.App.Application.Services
                         }
                     }
                 }
+
+                var methodDto = await GetMethodWithAnswersAsync(userId, method.Id, DateTime.Now, cancellationToken);
                 
-                var methodDto = new MethodDto
-                {
-                    Id = method.Id,
-                    Title = method.Title,
-                    Text = method.Text,
-                    Type = method.Type.ToString(),
-                    ImageUrl = method.Image?.Url
-                };
-
-                var userMethod = await _context.UserMethods
-                    .Where(x => x.UserId == userId && x.MethodId == method.Id &&
-                                x.Created.Date == DateTime.Now.Date).OrderBy(x => x.Created)
-                    .LastOrDefaultAsync(cancellationToken);
-
-                switch (method.Type)
-                {
-                    case MethodType.AbdominalGirth:
-
-                        var userAbdominalGirth = await _context.UserAbdominalGirths.Where(x => x.UserId == userId && x.Date.Date == DateTime.Now.Date)
-                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
-
-                        if (userAbdominalGirth != null)
-                        {
-                            methodDto.UserAnswerDecimal = userAbdominalGirth.Value;
-                            methodDto.DateAnswered = userAbdominalGirth.Date.ToLocalTime().Date;
-                        }
-
-                        break;
-                    case MethodType.Change:
-                    case MethodType.Drink:
-                    case MethodType.Meals:
-                    case MethodType.Sport:
-
-                        if (userMethod?.Answer != null)
-                        {
-                            methodDto.UserAnswerBoolean = userMethod.Answer;
-                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                            methodDto.TimeAnswered =
-                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                        }
-
-                        break;
-                    case MethodType.Knowledge:
-
-                        methodDto.Choices = new List<MethodMultipleChoiceDto>();
-
-                        var userMethods = (await _context.UserMethods.Where(x =>
-                                    x.UserId == userId && x.MethodId == method.Id &&
-                                    x.Created.Date == DateTime.Now.Date)
-                                .ToListAsync(cancellationToken))
-                            .GroupBy(g => g.MethodMultipleChoiceId)
-                            .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
-                            .ToList();
-
-                        if (userMethods.Any())
-                        {
-                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                            methodDto.TimeAnswered =
-                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                        }
-
-                        foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
-                            .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
-                        {
-                            methodDto.Choices.Add(new MethodMultipleChoiceDto
-                            {
-                                Id = methodMultipleChoice.Id,
-                                Title = methodMultipleChoice.Title,
-                                IsCorrect = methodMultipleChoice.IsCorrect,
-                                CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
-                            });
-                        }
-
-                        break;
-                    case MethodType.Mood:
-
-                        var userMeal = await _context.Meals.Where(x => x.UserId == userId && x.Mood != null && x.Date.Date == DateTime.Now.Date)
-                            .OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
-
-                        if (userMethod?.IntegerValue != null && userMeal != null)
-                        {
-                            if ((userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay > userMeal.Time)
-                            {
-                                methodDto.UserAnswerInteger = userMethod.IntegerValue;
-                                methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                                methodDto.TimeAnswered =
-                                    (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                            }
-                            else
-                            {
-                                methodDto.UserAnswerInteger = userMeal.Mood;
-                                methodDto.DateAnswered = userMeal.Date;
-                                methodDto.TimeAnswered = userMeal.Time;
-                            }
-                        }
-                        else if (userMethod?.IntegerValue != null)
-                        {
-                            methodDto.UserAnswerInteger = userMethod.IntegerValue;
-                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                            methodDto.TimeAnswered =
-                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                        }
-                        else if (userMeal != null)
-                        {
-                            methodDto.UserAnswerInteger = userMeal.Mood;
-                            methodDto.DateAnswered = userMeal.Date;
-                            methodDto.TimeAnswered = userMeal.Time;
-                        }
-
-                        break;
-                    case MethodType.Weight:
-
-                        var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date.Date == DateTime.Now.Date)
-                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
-
-                        if (userWeight != null)
-                        {
-                            methodDto.UserAnswerDecimal = userWeight.Value;
-                            methodDto.DateAnswered = userWeight.Date.ToLocalTime().Date;
-                        }
-
-                        break;
-                }
-
                 result.Add(methodDto);
 
                 await _context.UserMethodShowHistory.AddAsync(new UserMethodShowHistoryItem { MethodId = method.Id, UserId = userId }, cancellationToken);
@@ -265,132 +143,13 @@ namespace MyFoodDoc.App.Application.Services
             var result = new List<MethodDto>();
 
             foreach (var userMethod in (await _context.UserMethods
-                .Include(x => x.Method)
-                .ThenInclude(x => x.Image)
                 .Where(x=> x.UserId == userId)
                 .ToListAsync(cancellationToken))
                 .Where(x => (x.LastModified ?? x.Created).ToLocalTime().Date == date.Date)
                 .GroupBy(k=> k.MethodId)
                 .Select(g => g.First()))
             {
-                var methodDto = new MethodDto
-                {
-                    Id = userMethod.Method.Id,
-                    Title = userMethod.Method.Title,
-                    Text = userMethod.Method.Text,
-                    Type = userMethod.Method.Type.ToString(),
-                    ImageUrl = userMethod.Method.Image?.Url
-                };
-
-                switch (userMethod.Method.Type)
-                {
-                    case MethodType.AbdominalGirth:
-
-                        var userAbdominalGirth = await _context.UserAbdominalGirths.Where(x => x.UserId == userId && x.Date.Date == date.Date)
-                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
-
-                        if (userAbdominalGirth != null)
-                        {
-                            methodDto.UserAnswerDecimal = userAbdominalGirth.Value;
-                            methodDto.DateAnswered = userAbdominalGirth.Date.ToLocalTime().Date;
-                        }
-
-                        break;
-                    case MethodType.Change:
-                    case MethodType.Drink:
-                    case MethodType.Meals:
-                    case MethodType.Sport:
-
-                        if (userMethod?.Answer != null)
-                        {
-                            methodDto.UserAnswerBoolean = userMethod.Answer;
-                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                            methodDto.TimeAnswered =
-                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                        }
-
-                        break;
-                    case MethodType.Knowledge:
-
-                        methodDto.Choices = new List<MethodMultipleChoiceDto>();
-
-                        var userMethods = (await _context.UserMethods.Where(x =>
-                                    x.UserId == userId && x.MethodId == userMethod.Method.Id &&
-                                    x.Created.Date == date.Date)
-                                .ToListAsync(cancellationToken))
-                            .GroupBy(g => g.MethodMultipleChoiceId)
-                            .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
-                            .ToList();
-
-                        if (userMethods.Any())
-                        {
-                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                            methodDto.TimeAnswered =
-                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                        }
-
-                        foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
-                            .Where(x => x.MethodId == userMethod.Method.Id).ToListAsync(cancellationToken))
-                        {
-                            methodDto.Choices.Add(new MethodMultipleChoiceDto
-                            {
-                                Id = methodMultipleChoice.Id,
-                                Title = methodMultipleChoice.Title,
-                                IsCorrect = methodMultipleChoice.IsCorrect,
-                                CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
-                            });
-                        }
-
-                        break;
-                    case MethodType.Mood:
-
-                        var userMeal = await _context.Meals.Where(x => x.UserId == userId && x.Mood != null && x.Date.Date == date.Date)
-                            .OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
-
-                        if (userMethod?.IntegerValue != null && userMeal != null)
-                        {
-                            if ((userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay > userMeal.Time)
-                            {
-                                methodDto.UserAnswerInteger = userMethod.IntegerValue;
-                                methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                                methodDto.TimeAnswered =
-                                    (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                            }
-                            else
-                            {
-                                methodDto.UserAnswerInteger = userMeal.Mood;
-                                methodDto.DateAnswered = userMeal.Date;
-                                methodDto.TimeAnswered = userMeal.Time;
-                            }
-                        }
-                        else if (userMethod?.IntegerValue != null)
-                        {
-                            methodDto.UserAnswerInteger = userMethod.IntegerValue;
-                            methodDto.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                            methodDto.TimeAnswered =
-                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
-                        }
-                        else if (userMeal != null)
-                        {
-                            methodDto.UserAnswerInteger = userMeal.Mood;
-                            methodDto.DateAnswered = userMeal.Date;
-                            methodDto.TimeAnswered = userMeal.Time;
-                        }
-
-                        break;
-                    case MethodType.Weight:
-
-                        var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date.Date == date.Date)
-                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
-
-                        if (userWeight != null)
-                        {
-                            methodDto.UserAnswerDecimal = userWeight.Value;
-                            methodDto.DateAnswered = userWeight.Date.ToLocalTime().Date;
-                        }
-
-                        break;
-                }
+                var methodDto = await GetMethodWithAnswersAsync(userId, userMethod.MethodId, date, cancellationToken);
 
                 result.Add(methodDto);
             }
@@ -416,6 +175,139 @@ namespace MyFoodDoc.App.Application.Services
             return result;
         }
 
+        private async Task<MethodDto> GetMethodWithAnswersAsync(string userId, int methodId, DateTime date, CancellationToken cancellationToken)
+        {
+            var method = await _context.Methods
+                .Include(x => x.Image)
+                .Where(x => x.Id == methodId).SingleAsync(cancellationToken);
+
+            var result = new MethodDto
+            {
+                Id = method.Id,
+                Title = method.Title,
+                Text = method.Text,
+                Type = method.Type.ToString(),
+                ImageUrl = method.Image?.Url
+            };
+
+            var userMethod = await _context.UserMethods
+                .Where(x => x.UserId == userId && x.MethodId == method.Id &&
+                            x.Created.Date == date.Date).OrderBy(x => x.Created)
+                .LastOrDefaultAsync(cancellationToken);
+
+            switch (method.Type)
+            {
+                case MethodType.AbdominalGirth:
+
+                    var userAbdominalGirth = await _context.UserAbdominalGirths.Where(x => x.UserId == userId && x.Date.Date == date.Date)
+                        .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+                    if (userAbdominalGirth != null)
+                    {
+                        result.UserAnswerDecimal = userAbdominalGirth.Value;
+                        result.DateAnswered = userAbdominalGirth.Date.ToLocalTime().Date;
+                    }
+
+                    break;
+                case MethodType.Change:
+                case MethodType.Drink:
+                case MethodType.Meals:
+                case MethodType.Sport:
+
+                    if (userMethod?.Answer != null)
+                    {
+                        result.UserAnswerBoolean = userMethod.Answer;
+                        result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                        result.TimeAnswered =
+                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                    }
+
+                    break;
+                case MethodType.Knowledge:
+
+                    result.Choices = new List<MethodMultipleChoiceDto>();
+
+                    var userMethods = (await _context.UserMethods.Where(x =>
+                                x.UserId == userId && x.MethodId == method.Id &&
+                                x.Created.Date == date.Date)
+                            .ToListAsync(cancellationToken))
+                        .GroupBy(g => g.MethodMultipleChoiceId)
+                        .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
+                        .ToList();
+
+                    if (userMethods.Any())
+                    {
+                        result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                        result.TimeAnswered =
+                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                    }
+
+                    foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
+                        .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
+                    {
+                        result.Choices.Add(new MethodMultipleChoiceDto
+                        {
+                            Id = methodMultipleChoice.Id,
+                            Title = methodMultipleChoice.Title,
+                            IsCorrect = methodMultipleChoice.IsCorrect,
+                            CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
+                        });
+                    }
+
+                    break;
+                case MethodType.Mood:
+
+                    var userMeal = await _context.Meals.Where(x => x.UserId == userId && x.Mood != null && x.Date.Date == date.Date)
+                        .OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+
+                    if (userMethod?.IntegerValue != null && userMeal != null)
+                    {
+                        if ((userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay > userMeal.Time)
+                        {
+                            result.UserAnswerInteger = userMethod.IntegerValue;
+                            result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                            result.TimeAnswered =
+                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                        }
+                        else
+                        {
+                            result.UserAnswerInteger = userMeal.Mood;
+                            result.DateAnswered = userMeal.Date;
+                            result.TimeAnswered = userMeal.Time;
+                        }
+                    }
+                    else if (userMethod?.IntegerValue != null)
+                    {
+                        result.UserAnswerInteger = userMethod.IntegerValue;
+                        result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                        result.TimeAnswered =
+                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                    }
+                    else if (userMeal != null)
+                    {
+                        result.UserAnswerInteger = userMeal.Mood;
+                        result.DateAnswered = userMeal.Date;
+                        result.TimeAnswered = userMeal.Time;
+                    }
+
+                    break;
+                case MethodType.Weight:
+
+                    var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date.Date == date.Date)
+                        .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+                    if (userWeight != null)
+                    {
+                        result.UserAnswerDecimal = userWeight.Value;
+                        result.DateAnswered = userWeight.Date.ToLocalTime().Date;
+                    }
+
+                    break;
+            }
+
+            return result;
+        }
+
         public async Task InsertAsync(string userId, InsertMethodPayload payload, CancellationToken cancellationToken)
         {
             foreach (var item in payload.Methods)
@@ -432,7 +324,7 @@ namespace MyFoodDoc.App.Application.Services
                     case MethodType.AbdominalGirth:
                         if (item.UserAnswerDecimal != null)
                         {
-                            await _userHistoryService.UpsertAbdonimalGirthHistoryAsync(userId,
+                            await _userHistoryService.UpsertAbdominalGirthHistoryAsync(userId,
                                 new AbdominalGirthHistoryPayload { Date = DateTime.Now, Value = item.UserAnswerDecimal.Value }, cancellationToken);
 
                             await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.UserAnswerDecimal }, cancellationToken);

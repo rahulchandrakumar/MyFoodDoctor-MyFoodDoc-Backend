@@ -8,7 +8,7 @@ using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.TrackedValus;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations.Abstractions
 {
     public abstract class AbstractEnumConfiguration<TEntity, TKey> : IEntityTypeConfiguration<TEntity> where TEntity : class, IEnumEntity
     {
