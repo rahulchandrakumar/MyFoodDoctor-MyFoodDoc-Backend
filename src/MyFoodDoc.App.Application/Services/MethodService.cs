@@ -33,6 +33,9 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<MethodDto>();
 
+            if (!(await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).HasSubscription)
+                return result;
+
             var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
             var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
             var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
