@@ -38,14 +38,15 @@ module "global" {
   projectname = "mfd"
   stage       = "staging"
 
-  apiserver_plantier     = "Basic"
-  apiserver_plansize     = "B1"
-  apiserver_plancapacity = 1
+  apiserver_plantier     = "Standard"
+  apiserver_plansize     = "S1"
+  apiserver_plancapacity = 2
 
   apiapp_alwayson        = false
   apiapp_aspenv          = "Staging"
 
-  sqldb_tier             = "Basic"
+  sqldb_tier                = "Standard"
+  sqldb_service_objective   = "S0"
 
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"

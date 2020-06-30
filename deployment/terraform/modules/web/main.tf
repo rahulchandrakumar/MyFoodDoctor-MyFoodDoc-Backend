@@ -8,6 +8,7 @@ variable "projectname" {}
 variable "stage" {}
 
 variable "sqldb_tier" {}
+variable "sqldb_service_objective" {}
 
 variable "storageaccount_replication_type" {}
 variable "storageaccount_tier" {}
@@ -123,12 +124,13 @@ resource "azurerm_sql_firewall_rule" "sqlfirewall" {
 
 # create Azure SQL DB
 resource "azurerm_sql_database" "sqldb" {
-  name                = local.sqlDbName
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  server_name         = azurerm_sql_server.sqlserver.name
-  edition             = var.sqldb_tier
-  tags                = local.resource_tags
+  name                              = local.sqlDbName
+  resource_group_name               = azurerm_resource_group.rg.name
+  location                          = azurerm_resource_group.rg.location
+  server_name                       = azurerm_sql_server.sqlserver.name
+  edition                           = var.sqldb_tier
+  requested_service_objective_name  = var.sqldb_service_objective
+  tags                              = local.resource_tags
 }
 
 # save database connection string into the KeyVault
