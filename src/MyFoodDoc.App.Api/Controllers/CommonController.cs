@@ -10,6 +10,7 @@ using System;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.Application.Abstractions;
 
 namespace MyFoodDoc.App.Api.Controllers
@@ -59,7 +60,12 @@ namespace MyFoodDoc.App.Api.Controllers
         {
             string token = await _service.GeneratePasswordResetTokenAsync(tokenPayload.Email);
 
-            await _emailService.SendEmailAsync(tokenPayload.Email, "Reset password pin", token);
+            var result = await _emailService.SendEmailAsync(tokenPayload.Email, "Reset password pin", token);
+
+            if (!result)
+            {
+                throw new BadRequestException("Unable to sent email");
+            }
 
             return Accepted();
         }
