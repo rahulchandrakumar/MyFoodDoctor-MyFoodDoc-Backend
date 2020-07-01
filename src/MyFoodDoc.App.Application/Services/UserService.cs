@@ -241,7 +241,7 @@ namespace MyFoodDoc.App.Application.Services
             return await query.ToListAsync(cancellationToken);
         }
 
-        public async Task ChangePassword(string userId, string oldPassword, string newPassword)
+        public async Task ChangePasswordAsync(string userId, string oldPassword, string newPassword)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (!await _userManager.CheckPasswordAsync(user, oldPassword))
@@ -251,6 +251,7 @@ namespace MyFoodDoc.App.Application.Services
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, newPassword);
         }
+        
 
         public async Task UpdateUserHasSubscription(string userId, bool hasSubscription, CancellationToken cancellationToken = default)
         {

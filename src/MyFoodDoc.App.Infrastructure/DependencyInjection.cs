@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,10 +25,13 @@ namespace MyFoodDoc.App.Infrastructure
                 options.Password.RequireUppercase = true;
                 options.Password.RequireNonAlphanumeric = true;
                 options.Password.RequiredLength = 8;
+
+                options.Tokens.PasswordResetTokenProvider = ResetPasswordTokenProvider.ProviderKey;
             })
             .AddEntityFrameworkStores<ApplicationContext>()
             .AddSignInManager<SignInManager<User>>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<ResetPasswordTokenProvider>(ResetPasswordTokenProvider.ProviderKey);
 
             return services;
         }

@@ -18,6 +18,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Logging;
 using MyFoodDoc.App.Application.Serialization;
 using MyFoodDoc.App.Api.Middlewares;

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using MyFoodDoc.Application;
 using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.App.Application.Configuration;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Services;
 
 namespace MyFoodDoc.App.Application
 {
@@ -31,6 +33,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IMethodService, MethodService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserHistoryService, UserHistoryService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }
