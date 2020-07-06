@@ -384,7 +384,6 @@ resource "azurerm_function_app" "func" {
   app_settings = {
     ASPNETCORE_ENVIRONMENT                      = var.apiapp_aspenv
     APPINSIGHTS_INSTRUMENTATIONKEY              = azurerm_application_insights.appinsights.instrumentation_key
-    AzureWebJobsDashboard                       = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
     AzureWebJobsStorage                         = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
     DOCKER_REGISTRY_SERVER_URL                  = var.containerregistry_url
     DOCKER_REGISTRY_SERVER_USERNAME             = var.containerregistry_admin_username
