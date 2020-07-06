@@ -351,7 +351,7 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
     FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
     FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
-    STATISTICS_PERIOD				= 7
+    STATISTICS_PERIOD				            = 7
   }
 
   identity {
@@ -363,6 +363,59 @@ resource "azurerm_app_service" "api" {
     ignore_changes = [
       site_config,
       app_settings["DOCKER_CUSTOM_IMAGE_NAME"]
+    ]
+  }
+}
+
+resource "azurerm_function_app" "func" {
+  name                      = "${var.projectname}-app-func-${var.stage}"
+  location                  = azurerm_app_service_plan.appserviceplan.location
+  resource_group_name       = azurerm_app_service_plan.appserviceplan.resource_group_name
+  app_service_plan_id       = azurerm_app_service_plan.appserviceplan.id
+  storage_connection_string = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+  tags                      = local.resource_tags
+  version                   = "~3"
+
+  site_config {
+    linux_fx_version        = "DOCKER|${var.containerregistry_url}/${var.projectname}-func:latest"
+    always_on               = var.apiapp_alwayson
+  }
+
+  app_settings = {
+    ASPNETCORE_ENVIRONMENT                      = var.apiapp_aspenv
+    APPINSIGHTS_INSTRUMENTATIONKEY              = azurerm_application_insights.appinsights.instrumentation_key
+    AzureWebJobsDashboard                       = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+    AzureWebJobsStorage                         = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+    DOCKER_REGISTRY_SERVER_URL                  = var.containerregistry_url
+    DOCKER_REGISTRY_SERVER_USERNAME             = var.containerregistry_admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD             = var.containerregistry_admin_password
+    DOCKER_CUSTOM_IMAGE_NAME                    = "${var.projectname}-func"
+    DOCKER_ENABLE_CI                            = "false"
+    DEFAULT_DATABASE_CONNECTION                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+    FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
+    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = "ab118ff9a12641e4a6e80407b82f2b16"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
+    FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
+    FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
+    FUNCTIONS_WORKER_RUNTIME                    = "dotnet"
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
+    WEBSITE_HTTPLOGGING_RETENTION_DAYS          = "14"
+    WEBSITE_RUN_FROM_PACKAGE                    = ""
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  lifecycle {
+    #see https://www.terraform.io/docs/configuration/resources.html#ignore_changes
+    ignore_changes = [
+      site_config,
+      app_settings["DOCKER_CUSTOM_IMAGE_NAME"],
+      app_settings["AzureWebJobsStorage"]
     ]
   }
 }
@@ -395,6 +448,17 @@ resource "azurerm_key_vault_access_policy" "api" {
 
   tenant_id = data.azurerm_client_config.current.tenant_id
   object_id = azurerm_app_service.api.identity.0.principal_id
+  secret_permissions = [
+    "get",
+  ]
+}
+
+# func app KeyVault policy
+resource "azurerm_key_vault_access_policy" "func" {
+  key_vault_id = var.keyvault_id
+
+  tenant_id = data.azurerm_client_config.current.tenant_id
+  object_id = azurerm_function_app.func.identity.0.principal_id
   secret_permissions = [
     "get",
   ]
