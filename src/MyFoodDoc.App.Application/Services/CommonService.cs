@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using MyFoodDoc.App.Application.Abstractions;
-using MyFoodDoc.App.Application.Models;
-using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
+using MyFoodDoc.Application.Entities;
+using System.Linq;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Exceptions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -26,16 +22,41 @@ namespace MyFoodDoc.App.Application.Services
             _userManager = userManager;
         }
 
-        public async Task RegisterAsync(RegisterPayload payload, CancellationToken cancellationToken = default)
+        public async Task RegisterAsync(string email, string password, int insuranceId)
         {
             User newUser = new User
             {
-                UserName = payload.Email,
-                Email = payload.Email,
-                InsuranceId = payload.InsuranceId,
+                UserName = email,
+                Email = email,
+                InsuranceId = insuranceId,
             };
 
-            var result = await _userManager.CreateAsync(newUser, payload.Password);
+            var result = await _userManager.CreateAsync(newUser, password);
+        }
+
+        public async Task<string> GeneratePasswordResetTokenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+                throw new BadRequestException("User is not found");
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            return token;
+        }
+
+        public async Task ResetPasswordAsync(string email, string resetToken, string newPassword)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null) throw new BadRequestException("User is not found");
+            var result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+
+            if (!result.Succeeded)
+            {
+                throw new BadRequestException(string.Join('\n', result.Errors.Select(x => x.Description)));
+            }
         }
     }
 }

@@ -140,7 +140,7 @@ export default {
     }
   },
   async mounted() {
-    this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
+    this.insuranceList = await this.$store.dispatch("dictionaries/getInsuranceList")
   },
   methods: {
     async beforeSave(item) {

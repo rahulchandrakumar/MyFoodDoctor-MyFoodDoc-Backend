@@ -1,4 +1,4 @@
-﻿using MyFoodDoc.Application.Entites;
+﻿using MyFoodDoc.Application.Entities;
 using System;
 
 namespace MyFoodDoc.CMS.Application.Models
@@ -6,10 +6,12 @@ namespace MyFoodDoc.CMS.Application.Models
     public class LexiconModel: BaseModel<int>
     {
         public string TitleLong { get; set; }
+
         public string TitleShort { get; set; }
+
         public string Text { get; set; }
+
         public ImageModel Image { get; set; }
-        public int ImageId { get; set; }
 
         public static LexiconModel FromEntity(LexiconEntry entity)
         {

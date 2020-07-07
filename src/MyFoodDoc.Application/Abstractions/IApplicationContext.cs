@@ -7,8 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Courses;
+using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.Entities.Targets;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.Application.Abstractions
@@ -36,6 +40,22 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<Indication> Indications { get; set; }
         DbSet<Diet> Diets { get; set; }
         DbSet<Ingredient> Ingredients { get; set; }
+        DbSet<OptimizationArea> OptimizationAreas { get; set; }
+        DbSet<Target> Targets { get; set; }
+        DbSet<AdjustmentTarget> AdjustmentTargets { get; set; }
+        DbSet<MotivationTarget> MotivationTargets { get; set; }
+        DbSet<IndicationTarget> IndicationTargets { get; set; }
+        DbSet<DietTarget> DietTargets { get; set; }
+        DbSet<UserTarget> UserTargets { get; set; }
+        DbSet<Method> Methods { get; set; }
+        DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
+        DbSet<UserMethod> UserMethods { get; set; }
+        DbSet<UserMethodShowHistoryItem> UserMethodShowHistory { get; set; }
+        DbSet<MotivationMethod> MotivationMethods { get; set; }
+        DbSet<IndicationMethod> IndicationMethods { get; set; }
+        DbSet<DietMethod> DietMethods { get; set; }
+        DbSet<TargetMethod> TargetMethods { get; set; }
+
         #endregion
 
         #region Lexicon
@@ -56,8 +76,13 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
         #endregion
 
-        #region Reporting
-        DbSet<Report> Reports { get; set; }
+        #region Courses
+
+        DbSet<Course> Courses { get; set; }
+        DbSet<Chapter> Chapters { get; set; }
+        DbSet<Subchapter> Subchapters { get; set; }
+        DbSet<UserAnswer> UserAnswers { get; set; }
+
         #endregion
 
         int SaveChanges();
@@ -69,6 +94,5 @@ namespace MyFoodDoc.Application.Abstractions
         EntityEntry Entry([NotNullAttribute] object entity);
 
         EntityEntry<TEntity> Entry<TEntity>([NotNullAttribute] TEntity entity) where TEntity : class;
-
     }
 }

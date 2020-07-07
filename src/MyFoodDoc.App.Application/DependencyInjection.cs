@@ -6,6 +6,9 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using MyFoodDoc.Application;
 using MyFoodDoc.FatSecretClient;
+using MyFoodDoc.App.Application.Configuration;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Services;
 
 namespace MyFoodDoc.App.Application
 {
@@ -13,6 +16,8 @@ namespace MyFoodDoc.App.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<StatisticsOptions>(configuration.GetSection("Statistics"));
+
             services.AddSharedFatSecretClient(configuration);
             services.AddSharedApplication();
 
@@ -20,11 +25,15 @@ namespace MyFoodDoc.App.Application
 
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ICouponService, CouponService>();
+            services.AddScoped<ICourseService, CourseService>();
             services.AddScoped<IDiaryService, DiaryService>();
             services.AddScoped<IFoodService, FoodService>();
             services.AddScoped<ILexiconService, LexiconService>();
+            services.AddScoped<ITargetService, TargetService>();
+            services.AddScoped<IMethodService, MethodService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserHistoryService, UserHistoryService>();
+            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }

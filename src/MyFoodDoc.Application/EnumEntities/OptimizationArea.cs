@@ -1,23 +1,48 @@
-﻿using MyFoodDoc.Application.Abstractions;
+﻿using System;
+using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.Application.EnumEntities
 {
     public class OptimizationArea : AbstractEnumEntity
     {
-        
-    }
+        public string Text { get; set; }
 
-    /*
-    public void ConfigureDefaultValues(DefaultValueBuilder builder)
-    {
-        var values = new []
-        {
-            new OptimizationArea { Key = "sugar", Name = "Zucker" },
-            new OptimizationArea { Key = "vegetables", Name = "Gemüse" },
-            new OptimizationArea { Key = "protein", Name = "Proteine" },
-        };
+        public int? ImageId { get; set; }
 
-        builder.AddMany(values);
+        public Image Image { get; set; }
+
+        public decimal? LineGraphUpperLimit { get; set; }
+
+        public decimal? LineGraphLowerLimit { get; set; }
+
+        public decimal? LineGraphOptimal { get; set; }
+
+        public string OptimalLineGraphTitle { get; set; }
+
+        public string OptimalLineGraphText { get; set; }
+
+        public string BelowOptimalLineGraphTitle { get; set; }
+
+        public string BelowOptimalLineGraphText { get; set; }
+
+        public string AboveOptimalLineGraphTitle { get; set; }
+
+        public string AboveOptimalLineGraphText { get; set; }
+
+        public string OptimalPieChartTitle { get; set; }
+
+        public string OptimalPieChartText { get; set; }
+
+        public string BelowOptimalPieChartTitle { get; set; }
+
+        public string BelowOptimalPieChartText { get; set; }
+
+        public string AboveOptimalPieChartTitle { get; set; }
+
+        public string AboveOptimalPieChartText { get; set; }
+
+        public OptimizationAreaType Type => Enum.Parse<OptimizationAreaType>(Key, true);
     }
-    */
 }

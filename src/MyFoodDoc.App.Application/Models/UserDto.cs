@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MyFoodDoc.App.Application.Mappings;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using Newtonsoft.Json;
 using System;
@@ -25,6 +25,10 @@ namespace MyFoodDoc.App.Application.Models
         public decimal? Height { get; set; }
 
         public int? InsuranceId { get; set; }
+
+        public bool HasSubscription { get; set; }
+
+        public DateTime? HasSubscriptionUpdated { get; set; }
 
         public ICollection<string> Motivations { get; set; }
 

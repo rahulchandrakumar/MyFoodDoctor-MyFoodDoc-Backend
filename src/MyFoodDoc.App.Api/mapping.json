@@ -16,6 +16,9 @@
     "ConsumerKey": "{FAT_SECRET_CONSUMER_KEY}",
     "ConsumerSecret": "{FAT_SECRET_CONSUMER_SECRET}"
   },
+  "Statistics": {
+    "Period": "{STATISTICS_PERIOD}"
+  },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }

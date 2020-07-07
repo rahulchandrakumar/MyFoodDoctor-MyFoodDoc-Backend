@@ -1,5 +1,5 @@
 ﻿using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.CMS.Application.Common;
 using MyFoodDoc.CMS.Application.Models;
 using System.Linq;

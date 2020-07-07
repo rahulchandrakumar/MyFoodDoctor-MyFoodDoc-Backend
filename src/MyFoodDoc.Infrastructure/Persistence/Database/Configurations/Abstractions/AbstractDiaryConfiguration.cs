@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Abstractions;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations.Abstractions
 {
     public abstract class AbstractDiaryConfiguration<TEntity, TKey> : IEntityTypeConfiguration<TEntity> where TEntity : class, IDiaryEntity<TKey>
     {

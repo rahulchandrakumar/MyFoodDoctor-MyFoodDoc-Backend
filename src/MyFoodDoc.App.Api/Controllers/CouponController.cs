@@ -15,9 +15,9 @@ namespace MyFoodDoc.App.Api.Controllers
     public class CouponController : BaseController
     {
         private readonly ICouponService _service;
-        private readonly ILogger<UserController> _logger;
+        private readonly ILogger<CouponController> _logger;
 
-        public CouponController(ICouponService service, ILogger<UserController> logger)
+        public CouponController(ICouponService service, ILogger<CouponController> logger)
         {
             _service = service;
             _logger = logger;

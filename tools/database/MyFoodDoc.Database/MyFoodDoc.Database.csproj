@@ -23,6 +23,38 @@
     <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.Designer.cs" />
     <Compile Remove="Migrations\20191206081031_MotivationTypes.cs" />
     <Compile Remove="Migrations\20191206081031_MotivationTypes.Designer.cs" />
+    <Compile Remove="Migrations\20200417151455_Targets.cs" />
+    <Compile Remove="Migrations\20200417151455_Targets.Designer.cs" />
+    <Compile Remove="Migrations\20200417160034_Targets.cs" />
+    <Compile Remove="Migrations\20200417160034_Targets.Designer.cs" />
+    <Compile Remove="Migrations\20200422144307_TargetsAddImageUrl.cs" />
+    <Compile Remove="Migrations\20200422144307_TargetsAddImageUrl.Designer.cs" />
+    <Compile Remove="Migrations\20200424151453_TargetsMandatoryImage.cs" />
+    <Compile Remove="Migrations\20200424151453_TargetsMandatoryImage.Designer.cs" />
+    <Compile Remove="Migrations\20200424152256_TargetsMandatoryImage.cs" />
+    <Compile Remove="Migrations\20200424152256_TargetsMandatoryImage.Designer.cs" />
+    <Compile Remove="Migrations\20200506145950_Courses.cs" />
+    <Compile Remove="Migrations\20200506145950_Courses.Designer.cs" />
+    <Compile Remove="Migrations\20200506163110_Courses.cs" />
+    <Compile Remove="Migrations\20200506163110_Courses.Designer.cs" />
+    <Compile Remove="Migrations\20200506164659_Courses.cs" />
+    <Compile Remove="Migrations\20200506164659_Courses.Designer.cs" />
+    <Compile Remove="Migrations\20200526100333_Methods.cs" />
+    <Compile Remove="Migrations\20200526100333_Methods.Designer.cs" />
+    <Compile Remove="Migrations\20200526100705_Methods.cs" />
+    <Compile Remove="Migrations\20200526100705_Methods.Designer.cs" />
+    <Compile Remove="Migrations\20200526115505_Methods.cs" />
+    <Compile Remove="Migrations\20200526115505_Methods.Designer.cs" />
+    <Compile Remove="Migrations\20200526163134_Methods.cs" />
+    <Compile Remove="Migrations\20200526163134_Methods.Designer.cs" />
+    <Compile Remove="Migrations\20200617081600_MethodsAddImage.cs" />
+    <Compile Remove="Migrations\20200617081600_MethodsAddImage.Designer.cs" />
+    <Compile Remove="Migrations\20200622154032_TargetMethods.cs" />
+    <Compile Remove="Migrations\20200622154032_TargetMethods.Designer.cs" />
+    <Compile Remove="Migrations\20200622161721_TargetMethods.cs" />
+    <Compile Remove="Migrations\20200622161721_TargetMethods.Designer.cs" />
+    <Compile Remove="Migrations\20200622164146_Test.cs" />
+    <Compile Remove="Migrations\20200622164146_Test.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="mapping.json" />
@@ -35,16 +67,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />

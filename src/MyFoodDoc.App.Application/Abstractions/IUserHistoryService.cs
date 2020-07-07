@@ -17,8 +17,8 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task UpsertWeightHistoryAsync(string userId, WeightHistoryPayload payload, CancellationToken cancellationToken = default);
 
-        Task<UserHistoryDtoAbdominalGirth> GetAbdonimalGirthHistoryAsync(string userId, CancellationToken cancellationToken);
+        Task<UserHistoryDtoAbdominalGirth> GetAbdominalGirthHistoryAsync(string userId, CancellationToken cancellationToken);
 
-        Task UpsertAbdonimalGirthHistoryAsync(string userId, AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default);
+        Task UpsertAbdominalGirthHistoryAsync(string userId, AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,4 @@
-﻿using MyFoodDoc.Application.Entites;
+﻿using MyFoodDoc.Application.Entities;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

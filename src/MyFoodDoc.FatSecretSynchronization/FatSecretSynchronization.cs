@@ -22,7 +22,11 @@ namespace MyFoodDoc.FatSecretSynchronization
         }
 
         [FunctionName("Synchronize")]
-        public async Task Run([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/)]TimerInfo myTimer, ILogger log, CancellationToken cancellationToken)
+        public async Task RunAsync(
+            [TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)]
+            TimerInfo myTimer, 
+            ILogger log, 
+            CancellationToken cancellationToken)
         {
             var ingredients = _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddDays(-1)).ToList();
 

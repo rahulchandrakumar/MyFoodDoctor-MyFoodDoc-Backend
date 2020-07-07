@@ -28,6 +28,7 @@
         :max-height="imageHeight"
         :width="imageWidth"
         :max-width="imageWidth"
+        contain
       />
       <v-btn text icon @click="innerValue = ''">
         <v-icon>

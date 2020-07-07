@@ -22,7 +22,7 @@ namespace MyFoodDoc.FatSecretSynchronization
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: false)
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
                 .AddEnvironmentVariables()
-                .WithJsonMapping("mapping.json")
+                .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.mapping.json"))
                 .Build();
 
             builder.Services.AddSingleton<IConfiguration>(configuration);

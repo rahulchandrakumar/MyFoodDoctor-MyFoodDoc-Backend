@@ -88,7 +88,7 @@ export default {
     }
   },
   async created() {
-    this.insuranceList = await this.$store.dispatch("dictionaries/getinsuranceList")
+    this.insuranceList = await this.$store.dispatch("dictionaries/getInsuranceList")
   },
   methods: {
     makeChartData(items) {

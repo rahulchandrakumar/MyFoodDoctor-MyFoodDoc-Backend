@@ -1,21 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entites.Abstractions;
+using MyFoodDoc.Application.Entities.Methods;
 
-namespace MyFoodDoc.Infrastructure.Persistence.Database.Configuration.Abstractions
+namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
-    public abstract class MethodConfiguration<TMethod> : IEntityTypeConfiguration<TMethod> where TMethod : Method
+    public class MethodConfiguration : IEntityTypeConfiguration<Method>
     {
-        public virtual void Configure(EntityTypeBuilder<TMethod> builder)
+        public virtual void Configure(EntityTypeBuilder<Method> builder)
         {
-            builder.HasKey(method => method.Id);
-            builder.Property(method => method.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Property(method => method.AnalysisFlagId).IsRequired();
-            builder.Property(method => method.OptimizationAreaId).IsRequired();
-            builder.Property(method => method.Text).IsRequired();
+            builder.ToTable("Methods", "System");
 
-            builder.HasOne(method => method.Flag).WithMany().HasForeignKey(method => method.AnalysisFlagId);
-            builder.HasOne(method => method.OptimizationArea).WithMany().HasForeignKey(method => method.OptimizationAreaId);
+            builder.HasKey(o => o.Id);
+            builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Property(o => o.Title).IsRequired().HasMaxLength(100);
+            builder.Property(o => o.Text).IsRequired().HasMaxLength(1000);
+            builder.Property(o => o.Type).HasConversion<string>().HasMaxLength(14);
+            builder.Property(o => o.FrequencyPeriod).HasConversion<string>().HasMaxLength(5);
+
+            builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

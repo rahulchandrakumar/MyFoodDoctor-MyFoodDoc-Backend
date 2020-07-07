@@ -1,4 +1,4 @@
-﻿using MyFoodDoc.Application.Entites;
+﻿using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;

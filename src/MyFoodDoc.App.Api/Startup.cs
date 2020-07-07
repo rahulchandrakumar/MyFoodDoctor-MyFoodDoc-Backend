@@ -18,12 +18,13 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Logging;
 using MyFoodDoc.App.Application.Serialization;
 using MyFoodDoc.App.Api.Middlewares;
 using MyFoodDoc.App.Application.Clients.IdentityServer;
 
-namespace MyFoodDoc.Application.Api
+namespace MyFoodDoc.App.Api
 {
     public class Startup
     {
@@ -40,6 +41,7 @@ namespace MyFoodDoc.Application.Api
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMemoryCache();
             services.AddInfrastructure(Configuration, Environment);
             services.AddApplication(Configuration);
 
@@ -88,16 +90,21 @@ namespace MyFoodDoc.Application.Api
             IdentityModelEventSource.ShowPII = true;
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
+            //services.AddDistributedMemoryCache();
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddIdentityServerAuthentication(options =>
+            }).AddIdentityServerAuthentication(options =>
                 {
                     options.Authority = identityServerUrl;
                     options.ApiName = "myfooddoc_api";
                     options.RequireHttpsMetadata = false;
+                    options.ApiSecret = "secret";
+                    
+                    //options.EnableCaching = true;
+                    //options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
                 });
 
             /*
@@ -107,7 +114,7 @@ namespace MyFoodDoc.Application.Api
                 //option.ApiVersionReader = new Microsoft.AspNetCore.Mvc.Versioning.UrlSegmentApiVersionReader();
             });
             */
-            services.AddSwaggerDocumentation();
+            services.AddSwaggerDocumentation(Configuration);
 
             services.AddRouting(options => {
                 options.LowercaseUrls = true;

@@ -90,13 +90,13 @@ export default {
     state.total--
   },
   mutateData: async ({ commit, dispatch }, { data }) => {
-    let insuranceList = await dispatch("dictionaries/getinsuranceList", {},  { root:true })
+    let insuranceList = await dispatch("dictionaries/getInsuranceList", {},  { root:true })
     data.values.forEach((i) => {
        i.insurance = i.insuranceId == null ? null : insuranceList.filter(v => v.id == i.insuranceId )[0].name
     })
   },
   mutateItem: async ({ commit, dispatch }, { data }) => {
-    let insuranceList = await dispatch("dictionaries/getinsuranceList", {},  { root:true })
+    let insuranceList = await dispatch("dictionaries/getInsuranceList", {},  { root:true })
     data.insurance = data.insuranceId == null ? null : insuranceList.filter(v => v.id == data.insuranceId )[0].name
   }
 };

@@ -171,7 +171,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserToken","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Coupon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -203,7 +203,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Coupons","Coupon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DiaryExercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DiaryExercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -236,7 +236,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Exercises","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DiaryLiquid", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DiaryLiquid", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -269,7 +269,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Liquids","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DiaryMeal", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DiaryMeal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -311,7 +311,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Meals","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Ingredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -426,7 +426,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Insurance", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Insurance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -481,7 +481,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.LexiconEntry", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -537,7 +537,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -643,7 +643,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserDiet", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserDiet", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -658,7 +658,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserDiets","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserIndication", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -673,7 +673,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserIndications","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMotivation", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -886,7 +886,7 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -895,7 +895,7 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -910,7 +910,7 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -919,40 +919,40 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DiaryExercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DiaryExercise", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DiaryLiquid", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DiaryLiquid", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.DiaryMeal", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DiaryMeal", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsMany("MyFoodDoc.Application.Entites.DiaryMealIngredient", "Ingredients", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.DiaryMealIngredient", "Ingredients", b1 =>
                         {
                             b1.Property<int>("MealId")
                                 .HasColumnType("int");
@@ -969,7 +969,7 @@ namespace MyFoodDoc.Database.Migrations
 
                             b1.ToTable("MealsIngredients","Diary");
 
-                            b1.HasOne("MyFoodDoc.Application.Entites.Ingredient", "Ingredient")
+                            b1.HasOne("MyFoodDoc.Application.Entities.Ingredient", "Ingredient")
                                 .WithMany()
                                 .HasForeignKey("IngredientId")
                                 .OnDelete(DeleteBehavior.Cascade)
@@ -980,13 +980,13 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.User", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                    b.HasOne("MyFoodDoc.Application.Entities.Insurance", "Insurance")
                         .WithMany()
                         .HasForeignKey("InsuranceId");
 
-                    b.OwnsMany("MyFoodDoc.Application.Entites.TrackedValus.UserAbdonimalGirth", "AbdonimalGirthHistory", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValues.UserAbdonimalGirth", "AbdonimalGirthHistory", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");
@@ -1005,7 +1005,7 @@ namespace MyFoodDoc.Database.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsMany("MyFoodDoc.Application.Entites.TrackedValus.UserBloodSugarLevel", "BloodSugarLevelHistory", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValues.UserBloodSugarLevel", "BloodSugarLevelHistory", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");
@@ -1024,7 +1024,7 @@ namespace MyFoodDoc.Database.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsMany("MyFoodDoc.Application.Entites.TrackedValus.UserWeight", "WeightHistory", b1 =>
+                    b.OwnsMany("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", "WeightHistory", b1 =>
                         {
                             b1.Property<string>("UserId")
                                 .HasColumnType("nvarchar(450)");
@@ -1044,7 +1044,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserDiet", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserDiet", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
                         .WithMany()
@@ -1052,14 +1052,14 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Diets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserIndication", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
                         .WithMany()
@@ -1067,14 +1067,14 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Indications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMotivation", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Motivation", "Motivation")
                         .WithMany()
@@ -1082,7 +1082,7 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Motivations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

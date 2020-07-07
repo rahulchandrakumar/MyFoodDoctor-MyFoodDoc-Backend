@@ -15,7 +15,7 @@ namespace MyFoodDoc.Database.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.2")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -169,7 +169,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserToken","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.CmsUser", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.CmsUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -206,7 +206,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Users","CMS");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Coupon", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -248,7 +248,209 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Coupons","Coupon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Exercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Chapter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Answer")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("AnswerText1")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("AnswerText2")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("QuestionTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Chapters","Course");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Course", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Courses","Course");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Subchapter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ChapterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChapterId");
+
+                    b.ToTable("Subchapters","Course");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.UserAnswer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Answer")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ChapterId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChapterId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAnswers","Course");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
+                {
+                    b.Property<int>("DietId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DietId", "MethodId");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("DietMethods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietTarget", b =>
+                {
+                    b.Property<int>("DietId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DietId", "TargetId");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("DietTargets","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Exercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -280,7 +482,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Exercises","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Image", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -303,7 +505,37 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Images","System");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Ingredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationMethod", b =>
+                {
+                    b.Property<int>("IndicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IndicationId", "MethodId");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("IndicationMethods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationTarget", b =>
+                {
+                    b.Property<int>("IndicationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("IndicationId", "TargetId");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("IndicationTargets","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Ingredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -318,6 +550,11 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.Property<decimal?>("Cholesterol")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("ContainsPlantProtein")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -384,6 +621,9 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<decimal?>("Sugar")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal?>("Vegetables")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LastSynchronized");
@@ -394,7 +634,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Ingredients","Food");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Insurance", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Insurance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -455,7 +695,7 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.LexiconEntry", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -494,7 +734,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Entries","Lexicon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Liquid", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Liquid", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -526,7 +766,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Liquids","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Meal", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Meal", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -563,7 +803,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Meals","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MealIngredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MealIngredient", b =>
                 {
                     b.Property<int>("MealId")
                         .HasColumnType("int");
@@ -581,7 +821,113 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("MealsIngredients","Diary");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Promotion", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.Method", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Frequency")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FrequencyPeriod")
+                        .HasColumnType("nvarchar(5)")
+                        .HasMaxLength(5);
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(14)")
+                        .HasMaxLength(14);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Methods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.MethodMultipleChoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("MethodMultipleChoice","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationMethod", b =>
+                {
+                    b.Property<int>("MotivationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MotivationId", "MethodId");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("MotivationMethods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationTarget", b =>
+                {
+                    b.Property<int>("MotivationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MotivationId", "TargetId");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("MotivationTargets","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Promotion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -619,7 +965,130 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Promotions","Coupon");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TargetMethod", b =>
+                {
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TargetId", "MethodId");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("TargetMethods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.AdjustmentTarget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RecommendedText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("RemainText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<int>("Step")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StepDirection")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TargetText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<int>("TargetValue")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("AdjustmentTargets","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.Target", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OptimizationAreaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(6)")
+                        .HasMaxLength(6);
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<int>("Threshold")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("TriggerOperator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(11)")
+                        .HasMaxLength(11);
+
+                    b.Property<int>("TriggerValue")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("OptimizationAreaId");
+
+                    b.ToTable("Targets","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserAbdominalGirth", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -632,10 +1101,10 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("UserId", "Date");
 
-                    b.ToTable("AbdonimalGirthHistory","User");
+                    b.ToTable("AbdominalGirthHistory","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -651,7 +1120,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("WeightHistory","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -679,6 +1148,14 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<string>("Gender")
                         .HasColumnType("nvarchar(6)")
                         .HasMaxLength(6);
+
+                    b.Property<bool>("HasSubscription")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("HasSubscriptionUpdated")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal?>("Height")
                         .HasColumnType("decimal(4,1)");
@@ -741,7 +1218,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Users","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserDiet", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserDiet", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -756,7 +1233,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserDiets","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserIndication", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -771,7 +1248,78 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserIndications","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool?>("Answer")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("DecimalValue")
+                        .HasColumnType("decimal(4,1)");
+
+                    b.Property<int?>("IntegerValue")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MethodMultipleChoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MethodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserMethods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethodShowHistoryItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getutcdate()");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MethodId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserMethodShowHistory","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMotivation", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -786,7 +1334,40 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserMotivations","User");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.WebPage", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserTarget", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TargetAnswerCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TargetId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserTargets","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.WebPage", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1024,6 +1605,138 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.EnumEntities.OptimizationArea", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AboveOptimalLineGraphText")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("AboveOptimalLineGraphTitle")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("AboveOptimalPieChartText")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("AboveOptimalPieChartTitle")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("BelowOptimalLineGraphText")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("BelowOptimalLineGraphTitle")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("BelowOptimalPieChartText")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("BelowOptimalPieChartTitle")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)")
+                        .HasMaxLength(50);
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal?>("LineGraphLowerLimit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("LineGraphOptimal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("LineGraphUpperLimit")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("OptimalLineGraphText")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("OptimalLineGraphTitle")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("OptimalPieChartText")
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.Property<string>("OptimalPieChartTitle")
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("Key");
+
+                    b.ToTable("OptimizationAreas","System");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Key = "vegetables",
+                            LineGraphLowerLimit = 400m,
+                            LineGraphOptimal = 500m,
+                            Name = "Gemüse",
+                            Text = @"Gemüse und Salat haben einen hohen Wasseranteil, wodurch sie sehr kalorienarm sind. Die enthaltenen Ballaststoffe quellen im Magen-Darm-Trakt auf, wodurch du lange satt bleibst.
+Die Ballaststoffe aus Gemüse und Salat sorgen für eine gute Verdauung, wodurch dein Darm gesund bleibt.
+Gemüse und Salat sind reich an Vitaminen und sekundären Pflanzenstoffen. Sie sorgen für ein starkes Immunsystem."
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Key = "sugar",
+                            LineGraphOptimal = 30m,
+                            LineGraphUpperLimit = 40m,
+                            Name = "Zucker",
+                            Text = @"Zuckerreiche Lebensmittel liefern schnell, aber nur kurzfristige Energie. Es kommt zu einem sehr schnellen Anstieg des Blutzuckers, was zu einer sehr schnellen und starken Insulinausschüttung aus der Bauchspeicheldrüse führt.
+Dieser Mechanismus fördert Heißhungerattacken und Übergewicht."
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Key = "protein",
+                            LineGraphOptimal = 1m,
+                            Name = "Proteine",
+                            Text = @"Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.
+Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung."
+                        });
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1035,7 +1748,7 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1044,7 +1757,7 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1059,7 +1772,7 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1068,106 +1781,300 @@ namespace MyFoodDoc.Database.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", null)
+                    b.HasOne("MyFoodDoc.Application.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Coupon", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Coupon", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "Redeemer")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "Redeemer")
                         .WithMany()
                         .HasForeignKey("RedeemedBy");
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Promotion", "Promotion")
+                    b.HasOne("MyFoodDoc.Application.Entities.Promotion", "Promotion")
                         .WithMany("Coupons")
                         .HasForeignKey("PromotionId", "InsuranceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Exercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Chapter", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.Courses.Course", "Course")
+                        .WithMany("Chapters")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Course", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.Subchapter", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Courses.Chapter", "Chapter")
+                        .WithMany("Subchapters")
+                        .HasForeignKey("ChapterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Courses.UserAnswer", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Courses.Chapter", "Chapter")
+                        .WithMany()
+                        .HasForeignKey("ChapterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
+                        .WithMany("Methods")
+                        .HasForeignKey("DietId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany("Diets")
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietTarget", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
+                        .WithMany("Targets")
+                        .HasForeignKey("DietId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
+                        .WithMany("Diets")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Exercise", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.LexiconEntry", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationMethod", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Image", "Image")
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
+                        .WithMany("Methods")
+                        .HasForeignKey("IndicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany("Indications")
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationTarget", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
+                        .WithMany("Targets")
+                        .HasForeignKey("IndicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
+                        .WithMany("Indications")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Liquid", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Liquid", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Meal", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Meal", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.MealIngredient", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MealIngredient", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Ingredient", "Ingredient")
+                    b.HasOne("MyFoodDoc.Application.Entities.Ingredient", "Ingredient")
                         .WithMany("Meals")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.Meal", "Meal")
+                    b.HasOne("MyFoodDoc.Application.Entities.Meal", "Meal")
                         .WithMany("Ingredients")
                         .HasForeignKey("MealId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.Promotion", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.Method", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.MethodMultipleChoice", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationMethod", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany("Motivations")
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.Motivation", "Motivation")
+                        .WithMany("Methods")
+                        .HasForeignKey("MotivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationTarget", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.Motivation", "Motivation")
+                        .WithMany("Targets")
+                        .HasForeignKey("MotivationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
+                        .WithMany("Motivations")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Promotion", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Insurance", "Insurance")
                         .WithMany()
                         .HasForeignKey("InsuranceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserAbdominalGirth", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TargetMethod", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany("Targets")
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
+                        .WithMany("Methods")
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.AdjustmentTarget", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.Target", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.EnumEntities.OptimizationArea", "OptimizationArea")
+                        .WithMany()
+                        .HasForeignKey("OptimizationAreaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserAbdominalGirth", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("AbdominalGirthHistory")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.TrackedValus.UserWeight", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.TrackedValues.UserWeight", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("WeightHistory")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.User", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.User", b =>
                 {
-                    b.HasOne("MyFoodDoc.Application.Entites.Insurance", "Insurance")
+                    b.HasOne("MyFoodDoc.Application.Entities.Insurance", "Insurance")
                         .WithMany()
                         .HasForeignKey("InsuranceId");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserDiet", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserDiet", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
                         .WithMany()
@@ -1175,14 +2082,14 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Diets")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserIndication", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserIndication", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Indication", "Indication")
                         .WithMany()
@@ -1190,14 +2097,44 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Indications")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entites.UserMotivation", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethod", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMethodShowHistoryItem", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserMotivation", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Motivation", "Motivation")
                         .WithMany()
@@ -1205,11 +2142,34 @@ namespace MyFoodDoc.Database.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("MyFoodDoc.Application.Entites.User", "User")
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
                         .WithMany("Motivations")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserTarget", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Targets.Target", "Target")
+                        .WithMany()
+                        .HasForeignKey("TargetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.EnumEntities.OptimizationArea", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
                 });
 #pragma warning restore 612, 618
         }

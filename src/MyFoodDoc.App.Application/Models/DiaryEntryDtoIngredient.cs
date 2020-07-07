@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using AutoMapper;
 using MyFoodDoc.App.Application.Mappings;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 
 namespace MyFoodDoc.App.Application.Models
 {

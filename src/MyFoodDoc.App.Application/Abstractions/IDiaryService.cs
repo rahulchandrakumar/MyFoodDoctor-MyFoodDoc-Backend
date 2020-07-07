@@ -17,5 +17,6 @@ namespace MyFoodDoc.App.Application.Abstractions
         Task UpsertLiquidAsync(string userId, LiquidPayload payload, CancellationToken cancellationToken);
         Task<DiaryEntryDtoExercise> GetExerciseAsync(string userId, DateTime date, CancellationToken cancellationToken);
         Task UpsertExerciseAsync(string userId, ExercisePayload payload, CancellationToken cancellationToken);
+        Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken);
     }
 }

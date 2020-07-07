@@ -20,6 +20,7 @@ FROM build AS publish
 RUN dotnet publish "MyFoodDoc.FatSecretSynchronization.csproj" -c Release -o /app/publish
 
 FROM base AS final
-WORKDIR /app
+WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
-ENV AzureWebJobsScriptRoot=/app
+ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true

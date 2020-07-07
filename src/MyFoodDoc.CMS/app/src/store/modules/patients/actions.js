@@ -28,7 +28,7 @@ export default {
     return response.data;
   },
   mutateData: async ({ commit, dispatch }, { data }) => {    
-    let insuranceList = await dispatch("dictionaries/getinsuranceList", {},  { root:true })
+    let insuranceList = await dispatch("dictionaries/getInsuranceList", {},  { root:true })
     data.values.forEach((i) => {
        i.insurance = i.insuranceId == null ? null : insuranceList.filter(v => v.id == i.insuranceId )[0].name
        i.gender = i.gender == null ? null : i.gender == Gender.MALE ? "Male" : "Female"

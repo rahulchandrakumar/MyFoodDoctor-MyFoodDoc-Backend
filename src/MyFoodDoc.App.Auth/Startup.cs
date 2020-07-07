@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Infrastructure;
 using IdentityServer4;
 
@@ -35,6 +35,10 @@ namespace MyFoodDoc.App.Auth
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
 
+                var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
+
+                options.IssuerUri = identityServerIssuerUri;
+                options.PublicOrigin = identityServerIssuerUri;
 
                 options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 /*
@@ -56,7 +60,8 @@ namespace MyFoodDoc.App.Auth
             .AddInMemoryClients(Config.GetClients())
             .AddAspNetIdentity<User>();
 
-            if (Environment.IsDevelopment())
+            //TODO: Use builder.AddSigningCredential for Staging and Production
+            if (Environment.IsDevelopment() || Environment.IsStaging() || Environment.IsProduction())
             {
                 builder.AddDeveloperSigningCredential();
             }

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using MyFoodDoc.Core.Configuration.ConfigurationMapper;
 
-namespace MyFoodDoc.Application.Api
+namespace MyFoodDoc.App.Api
 {
     public class Program
     {

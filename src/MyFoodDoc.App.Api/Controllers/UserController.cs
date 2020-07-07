@@ -17,14 +17,18 @@ namespace MyFoodDoc.App.Api.Controllers
     [Authorize]
     public class UserController : BaseController
     {
-        private IUserService _service;
-        private IUserHistoryService _historyService;
+        private readonly IUserService _service;
+        private readonly IUserHistoryService _historyService;
+        private readonly IDiaryService _diaryService;
+        private readonly ITargetService _targetService;
         private readonly ILogger _logger;
 
-        public UserController(IUserService service, IUserHistoryService historyService, ILogger<UserController> logger)
+        public UserController(IUserService service, IUserHistoryService historyService, IDiaryService diaryService, ITargetService targetService, ILogger<UserController> logger)
         {
             _service = service;
             _historyService = historyService;
+            _diaryService = diaryService;
+            _targetService = targetService;
             _logger = logger;
         }
 
@@ -66,7 +70,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPayload payload, CancellationToken cancellationToken = default)
         {
-            await _service.ChangePassword(GetUserId(), payload.OldPassword, payload.NewPassword);
+            await _service.ChangePasswordAsync(GetUserId(), payload.OldPassword, payload.NewPassword);
 
             return NoContent();
         }
@@ -98,22 +102,39 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(IEnumerable<UserHistoryDtoAbdominalGirth>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<UserHistoryDtoAbdominalGirth>>> UpdateUserHistoryAbdominalGirth([FromBody] AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
         {
-            await _historyService.UpsertAbdonimalGirthHistoryAsync(GetUserId(), payload, cancellationToken);
+            await _historyService.UpsertAbdominalGirthHistoryAsync(GetUserId(), payload, cancellationToken);
 
-            var result = await _historyService.GetAbdonimalGirthHistoryAsync(GetUserId(), cancellationToken);
+            var result = await _historyService.GetAbdominalGirthHistoryAsync(GetUserId(), cancellationToken);
 
             return Ok(result);
         }
 
-        [HttpGet("statistics/ready")]
-        [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
-        public async Task<IActionResult> StatisticsReady(CancellationToken cancellationToken = default)
+        [HttpGet("statistics")]
+        [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
         {
-            var user = await _service.GetUserAsync(GetUserId(), cancellationToken);
+            var user = GetUserId();
 
-            //TODO: implement statistics check
+            var result = new UserStatisticsDto
+            {
+                HasSubscription = (await _service.GetUserAsync(user, cancellationToken)).HasSubscription,
+                IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken),
+                HasNewTargetsTriggered = await _targetService.NewTriggered(user, cancellationToken),
+                IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(user, cancellationToken)),
+                HasTargetsActivated = await _targetService.AnyActivated(user, cancellationToken)
+            };
 
-            return Ok(false);
+            return Ok(result);
+        }
+
+        [HttpPost("subscription/{hasSubscription}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateUserHasSubscription([FromRoute] bool hasSubscription, CancellationToken cancellationToken = default)
+        {
+            await _service.UpdateUserHasSubscription(GetUserId(), hasSubscription, cancellationToken);
+
+            return Ok();
         }
     }
 }

@@ -11,6 +11,6 @@ export default async function(base64img) {
   let formData = new FormData();
   formData.append('file', _imageDecode(base64img))
 
-  var result = await httpRequest.post("api/v1/images/upload", formData, 'file');
+  var result = await httpRequest.post("/api/v1/images/upload", formData, 'file');
   return result.data;
 }

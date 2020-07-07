@@ -1,6 +1,6 @@
 ﻿using System;
 using AutoMapper;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Application.Mappings;
 using Newtonsoft.Json;
 
@@ -33,6 +33,8 @@ namespace MyFoodDoc.App.Application.Models
         public decimal? Fiber { get; set; }
 
         public decimal? Sugar { get; set; }
+
+        public decimal? Vegetables { get; set; }
 
         public void Mapping(Profile profile) => profile.CreateMap(typeof(Ingredient), GetType());
     }

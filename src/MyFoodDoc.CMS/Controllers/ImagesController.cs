@@ -11,7 +11,7 @@ namespace MyFoodDoc.CMS.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
-    public class ImagesController
+    public class ImagesController : ControllerBase
     {
         private readonly IImageService _imageService = null;
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using MyFoodDoc.Application.Entites;
+using MyFoodDoc.Application.Entities;
 
 namespace MyFoodDoc.CMS.Application.Models
 {
@@ -45,6 +45,10 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public decimal? Sugar { get; set; }
 
+        public decimal? Vegetables { get; set; }
+
+        public bool ContainsPlantProtein { get; set; }
+
         public static IngredientModel FromEntity(Ingredient entity)
         {
             return entity == null ? null : new IngredientModel()
@@ -69,7 +73,9 @@ namespace MyFoodDoc.CMS.Application.Models
                 Sodium = entity.Sodium,
                 Potassium = entity.Potassium,
                 Fiber = entity.Fiber,
-                Sugar = entity.Sugar
+                Sugar = entity.Sugar,
+                Vegetables = entity.Vegetables,
+                ContainsPlantProtein = entity.ContainsPlantProtein
             };
         }
 
@@ -97,7 +103,9 @@ namespace MyFoodDoc.CMS.Application.Models
                 Sodium = this.Sodium,
                 Potassium = this.Potassium,
                 Fiber = this.Fiber,
-                Sugar = this.Sugar
+                Sugar = this.Sugar,
+                Vegetables = this.Vegetables,
+                ContainsPlantProtein = this.ContainsPlantProtein
             };
         }
     }

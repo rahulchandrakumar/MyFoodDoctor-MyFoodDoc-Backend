@@ -7,8 +7,8 @@ using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entites;
-using MyFoodDoc.Application.Entites.TrackedValus;
+using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.TrackedValues;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -241,7 +241,7 @@ namespace MyFoodDoc.App.Application.Services
             return await query.ToListAsync(cancellationToken);
         }
 
-        public async Task ChangePassword(string userId, string oldPassword, string newPassword)
+        public async Task ChangePasswordAsync(string userId, string oldPassword, string newPassword)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (!await _userManager.CheckPasswordAsync(user, oldPassword))
@@ -250,6 +250,24 @@ namespace MyFoodDoc.App.Application.Services
             }
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, newPassword);
+        }
+        
+
+        public async Task UpdateUserHasSubscription(string userId, bool hasSubscription, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            user.HasSubscription = hasSubscription;
+            user.HasSubscriptionUpdated = DateTime.Now;
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }
