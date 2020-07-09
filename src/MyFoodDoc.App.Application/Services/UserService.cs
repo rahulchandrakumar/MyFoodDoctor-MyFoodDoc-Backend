@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Payloads.Diary;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -22,13 +23,15 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
+        private readonly IUserHistoryService _userHistoryService;
         private readonly UserManager<User> _userManager;
 
-        public UserService(IApplicationContext context, IMapper mapper, UserManager<User> userManager)
+        public UserService(IApplicationContext context, IMapper mapper, IUserHistoryService userHistoryService, UserManager<User> userManager)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _userHistoryService = userHistoryService;
         }
 
         public async Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default)
@@ -61,16 +64,13 @@ namespace MyFoodDoc.App.Application.Services
             user.Gender = payload.Gender;
             user.Height = payload.Height;
 
-            var oldIndications = _context.UserIndications.Where(x => x.UserId.Equals(userId));
+            var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
             _context.UserIndications.RemoveRange(oldIndications);
 
             if (payload.Weight > 0)
             {
-                user.WeightHistory.Add(new UserWeight()
-                {
-                    Date = DateTime.UtcNow,
-                    Value = payload.Weight
-                });
+                await _userHistoryService.UpsertWeightHistoryAsync(userId,
+                    new WeightHistoryPayload { Date = DateTime.UtcNow, Value = payload.Weight }, cancellationToken);
             }
 
             if (payload.Indications != null)
@@ -78,14 +78,14 @@ namespace MyFoodDoc.App.Application.Services
                 var indicationsIds = await _context.Indications
                     .Where(x => payload.Indications.ToArray().Contains(x.Key))
                     .Select(x => x.Id)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 var userIndications = indicationsIds.Select(indicationId => new UserIndication { UserId = userId, IndicationId = indicationId });
 
                 _context.UserIndications.AddRange(userIndications);
             }
 
-            var oldMotivations = _context.UserMotivations.Where(x => x.UserId.Equals(userId));
+            var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
             _context.UserMotivations.RemoveRange(oldMotivations);
             
             if (payload.Motivations != null)
@@ -93,7 +93,7 @@ namespace MyFoodDoc.App.Application.Services
                 var motivationIds = await _context.Motivations
                     .Where(x => payload.Motivations.ToArray().Contains(x.Key))
                     .Select(x => x.Id)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 var userMotivations = motivationIds.Select(motivationId => new UserMotivation { UserId = userId, MotivationId = motivationId });
 
