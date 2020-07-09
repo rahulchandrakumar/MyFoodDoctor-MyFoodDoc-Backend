@@ -385,7 +385,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (item.UserAnswerDecimal != null)
                         {
                             await _userHistoryService.UpsertWeightHistoryAsync(userId,
-                                new WeightHistoryPayload {Date = DateTime.Now, Value = item.UserAnswerDecimal.Value}, cancellationToken);
+                                new WeightHistoryPayload {Date = DateTime.UtcNow, Value = item.UserAnswerDecimal.Value}, cancellationToken);
 
                             await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.UserAnswerDecimal }, cancellationToken);
                         }
