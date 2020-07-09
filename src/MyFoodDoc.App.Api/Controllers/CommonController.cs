@@ -64,7 +64,7 @@ namespace MyFoodDoc.App.Api.Controllers
 
             if (!result)
             {
-                throw new BadRequestException("Unable to sent email");
+                throw new BadRequestException("Unable to send email");
             }
 
             return Accepted();
