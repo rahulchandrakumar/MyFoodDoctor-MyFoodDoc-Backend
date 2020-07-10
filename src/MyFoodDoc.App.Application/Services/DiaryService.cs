@@ -153,6 +153,7 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task UpsertLiquidAsync(string userId, LiquidPayload payload, CancellationToken cancellationToken)
         {
+            /*
             var liquid = await _context.Liquids.SingleOrDefaultAsync(x => x.UserId == userId && x.Date == payload.Date, cancellationToken);
 
             if (liquid == null)
@@ -161,18 +162,39 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     UserId = userId,
                     Date = payload.Date,
+                    Amount = payload.Amount
                 };
 
-                _context.Liquids.Add(liquid);
+                await _context.Liquids.AddAsync(liquid, cancellationToken);
             }
-
-            if (liquid.Amount < payload.Amount)
+            else
             {
-                liquid.LastAdded = payload.Time;
+                if(liquid.Amount < payload.Amount)
+                {
+                    liquid.LastAdded = payload.Time;
+                }
+
+                liquid.Amount = payload.Amount;
             }
-            liquid.Amount = payload.Amount;
 
             await _context.SaveChangesAsync(cancellationToken);
+            */
+
+            await _context.Liquids
+                .Upsert(new Liquid
+                {
+                    UserId = userId,
+                    Date = payload.Date,
+                    LastAdded = payload.Time,
+                    Amount = payload.Amount
+                })
+                .On(x => new { x.UserId, x.Date })
+                .WhenMatched(x => new Liquid
+                {
+                    LastAdded = x.Amount < payload.Amount ? payload.Time : x.LastAdded,
+                    Amount = payload.Amount
+                })
+                .RunAsync(cancellationToken);
         }
 
         public async Task<DiaryEntryDtoExercise> GetExerciseAsync(string userId, DateTime date, CancellationToken cancellationToken)
@@ -192,6 +214,7 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task UpsertExerciseAsync(string userId, ExercisePayload payload, CancellationToken cancellationToken)
         {
+            /*
             var exercise = await _context.Exercises
                 .Where(x => x.UserId == userId && x.Date == payload.Date)
                 .SingleOrDefaultAsync(cancellationToken);
@@ -206,16 +229,38 @@ namespace MyFoodDoc.App.Application.Services
                     Duration = payload.Duration,
                 };
 
-                _context.Exercises.Add(exercise);
+                await _context.Exercises.AddAsync(exercise, cancellationToken);
             }
-
-            if (exercise.Duration < payload.Duration)
+            else
             {
-                exercise.LastAdded = payload.Time;
-            }
-            exercise.Duration = payload.Duration;
+                if (exercise.Duration < payload.Duration)
+                {
+                    exercise.LastAdded = payload.Time;
+                }
 
+                exercise.Duration = payload.Duration;
+
+                _context.Exercises.Update(exercise);
+            }
+            
             await _context.SaveChangesAsync(cancellationToken);
+            */
+
+            await _context.Exercises
+                .Upsert(new Exercise
+                {
+                    UserId = userId,
+                    Date = payload.Date,
+                    LastAdded = payload.Time,
+                    Duration = payload.Duration,
+                })
+                .On(x => new { x.UserId, x.Date })
+                .WhenMatched(x => new Exercise
+                {
+                    LastAdded = x.Duration < payload.Duration ? payload.Time : x.LastAdded,
+                    Duration = payload.Duration
+                })
+                .RunAsync(cancellationToken);
         }
 
         public async Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken)

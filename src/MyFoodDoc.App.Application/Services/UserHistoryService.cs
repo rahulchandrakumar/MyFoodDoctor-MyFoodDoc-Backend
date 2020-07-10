@@ -45,13 +45,18 @@ namespace MyFoodDoc.App.Application.Services
                 entry = new UserWeight
                 {
                     UserId = userId,
-                    Date = payload.Date
+                    Date = payload.Date,
+                    Value = payload.Value
                 };
 
-                _context.UserWeights.Add(entry);
+                await _context.UserWeights.AddAsync(entry, cancellationToken);
             }
+            else
+            {
+                entry.Value = payload.Value;
 
-            entry.Value = payload.Value;
+                _context.UserWeights.Update(entry);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
         }
@@ -65,13 +70,18 @@ namespace MyFoodDoc.App.Application.Services
                 entry = new UserAbdominalGirth
                 {
                     UserId = userId,
-                    Date = payload.Date
+                    Date = payload.Date,
+                    Value = payload.Value
                 };
 
-                _context.UserAbdominalGirths.Add(entry);
+                await _context.UserAbdominalGirths.AddAsync(entry, cancellationToken);
             }
+            else
+            {
+                entry.Value = payload.Value;
 
-            entry.Value = payload.Value;
+                _context.UserAbdominalGirths.Update(entry);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
         }
