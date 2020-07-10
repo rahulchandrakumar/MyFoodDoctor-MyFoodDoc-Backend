@@ -40,7 +40,7 @@ module "global" {
 
   apiserver_plantier     = "Standard"
   apiserver_plansize     = "S1"
-  apiserver_plancapacity = 2
+  apiserver_plancapacity = 1
 
   apiapp_alwayson        = false
   apiapp_aspenv          = "Staging"
