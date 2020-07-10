@@ -38,8 +38,8 @@ module "global" {
   projectname = "mfd"
   stage       = "dev"
 
-  apiserver_plantier     = "Basic"
-  apiserver_plansize     = "B1"
+  apiserver_plantier     = "Standard"
+  apiserver_plansize     = "S1"
   apiserver_plancapacity = 1
 
   apiapp_alwayson        = false

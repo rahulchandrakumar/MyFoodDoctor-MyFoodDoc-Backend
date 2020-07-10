@@ -16,13 +16,11 @@ namespace MyFoodDoc.Infrastructure
             var connectionString = configuration.GetConnectionString(ConnectionStringName);
 
             services.AddDbContext<ApplicationContext>(options =>
-            {
-                //options.UseInMemoryDatabase(databaseName: "Add_writes_to_database");
-                //options.UseSqlServer("Server=localhost;Database=MyFoodDoc2;Trusted_Connection=True;");
-                options.UseSqlServer(connectionString);
-            });
+                    options.UseSqlServer(connectionString),
+                ServiceLifetime.Transient
+            );
 
-            services.AddScoped<IApplicationContext, ApplicationContext>();
+            services.AddTransient<IApplicationContext, ApplicationContext>();
 
             return services;
         }
