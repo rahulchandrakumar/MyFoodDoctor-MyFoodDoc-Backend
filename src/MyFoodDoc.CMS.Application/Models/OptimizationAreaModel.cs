@@ -54,7 +54,7 @@ namespace MyFoodDoc.CMS.Application.Models
                     Key = entity.Key,
                     Name = entity.Name,
                     Text = entity.Text,
-                    Image = ImageModel.FromEntity(entity.Image),
+                    Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
                     LineGraphUpperLimit = entity.LineGraphUpperLimit,
                     LineGraphLowerLimit = entity.LineGraphLowerLimit,
                     LineGraphOptimal = entity.LineGraphOptimal,

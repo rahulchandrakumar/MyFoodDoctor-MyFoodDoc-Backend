@@ -51,7 +51,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Key = model.Key,
                 Name = model.Name,
                 Text = model.Text,
-                Image = Image.FromModel(model.Image),
+                Image = model.Image == null ? null : Image.FromModel(model.Image),
                 LineGraphUpperLimit = model.LineGraphUpperLimit,
                 LineGraphLowerLimit = model.LineGraphLowerLimit,
                 LineGraphOptimal = model.LineGraphOptimal,
