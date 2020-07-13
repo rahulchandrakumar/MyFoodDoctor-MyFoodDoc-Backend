@@ -27,8 +27,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
                 .HasMaxLength(10);
 
             builder.Property(p => p.Mood);
-
-            builder.HasMany(o => o.Ingredients).WithOne();
         }
     }
 }

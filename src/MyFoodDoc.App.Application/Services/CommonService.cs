@@ -32,6 +32,9 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             var result = await _userManager.CreateAsync(newUser, password);
+
+            if (!result.Succeeded)
+                throw new BadRequestException(result.ToString());
         }
 
         public async Task<string> GeneratePasswordResetTokenAsync(string email)

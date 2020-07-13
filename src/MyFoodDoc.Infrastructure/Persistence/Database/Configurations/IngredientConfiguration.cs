@@ -17,7 +17,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.ServingId).IsRequired();
             builder.Property(o => o.ServingDescription).IsRequired().HasMaxLength(100);
             builder.Property(o => o.MetricServingAmount).IsRequired().HasColumnType(NutritionsDecimal);
-            builder.Property(o => o.MetricServingUnit).IsRequired().HasMaxLength(100);
+            builder.Property(o => o.MetricServingUnit).HasMaxLength(100);
             builder.Property(o => o.MeasurementDescription).IsRequired().HasMaxLength(100);
             builder.Property(o => o.LastSynchronized).IsRequired();
             builder.Property(o => o.Calories).HasColumnType(NutritionsDecimal);
