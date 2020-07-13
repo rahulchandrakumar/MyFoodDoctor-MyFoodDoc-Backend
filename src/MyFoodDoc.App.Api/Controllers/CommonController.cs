@@ -56,6 +56,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPost("password/forgot")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordPayload tokenPayload, CancellationToken cancellationToken = default)
         {
             string token = await _service.GeneratePasswordResetTokenAsync(tokenPayload.Email);
@@ -73,6 +74,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPost("password/reset")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordPayload payload, CancellationToken cancellationToken = default)
         {
             await _service.ResetPasswordAsync(payload.Email, payload.ResetToken, payload.NewPassword);

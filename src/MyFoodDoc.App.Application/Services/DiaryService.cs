@@ -84,7 +84,7 @@ namespace MyFoodDoc.App.Application.Services
                 Mood = payload.Mood,
             };
 
-            _context.Meals.Add(meal);
+            await _context.Meals.AddAsync(meal, cancellationToken);
             
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -153,33 +153,6 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task UpsertLiquidAsync(string userId, LiquidPayload payload, CancellationToken cancellationToken)
         {
-            /*
-            var liquid = await _context.Liquids.SingleOrDefaultAsync(x => x.UserId == userId && x.Date == payload.Date, cancellationToken);
-
-            if (liquid == null)
-            {
-                liquid = new Liquid
-                {
-                    UserId = userId,
-                    Date = payload.Date,
-                    Amount = payload.Amount
-                };
-
-                await _context.Liquids.AddAsync(liquid, cancellationToken);
-            }
-            else
-            {
-                if(liquid.Amount < payload.Amount)
-                {
-                    liquid.LastAdded = payload.Time;
-                }
-
-                liquid.Amount = payload.Amount;
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
-            */
-
             await _context.Liquids
                 .Upsert(new Liquid
                 {
@@ -214,38 +187,6 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task UpsertExerciseAsync(string userId, ExercisePayload payload, CancellationToken cancellationToken)
         {
-            /*
-            var exercise = await _context.Exercises
-                .Where(x => x.UserId == userId && x.Date == payload.Date)
-                .SingleOrDefaultAsync(cancellationToken);
-
-            if (exercise == null)
-            {
-                exercise = new Exercise
-                {
-                    UserId = userId,
-                    Date = payload.Date,
-                    LastAdded = payload.Time,
-                    Duration = payload.Duration,
-                };
-
-                await _context.Exercises.AddAsync(exercise, cancellationToken);
-            }
-            else
-            {
-                if (exercise.Duration < payload.Duration)
-                {
-                    exercise.LastAdded = payload.Time;
-                }
-
-                exercise.Duration = payload.Duration;
-
-                _context.Exercises.Update(exercise);
-            }
-            
-            await _context.SaveChangesAsync(cancellationToken);
-            */
-
             await _context.Exercises
                 .Upsert(new Exercise
                 {
