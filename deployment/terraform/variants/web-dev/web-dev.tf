@@ -45,8 +45,8 @@ module "global" {
   apiapp_alwayson        = false
   apiapp_aspenv          = "Development"
 
-  sqldb_tier                = "Basic"
-  sqldb_service_objective   = "Basic"
+  sqldb_tier                = "Standard"
+  sqldb_service_objective   = "S0"
 
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"
