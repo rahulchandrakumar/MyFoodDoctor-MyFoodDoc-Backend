@@ -75,6 +75,8 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<int> InsertMealAsync(string userId, InsertMealPayload payload, CancellationToken cancellationToken)
         {
+            await CheckIngredients(payload.Ingredients, cancellationToken);
+
             var meal = new Meal
             {
                 UserId = userId,
@@ -88,13 +90,6 @@ namespace MyFoodDoc.App.Application.Services
             
             await _context.SaveChangesAsync(cancellationToken);
 
-            //TODO: Check relevance
-            var oldIngredients = _context.MealIngredients.Where(x => x.MealId == meal.Id);
-
-            _context.MealIngredients.RemoveRange(oldIngredients);
-
-            await _context.SaveChangesAsync(cancellationToken);
-
             await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
 
             return meal.Id;
@@ -102,6 +97,8 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<int> UpdateMealAsync(string userId, int mealId, UpdateMealPayload payload, CancellationToken cancellationToken)
         {
+            await CheckIngredients(payload.Ingredients, cancellationToken);
+
             Meal meal = await _context.Meals
                 .Where(x => x.UserId == userId && x.Id == mealId)
                 .SingleOrDefaultAsync(cancellationToken);
@@ -109,6 +106,8 @@ namespace MyFoodDoc.App.Application.Services
             meal.Time = payload.Time;
             meal.Type = payload.Type;
             meal.Mood = payload.Mood;
+
+            _context.Meals.Update(meal);
 
             await _context.SaveChangesAsync(cancellationToken);
 
@@ -125,8 +124,6 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task RemoveMealAsync(string userId, int mealId, CancellationToken cancellationToken)
         {
-            //TODO: Check and delete unused ingredients
-
             var meal = await _context.Meals
                 .Where(x => x.UserId == userId && x.Id == mealId)
                 .SingleOrDefaultAsync(cancellationToken);
@@ -220,10 +217,54 @@ namespace MyFoodDoc.App.Application.Services
                     .CountAsync(cancellationToken) > 2;//TODO: Create configuration parameter
         }
 
+        private async Task CheckIngredients(IEnumerable<IngredientPayload> ingredients,
+            CancellationToken cancellationToken)
+        {
+            if (ingredients != null)
+            {
+                foreach (var ingredient in ingredients)
+                {
+                    var existingIngredient = _context.Ingredients.SingleOrDefault(x =>
+                        x.FoodId == ingredient.FoodId && x.ServingId == ingredient.ServingId);
+
+                    if (existingIngredient == null)
+                    {
+                        var food = await _fatSecretClient.GetFoodAsync(ingredient.FoodId);
+
+                        if (food == null)
+                        {
+                            throw new NotFoundException(nameof(Food), ingredient.FoodId);
+                        }
+
+                        var serving = food.Servings.Serving.SingleOrDefault(s => s.Id == ingredient.ServingId);
+
+                        if (serving == null)
+                        {
+                            throw new NotFoundException(nameof(Serving), ingredient.ServingId);
+                        }
+
+                        var newIngredient = new Ingredient
+                        {
+                            FoodId = food.Id,
+                            FoodName = food.Name,
+                            ServingId = serving.Id,
+                            ServingDescription = serving.Description,
+                            MetricServingAmount = serving.MetricServingAmount,
+                            MetricServingUnit = serving.MetricServingUnit,
+                            MeasurementDescription = serving.MeasurementDescription,
+                            LastSynchronized = DateTime.Now
+                        };
+
+                        await _context.Ingredients.AddAsync(newIngredient, cancellationToken);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+                    }
+                }
+            }
+        }
+
         private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
         {
-            //TODO: Check and delete unused ingredients
-
             if (ingredients != null)
             {
                 var mealIngredients = new List<MealIngredient>();
@@ -261,7 +302,7 @@ namespace MyFoodDoc.App.Application.Services
                             LastSynchronized = DateTime.Now
                         };
 
-                        await _context.Ingredients.AddAsync(newIngredient);
+                        await _context.Ingredients.AddAsync(newIngredient, cancellationToken);
 
                         await _context.SaveChangesAsync(cancellationToken);
 
@@ -273,7 +314,7 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
-                await _context.MealIngredients.AddRangeAsync(mealIngredients);
+                await _context.MealIngredients.AddRangeAsync(mealIngredients, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
             }

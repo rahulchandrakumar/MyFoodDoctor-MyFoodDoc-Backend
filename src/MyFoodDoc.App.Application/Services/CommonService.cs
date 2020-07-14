@@ -24,6 +24,11 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task RegisterAsync(string email, string password, int insuranceId)
         {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user != null)
+                throw new ConflictException("User already exists");
+
             User newUser = new User
             {
                 UserName = email,

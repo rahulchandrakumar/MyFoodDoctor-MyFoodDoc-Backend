@@ -56,6 +56,10 @@ namespace MyFoodDoc.App.Api.Middlewares
                     code = HttpStatusCode.BadRequest;
                     result = badRequestException.Message;
                     break;
+                case ConflictException conflictException:
+                    code = HttpStatusCode.Conflict;
+                    result = conflictException.Message;
+                    break;
                 case NotFoundException _:
                     code = HttpStatusCode.NotFound;
                     break;
