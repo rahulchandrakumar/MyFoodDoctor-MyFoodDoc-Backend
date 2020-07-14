@@ -34,6 +34,7 @@ namespace MyFoodDoc.App.Api.Controllers
 
         [HttpPost("meal")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(DiaryEntryDtoMeal), StatusCodes.Status200OK)]
         public async Task<ActionResult<DiaryEntryDtoMeal>> AddMeal([FromBody] InsertMealPayload payload, CancellationToken cancellationToken = default)
         {
