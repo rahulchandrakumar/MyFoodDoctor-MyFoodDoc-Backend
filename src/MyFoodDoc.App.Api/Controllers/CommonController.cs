@@ -38,6 +38,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Register([FromBody] RegisterPayload payload, CancellationToken cancellationToken = default) 
         {
             await _service.RegisterAsync(payload.Email, payload.Password, payload.InsuranceId);
