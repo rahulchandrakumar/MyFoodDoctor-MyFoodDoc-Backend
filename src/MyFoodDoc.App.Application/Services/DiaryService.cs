@@ -217,52 +217,51 @@ namespace MyFoodDoc.App.Application.Services
                     .CountAsync(cancellationToken) > 2;//TODO: Create configuration parameter
         }
 
-        private async Task CheckIngredients(IEnumerable<IngredientPayload> ingredients,
-            CancellationToken cancellationToken)
+        private async Task<int> UpsertIngredient(long foodId, long servingId, CancellationToken cancellationToken)
         {
-            if (ingredients != null)
+            var existingIngredient = await _context.Ingredients.SingleOrDefaultAsync(x =>
+                x.FoodId == foodId && x.ServingId == servingId, cancellationToken);
+
+            if (existingIngredient == null)
             {
-                foreach (var ingredient in ingredients)
+                var food = await _fatSecretClient.GetFoodAsync(foodId);
+
+                if (food == null)
                 {
-                    var existingIngredient = _context.Ingredients.SingleOrDefault(x =>
-                        x.FoodId == ingredient.FoodId && x.ServingId == ingredient.ServingId);
-
-                    if (existingIngredient == null)
-                    {
-                        var food = await _fatSecretClient.GetFoodAsync(ingredient.FoodId);
-
-                        if (food == null)
-                        {
-                            throw new NotFoundException(nameof(Food), ingredient.FoodId);
-                        }
-
-                        var serving = food.Servings.Serving.SingleOrDefault(s => s.Id == ingredient.ServingId);
-
-                        if (serving == null)
-                        {
-                            throw new NotFoundException(nameof(Serving), ingredient.ServingId);
-                        }
-
-                        var newIngredient = new Ingredient
-                        {
-                            FoodId = food.Id,
-                            FoodName = food.Name,
-                            ServingId = serving.Id,
-                            ServingDescription = serving.Description,
-                            MetricServingAmount = serving.MetricServingAmount,
-                            MetricServingUnit = serving.MetricServingUnit,
-                            MeasurementDescription = serving.MeasurementDescription,
-                            LastSynchronized = DateTime.Now
-                        };
-
-                        await _context.Ingredients.AddAsync(newIngredient, cancellationToken);
-
-                        await _context.SaveChangesAsync(cancellationToken);
-                    }
+                    throw new NotFoundException(nameof(Food), foodId);
                 }
+
+                var serving = food.Servings.Serving.SingleOrDefault(s => s.Id == servingId);
+
+                if (serving == null)
+                {
+                    throw new NotFoundException(nameof(Serving), servingId);
+                }
+
+                var newIngredient = new Ingredient
+                {
+                    FoodId = food.Id,
+                    FoodName = food.Name,
+                    ServingId = serving.Id,
+                    ServingDescription = serving.Description,
+                    MetricServingAmount = serving.MetricServingAmount,
+                    MetricServingUnit = serving.MetricServingUnit,
+                    MeasurementDescription = serving.MeasurementDescription,
+                    LastSynchronized = DateTime.Now
+                };
+
+                await _context.Ingredients.AddAsync(newIngredient, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return newIngredient.Id;
+            }
+            else
+            {
+                return existingIngredient.Id;
             }
         }
-
+        
         private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
         {
             if (ingredients != null)
@@ -271,52 +270,24 @@ namespace MyFoodDoc.App.Application.Services
 
                 foreach (var ingredient in ingredients)
                 {
-                    var existingIngredient = _context.Ingredients.SingleOrDefault(x =>
-                        x.FoodId == ingredient.FoodId && x.ServingId == ingredient.ServingId);
-
-                    if (existingIngredient == null)
-                    {
-                        var food = await _fatSecretClient.GetFoodAsync(ingredient.FoodId);
-
-                        if (food == null)
-                        {
-                            throw new NotFoundException(nameof(Food), ingredient.FoodId);
-                        }
-
-                        var serving = food.Servings.Serving.SingleOrDefault(s => s.Id == ingredient.ServingId);
-
-                        if (serving == null)
-                        {
-                            throw new NotFoundException(nameof(Serving), ingredient.ServingId);
-                        }
-
-                        var newIngredient = new Ingredient
-                        {
-                            FoodId = food.Id,
-                            FoodName = food.Name,
-                            ServingId = serving.Id,
-                            ServingDescription = serving.Description,
-                            MetricServingAmount = serving.MetricServingAmount,
-                            MetricServingUnit = serving.MetricServingUnit,
-                            MeasurementDescription = serving.MeasurementDescription,
-                            LastSynchronized = DateTime.Now
-                        };
-
-                        await _context.Ingredients.AddAsync(newIngredient, cancellationToken);
-
-                        await _context.SaveChangesAsync(cancellationToken);
-
-                        mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = newIngredient.Id, Amount = ingredient.Amount });
-                    }
-                    else
-                    {
-                        mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = existingIngredient.Id, Amount = ingredient.Amount });
-                    }
+                    mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken), Amount = ingredient.Amount });
                 }
-
+                
                 await _context.MealIngredients.AddRangeAsync(mealIngredients, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
+        private async Task CheckIngredients(IEnumerable<IngredientPayload> ingredients,
+            CancellationToken cancellationToken)
+        {
+            if (ingredients != null)
+            {
+                foreach (var ingredient in ingredients)
+                {
+                    await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken);
+                }
             }
         }
     }

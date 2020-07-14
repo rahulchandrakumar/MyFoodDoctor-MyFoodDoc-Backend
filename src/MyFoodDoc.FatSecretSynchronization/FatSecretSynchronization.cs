@@ -23,7 +23,7 @@ namespace MyFoodDoc.FatSecretSynchronization
 
         [FunctionName("Synchronize")]
         public async Task RunAsync(
-            [TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 */30 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer, 
             ILogger log, 
             CancellationToken cancellationToken)
