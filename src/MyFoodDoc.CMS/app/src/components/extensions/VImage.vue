@@ -12,7 +12,7 @@
         :debounce="300"               
         class="v-image-input"
         :image-quality="0.65"
-        image-format="jpeg"
+        image-format="png"
         :image-height="imageHeight"
         :image-width="imageWidth"
         overlay-padding="20px"
