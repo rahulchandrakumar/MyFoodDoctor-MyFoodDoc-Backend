@@ -32,9 +32,11 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
             if (stream == null || !stream.CanRead)
                 return null;
 
-            filename = filename ?? (Guid.NewGuid().ToString() + ".jpg");
+            string fileExtension = fileType == "image/png" ? ".png" : ".jpg";
+
+            filename = filename ?? (Guid.NewGuid().ToString() + fileExtension);
             CloudBlockBlob blob = _container.GetBlockBlobReference(filename);
-            blob.Properties.ContentType = fileType;
+            blob.Properties.ContentType = fileType == "image/png" ? "image/png" : "image/jpeg";
 
             bool imageExists = await blob.ExistsAsync(cancellationToken);
             if (imageExists)

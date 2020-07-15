@@ -26,7 +26,9 @@ namespace MyFoodDoc.CMS.Controllers
             if (payload?.Files == null)
                 return null;
 
-            var image = Image.FromModel(await _imageService.UploadImage(payload.Files.Files.First().OpenReadStream(), cancellationToken));
+            var file = payload.Files.Files.First();
+
+            var image = Image.FromModel(await _imageService.UploadImage(file.OpenReadStream(), file.ContentType, cancellationToken));
 
             return image;
         }
