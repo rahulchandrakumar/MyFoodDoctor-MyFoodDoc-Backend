@@ -18,11 +18,11 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             this._imageBlobService = imageBlobService;
         }
 
-        public async Task<ImageModel> UploadImage(Stream stream, CancellationToken cancellationToken = default)
+        public async Task<ImageModel> UploadImage(Stream stream, string contentType, CancellationToken cancellationToken = default)
         {
             var image = new ImageModel()
             {
-                Url = await _imageBlobService.UploadImage(stream, "image/jpeg", null, cancellationToken)
+                Url = await _imageBlobService.UploadImage(stream, contentType, null, cancellationToken)
             };
 
             var imageEntity = image.ToEntity();

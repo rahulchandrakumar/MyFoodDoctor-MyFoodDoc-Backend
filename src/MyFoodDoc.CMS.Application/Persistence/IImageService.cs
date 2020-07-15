@@ -7,6 +7,6 @@ namespace MyFoodDoc.CMS.Application.Persistence
 {
     public interface IImageService
     {
-        Task<ImageModel> UploadImage(Stream stream, CancellationToken cancellationToken = default);
+        Task<ImageModel> UploadImage(Stream stream, string contentType, CancellationToken cancellationToken = default);
     }
 }
