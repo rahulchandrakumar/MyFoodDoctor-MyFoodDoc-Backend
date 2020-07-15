@@ -40,9 +40,18 @@ namespace MyFoodDoc.App.Application.Services
             var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
             var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
 
-            var availableMethodIds = _context.DietMethods.Where(x => userDiets.Contains(x.DietId)).Select(x => x.MethodId)
-                .Union(_context.IndicationMethods.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId))
-                .Union(_context.MotivationMethods.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)).Distinct();
+            var dietMethods = await _context.DietMethods.Where(x => userDiets.Contains(x.DietId))
+                .Select(x => x.MethodId).ToListAsync(cancellationToken);
+            var indicationMethods = await _context.IndicationMethods
+                .Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId)
+                .ToListAsync(cancellationToken);
+            var motivationMethods = await _context.MotivationMethods
+                .Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)
+                .ToListAsync(cancellationToken);
+
+            var availableMethodIds = dietMethods
+                .Union(indicationMethods)
+                .Union(motivationMethods).Distinct().ToList();
 
             if (!availableMethodIds.Any())
                 return result;
