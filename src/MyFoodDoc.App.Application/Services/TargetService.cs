@@ -54,10 +54,14 @@ namespace MyFoodDoc.App.Application.Services
                 var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
                 var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
 
-                var targetIds = _context.DietTargets.Where(x => userDiets.Contains(x.DietId)).Select(x => x.TargetId)
-                    .Union(_context.IndicationTargets.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.TargetId))
-                    .Union(_context.MotivationTargets.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.TargetId)).Distinct();
+                var dietTargets = userDiets.Any() ? await _context.DietTargets.Where(x => userDiets.Contains(x.DietId)).Select(x => x.TargetId).ToListAsync(cancellationToken) : new List<int>();
+                var indicationTargets = userIndications.Any() ? await _context.IndicationTargets.Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.TargetId).ToListAsync(cancellationToken) : new List<int>();
+                var motivationTargets = userMotivations.Any() ? await _context.MotivationTargets.Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.TargetId).ToListAsync(cancellationToken) : new List<int>();
 
+                var targetIds = dietTargets
+                    .Union(indicationTargets)
+                    .Union(motivationTargets).Distinct().ToList();
+                
                 if (!targetIds.Any())
                     return result;
 
@@ -505,8 +509,8 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new Dictionary<DateTime, MealNutritionsDto>();
 
-            foreach (var dailyMeals in _context.Meals
-                .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod)).ToList().GroupBy(g => g.Date))
+            foreach (var dailyMeals in (await _context.Meals
+                .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod)).ToListAsync(cancellationToken)).GroupBy(g => g.Date))
             {
                 var dailyNutritions = new MealNutritionsDto
                 {

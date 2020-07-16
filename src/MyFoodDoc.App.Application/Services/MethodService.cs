@@ -40,14 +40,14 @@ namespace MyFoodDoc.App.Application.Services
             var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
             var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
 
-            var dietMethods = await _context.DietMethods.Where(x => userDiets.Contains(x.DietId))
-                .Select(x => x.MethodId).ToListAsync(cancellationToken);
-            var indicationMethods = await _context.IndicationMethods
+            var dietMethods = userDiets.Any() ? await _context.DietMethods.Where(x => userDiets.Contains(x.DietId))
+                .Select(x => x.MethodId).ToListAsync(cancellationToken) : new List<int>();
+            var indicationMethods = userIndications.Any() ? await _context.IndicationMethods
                 .Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId)
-                .ToListAsync(cancellationToken);
-            var motivationMethods = await _context.MotivationMethods
+                .ToListAsync(cancellationToken) : new List<int>();
+            var motivationMethods = userMotivations.Any() ? await _context.MotivationMethods
                 .Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)
-                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken) : new List<int>();
 
             var availableMethodIds = dietMethods
                 .Union(indicationMethods)
@@ -191,7 +191,7 @@ namespace MyFoodDoc.App.Application.Services
         {
             var method = await _context.Methods
                 .Include(x => x.Image)
-                .Where(x => x.Id == methodId).SingleAsync(cancellationToken);
+                .SingleAsync(x => x.Id == methodId, cancellationToken);
 
             var result = new MethodDto
             {
