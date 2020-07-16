@@ -20,7 +20,7 @@ namespace MyFoodDoc.Infrastructure
                 ServiceLifetime.Transient
             );
 
-            services.AddTransient<IApplicationContext, ApplicationContext>();
+            services.AddTransient<IApplicationContext>(provider => provider.GetService<ApplicationContext>());
 
             return services;
         }

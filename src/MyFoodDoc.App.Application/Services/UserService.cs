@@ -82,7 +82,7 @@ namespace MyFoodDoc.App.Application.Services
 
                 var userIndications = indicationsIds.Select(indicationId => new UserIndication { UserId = userId, IndicationId = indicationId });
 
-                _context.UserIndications.AddRange(userIndications);
+                await _context.UserIndications.AddRangeAsync(userIndications, cancellationToken);
             }
 
             var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
@@ -97,7 +97,7 @@ namespace MyFoodDoc.App.Application.Services
 
                 var userMotivations = motivationIds.Select(motivationId => new UserMotivation { UserId = userId, MotivationId = motivationId });
 
-                _context.UserMotivations.AddRange(userMotivations);
+                await _context.UserMotivations.AddRangeAsync(userMotivations, cancellationToken);
             }
 
             // TODO: Add weight behavior
@@ -134,7 +134,7 @@ namespace MyFoodDoc.App.Application.Services
             
             _context.Users.Update(user);
 
-            var oldIndications = _context.UserIndications.Where(x => x.UserId.Equals(userId));
+            var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
             _context.UserIndications.RemoveRange(oldIndications);
 
             if (payload.Indications != null)
@@ -142,14 +142,14 @@ namespace MyFoodDoc.App.Application.Services
                 var indicationsIds = await _context.Indications
                     .Where(x => payload.Indications.ToArray().Contains(x.Key))
                     .Select(x => x.Id)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 var userIndications = indicationsIds.Select(indicationId => new UserIndication { UserId = userId, IndicationId = indicationId });
 
-                _context.UserIndications.AddRange(userIndications);
+                await _context.UserIndications.AddRangeAsync(userIndications, cancellationToken);
             }
 
-            var oldMotivations = _context.UserMotivations.Where(x => x.UserId.Equals(userId));
+            var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
             _context.UserMotivations.RemoveRange(oldMotivations);
 
             if (payload.Motivations != null)
@@ -157,11 +157,11 @@ namespace MyFoodDoc.App.Application.Services
                 var motivationIds = await _context.Motivations
                     .Where(x => payload.Motivations.ToArray().Contains(x.Key))
                     .Select(x => x.Id)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 var userMotivations = motivationIds.Select(motivationId => new UserMotivation { UserId = userId, MotivationId = motivationId });
 
-                _context.UserMotivations.AddRange(userMotivations);
+                await _context.UserMotivations.AddRangeAsync(userMotivations, cancellationToken);
             }
 
             var oldDiets = _context.UserDiets.Where(x => x.UserId.Equals(userId));
@@ -172,11 +172,11 @@ namespace MyFoodDoc.App.Application.Services
                 var dietIds = await _context.Diets
                     .Where(x => payload.Diets.ToArray().Contains(x.Key))
                     .Select(x => x.Id)
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
 
                 var userDiets = dietIds.Select(motivationId => new UserDiet { UserId = userId, DietId = motivationId });
 
-                _context.UserDiets.AddRange(userDiets);
+                await _context.UserDiets.AddRangeAsync(userDiets, cancellationToken);
             }
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -252,7 +252,6 @@ namespace MyFoodDoc.App.Application.Services
             await _userManager.AddPasswordAsync(user, newPassword);
         }
         
-
         public async Task UpdateUserHasSubscription(string userId, bool hasSubscription, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
