@@ -6,13 +6,12 @@ using Microsoft.Extensions.Hosting;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Infrastructure;
 using IdentityServer4;
+using IdentityServer4.Extensions;
 
 namespace MyFoodDoc.App.Auth
 {
     public class Startup
     {
-        private readonly string ApiOrigin = "api-origin";
-
         public IConfiguration Configuration { get; }
         public IHostEnvironment Environment { get; }
 
@@ -80,6 +79,16 @@ namespace MyFoodDoc.App.Auth
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            /*
+            var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
+            
+            app.Use(async (ctx, next) =>
+            {
+                ctx.SetIdentityServerOrigin(identityServerIssuerUri);
+                await next();
+            });
+            */
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
