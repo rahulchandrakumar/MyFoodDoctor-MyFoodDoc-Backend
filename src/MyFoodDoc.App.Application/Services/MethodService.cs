@@ -162,7 +162,7 @@ namespace MyFoodDoc.App.Application.Services
 
                 _logger.LogInformation("Before GetMethodWithAnswersAsync " + method.Id);
 
-                var methodDto = await GetMethodWithAnswersAsync(userId, method.Id, DateTime.Now, cancellationToken);
+                var methodDto = await GetMethodWithAnswersAsync(userId, method, DateTime.Now, cancellationToken);
 
                 result.Add(methodDto);
 
@@ -187,14 +187,16 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<MethodDto>();
 
-            foreach (var userMethod in (await _context.UserMethods.AsNoTracking()
+            foreach (var userMethod in (await _context.UserMethods
+                    .Include(x => x.Method)
+                    .ThenInclude(x => x.Image).AsNoTracking()
                 .Where(x=> x.UserId == userId)
                 .ToListAsync(cancellationToken))
                 .Where(x => (x.LastModified ?? x.Created).ToLocalTime().Date == date.Date)
                 .GroupBy(k=> k.MethodId)
                 .Select(g => g.First()))
             {
-                var methodDto = await GetMethodWithAnswersAsync(userId, userMethod.MethodId, date, cancellationToken);
+                var methodDto = await GetMethodWithAnswersAsync(userId, userMethod.Method, date, cancellationToken);
 
                 result.Add(methodDto);
             }
@@ -220,13 +222,8 @@ namespace MyFoodDoc.App.Application.Services
             return result;
         }
 
-        private async Task<MethodDto> GetMethodWithAnswersAsync(string userId, int methodId, DateTime date, CancellationToken cancellationToken)
+        private async Task<MethodDto> GetMethodWithAnswersAsync(string userId, Method method, DateTime date, CancellationToken cancellationToken)
         {
-            var method = await _context.Methods
-                .Include(x => x.Image)
-                .AsNoTracking()
-                .SingleAsync(x => x.Id == methodId, cancellationToken);
-
             var result = new MethodDto
             {
                 Id = method.Id,
@@ -236,11 +233,15 @@ namespace MyFoodDoc.App.Application.Services
                 ImageUrl = method.Image?.Url
             };
 
+            _logger.LogInformation("Before UserMethods " + method.Id);
+
             var userMethod = await _context.UserMethods.AsNoTracking()
                 .Where(x => x.UserId == userId && x.MethodId == method.Id &&
                             x.Created.Date == date.Date).OrderBy(x => x.Created)
                 .LastOrDefaultAsync(cancellationToken);
 
+            _logger.LogInformation("After UserMethods " + method.Id);
+            
             switch (method.Type)
             {
                 case MethodType.AbdominalGirth:
