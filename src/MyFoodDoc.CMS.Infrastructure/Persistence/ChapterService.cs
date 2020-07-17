@@ -68,6 +68,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Chapters
                 .Include(x => x.Image)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return ChapterModel.FromEntity(entity);
@@ -89,6 +90,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var entities = await GetBaseQuery(parentId, search)
                 .Include(x => x.Image)
                 .Skip(skip).Take(take)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             return entities.Select(ChapterModel.FromEntity).OrderBy(x => x.Order).ToList();
@@ -96,7 +98,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
+            return await GetBaseQuery(parentId, search).AsNoTracking().CountAsync(cancellationToken);
         }
 
         public async Task<ChapterModel> UpdateItem(ChapterModel item, CancellationToken cancellationToken = default)

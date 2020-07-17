@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Configuration;
@@ -22,30 +23,42 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IUserHistoryService _userHistoryService;
+        private readonly ILogger<MethodService> _logger;
 
-        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService)
+        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, ILogger<MethodService> logger)
         {
             _context = context;
             _userHistoryService = userHistoryService;
+            _logger = logger;
         }
 
         public async Task<ICollection<MethodDto>> GetAsync(string userId, CancellationToken cancellationToken)
         {
+            _logger.LogInformation("Start");
+
             var result = new List<MethodDto>();
 
             if (!(await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).HasSubscription)
                 return result;
 
-            var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
-            var userIndications = await _context.UserIndications.Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
-            var userMotivations = await _context.UserMotivations.Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
+            _logger.LogInformation("Before User Indications");
 
-            var dietMethods = userDiets.Any() ? await _context.DietMethods.Where(x => userDiets.Contains(x.DietId))
+            var userDiets = await _context.UserDiets.AsNoTracking()
+                .Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
+            var userIndications = await _context.UserIndications.AsNoTracking()
+                .Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
+            var userMotivations = await _context.UserMotivations.AsNoTracking()
+                .Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
+
+            _logger.LogInformation("Before available methods");
+
+            var dietMethods = userDiets.Any() ? await _context.DietMethods.AsNoTracking()
+                .Where(x => userDiets.Contains(x.DietId))
                 .Select(x => x.MethodId).ToListAsync(cancellationToken) : new List<int>();
-            var indicationMethods = userIndications.Any() ? await _context.IndicationMethods
+            var indicationMethods = userIndications.Any() ? await _context.IndicationMethods.AsNoTracking()
                 .Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId)
                 .ToListAsync(cancellationToken) : new List<int>();
-            var motivationMethods = userMotivations.Any() ? await _context.MotivationMethods
+            var motivationMethods = userMotivations.Any() ? await _context.MotivationMethods.AsNoTracking()
                 .Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)
                 .ToListAsync(cancellationToken) : new List<int>();
 
@@ -56,14 +69,20 @@ namespace MyFoodDoc.App.Application.Services
             if (!availableMethodIds.Any())
                 return result;
 
-            var userTargetIds = (await _context.UserTargets.Where(x =>
+            _logger.LogInformation("Before user targets");
+
+            var userTargetIds = (await _context.UserTargets.AsNoTracking()
+                    .Where(x =>
                         x.UserId == userId)
                     .ToListAsync(cancellationToken))
                 .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList();
 
+            _logger.LogInformation("Before user methods");
+
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x => x.Image)
+                .AsNoTracking()
                 .Where(x => availableMethodIds.Contains(x.Id))
                 .ToListAsync(cancellationToken))
             {
@@ -102,7 +121,8 @@ namespace MyFoodDoc.App.Application.Services
                     }
                     else
                     {
-                        if ((await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id)
+                        if ((await _context.UserMethods.AsNoTracking()
+                                .Where(x => x.UserId == userId && x.MethodId == method.Id)
                                 .ToListAsync(cancellationToken))
                             .Any(x => (x.LastModified ?? x.Created).ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                             continue;
@@ -111,7 +131,8 @@ namespace MyFoodDoc.App.Application.Services
                         {
                             case MethodType.AbdominalGirth:
 
-                                if ((await _context.UserAbdominalGirths.Where(x => x.UserId == userId)
+                                if ((await _context.UserAbdominalGirths.AsNoTracking()
+                                        .Where(x => x.UserId == userId)
                                         .ToListAsync(cancellationToken))
                                     .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                                     continue;
@@ -119,7 +140,8 @@ namespace MyFoodDoc.App.Application.Services
                                 break;
                             case MethodType.Mood:
 
-                                if ((await _context.Meals.Where(x => x.UserId == userId && x.Mood != null)
+                                if ((await _context.Meals.AsNoTracking()
+                                        .Where(x => x.UserId == userId && x.Mood != null)
                                         .ToListAsync(cancellationToken))
                                     .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                                     continue;
@@ -127,7 +149,8 @@ namespace MyFoodDoc.App.Application.Services
                                 break;
                             case MethodType.Weight:
 
-                                if ((await _context.UserWeights.Where(x => x.UserId == userId)
+                                if ((await _context.UserWeights.AsNoTracking()
+                                        .Where(x => x.UserId == userId)
                                         .ToListAsync(cancellationToken))
                                     .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                                     continue;
@@ -137,14 +160,24 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
+                _logger.LogInformation("Before GetMethodWithAnswersAsync " + method.Id);
+
                 var methodDto = await GetMethodWithAnswersAsync(userId, method.Id, DateTime.Now, cancellationToken);
-                
+
                 result.Add(methodDto);
 
-                await _context.UserMethodShowHistory.AddAsync(new UserMethodShowHistoryItem { MethodId = method.Id, UserId = userId }, cancellationToken);
+                _logger.LogInformation("Method added " + method.Id);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            if (result.Any())
+            {
+                _logger.LogInformation("Save");
+
+                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId }), cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            _logger.LogInformation("Return");
 
             return result;
         }
@@ -154,7 +187,7 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<MethodDto>();
 
-            foreach (var userMethod in (await _context.UserMethods
+            foreach (var userMethod in (await _context.UserMethods.AsNoTracking()
                 .Where(x=> x.UserId == userId)
                 .ToListAsync(cancellationToken))
                 .Where(x => (x.LastModified ?? x.Created).ToLocalTime().Date == date.Date)
@@ -191,6 +224,7 @@ namespace MyFoodDoc.App.Application.Services
         {
             var method = await _context.Methods
                 .Include(x => x.Image)
+                .AsNoTracking()
                 .SingleAsync(x => x.Id == methodId, cancellationToken);
 
             var result = new MethodDto
@@ -202,7 +236,7 @@ namespace MyFoodDoc.App.Application.Services
                 ImageUrl = method.Image?.Url
             };
 
-            var userMethod = await _context.UserMethods
+            var userMethod = await _context.UserMethods.AsNoTracking()
                 .Where(x => x.UserId == userId && x.MethodId == method.Id &&
                             x.Created.Date == date.Date).OrderBy(x => x.Created)
                 .LastOrDefaultAsync(cancellationToken);
@@ -211,7 +245,8 @@ namespace MyFoodDoc.App.Application.Services
             {
                 case MethodType.AbdominalGirth:
 
-                    var userAbdominalGirth = await _context.UserAbdominalGirths.Where(x => x.UserId == userId && x.Date.Date == date.Date)
+                    var userAbdominalGirth = await _context.UserAbdominalGirths.AsNoTracking()
+                        .Where(x => x.UserId == userId && x.Date.Date == date.Date)
                         .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
 
                     if (userAbdominalGirth != null)
@@ -239,7 +274,8 @@ namespace MyFoodDoc.App.Application.Services
 
                     result.Choices = new List<MethodMultipleChoiceDto>();
 
-                    var userMethods = (await _context.UserMethods.Where(x =>
+                    var userMethods = (await _context.UserMethods.AsNoTracking()
+                            .Where(x =>
                                 x.UserId == userId && x.MethodId == method.Id &&
                                 x.Created.Date == date.Date)
                             .ToListAsync(cancellationToken))
@@ -254,7 +290,7 @@ namespace MyFoodDoc.App.Application.Services
                             (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
                     }
 
-                    foreach (var methodMultipleChoice in await _context.MethodMultipleChoice
+                    foreach (var methodMultipleChoice in await _context.MethodMultipleChoice.AsNoTracking()
                         .Where(x => x.MethodId == method.Id).ToListAsync(cancellationToken))
                     {
                         result.Choices.Add(new MethodMultipleChoiceDto
@@ -269,7 +305,8 @@ namespace MyFoodDoc.App.Application.Services
                     break;
                 case MethodType.Mood:
 
-                    var userMeal = await _context.Meals.Where(x => x.UserId == userId && x.Mood != null && x.Date.Date == date.Date)
+                    var userMeal = await _context.Meals.AsNoTracking()
+                        .Where(x => x.UserId == userId && x.Mood != null && x.Date.Date == date.Date)
                         .OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                     if (userMethod?.IntegerValue != null && userMeal != null)
@@ -305,7 +342,8 @@ namespace MyFoodDoc.App.Application.Services
                     break;
                 case MethodType.Weight:
 
-                    var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date.Date == date.Date)
+                    var userWeight = await _context.UserWeights.AsNoTracking()
+                        .Where(x => x.UserId == userId && x.Date.Date == date.Date)
                         .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
 
                     if (userWeight != null)

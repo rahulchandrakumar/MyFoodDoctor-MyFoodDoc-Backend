@@ -12,7 +12,7 @@ namespace MyFoodDoc.App.Auth
         {
             services.AddSwaggerGen(c =>
             {
-                c.DescribeAllEnumsAsStrings();
+                //c.DescribeAllEnumsAsStrings();
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API v1.0", Version = "v1" });
             });
 
