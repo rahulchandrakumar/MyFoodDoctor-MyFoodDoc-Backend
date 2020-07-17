@@ -234,11 +234,14 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             _logger.LogInformation("Before UserMethods " + method.Id);
-
-            var userMethod = await _context.UserMethods.AsNoTracking()
-                .Where(x => x.UserId == userId && x.MethodId == method.Id &&
-                            x.Created.Date == date.Date).OrderBy(x => x.Created)
-                .LastOrDefaultAsync(cancellationToken);
+            
+            var userMethodsOnDate = (await _context.UserMethods.AsNoTracking()
+                .Where(x =>
+                    x.UserId == userId && x.MethodId == method.Id &&
+                    x.Created.Date == date.Date)
+                .ToListAsync(cancellationToken));
+            
+            var userMethod = userMethodsOnDate.OrderBy(x => x.Created).LastOrDefault();
 
             _logger.LogInformation("After UserMethods " + method.Id);
             
@@ -275,16 +278,12 @@ namespace MyFoodDoc.App.Application.Services
 
                     result.Choices = new List<MethodMultipleChoiceDto>();
 
-                    var userMethods = (await _context.UserMethods.AsNoTracking()
-                            .Where(x =>
-                                x.UserId == userId && x.MethodId == method.Id &&
-                                x.Created.Date == date.Date)
-                            .ToListAsync(cancellationToken))
+                    var userMethodChoices = userMethodsOnDate
                         .GroupBy(g => g.MethodMultipleChoiceId)
                         .Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.MethodMultipleChoiceId.Value)
                         .ToList();
 
-                    if (userMethods.Any())
+                    if (userMethodChoices.Any())
                     {
                         result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
                         result.TimeAnswered =
@@ -299,7 +298,7 @@ namespace MyFoodDoc.App.Application.Services
                             Id = methodMultipleChoice.Id,
                             Title = methodMultipleChoice.Title,
                             IsCorrect = methodMultipleChoice.IsCorrect,
-                            CheckedByUser = userMethods.Contains(methodMultipleChoice.Id)
+                            CheckedByUser = userMethodChoices.Contains(methodMultipleChoice.Id)
                         });
                     }
 
