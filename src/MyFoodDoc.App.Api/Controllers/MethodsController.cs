@@ -29,9 +29,17 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(ICollection<MethodDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<MethodDto>>> Get(CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAsync(GetUserId(), cancellationToken);
+            try
+            {
+                var result = await _service.GetAsync(GetUserId(), cancellationToken);
 
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message + e.Source + e.StackTrace + e.InnerException);
+                throw;
+            }
         }
 
         [HttpGet("overview/{date:Date}")]
