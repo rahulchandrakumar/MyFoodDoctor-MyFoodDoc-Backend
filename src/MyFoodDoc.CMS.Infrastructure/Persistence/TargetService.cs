@@ -174,11 +174,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             //Target
             var targetEntity = await _context.Targets.FindAsync(new object[] { item.Id }, cancellationToken);
 
-            var newTargetEntity = item.ToTargetEntity();
-
-            //Image
             var oldImageId = targetEntity.ImageId;
 
+            var newTargetEntity = item.ToTargetEntity();
+
+            _context.Entry(targetEntity).CurrentValues.SetValues(newTargetEntity);
+
+            //Image
             if (item.Image.Id != oldImageId)
             {
                 var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId, cancellationToken);
@@ -211,8 +213,6 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
                 await _context.AdjustmentTargets.AddAsync(adjustmentTargetEntity, cancellationToken);
             }
-
-            _context.Entry(targetEntity).CurrentValues.SetValues(newTargetEntity);
 
             await _context.SaveChangesAsync(cancellationToken);
 
