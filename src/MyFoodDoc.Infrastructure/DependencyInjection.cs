@@ -17,10 +17,10 @@ namespace MyFoodDoc.Infrastructure
 
             services.AddDbContext<ApplicationContext>(options =>
                     options.UseSqlServer(connectionString),
-                ServiceLifetime.Transient
+                ServiceLifetime.Scoped
             );
 
-            services.AddTransient<IApplicationContext>(provider => provider.GetService<ApplicationContext>());
+            services.AddScoped<IApplicationContext>(provider => provider.GetService<ApplicationContext>());
 
             return services;
         }
