@@ -17,7 +17,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(o => o.Date).HasDefaultValueSql("getutcdate()");
             builder.Property(o => o.UserId).IsRequired().HasMaxLength(450);
-            
+
+            builder.HasIndex(p => new { p.UserId, p.Date, p.MethodId });
+
             builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.Method).WithMany().HasForeignKey(x => x.MethodId).OnDelete(DeleteBehavior.Cascade);
         }
