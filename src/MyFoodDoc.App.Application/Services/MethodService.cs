@@ -88,10 +88,10 @@ namespace MyFoodDoc.App.Application.Services
             {
                 if (!method.Targets.Any() && method.Frequency == null && method.FrequencyPeriod == null)
                     continue;
-                
-                if (method.Targets.Any() && !method.Targets.Any(x =>  userTargetIds.Contains(x.TargetId)))
+
+                if (method.Targets.Any() && !method.Targets.Any(x => userTargetIds.Contains(x.TargetId)))
                     continue;
-                
+
                 if (method.Frequency != null && method.FrequencyPeriod != null)
                 {
                     int daysInPeriod = 0;
@@ -108,19 +108,23 @@ namespace MyFoodDoc.App.Application.Services
                             daysInPeriod = 30;
                             break;
                     }
-                    
+
                     var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
 
                     if (method.Type == MethodType.Information)
                     {
                         if (result.Any(x => Enum.Parse<MethodType>(x.Type) == MethodType.Information) ||
-                            (await _context.UserMethodShowHistory.AnyAsync(x => x.UserId == userId && x.MethodId == method.Id && x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod), cancellationToken)))
+                            (await _context.UserMethodShowHistory.Where(x => x.UserId == userId && x.MethodId == method.Id)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                             continue;
                     }
                     else
                     {
-                        if (await _context.UserMethods.AsNoTracking()
-                            .AnyAsync(x => x.UserId == userId && x.MethodId == method.Id && x.Created.ToLocalTime() > DateTime.Now.Subtract(checkPeriod), cancellationToken))
+                        if ((await _context.UserMethods.AsNoTracking()
+                                .Where(x => x.UserId == userId && x.MethodId == method.Id)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => x.Created.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
                             continue;
 
                         switch (method.Type)
@@ -186,8 +190,9 @@ namespace MyFoodDoc.App.Application.Services
             foreach (var userMethod in (await _context.UserMethods
                     .Include(x => x.Method)
                     .ThenInclude(x => x.Image).AsNoTracking()
-                    .Where(x => x.UserId == userId && x.Created.ToLocalTime().Date == date.Date)
-                    .ToListAsync(cancellationToken))
+                .Where(x => x.UserId == userId)
+                .ToListAsync(cancellationToken))
+                .Where(x => x.Created.ToLocalTime().Date == date.Date)
                 .GroupBy(k => k.MethodId)
                 .Select(g => g.First()))
             {
@@ -197,10 +202,11 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             foreach (var userMethod in (await _context.UserMethodShowHistory
-                    .Include(x => x.Method)
-                    .ThenInclude(x => x.Image)
-                    .Where(x => x.UserId == userId && x.Date.ToLocalTime().Date == date.Date && x.Method.Type == MethodType.Information)
-                    .ToListAsync(cancellationToken))
+                .Include(x => x.Method)
+                .ThenInclude(x => x.Image)
+                .Where(x => x.UserId == userId && x.Method.Type == MethodType.Information)
+                .ToListAsync(cancellationToken))
+                .Where(x => x.Date.ToLocalTime().Date == date.Date)
                 .GroupBy(k => k.MethodId).Select(g => g.First()))
             {
                 result.Add(new MethodDto
@@ -228,17 +234,16 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             _logger.LogInformation("Before UserMethods " + method.Id);
-            
+
             var userMethodsOnDate = (await _context.UserMethods.AsNoTracking()
                 .Where(x =>
-                    x.UserId == userId && x.MethodId == method.Id &&
-                    x.Created.Date == date.Date)
-                .ToListAsync(cancellationToken));
-            
-            var userMethod = userMethodsOnDate.OrderBy(x => x.Created).Last();
+                    x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).Where(x=>
+                    x.Created.ToLocalTime().Date == date.Date).ToList();
+
+            var userMethod = userMethodsOnDate.OrderBy(x => x.Created).LastOrDefault();
 
             _logger.LogInformation("After UserMethods " + method.Id);
-            
+
             switch (method.Type)
             {
                 case MethodType.AbdominalGirth:
@@ -362,7 +367,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     throw new NotFoundException(nameof(Method), (item.Id));
                 }
-                
+
                 switch (method.Type)
                 {
                     case MethodType.AbdominalGirth:
@@ -382,7 +387,7 @@ namespace MyFoodDoc.App.Application.Services
 
                         if (item.UserAnswerBoolean != null)
                         {
-                            var userMethod = await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id && x.Created.Date == DateTime.Now.Date).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+                            var userMethod = (await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).Where(x => x.Created.ToLocalTime().Date == DateTime.Now.Date).OrderBy(x => x.Created).LastOrDefault();
 
                             if (userMethod == null)
                             {
@@ -407,8 +412,9 @@ namespace MyFoodDoc.App.Application.Services
                     case MethodType.Knowledge:
 
                         foreach (var userMethod in (await _context.UserMethods.Where(x =>
-                                    x.UserId == userId && x.MethodId == method.Id && x.Created.Date == DateTime.Now.Date)
+                                    x.UserId == userId && x.MethodId == method.Id)
                                 .ToListAsync(cancellationToken))
+                            .Where(x=> x.Created.ToLocalTime().Date == DateTime.Now.Date)
                             .GroupBy(g => g.MethodMultipleChoiceId)
                             .Select(x => x.OrderBy(y => y.Created).Last()))
                         {
@@ -426,7 +432,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (item.UserAnswerDecimal != null)
                         {
                             await _userHistoryService.UpsertWeightHistoryAsync(userId,
-                                new WeightHistoryPayload {Date = DateTime.UtcNow, Value = item.UserAnswerDecimal.Value}, cancellationToken);
+                                new WeightHistoryPayload { Date = DateTime.UtcNow, Value = item.UserAnswerDecimal.Value }, cancellationToken);
 
                             await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, DecimalValue = item.UserAnswerDecimal }, cancellationToken);
                         }
