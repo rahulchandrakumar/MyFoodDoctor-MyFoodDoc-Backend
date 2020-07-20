@@ -18,6 +18,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.UserId).IsRequired().HasMaxLength(450);
             builder.Property(o => o.DecimalValue).HasColumnType("decimal(4,1)");
 
+            builder.HasIndex(p => new { p.UserId, p.MethodId });
+
             builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.Method).WithMany().HasForeignKey(x => x.MethodId).OnDelete(DeleteBehavior.Cascade);
         }

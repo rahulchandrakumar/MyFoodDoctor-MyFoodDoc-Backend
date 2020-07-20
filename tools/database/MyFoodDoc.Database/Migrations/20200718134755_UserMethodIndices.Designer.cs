@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20200718134755_UserMethodIndices")]
+    partial class UserMethodIndices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1284,7 +1286,7 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasIndex("MethodId");
 
-                    b.HasIndex("UserId", "MethodId");
+                    b.HasIndex("UserId", "MethodId", "Created");
 
                     b.ToTable("UserMethods","System");
                 });
@@ -1313,7 +1315,7 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasIndex("MethodId");
 
-                    b.HasIndex("UserId", "MethodId");
+                    b.HasIndex("UserId", "Date", "MethodId");
 
                     b.ToTable("UserMethodShowHistory","System");
                 });
@@ -1361,7 +1363,7 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasIndex("TargetId");
 
-                    b.HasIndex("UserId", "TargetId");
+                    b.HasIndex("UserId", "Created", "TargetId");
 
                     b.ToTable("UserTargets","System");
                 });

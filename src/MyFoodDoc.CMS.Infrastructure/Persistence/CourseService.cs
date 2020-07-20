@@ -64,6 +64,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var course = await _context.Courses
                                             .Include(x => x.Image)
+                                            .AsNoTracking()
                                             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return CourseModel.FromEntity(course, GetUsersCount(course.Id), GetCompletedByUsersCount(course.Id));
@@ -73,6 +74,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entities = await _context.Courses
                                                 .Include(x => x.Image)
+                                                .AsNoTracking()
                                                 .ToListAsync(cancellationToken);
 
             return entities.Select(x => CourseModel.FromEntity(x,  GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).ToList();
@@ -94,6 +96,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var entities = await GetBaseQuery(search)
                                                 .Include(x => x.Image)
                                                 .Skip(skip).Take(take)
+                                                .AsNoTracking()
                                                 .ToListAsync(cancellationToken);
 
             return entities.Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).OrderBy(x => x.Order).ToList();
@@ -101,7 +104,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+            return await GetBaseQuery(search).AsNoTracking().CountAsync(cancellationToken);
         }
 
         public async Task<CourseModel> UpdateItem(CourseModel item, CancellationToken cancellationToken = default)

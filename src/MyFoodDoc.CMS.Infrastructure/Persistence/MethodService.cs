@@ -116,6 +116,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             return MethodModel.FromEntity(entity);
@@ -141,6 +142,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
                 .Skip(skip).Take(take)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             return entities.Select(MethodModel.FromEntity).ToList();
@@ -148,7 +150,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+            return await GetBaseQuery(search).AsNoTracking().CountAsync(cancellationToken);
         }
 
         public async Task<MethodModel> UpdateItem(MethodModel item, CancellationToken cancellationToken = default)

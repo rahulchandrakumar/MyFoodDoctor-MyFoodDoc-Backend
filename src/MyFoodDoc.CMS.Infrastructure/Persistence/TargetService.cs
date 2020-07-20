@@ -111,6 +111,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                             .Include(x => x.Diets)
                                             .Include(x => x.Indications)
                                             .Include(x => x.Motivations)
+                                            .AsNoTracking()
                                             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             AdjustmentTarget adjustmentTargetEntity = null;
@@ -129,6 +130,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                                 .Include(x => x.Diets)
                                                 .Include(x => x.Indications)
                                                 .Include(x => x.Motivations)
+                                                .AsNoTracking()
                                                 .ToListAsync(cancellationToken);
 
             var adjustmentTargetEntities = await _context.AdjustmentTargets
@@ -156,6 +158,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                                 .Include(x => x.Indications)
                                                 .Include(x => x.Motivations)
                                                 .Skip(skip).Take(take)
+                                                .AsNoTracking()
                                                 .ToListAsync(cancellationToken);
 
             var adjustmentTargetEntities = await _context.AdjustmentTargets
@@ -166,7 +169,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
+            return await GetBaseQuery(parentId, search).AsNoTracking().CountAsync(cancellationToken);
         }
 
         public async Task<TargetModel> UpdateItem(TargetModel item, CancellationToken cancellationToken = default)

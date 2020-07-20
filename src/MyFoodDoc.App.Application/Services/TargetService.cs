@@ -38,11 +38,12 @@ namespace MyFoodDoc.App.Application.Services
 
             List<UserTarget> userTargets = new List<UserTarget>();
 
-            if (await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken))
+            var userTargetsForStatisticsPeriod = await _context.UserTargets.Where(x =>
+                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).ToListAsync(cancellationToken);
+
+            if (userTargetsForStatisticsPeriod.Any())
             {
-                userTargets = (await _context.UserTargets.Where(x =>
-                        x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).ToListAsync(cancellationToken))
+                userTargets = userTargetsForStatisticsPeriod
                     .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).ToList();
             }
             else
