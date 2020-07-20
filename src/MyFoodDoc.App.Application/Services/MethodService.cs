@@ -23,25 +23,19 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IUserHistoryService _userHistoryService;
-        private readonly ILogger<MethodService> _logger;
 
-        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, ILogger<MethodService> logger)
+        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService)
         {
             _context = context;
             _userHistoryService = userHistoryService;
-            _logger = logger;
         }
 
         public async Task<ICollection<MethodDto>> GetAsync(string userId, CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Start");
-
             var result = new List<MethodDto>();
 
             if (!(await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).HasSubscription)
                 return result;
-
-            _logger.LogInformation("Before User Indications");
 
             var userDiets = await _context.UserDiets.AsNoTracking()
                 .Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
@@ -49,8 +43,6 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.UserId == userId).Select(x => x.IndicationId).ToListAsync(cancellationToken);
             var userMotivations = await _context.UserMotivations.AsNoTracking()
                 .Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
-
-            _logger.LogInformation("Before available methods");
 
             var dietMethods = userDiets.Any() ? await _context.DietMethods.AsNoTracking()
                 .Where(x => userDiets.Contains(x.DietId))
@@ -69,15 +61,11 @@ namespace MyFoodDoc.App.Application.Services
             if (!availableMethodIds.Any())
                 return result;
 
-            _logger.LogInformation("Before user targets");
-
             var userTargetIds = (await _context.UserTargets.AsNoTracking()
                     .Where(x =>
                         x.UserId == userId)
                     .ToListAsync(cancellationToken))
                 .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList();
-
-            _logger.LogInformation("Before user methods");
 
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
@@ -160,24 +148,16 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
-                _logger.LogInformation("Before GetMethodWithAnswersAsync " + method.Id);
-
                 var methodDto = await GetMethodWithAnswersAsync(userId, method, DateTime.Now, cancellationToken);
 
                 result.Add(methodDto);
-
-                _logger.LogInformation("Method added " + method.Id);
             }
 
             if (result.Any())
             {
-                _logger.LogInformation("Save");
-
                 await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId }), cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
             }
-
-            _logger.LogInformation("Return");
 
             return result;
         }
@@ -233,16 +213,12 @@ namespace MyFoodDoc.App.Application.Services
                 ImageUrl = method.Image?.Url
             };
 
-            _logger.LogInformation("Before UserMethods " + method.Id);
-
             var userMethodsOnDate = (await _context.UserMethods.AsNoTracking()
                 .Where(x =>
                     x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).Where(x=>
                     x.Created.ToLocalTime().Date == date.Date).ToList();
 
             var userMethod = userMethodsOnDate.OrderBy(x => x.Created).LastOrDefault();
-
-            _logger.LogInformation("After UserMethods " + method.Id);
 
             switch (method.Type)
             {
