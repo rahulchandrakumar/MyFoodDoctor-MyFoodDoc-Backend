@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -122,35 +123,39 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return MethodModel.FromEntity(entity);
         }
 
-        public IQueryable<Method> GetBaseQuery(string search)
+        public async Task<IList<Method>> GetItems(string search, CancellationToken cancellationToken = default)
         {
-            IQueryable<Method> baseQuery = _context.Methods;
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                var searchString = $"%{search}%";
-                baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Title, searchString) || EF.Functions.Like(f.Text, searchString));
-            }
-            return baseQuery;
-        }
-
-        public async Task<IList<MethodModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
-        {
-            var entities = await GetBaseQuery(search)
+            var entities = await _context.Methods
                 .Include(x => x.Image)
                 .Include(x => x.Targets)
                 .Include(x => x.Diets)
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
-                .Skip(skip).Take(take)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                entities = entities.Where(f => f.Title.Contains(search, StringComparison.InvariantCultureIgnoreCase)
+                                               || f.Text.Contains(search, StringComparison.InvariantCultureIgnoreCase)
+                                               || f.Type.ToString().Contains(search, StringComparison.InvariantCultureIgnoreCase)).ToList();
+            }
+
+            return entities;
+        }
+
+        public async Task<IList<MethodModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        {
+            var entities = (await GetItems(search, cancellationToken))
+                .Skip(skip).Take(take)
+                .ToList();
 
             return entities.Select(MethodModel.FromEntity).ToList();
         }
 
         public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(search).AsNoTracking().CountAsync(cancellationToken);
+            return (await GetItems(search, cancellationToken)).Count();
         }
 
         public async Task<MethodModel> UpdateItem(MethodModel item, CancellationToken cancellationToken = default)
