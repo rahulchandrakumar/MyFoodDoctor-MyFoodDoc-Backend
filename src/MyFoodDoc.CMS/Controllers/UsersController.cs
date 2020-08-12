@@ -8,6 +8,7 @@ using MyFoodDoc.CMS.Payloads;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Common;
 
 namespace MyFoodDoc.CMS.Controllers
 {
@@ -16,12 +17,14 @@ namespace MyFoodDoc.CMS.Controllers
     [ApiController]
     public class UsersController: ControllerBase
     {
+        private readonly IHashingManager _hashingManager;
         private readonly IUserService _userService;
         private readonly IHubContext<EditStateHub> _hubContext;
         private const string _groupName = "users";
 
-        public UsersController(IUserService userService, IHubContext<EditStateHub> hubContext)
+        public UsersController(IHashingManager hashingManager, IUserService userService, IHubContext<EditStateHub> hubContext)
         {
+            this._hashingManager = hashingManager;
             this._userService = userService;
             this._hubContext = hubContext;
         }
@@ -48,7 +51,7 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpPost]
         public async Task Post([FromBody] User item, CancellationToken cancellationToken = default)
         {
-            var model = await _userService.AddItem(item.ToModel(), cancellationToken);
+            var model = await _userService.AddItem(item.ToModel(_hashingManager), cancellationToken);
             await _hubContext.Clients.Group(_groupName).SendAsync(EditStateHub.ItemAddedMsg, _groupName, model.Id, cancellationToken);
         }
 
@@ -56,7 +59,7 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpPut()]
         public async Task Put([FromBody] User item, CancellationToken cancellationToken = default)
         {
-            await _userService.UpdateItem(item.ToModel(), cancellationToken);
+            await _userService.UpdateItem(item.ToModel(_hashingManager), cancellationToken);
             await _hubContext.Clients.Group(_groupName).SendAsync(EditStateHub.ItemUpdatedMsg, _groupName, item.Id, cancellationToken);
         }
 
