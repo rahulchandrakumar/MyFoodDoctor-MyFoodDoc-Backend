@@ -1,5 +1,6 @@
 ﻿using MyFoodDoc.CMS.Application.Models;
 using System;
+using MyFoodDoc.CMS.Application.Common;
 
 namespace MyFoodDoc.CMS.Models.VM
 {
@@ -21,14 +22,15 @@ namespace MyFoodDoc.CMS.Models.VM
             };
         }
 
-        public UserModel ToModel()
+        public UserModel ToModel(IHashingManager hashingManager)
         {
             return new UserModel()
             {
                 Displayname = this.DisplayName,
                 Id = this.Id,
                 Username = this.Username,
-                Role = Enum.Parse<UserRoleEnum>(this.Role)
+                Role = Enum.Parse<UserRoleEnum>(this.Role),
+                PasswordHash = string.IsNullOrEmpty(this.Password) ? null : hashingManager.HashToString(this.Password)
             };
         }
     }
