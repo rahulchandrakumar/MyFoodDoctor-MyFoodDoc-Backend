@@ -37,7 +37,6 @@ namespace MyFoodDoc.App.Auth
                 var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
 
                 options.IssuerUri = identityServerIssuerUri;
-                options.PublicOrigin = identityServerIssuerUri;
 
                 options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 /*
@@ -55,6 +54,7 @@ namespace MyFoodDoc.App.Auth
                 */
             })
             .AddInMemoryIdentityResources(Config.GetIdentityResources())
+            .AddInMemoryApiScopes(Config.GetApiScopes())
             .AddInMemoryApiResources(Config.GetApiResources())
             .AddInMemoryClients(Config.GetClients())
             .AddAspNetIdentity<User>();
@@ -95,6 +95,15 @@ namespace MyFoodDoc.App.Auth
             }
             //app.UseStaticFiles();
             //app.UseCors(ApiOrigin);
+
+            var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
+
+            app.Use(async (ctx, next) =>
+            {
+                ctx.SetIdentityServerOrigin(identityServerIssuerUri);
+                await next();
+            });
+
             app.UseIdentityServer();
 
             //app.UseRouting();
