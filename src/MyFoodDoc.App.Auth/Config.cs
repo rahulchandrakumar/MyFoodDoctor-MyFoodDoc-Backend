@@ -17,6 +17,14 @@ namespace MyFoodDoc.App.Auth
         }
 
         // scopes define the API resources in your system
+        public static IEnumerable<ApiScope> GetApiScopes()
+        {
+            return new List<ApiScope>
+            {
+                new ApiScope("myfooddoc_api", "MyFoodDoc.Api")
+            };
+        }
+
         public static IEnumerable<ApiResource> GetApiResources()
         {
             return new List<ApiResource>
@@ -25,7 +33,8 @@ namespace MyFoodDoc.App.Auth
                 {              
                     ApiSecrets = {
                         new Secret("secret".Sha256())
-                    }
+                    },
+                    Scopes = { "myfooddoc_api" }
                 }
             };
         }
