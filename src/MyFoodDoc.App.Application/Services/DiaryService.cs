@@ -24,6 +24,8 @@ namespace MyFoodDoc.App.Application.Services
         private static readonly DiaryEntryDtoLiquid _liquidDefault = new DiaryEntryDtoLiquid { Amount = 0, PredefinedAmount = 0 };
         private static readonly DiaryEntryDtoExercise _exerciseDefault = new DiaryEntryDtoExercise { Duration = 0 };
 
+        private const int SuggestedLiquidAmountPerKilo = 30;
+
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
@@ -41,19 +43,25 @@ namespace MyFoodDoc.App.Application.Services
         {
             var aggregation = new DiaryEntryDto
             {
-                Meals = await _context.Meals
+                Meals = await _context.Meals.AsNoTracking()
                     .Where(x => x.UserId == userId && x.Date == start)
                     .ProjectTo<DiaryEntryDtoMeal>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken),
-                Liquid = await _context.Liquids
+                Liquid = await _context.Liquids.AsNoTracking()
                     .Where(x => x.UserId == userId && x.Date == start)
                     .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
                     .SingleOrDefaultAsync(cancellationToken) ?? _liquidDefault,
-                Exercise = await _context.Exercises
+                Exercise = await _context.Exercises.AsNoTracking()
                     .Where(x => x.UserId == userId && x.Date == start)
                     .ProjectTo<DiaryEntryDtoExercise>(_mapper.ConfigurationProvider)
                     .SingleOrDefaultAsync(cancellationToken) ?? _exerciseDefault,
             };
+
+            var userWeight = await _context.UserWeights.AsNoTracking()
+                .Where(x => x.UserId == userId)
+                .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+            aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 
             return aggregation;
         }
