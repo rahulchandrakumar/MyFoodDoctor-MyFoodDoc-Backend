@@ -21,16 +21,11 @@ namespace MyFoodDoc.App.Application.Services
     {
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
-        private readonly IFatSecretClient _fatSecretClient;
-        private readonly IMemoryCache _cache;
-        private const string cachePrefix = nameof(FoodService) + "_";
 
-        public FoodService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient, IMemoryCache cache)
+        public FoodService(IApplicationContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _fatSecretClient = fatSecretClient;
-            _cache = cache;
         }
 
         public async Task<ICollection<IngredientDto>> GetFoodAsync(long foodId, CancellationToken cancellationToken)
@@ -52,29 +47,19 @@ namespace MyFoodDoc.App.Application.Services
                 Vegetables = 0
             };
 
-            foreach (var mealIngredient in _context.MealIngredients.Include(x => x.Ingredient).Where(x => x.MealId == mealId))
+            foreach (var mealIngredient in await _context.MealIngredients
+                .Include(x => x.Ingredient)
+                .Where(x => x.MealId == mealId)
+                .ToListAsync(cancellationToken))
             {
-                var cacheKey = cachePrefix + mealIngredient.Ingredient.FoodId;
-
-                var food = await _cache.GetOrCreateAsync(cacheKey, async entry =>
-                {
-                    entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(300);
-
-                    var result = await _fatSecretClient.GetFoodAsync(mealIngredient.Ingredient.FoodId);
-
-                    return result;
-                });
-
-                var serving = food.Servings.Serving.Single(x => x.Id == mealIngredient.Ingredient.ServingId);
-
-                decimal protein = (mealIngredient.Ingredient.Protein ?? serving.Protein) * mealIngredient.Amount;
+                decimal protein = (mealIngredient.Ingredient.Protein ?? mealIngredient.Ingredient.ProteinExternal) * mealIngredient.Amount;
 
                 if (mealIngredient.Ingredient.ContainsPlantProtein)
                     result.PlantProtein += protein;
                 else
                     result.AnimalProtein += protein;
 
-                result.Sugar += (mealIngredient.Ingredient.Sugar ?? serving.Sugar) * mealIngredient.Amount;
+                result.Sugar += (mealIngredient.Ingredient.Sugar ?? mealIngredient.Ingredient.SugarExternal) * mealIngredient.Amount;
                 result.Vegetables += (mealIngredient.Ingredient.Vegetables ?? 0) * mealIngredient.Amount;
             }
 
