@@ -255,6 +255,18 @@ namespace MyFoodDoc.App.Application.Services
                     MetricServingAmount = serving.MetricServingAmount,
                     MetricServingUnit = serving.MetricServingUnit,
                     MeasurementDescription = serving.MeasurementDescription,
+                    CaloriesExternal = serving.Calories,
+                    CarbohydrateExternal = serving.Carbohydrate,
+                    ProteinExternal = serving.Protein,
+                    FatExternal = serving.Fat,
+                    SaturatedFatExternal = serving.SaturatedFat,
+                    PolyunsaturatedFatExternal = serving.PolyunsaturatedFat,
+                    MonounsaturatedFatExternal = serving.MonounsaturatedFat,
+                    CholesterolExternal = serving.Cholesterol,
+                    SodiumExternal = serving.Sodium,
+                    PotassiumExternal = serving.Potassium,
+                    FiberExternal = serving.Fiber,
+                    SugarExternal = serving.Sugar,
                     LastSynchronized = DateTime.Now
                 };
 
