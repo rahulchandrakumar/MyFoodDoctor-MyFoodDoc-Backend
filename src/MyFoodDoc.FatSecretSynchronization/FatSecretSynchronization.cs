@@ -60,6 +60,18 @@ namespace MyFoodDoc.FatSecretSynchronization
                     ingredient.MetricServingAmount = serving.MetricServingAmount;
                     ingredient.MetricServingUnit = serving.MetricServingUnit;
                     ingredient.MeasurementDescription = serving.MeasurementDescription;
+                    ingredient.CaloriesExternal = serving.Calories;
+                    ingredient.CarbohydrateExternal = serving.Carbohydrate;
+                    ingredient.ProteinExternal = serving.Protein;
+                    ingredient.FatExternal = serving.Fat;
+                    ingredient.SaturatedFatExternal = serving.SaturatedFat;
+                    ingredient.PolyunsaturatedFatExternal = serving.PolyunsaturatedFat;
+                    ingredient.MonounsaturatedFatExternal = serving.MonounsaturatedFat;
+                    ingredient.CholesterolExternal = serving.Cholesterol;
+                    ingredient.SodiumExternal = serving.Sodium;
+                    ingredient.PotassiumExternal = serving.Potassium;
+                    ingredient.FiberExternal = serving.Fiber;
+                    ingredient.SugarExternal = serving.Sugar;
                     ingredient.LastSynchronized = DateTime.Now;
 
                     _context.Ingredients.Update(ingredient);
