@@ -30,6 +30,7 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
         private readonly int _statisticsPeriod;
+        private readonly int _statisticsMinimumDays;
 
         public DiaryService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient, IOptions<StatisticsOptions> statisticsOptions)
         {
@@ -37,6 +38,7 @@ namespace MyFoodDoc.App.Application.Services
             _mapper = mapper;
             _fatSecretClient = fatSecretClient;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
+            _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
         public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default)
@@ -222,7 +224,7 @@ namespace MyFoodDoc.App.Application.Services
                     .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod))
                     .Select(x => x.Date)
                     .Distinct()
-                    .CountAsync(cancellationToken) > 2;//TODO: Create configuration parameter
+                    .CountAsync(cancellationToken) >= _statisticsMinimumDays;
         }
 
         private async Task<int> UpsertIngredient(long foodId, long servingId, CancellationToken cancellationToken)

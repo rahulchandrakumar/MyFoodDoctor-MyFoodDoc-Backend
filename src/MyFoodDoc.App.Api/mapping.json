@@ -17,7 +17,8 @@
     "ConsumerSecret": "{FAT_SECRET_CONSUMER_SECRET}"
   },
   "Statistics": {
-    "Period": "{STATISTICS_PERIOD}"
+    "Period": "{STATISTICS_PERIOD}",
+    "MinimumDays": "{STATISTICS_MINIMUM_DAYS}"
   },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
