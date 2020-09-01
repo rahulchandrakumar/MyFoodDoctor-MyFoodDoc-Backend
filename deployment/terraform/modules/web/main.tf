@@ -352,6 +352,7 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
     FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
     STATISTICS_PERIOD				            = 7
+    STATISTICS_MINIMUM_DAYS                     = 3
   }
 
   identity {
