@@ -261,6 +261,7 @@ resource "azurerm_app_service" "cms" {
     FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
     FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
     FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
+    TZ                                          = "Europe/Berlin"
   }
 
   identity {
@@ -353,6 +354,7 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
     STATISTICS_PERIOD				            = 7
     STATISTICS_MINIMUM_DAYS                     = 3
+    TZ                                          = "Europe/Berlin"
   }
 
   identity {
@@ -404,6 +406,7 @@ resource "azurerm_function_app" "func" {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
     WEBSITE_HTTPLOGGING_RETENTION_DAYS          = "14"
     WEBSITE_RUN_FROM_PACKAGE                    = ""
+    TZ                                          = "Europe/Berlin"
   }
 
   identity {
