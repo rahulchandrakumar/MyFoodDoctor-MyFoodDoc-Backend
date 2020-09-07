@@ -23,6 +23,10 @@ namespace MyFoodDoc.Application.Entities
 
         public DateTime? HasSubscriptionUpdated { get; set; }
 
+        public bool PushNotificationsEnabled { get; set; }
+
+        public string DeviceToken { get; set; }
+
         public Insurance Insurance { get; set; }
 
         public DateTime Created { get; set; }
