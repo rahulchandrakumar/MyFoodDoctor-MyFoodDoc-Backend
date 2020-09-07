@@ -268,5 +268,23 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public async Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            user.PushNotificationsEnabled = payload.IsNotificationsEnabled;
+            user.DeviceToken = payload.DeviceToken;
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
