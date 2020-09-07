@@ -20,5 +20,8 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task UpdateUserHasSubscription(string userId, bool hasSubscription,
             CancellationToken cancellationToken = default);
+
+        Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,
+            CancellationToken cancellationToken = default);
     }
 }

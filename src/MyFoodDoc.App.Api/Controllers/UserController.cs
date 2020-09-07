@@ -136,5 +136,16 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPost("notifications")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdatePushNotifications([FromBody] UpdatePushNotificationsPayload payload, CancellationToken cancellationToken = default)
+        {
+            await _service.UpdatePushNotifications(GetUserId(), payload, cancellationToken);
+
+            return Ok();
+        }
     }
 }
