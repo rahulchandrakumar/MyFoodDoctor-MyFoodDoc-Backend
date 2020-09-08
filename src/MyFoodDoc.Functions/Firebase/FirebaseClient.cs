@@ -20,6 +20,9 @@ namespace MyFoodDoc.Functions.Firebase
         {
             _logger = logger;
 
+            //Azure key vault adds extra slash before new line
+            settings.Value.PrivateKey = settings.Value.PrivateKey.Replace("\\n", "\n");
+
             string jsonSettings = JsonConvert.SerializeObject(settings.Value);
 
             FirebaseApp.Create(new AppOptions()
