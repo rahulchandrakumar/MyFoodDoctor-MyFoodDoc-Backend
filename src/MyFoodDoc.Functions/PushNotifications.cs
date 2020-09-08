@@ -24,7 +24,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("PushNotificationsEmptyDiary")]
         public async Task RunAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
