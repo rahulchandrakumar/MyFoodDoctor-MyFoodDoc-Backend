@@ -75,6 +75,9 @@ namespace MyFoodDoc.Functions
                     }
                 }
 
+                log.LogInformation($"Notifications to send: {notifications.Count()}");
+
+
                 if (notifications.Any())
                 {
                     var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
