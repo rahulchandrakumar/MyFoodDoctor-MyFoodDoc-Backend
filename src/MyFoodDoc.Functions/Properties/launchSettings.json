@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "MyFoodDoc.FatSecretSynchronization": {
+    "MyFoodDoc.Functions": {
       "commandName": "Project"
     },
     "Docker": {

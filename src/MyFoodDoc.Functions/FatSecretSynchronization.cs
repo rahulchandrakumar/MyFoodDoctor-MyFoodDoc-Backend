@@ -8,7 +8,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.FatSecretClient.Abstractions;
 
 
-namespace MyFoodDoc.FatSecretSynchronization
+namespace MyFoodDoc.Functions
 {
     public class FatSecretSynchronization
     {
@@ -21,7 +21,7 @@ namespace MyFoodDoc.FatSecretSynchronization
             _fatSecretClient = fatSecretClient;
         }
 
-        [FunctionName("Synchronize")]
+        [FunctionName("FatSecretSynchronization")]
         public async Task RunAsync(
             [TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer, 
