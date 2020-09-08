@@ -41,8 +41,6 @@ locals {
   }
 }
 
-
-
 #######################################################
 # Resources/Providers
 #######################################################
@@ -255,12 +253,12 @@ resource "azurerm_app_service" "cms" {
     DOCKER_ENABLE_CI                            = "false"
     FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
     FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = "ab118ff9a12641e4a6e80407b82f2b16"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = ""
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = ""
     FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
     FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
-    FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
-    FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
+    FAT_SECRET_CONSUMER_KEY                     = ""
+    FAT_SECRET_CONSUMER_SECRET                  = ""
     TZ                                          = "Europe/Berlin"
   }
 
@@ -272,7 +270,11 @@ resource "azurerm_app_service" "cms" {
     #see https://www.terraform.io/docs/configuration/resources.html#ignore_changes
     ignore_changes = [
       site_config,
-      app_settings["DOCKER_CUSTOM_IMAGE_NAME"]
+      app_settings["DOCKER_CUSTOM_IMAGE_NAME"],
+      app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_ID"],
+      app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET"],
+      app_settings["FAT_SECRET_CONSUMER_KEY"],
+      app_settings["FAT_SECRET_CONSUMER_SECRET"]
     ]
   }
 }
@@ -346,12 +348,12 @@ resource "azurerm_app_service" "api" {
     IDENTITY_SERVER_ADDRESS                     = "https://${local.authAppName}.azurewebsites.net"
     FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
     FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = "ab118ff9a12641e4a6e80407b82f2b16"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = ""
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = ""
     FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
     FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
-    FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
-    FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
+    FAT_SECRET_CONSUMER_KEY                     = ""
+    FAT_SECRET_CONSUMER_SECRET                  = ""
     STATISTICS_PERIOD				            = 7
     STATISTICS_MINIMUM_DAYS                     = 3
     TZ                                          = "Europe/Berlin"
@@ -365,7 +367,11 @@ resource "azurerm_app_service" "api" {
     #see https://www.terraform.io/docs/configuration/resources.html#ignore_changes
     ignore_changes = [
       site_config,
-      app_settings["DOCKER_CUSTOM_IMAGE_NAME"]
+      app_settings["DOCKER_CUSTOM_IMAGE_NAME"],
+      app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_ID"],
+      app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET"],
+      app_settings["FAT_SECRET_CONSUMER_KEY"],
+      app_settings["FAT_SECRET_CONSUMER_SECRET"]
     ]
   }
 }
@@ -396,12 +402,22 @@ resource "azurerm_function_app" "func" {
     DEFAULT_DATABASE_CONNECTION                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
     FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
     FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = "ab118ff9a12641e4a6e80407b82f2b16"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = "39ad88ac0494455c96bd88b5955411b7"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = ""
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = ""
     FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
     FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
-    FAT_SECRET_CONSUMER_KEY                     = "39ad88ac0494455c96bd88b5955411b7"
-    FAT_SECRET_CONSUMER_SECRET                  = "489dfd281c924e15985516227fd6fd70"
+    FAT_SECRET_CONSUMER_KEY                     = ""
+    FAT_SECRET_CONSUMER_SECRET                  = ""
+    FIREBASE_TYPE                               = "service_account"
+    FIREBASE_PROJECT_ID                         = "medicum-myfooddoc"
+    FIREBASE_PRIVATE_KEY_ID                     = ""
+    FIREBASE_PRIVATE_KEY                        = ""
+    FIREBASE_CLIENT_EMAIL                       = "firebase-adminsdk-1mq1y@medicum-myfooddoc.iam.gserviceaccount.com"
+    FIREBASE_CLIENT_ID                          = ""
+    FIREBASE_AUTH_URI                           = "https://accounts.google.com/o/oauth2/auth"
+    FIREBASE_TOKEN_URI                          = "https://oauth2.googleapis.com/token"
+    FIREBASE_AUTH_PROVIDER_X509_CERT_URL        = "https://www.googleapis.com/oauth2/v1/certs"
+    FIREBASE_CLIENT_X509_CERT_URL               = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1mq1y%40medicum-myfooddoc.iam.gserviceaccount.com"
     FUNCTIONS_WORKER_RUNTIME                    = "dotnet"
     WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
     WEBSITE_HTTPLOGGING_RETENTION_DAYS          = "14"
@@ -418,7 +434,14 @@ resource "azurerm_function_app" "func" {
     ignore_changes = [
       site_config,
       app_settings["DOCKER_CUSTOM_IMAGE_NAME"],
-      app_settings["AzureWebJobsStorage"]
+      app_settings["AzureWebJobsStorage"],
+      app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_ID"],
+      app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET"],
+      app_settings["FAT_SECRET_CONSUMER_KEY"],
+      app_settings["FAT_SECRET_CONSUMER_SECRET"],
+      app_settings["FIREBASE_CLIENT_ID"],
+      app_settings["FIREBASE_PRIVATE_KEY_ID"],
+      app_settings["FIREBASE_PRIVATE_KEY"]
     ]
   }
 }

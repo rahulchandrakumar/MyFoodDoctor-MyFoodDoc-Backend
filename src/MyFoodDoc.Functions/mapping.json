@@ -11,6 +11,18 @@
     "ConsumerKey": "{FAT_SECRET_CONSUMER_KEY}",
     "ConsumerSecret": "{FAT_SECRET_CONSUMER_SECRET}"
   },
+  "Firebase": {
+    "Type": "{FIREBASE_TYPE}",
+    "ProjectId": "{FIREBASE_PROJECT_ID}",
+    "PrivateKeyId": "{FIREBASE_PRIVATE_KEY_ID}",
+    "PrivateKey": "{FIREBASE_PRIVATE_KEY}",
+    "ClientEmail": "{FIREBASE_CLIENT_EMAIL}",
+    "ClientId": "{FIREBASE_CLIENT_ID}",
+    "AuthUri": "{FIREBASE_AUTH_URI}",
+    "TokenUri": "{FIREBASE_TOKEN_URI}",
+    "AuthProviderX509CertUrl": "{FIREBASE_AUTH_PROVIDER_X509_CERT_URL}",
+    "ClientX509CertUrl": "{FIREBASE_CLIENT_X509_CERT_URL}"
+  },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }

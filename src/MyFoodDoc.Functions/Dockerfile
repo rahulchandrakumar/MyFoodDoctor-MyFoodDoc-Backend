@@ -6,18 +6,18 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
-COPY ["src/MyFoodDoc.FatSecretSynchronization/MyFoodDoc.FatSecretSynchronization.csproj", "src/MyFoodDoc.FatSecretSynchronization/"]
+COPY ["src/MyFoodDoc.Functions/MyFoodDoc.Functions.csproj", "src/MyFoodDoc.Functions/"]
 COPY ["src/MyFoodDoc.Core/MyFoodDoc.Core.csproj", "src/MyFoodDoc.Core/"]
 COPY ["src/MyFoodDoc.FatSecretClient/MyFoodDoc.FatSecretClient.csproj", "src/MyFoodDoc.FatSecretClient/"]
 COPY ["src/MyFoodDoc.Infrastructure/MyFoodDoc.Infrastructure.csproj", "src/MyFoodDoc.Infrastructure/"]
 COPY ["src/MyFoodDoc.Application/MyFoodDoc.Application.csproj", "src/MyFoodDoc.Application/"]
-RUN dotnet restore "src/MyFoodDoc.FatSecretSynchronization/MyFoodDoc.FatSecretSynchronization.csproj"
+RUN dotnet restore "src/MyFoodDoc.Functions/MyFoodDoc.Functions.csproj"
 COPY . .
-WORKDIR "/src/src/MyFoodDoc.FatSecretSynchronization"
-RUN dotnet build "MyFoodDoc.FatSecretSynchronization.csproj" -c Release -o /app/build
+WORKDIR "/src/src/MyFoodDoc.Functions"
+RUN dotnet build "MyFoodDoc.Functions.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "MyFoodDoc.FatSecretSynchronization.csproj" -c Release -o /app/publish
+RUN dotnet publish "MyFoodDoc.Functions.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /home/site/wwwroot

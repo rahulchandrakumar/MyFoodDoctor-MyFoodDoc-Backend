@@ -7,12 +7,14 @@
     <UserSecretsId>23c4d54d-f891-4bb9-bc83-ea9b8bee1acc</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="local.settings.json" />
     <None Remove="mapping.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mapping.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FirebaseAdmin" Version="1.15.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.7" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
@@ -25,10 +27,6 @@
   <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="local.settings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
   </ItemGroup>
 </Project>
