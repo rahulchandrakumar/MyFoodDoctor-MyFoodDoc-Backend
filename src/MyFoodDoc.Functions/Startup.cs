@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
@@ -8,10 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using MyFoodDoc.Infrastructure;
 using MyFoodDoc.Core.Configuration.ConfigurationMapper;
 using MyFoodDoc.FatSecretClient;
+using MyFoodDoc.Functions.Firebase;
 
-[assembly: WebJobsStartup(typeof(MyFoodDoc.FatSecretSynchronization.Startup))]
+[assembly: WebJobsStartup(typeof(MyFoodDoc.Functions.Startup))]
 
-namespace MyFoodDoc.FatSecretSynchronization
+namespace MyFoodDoc.Functions
 {
     class Startup : IWebJobsStartup
     {
@@ -30,6 +30,11 @@ namespace MyFoodDoc.FatSecretSynchronization
             builder.Services.AddSharedInfrastructure(configuration, null);
 
             builder.Services.AddSharedFatSecretClient(configuration);
+
+            builder.Services.Configure<FirebaseClientOptions>(
+                configuration.GetSection("Firebase"));
+
+            builder.Services.AddScoped<IFirebaseClient, FirebaseClient>();
         }
     }
 }
