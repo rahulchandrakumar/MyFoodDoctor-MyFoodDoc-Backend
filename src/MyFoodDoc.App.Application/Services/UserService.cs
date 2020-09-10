@@ -279,6 +279,14 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
+            var otherUsersWithDeviceToken = await _context.Users.Where(x => x.Id != userId && x.DeviceToken == payload.DeviceToken).ToListAsync(cancellationToken);
+
+            foreach (var userToDisablePushNotifications in otherUsersWithDeviceToken)
+            {
+                userToDisablePushNotifications.PushNotificationsEnabled = false;
+                userToDisablePushNotifications.DeviceToken = null;
+            }
+
             user.PushNotificationsEnabled = payload.IsNotificationsEnabled;
             user.DeviceToken = payload.DeviceToken;
 
