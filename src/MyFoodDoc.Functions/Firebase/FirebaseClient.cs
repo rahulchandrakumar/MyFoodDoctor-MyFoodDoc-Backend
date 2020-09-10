@@ -15,20 +15,33 @@ namespace MyFoodDoc.Functions.Firebase
     public class FirebaseClient : IFirebaseClient
     {
         private readonly ILogger<FirebaseClient> _logger;
+        private FirebaseClientOptions _settings;
 
         public FirebaseClient(IOptions<FirebaseClientOptions> settings, ILogger<FirebaseClient> logger)
         {
             _logger = logger;
+            _settings = settings.Value;
+        }
 
-            //Azure key vault adds extra slash before new line
-            settings.Value.PrivateKey = settings.Value.PrivateKey.Replace("\\n", "\n");
-
-            string jsonSettings = JsonConvert.SerializeObject(settings.Value);
-
-            FirebaseApp.Create(new AppOptions()
+        private FirebaseMessaging FirebaseMessagingInstance
+        {
+            get
             {
-                Credential = GoogleCredential.FromJson(jsonSettings)
-            });
+                if (FirebaseMessaging.DefaultInstance == null)
+                {
+                    //Azure key vault adds extra slash before new line
+                    _settings.PrivateKey = _settings.PrivateKey.Replace("\\n", "\n");
+
+                    string jsonSettings = JsonConvert.SerializeObject(_settings);
+
+                    FirebaseApp.Create(new AppOptions()
+                    {
+                        Credential = GoogleCredential.FromJson(jsonSettings)
+                    });
+                }
+
+                return FirebaseMessaging.DefaultInstance;
+            }
         }
 
         public async Task<bool> SendAsync(IEnumerable<FirebaseNotification> notifications, CancellationToken cancellationToken)
@@ -45,7 +58,7 @@ namespace MyFoodDoc.Functions.Firebase
             
             try
             {
-                var messaging = FirebaseMessaging.DefaultInstance;
+                var messaging = FirebaseMessagingInstance;
 
                 var result = await messaging.SendAllAsync(messages, cancellationToken);
 
