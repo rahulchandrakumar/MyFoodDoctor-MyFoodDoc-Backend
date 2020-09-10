@@ -7,7 +7,6 @@
     <UserSecretsId>23c4d54d-f891-4bb9-bc83-ea9b8bee1acc</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="local.settings.json" />
     <None Remove="mapping.json" />
   </ItemGroup>
   <ItemGroup>
@@ -27,6 +26,9 @@
   <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="local.settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>

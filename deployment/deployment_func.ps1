@@ -1,13 +1,13 @@
 $tag                 = "latest"
-$image               = "myfooddoc-mock-func"
+$image               = "mfd-func"
 
-$registryName        = "myfooddocmockregistry"
+$registryName        = "mfdcontainers"
 $registryServer      = "$registryName.azurecr.io"
-$registryPw          = "ZUI+NMC9bpT3Rd+5lhoLWPpVZeZzUat8"
+$registryPw          = "cwyUs0oKvHibAIEJSSAuo=WlfYG82Jvr"
 
 $tag = $registryServer + "/" + $image + ":" + $tag
 
 docker login $registryServer -u $registryName -p $registryPw
 
-docker build --tag "$tag" -f ../src/MyFoodDoc.FatSecretSynchronization/Dockerfile ../
+docker build --tag "$tag" -f ../src/MyFoodDoc.Functions/Dockerfile ../
 docker push $tag

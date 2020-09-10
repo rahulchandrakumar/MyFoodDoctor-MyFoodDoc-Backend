@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Threading;
@@ -28,7 +29,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(ICollection<OptimizationAreaDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<OptimizationAreaDto>>> Get(CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAsync(GetUserId(), cancellationToken);
+            var result = await _service.GetAsync(GetUserId(), DateTime.Now, cancellationToken);
 
             return Ok(result);
         }
