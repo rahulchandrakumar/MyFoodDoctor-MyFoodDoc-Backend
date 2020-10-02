@@ -45,6 +45,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.Functions", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.FatSecretClient", "src\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj", "{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.AppStoreClient", "src\MyFoodDoc.AppStoreClient\MyFoodDoc.AppStoreClient.csproj", "{D5B33A34-A044-4911-8331-49FDF8C7AE62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -107,6 +109,10 @@ Global
 		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5B33A34-A044-4911-8331-49FDF8C7AE62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5B33A34-A044-4911-8331-49FDF8C7AE62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5B33A34-A044-4911-8331-49FDF8C7AE62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5B33A34-A044-4911-8331-49FDF8C7AE62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +135,7 @@ Global
 		{E385B8AF-BAD6-4995-ADE1-70C387983FCB} = {537E1F0C-A54C-41F9-ABF2-D43A41B08B17}
 		{F8AA4440-2382-486F-A010-C22351B15494} = {E385B8AF-BAD6-4995-ADE1-70C387983FCB}
 		{4467A9F7-A1C4-4CF6-B9B9-DF4154797364} = {CF039FC0-983B-4984-B713-C5932C91D92A}
+		{D5B33A34-A044-4911-8331-49FDF8C7AE62} = {CF039FC0-983B-4984-B713-C5932C91D92A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156771D1-5C1C-4E9F-B531-A625B6AFF31F}

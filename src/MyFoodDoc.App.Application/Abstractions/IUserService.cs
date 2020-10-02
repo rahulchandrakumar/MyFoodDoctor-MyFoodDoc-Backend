@@ -23,5 +23,8 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,
             CancellationToken cancellationToken = default);
+
+        Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload,
+            CancellationToken cancellationToken = default);
     }
 }

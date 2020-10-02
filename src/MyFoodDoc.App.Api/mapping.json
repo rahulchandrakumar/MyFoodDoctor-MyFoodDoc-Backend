@@ -4,6 +4,10 @@
     "ClientId": "{IDENTITY_SERVER_CLIENT}",
     "Scope": "{IDENTITY_SERVER_SCOPE}"
   },
+  "AppStore": {
+    "VerifyReceiptUrl": "{APP_STORE_VERIFY_RECEIPT_URL}",
+    "VerifyReceiptSharedSecret": "{APP_STORE_VERIFY_RECEIPT_SHARED_SECRET}"
+  }, 
   "FatSecretIdentityServer": {
     "Address": "{FAT_SECRET_IDENTITY_SERVER_ADDRESS}",
     "GrantType": "{FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE}",

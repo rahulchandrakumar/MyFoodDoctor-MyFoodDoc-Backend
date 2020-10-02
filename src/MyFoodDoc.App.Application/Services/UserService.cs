@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Payloads.Diary;
+using MyFoodDoc.AppStoreClient.Abstractions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -25,13 +26,20 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IMapper _mapper;
         private readonly IUserHistoryService _userHistoryService;
         private readonly UserManager<User> _userManager;
+        private readonly IAppStoreClient _appStoreClient;
 
-        public UserService(IApplicationContext context, IMapper mapper, IUserHistoryService userHistoryService, UserManager<User> userManager)
+        public UserService(
+            IApplicationContext context, 
+            IMapper mapper, 
+            IUserHistoryService userHistoryService, 
+            UserManager<User> userManager, 
+            IAppStoreClient appStoreClient)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
             _userHistoryService = userHistoryService;
+            _appStoreClient = appStoreClient;
         }
 
         public async Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default)
@@ -261,8 +269,8 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            user.HasSubscription = hasSubscription;
-            user.HasSubscriptionUpdated = DateTime.Now;
+            user.SubscriptionExpirationDate = hasSubscription ? DateTime.MaxValue: DateTime.MinValue;
+            user.SubscriptionExpirationDateUpdated = DateTime.Now;
 
             _context.Users.Update(user);
 
@@ -293,6 +301,27 @@ namespace MyFoodDoc.App.Application.Services
             _context.Users.Update(user);
 
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(payload.ReceiptData);
+            
+            user.SubscriptionExpirationDate = validateReceiptValidationResult.SubscriptionExpirationDate;
+            user.SubscriptionExpirationDateUpdated = DateTime.Now;
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return validateReceiptValidationResult.SubscriptionExpirationDate < DateTime.Now;
         }
     }
 }
