@@ -40,6 +40,8 @@ namespace MyFoodDoc.App.Application.Models
         {
             profile.CreateMap<User, UserDto>()
                 .ForMember(x => x.Age, opt => opt.MapFrom(src => src.Birthday == null ? null : (int?)(DateTime.UtcNow.Year - src.Birthday.Value.Year)))
+                .ForMember(x => x.HasSubscription, opt => opt.MapFrom(src => src.SubscriptionExpirationDate != null && src.SubscriptionExpirationDate.Value > DateTime.Now))
+                .ForMember(x => x.HasSubscriptionUpdated, opt => opt.MapFrom(src => src.SubscriptionExpirationDateUpdated))
                 .ForMember(x => x.Indications, opt => opt.MapFrom(src => src.Indications.Select(x => x.Indication.Key)))
                 .ForMember(x => x.Motivations, opt => opt.MapFrom(src => src.Motivations.Select(x => x.Motivation.Key)))
                 .ForMember(x => x.Diets, opt => opt.MapFrom(src => src.Diets.Select(x => x.Diet.Key)));
