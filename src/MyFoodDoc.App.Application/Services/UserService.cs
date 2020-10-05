@@ -321,7 +321,7 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return validateReceiptValidationResult.SubscriptionExpirationDate < DateTime.Now;
+            return validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
         }
     }
 }
