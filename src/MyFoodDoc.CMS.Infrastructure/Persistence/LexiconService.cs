@@ -62,18 +62,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return LexiconModel.FromEntity(lexiconEntity);
         }
 
-        public async Task<IList<LexiconModel>> GetItems(CancellationToken cancellationToken = default)
+        public IQueryable<LexiconEntry> GetBaseQuery(int parentId, string search)
         {
-            var lexiconEntities = await _context.LexiconEntries
-                                                .Include(x => x.Image)
-                                                .ToListAsync(cancellationToken);
-
-            return lexiconEntities.Select(LexiconModel.FromEntity).ToList();
-        }
-
-        public IQueryable<LexiconEntry> GetBaseQuery(string search)
-        {
-            IQueryable<LexiconEntry> baseQuery = _context.LexiconEntries;
+            IQueryable<LexiconEntry> baseQuery = _context.LexiconEntries.Where(x => x.CategoryId == parentId); ;
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
@@ -82,9 +73,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<LexiconModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<IList<LexiconModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var lexiconEntities = await GetBaseQuery(search)
+            var lexiconEntities = await GetBaseQuery(parentId, search)
                                                 .Include(x => x.Image)
                                                 .Skip(skip).Take(take)                                                
                                                 .ToListAsync(cancellationToken);
@@ -92,9 +83,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return lexiconEntities.Select(LexiconModel.FromEntity).ToList();
         }
 
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
         {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
         }
 
         public async Task<LexiconModel> UpdateItem(LexiconModel item, CancellationToken cancellationToken = default)

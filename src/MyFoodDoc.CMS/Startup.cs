@@ -57,6 +57,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPatientService, PatientService>();
             services.AddTransient<ILexiconService, LexiconService>();
+            services.AddTransient<ILexiconCategoryService, LexiconCategoryService>();
             services.AddTransient<IImageService, ImageService>();
             services.AddTransient<IWebViewService, WebViewService>();
             services.AddTransient<IPromotionService, PromotionService>();

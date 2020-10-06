@@ -32,8 +32,8 @@ namespace MyFoodDoc.CMS.Controllers
         {
             return new
             {
-                values = (await _lexiconService.GetItems(payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(LexiconItem.FromModel),
-                total = await _lexiconService.GetItemsCount(payload.Search, cancellationToken)
+                values = (await _lexiconService.GetItems(payload.CategoryId, payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(LexiconItem.FromModel),
+                total = await _lexiconService.GetItemsCount(payload.CategoryId, payload.Search, cancellationToken)
             };
         }
 

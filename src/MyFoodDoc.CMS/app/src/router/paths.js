@@ -42,7 +42,15 @@ export default [
         }
     },
     {
-        path: "/lexicon-list",
+        path: "/lexicon-category-list",
+        name: "Lexicon Categories",
+        view: "Data/LexiconCategoryList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
+        path: "/lexicon-list/:parentId",
         name: "Lexicon",
         view: "Data/LexiconList",
         meta: {
