@@ -18,7 +18,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(p => p.Text).IsRequired();
 
             builder.HasOne(x => x.Category).WithMany(x => x.Entries).HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId);
+            builder.HasOne(x => x.Image).WithMany().HasForeignKey(x => x.ImageId).OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

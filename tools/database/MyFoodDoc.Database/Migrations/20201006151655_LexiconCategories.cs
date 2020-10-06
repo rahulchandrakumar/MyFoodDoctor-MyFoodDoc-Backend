@@ -7,6 +7,11 @@ namespace MyFoodDoc.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Entries_Images_ImageId",
+                schema: "Lexicon",
+                table: "Entries");
+
             migrationBuilder.AddColumn<int>(
                 name: "CategoryId",
                 schema: "Lexicon",
@@ -35,7 +40,7 @@ namespace MyFoodDoc.Database.Migrations
                         principalSchema: "System",
                         principalTable: "Images",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
@@ -59,12 +64,27 @@ namespace MyFoodDoc.Database.Migrations
                 principalTable: "Categories",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Entries_Images_ImageId",
+                schema: "Lexicon",
+                table: "Entries",
+                column: "ImageId",
+                principalSchema: "System",
+                principalTable: "Images",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.SetNull);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
                 name: "FK_Entries_Categories_CategoryId",
+                schema: "Lexicon",
+                table: "Entries");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Entries_Images_ImageId",
                 schema: "Lexicon",
                 table: "Entries");
 
@@ -81,6 +101,16 @@ namespace MyFoodDoc.Database.Migrations
                 name: "CategoryId",
                 schema: "Lexicon",
                 table: "Entries");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Entries_Images_ImageId",
+                schema: "Lexicon",
+                table: "Entries",
+                column: "ImageId",
+                principalSchema: "System",
+                principalTable: "Images",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
     }
 }

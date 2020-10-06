@@ -10,7 +10,7 @@ using MyFoodDoc.Infrastructure.Persistence.Database;
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20201006141219_LexiconCategories")]
+    [Migration("20201006151655_LexiconCategories")]
     partial class LexiconCategories
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -2022,7 +2022,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                     b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 
@@ -2037,7 +2037,7 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                     b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull)
                         .IsRequired();
                 });
 
