@@ -26,11 +26,11 @@ namespace MyFoodDoc.App.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<ICollection<LexiconShallowEntryDto>> GetAllAsync(CancellationToken cancellationToken = default)
+        public async Task<ICollection<LexiconCategoryDto>> GetAllAsync(CancellationToken cancellationToken = default)
         {
-            var result = await _context.LexiconEntries
-
-                .ProjectTo<LexiconShallowEntryDto>(_mapper.ConfigurationProvider)
+            var result = await _context.LexiconCategories
+                .Include(x => x.Entries)
+                .ProjectTo<LexiconCategoryDto>(_mapper.ConfigurationProvider)
                 .OrderBy(e => e.Title)
                 .ToListAsync(cancellationToken);
 
