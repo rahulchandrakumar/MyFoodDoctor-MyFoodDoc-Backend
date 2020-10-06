@@ -65,6 +65,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
 
         #region Lexicon
         public DbSet<LexiconEntry> LexiconEntries { get; set; }
+
+        public DbSet<LexiconCategory> LexiconCategories { get; set; }
         #endregion
 
         #region Cms

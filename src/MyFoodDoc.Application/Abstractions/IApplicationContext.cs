@@ -60,6 +60,8 @@ namespace MyFoodDoc.Application.Abstractions
 
         #region Lexicon
         DbSet<LexiconEntry> LexiconEntries { get; set; }
+
+        DbSet<LexiconCategory> LexiconCategories { get; set; }
         #endregion
 
         #region Cms
