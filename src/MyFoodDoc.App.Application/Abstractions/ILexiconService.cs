@@ -7,7 +7,7 @@ namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface ILexiconService
     {
-        Task<ICollection<LexiconShallowEntryDto>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<ICollection<LexiconCategoryDto>> GetAllAsync(CancellationToken cancellationToken = default);
 
         Task<LexiconEntryDto> GetAsync(int entryId, CancellationToken cancellationToken = default);
     }
