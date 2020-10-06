@@ -3,7 +3,7 @@ using System;
 
 namespace MyFoodDoc.CMS.Application.Models
 {
-    public class LexiconModel: BaseModel<int>
+    public class LexiconModel : BaseModel<int>
     {
         public string TitleLong { get; set; }
 
@@ -13,15 +13,18 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public ImageModel Image { get; set; }
 
+        public int CategoryId { get; set; }
+
         public static LexiconModel FromEntity(LexiconEntry entity)
         {
             return entity == null ? null : new LexiconModel()
             {
-                Text = entity.Text,
                 Id = entity.Id,
-                Image = ImageModel.FromEntity(entity.Image),
+                TitleShort = entity.TitleShort,
                 TitleLong = entity.TitleLong,
-                TitleShort = entity.TitleShort
+                Text = entity.Text,
+                Image = ImageModel.FromEntity(entity.Image),
+                CategoryId = entity.CategoryId
             };
         }
 
@@ -30,10 +33,11 @@ namespace MyFoodDoc.CMS.Application.Models
             return new LexiconEntry()
             {
                 Id = this.Id,
-                ImageId = this.Image.Id,
-                Text = this.Text,
+                TitleShort = this.TitleShort,
                 TitleLong = this.TitleLong,
-                TitleShort = this.TitleShort
+                Text = this.Text,
+                ImageId = this.Image.Id,
+                CategoryId = this.CategoryId
             };
         }
     }

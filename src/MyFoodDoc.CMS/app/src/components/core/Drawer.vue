@@ -140,7 +140,7 @@
             if (userRoles.includes(UserRoles.ADMIN)) {
                 links.push({
                     icon: "mdi-dictionary",
-                    to: "/lexicon-list",
+                    to: "/lexicon-category-list",
                     text: "Lexicon"
                 });
                 links.push({

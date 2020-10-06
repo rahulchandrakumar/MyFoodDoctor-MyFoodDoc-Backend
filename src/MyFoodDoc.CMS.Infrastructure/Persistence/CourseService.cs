@@ -70,16 +70,6 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return CourseModel.FromEntity(course, GetUsersCount(course.Id), GetCompletedByUsersCount(course.Id));
         }
         
-        public async Task<IList<CourseModel>> GetItems(CancellationToken cancellationToken = default)
-        {
-            var entities = await _context.Courses
-                                                .Include(x => x.Image)
-                                                .AsNoTracking()
-                                                .ToListAsync(cancellationToken);
-
-            return entities.Select(x => CourseModel.FromEntity(x,  GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).ToList();
-        }
-
         public IQueryable<Course> GetBaseQuery(string search)
         {
             IQueryable<Course> baseQuery = _context.Courses;

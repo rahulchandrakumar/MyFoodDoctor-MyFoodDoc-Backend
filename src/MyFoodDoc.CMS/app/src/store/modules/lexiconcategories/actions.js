@@ -1,13 +1,13 @@
 import integration from "@/integration";
 
 export default {
-    loadItems: async ({ commit, state }, { page, search, parentId }) => {
+    loadItems: async ({ commit, state }, { page, search }) => {
         state.loaded = false
 
         state.skip = (page - 1) * state.take;
         state.search = search;
 
-        let response = await integration.lexicon.getAll({ categoryId: parentId, take: state.take, skip: state.skip, search: state.search });
+        let response = await integration.lexiconcategories.getAll({ take: state.take, skip: state.skip, search: state.search });
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -18,17 +18,17 @@ export default {
     loadItem: async ({ state }, { id }) => {
         state.loaded = false
 
-        let response = await integration.lexicon.get(id);
+        let response = await integration.lexiconcategories.get(id);
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
 
         return response.data;
     },
-    loadOneMoreItem: async ({ state }, { parentId }) => {
+    loadOneMoreItem: async ({ state }) => {
         state.loaded = false
 
-        let response = await integration.lexicon.getAll({ categoryId: parentId, take: 1, skip: state.skip + state.take - 1, search: state.search });
+        let response = await integration.lexiconcategories.getAll({ take: 1, skip: state.skip + state.take - 1, search: state.search });
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -38,7 +38,7 @@ export default {
     addItem: async ({ state }, { item }) => {
         state.loaded = false
 
-        let response = await integration.lexicon.post(item);
+        let response = await integration.lexiconcategories.post(item);
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -48,7 +48,7 @@ export default {
     updateItem: async ({ state }, { item }) => {
         state.loaded = false
 
-        let response = await integration.lexicon.put(item);
+        let response = await integration.lexiconcategories.put(item);
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -58,7 +58,7 @@ export default {
     deleteItem: async ({ state }, { id }) => {
         state.loaded = false
 
-        let response = await integration.lexicon.delete(id);
+        let response = await integration.lexiconcategories.delete(id);
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
         }
@@ -81,7 +81,7 @@ export default {
     itemDeleted: async ({ state, commit }, { Id }) => {
         var item = null;
         if (state.items.filter(i => i.id == Id).length > 0 && state.total > state.take) {
-            item = await dispatch('loadOneMoreItem', { parentId: ParentId })
+            item = await dispatch('loadOneMoreItem')
         }
         commit("deleteItem", { Id, item })
         state.total--

@@ -9,16 +9,18 @@ namespace MyFoodDoc.CMS.Models.VM
         public string TitleShort { get; set; }
         public string Text { get; set; }
         public Image Image { get; set; }
+        public int CategoryId { get; set; }
 
         public static LexiconItem FromModel(LexiconModel model)
         {
             return model == null ? null : new LexiconItem()
             {
                 Id = model.Id,
-                TitleLong = model.TitleLong,
                 TitleShort = model.TitleShort,
+                TitleLong = model.TitleLong,
                 Text = model.Text,
-                Image = Image.FromModel(model.Image)
+                Image = Image.FromModel(model.Image),
+                CategoryId = model.CategoryId
             };
         }
 
@@ -27,10 +29,11 @@ namespace MyFoodDoc.CMS.Models.VM
             return new LexiconModel()
             {
                 Id = this.Id,
-                TitleLong = this.TitleLong,
                 TitleShort = this.TitleShort,
+                TitleLong = this.TitleLong,
                 Text = this.Text,
-                Image = this.Image.ToModel()
+                Image = this.Image.ToModel(),
+                CategoryId = this.CategoryId
             };
         }
     }
