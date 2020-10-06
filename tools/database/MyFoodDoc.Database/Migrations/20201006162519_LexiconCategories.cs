@@ -40,7 +40,7 @@ namespace MyFoodDoc.Database.Migrations
                         principalSchema: "System",
                         principalTable: "Images",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -73,7 +73,7 @@ namespace MyFoodDoc.Database.Migrations
                 principalSchema: "System",
                 principalTable: "Images",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.SetNull);
+                onDelete: ReferentialAction.Restrict);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
