@@ -354,8 +354,8 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
     FAT_SECRET_CONSUMER_KEY                     = ""
     FAT_SECRET_CONSUMER_SECRET                  = ""
-    STATISTICS_PERIOD				            = 7
-    STATISTICS_MINIMUM_DAYS                     = 3
+    STATISTICS_PERIOD				            = 4
+    STATISTICS_MINIMUM_DAYS                     = 2
     TZ                                          = "Europe/Berlin"
   }
 
