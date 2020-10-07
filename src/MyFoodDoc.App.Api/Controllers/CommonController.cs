@@ -51,6 +51,13 @@ namespace MyFoodDoc.App.Api.Controllers
                 return BadRequest();
             }
 
+            var result = await _emailService.SendEmailAsync(payload.Email, "Willkommensmail", "Willkommen in My Food Doctor!");
+
+            if (!result)
+            {
+                _logger.LogError($"Unable to send an invitation email to {payload.Email}");
+            }
+
             return Content(response.Raw, MediaTypeNames.Application.Json);
         }
 
@@ -66,7 +73,7 @@ namespace MyFoodDoc.App.Api.Controllers
 
             if (!result)
             {
-                throw new BadRequestException("Unable to send email");
+                throw new BadRequestException($"Unable to send an email to {tokenPayload.Email}");
             }
 
             return Accepted();
