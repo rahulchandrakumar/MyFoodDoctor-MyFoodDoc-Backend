@@ -55,7 +55,7 @@ namespace MyFoodDoc.App.Api.Controllers
 
             if (!result)
             {
-                _logger.LogError($"Unable to send an invitation email to {payload.Email}");
+                _logger.LogError($"Unable to send a welcome email to {payload.Email}");
             }
 
             return Content(response.Raw, MediaTypeNames.Application.Json);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -101,6 +102,61 @@ namespace MyFoodDoc.App.Api.Controllers
             var result = await _service.GetExerciseAsync(GetUserId(), payload.Date, cancellationToken);
 
             return Ok(result);
+        }
+
+        [HttpGet("favourite")]
+        [ProducesResponseType(typeof(ICollection<FavouriteDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ICollection<FavouriteDto>>> GetFavourites(CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetFavouritesAsync(GetUserId(), cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpGet("favourite/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(FavouriteDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<FavouriteDto>> GetFavourite([FromRoute] int id, CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetFavouriteAsync(GetUserId(), id, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpPost("favourite")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(FavouriteDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<FavouriteDto>> AddFavourite([FromBody] FavouritePayload payload, CancellationToken cancellationToken = default)
+        {
+            var id = await _service.InsertFavouriteAsync(GetUserId(), payload, cancellationToken);
+
+            var result = await _service.GetFavouriteAsync(GetUserId(), id, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpPut("favourite/{id}")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(FavouriteDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<FavouriteDto>> UpdateFavourite([FromRoute] int id, [FromBody] FavouritePayload payload, CancellationToken cancellationToken = default)
+        {
+            await _service.UpdateFavouriteAsync(GetUserId(), id, payload, cancellationToken);
+
+            var result = await _service.GetFavouriteAsync(GetUserId(), id, cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("favourite/{id}")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoveFavourite([FromRoute] int id, CancellationToken cancellationToken = default)
+        {
+            await _service.RemoveFavouriteAsync(GetUserId(), id, cancellationToken);
+
+            return Ok();
         }
     }
 }
