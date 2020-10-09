@@ -1,4 +1,4 @@
-﻿namespace MyFoodDoc.Application.Entities
+﻿namespace MyFoodDoc.Application.Entities.Diary
 {
     public class MealIngredient
     {

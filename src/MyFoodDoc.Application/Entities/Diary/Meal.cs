@@ -3,7 +3,7 @@ using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 
-namespace MyFoodDoc.Application.Entities
+namespace MyFoodDoc.Application.Entities.Diary
 {
     public class Meal : AbstractDiaryEntity<string>
     {
@@ -14,5 +14,7 @@ namespace MyFoodDoc.Application.Entities
         public int? Mood { get; set; }
 
         public ICollection<MealIngredient> Ingredients { get; set; }
+
+        public ICollection<MealFavourite> Favourites { get; set; }
     }
 }
