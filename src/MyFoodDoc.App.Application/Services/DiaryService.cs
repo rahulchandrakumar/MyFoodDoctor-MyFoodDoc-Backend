@@ -66,6 +66,20 @@ namespace MyFoodDoc.App.Application.Services
 
             aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 
+            foreach (var meal in aggregation.Meals)
+                if (meal.Favourites != null)
+                    foreach (var favourite in meal.Favourites)
+                    foreach (var favouriteIngredients in await _context.FavouriteIngredients
+                        .Include(x => x.Ingredient)
+                        .Where(x => x.FavouriteId == favourite.Favourite.Id)
+                        .ToListAsync(cancellationToken))
+                    {
+                        favourite.Favourite.Fat += (favouriteIngredients.Ingredient.Fat ?? favouriteIngredients.Ingredient.FatExternal) * favouriteIngredients.Amount;
+                        favourite.Favourite.Protein += (favouriteIngredients.Ingredient.Protein ?? favouriteIngredients.Ingredient.ProteinExternal) * favouriteIngredients.Amount;
+                        favourite.Favourite.Sugar += (favouriteIngredients.Ingredient.Sugar ?? favouriteIngredients.Ingredient.SugarExternal) * favouriteIngredients.Amount;
+                        favourite.Favourite.Carbohydrate += (favouriteIngredients.Ingredient.Carbohydrate ?? favouriteIngredients.Ingredient.CarbohydrateExternal) * favouriteIngredients.Amount;
+                    }
+
             return aggregation;
         }
 
@@ -80,6 +94,19 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new NotFoundException(nameof(Meal), mealId);
             }
+
+            if (meal.Favourites != null)
+                foreach (var favourite in meal.Favourites)
+                    foreach (var favouriteIngredients in await _context.FavouriteIngredients
+                    .Include(x => x.Ingredient)
+                    .Where(x => x.FavouriteId == favourite.Favourite.Id)
+                    .ToListAsync(cancellationToken))
+                {
+                    favourite.Favourite.Fat += (favouriteIngredients.Ingredient.Fat ?? favouriteIngredients.Ingredient.FatExternal) * favouriteIngredients.Amount;
+                    favourite.Favourite.Protein += (favouriteIngredients.Ingredient.Protein ?? favouriteIngredients.Ingredient.ProteinExternal) * favouriteIngredients.Amount;
+                    favourite.Favourite.Sugar += (favouriteIngredients.Ingredient.Sugar ?? favouriteIngredients.Ingredient.SugarExternal) * favouriteIngredients.Amount;
+                    favourite.Favourite.Carbohydrate += (favouriteIngredients.Ingredient.Carbohydrate ?? favouriteIngredients.Ingredient.CarbohydrateExternal) * favouriteIngredients.Amount;
+                }
 
             return meal;
         }
@@ -103,6 +130,8 @@ namespace MyFoodDoc.App.Application.Services
 
             await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
 
+            await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
+
             return meal.Id;
         }
 
@@ -122,13 +151,35 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            var oldIngredients = _context.MealIngredients.Where(x => x.MealId == mealId);
-            
-            _context.MealIngredients.RemoveRange(oldIngredients);
+            var oldMealIngredients = await _context.MealIngredients.Where(x => x.MealId == mealId).ToListAsync(cancellationToken);
 
-            await _context.SaveChangesAsync(cancellationToken);
+            if (oldMealIngredients.Any())
+            {
+                _context.MealIngredients.RemoveRange(oldMealIngredients);
 
-            await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
+            }
+
+            var oldMealFavourites = await _context.MealFavourites
+                .Include(x => x.Favourite)
+                .Where(x => x.MealId == mealId).ToListAsync(cancellationToken);
+
+            if (oldMealFavourites.Any())
+            {
+                var oldFavourites = oldMealFavourites.Select(x=> x.Favourite).ToList();
+
+                _context.MealFavourites.RemoveRange(oldMealFavourites);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                _context.Favourites.RemoveRange(oldFavourites);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
+            }
 
             return meal.Id;
         }
@@ -139,9 +190,20 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.UserId == userId && x.Id == mealId)
                 .SingleOrDefaultAsync(cancellationToken);
 
+            var favourites = await _context.MealFavourites
+                .Include(x => x.Favourite)
+                .Where(x => x.MealId == mealId).Select(x => x.Favourite).ToListAsync(cancellationToken);
+
             _context.Meals.Remove(meal);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (favourites.Any())
+            {
+                _context.Favourites.RemoveRange(favourites);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
         }
 
         public async Task<DiaryEntryDtoLiquid> GetLiquidAsync(string userId, DateTime date, CancellationToken cancellationToken)
@@ -319,6 +381,55 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
+        private async Task UpsertMealFavourites(int mealId, IEnumerable<MealFavouritePayload> favourites, CancellationToken cancellationToken)
+        {
+            if (favourites != null)
+            {
+                var mealFavourites = new List<MealFavourite>();
+
+                foreach (var favourite in favourites)
+                {
+                    var genericFavourite = await _context.Favourites
+                        .Include(x => x.Ingredients)
+                        .Where(x => x.Id == favourite.FavouriteId)
+                        .SingleOrDefaultAsync(cancellationToken);
+
+                    if (genericFavourite == null)
+                    {
+                        throw new NotFoundException(nameof(Favourite), favourite.FavouriteId);
+                    }
+
+                    var copiedFavourite = new Favourite
+                    {
+                        UserId = genericFavourite.UserId,
+                        Title = genericFavourite.Title,
+                        IsGeneric = false
+                    };
+
+                    await _context.Favourites.AddAsync(copiedFavourite, cancellationToken);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    var favouriteIngredients = new List<FavouriteIngredient>();
+
+                    foreach (var ingredient in genericFavourite.Ingredients)
+                    {
+                        favouriteIngredients.Add(new FavouriteIngredient { FavouriteId = copiedFavourite.Id, IngredientId = ingredient.IngredientId, Amount = ingredient.Amount});
+                    }
+
+                    await _context.FavouriteIngredients.AddRangeAsync(favouriteIngredients, cancellationToken);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = copiedFavourite.Id });
+                }
+
+                await _context.MealFavourites.AddRangeAsync(mealFavourites, cancellationToken);
+
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+        }
+
         private async Task CheckIngredients(IEnumerable<IngredientPayload> ingredients,
             CancellationToken cancellationToken)
         {
@@ -334,7 +445,7 @@ namespace MyFoodDoc.App.Application.Services
         public async Task<ICollection<FavouriteDto>> GetFavouritesAsync(string userId, CancellationToken cancellationToken)
         {
             var favourites = await _context.Favourites
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == userId && x.IsGeneric)
                 .ProjectTo<FavouriteDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 

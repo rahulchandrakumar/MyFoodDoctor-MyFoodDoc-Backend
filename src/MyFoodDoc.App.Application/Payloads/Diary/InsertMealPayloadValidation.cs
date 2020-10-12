@@ -10,11 +10,9 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
             RuleFor(x => x.Date).NotNull();
             RuleFor(x => x.Time).NotNull();
             RuleFor(x => x.Type).NotNull().IsInEnum();
-            RuleFor(x => x.Ingredients).NotEmpty();
+
             RuleForEach(x => x.Ingredients).ChildRules(i =>
             {
-                i.RuleFor(x => x.FoodId).NotNull();
-                i.RuleFor(x => x.ServingId).NotNull();
                 i.RuleFor(x => x.Amount).GreaterThanOrEqualTo(0);
             });
             RuleFor(m => m.Mood).InclusiveBetween(1,5);
