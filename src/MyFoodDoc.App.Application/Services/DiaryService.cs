@@ -158,9 +158,9 @@ namespace MyFoodDoc.App.Application.Services
                 _context.MealIngredients.RemoveRange(oldMealIngredients);
 
                 await _context.SaveChangesAsync(cancellationToken);
-
-                await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
             }
+
+            await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
 
             var oldMealFavourites = await _context.MealFavourites
                 .Include(x => x.Favourite)
@@ -177,9 +177,9 @@ namespace MyFoodDoc.App.Application.Services
                 _context.Favourites.RemoveRange(oldFavourites);
 
                 await _context.SaveChangesAsync(cancellationToken);
-
-                await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
             }
+
+            await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
 
             return meal.Id;
         }
