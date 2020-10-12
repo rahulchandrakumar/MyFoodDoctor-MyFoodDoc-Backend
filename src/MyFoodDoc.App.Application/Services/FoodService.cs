@@ -5,15 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Clients;
-using MyFoodDoc.App.Application.Exceptions;
-using MyFoodDoc.FatSecretClient.Abstractions;
-using System;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -61,6 +55,27 @@ namespace MyFoodDoc.App.Application.Services
 
                 result.Sugar += (mealIngredient.Ingredient.Sugar ?? mealIngredient.Ingredient.SugarExternal) * mealIngredient.Amount;
                 result.Vegetables += (mealIngredient.Ingredient.Vegetables ?? 0) * mealIngredient.Amount;
+            }
+
+            foreach (var mealFavourite in await _context.MealFavourites
+                .Where(x => x.MealId == mealId)
+                .ToListAsync(cancellationToken))
+            {
+                foreach (var favouriteIngredient in await _context.FavouriteIngredients
+                    .Include(x => x.Ingredient)
+                    .Where(x => x.FavouriteId == mealFavourite.FavouriteId)
+                    .ToListAsync(cancellationToken))
+                {
+                    decimal protein = (favouriteIngredient.Ingredient.Protein ?? favouriteIngredient.Ingredient.ProteinExternal) * favouriteIngredient.Amount;
+
+                    if (favouriteIngredient.Ingredient.ContainsPlantProtein)
+                        result.PlantProtein += protein;
+                    else
+                        result.AnimalProtein += protein;
+
+                    result.Sugar += (favouriteIngredient.Ingredient.Sugar ?? favouriteIngredient.Ingredient.SugarExternal) * favouriteIngredient.Amount;
+                    result.Vegetables += (favouriteIngredient.Ingredient.Vegetables ?? 0) * favouriteIngredient.Amount;
+                }
             }
 
             return result;
