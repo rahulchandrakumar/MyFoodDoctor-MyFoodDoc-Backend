@@ -9,10 +9,14 @@ namespace MyFoodDoc.Application.Entities
 
         public string TitleLong { get; set; }
 
-        public int ImageId { get; set; }
-
         public string Text { get; set; }
 
+        public int ImageId { get; set; }
+
+        public int CategoryId { get; set; }
+
         public Image Image { get; set; }
+
+        public LexiconCategory Category { get; set; }
     }
 }

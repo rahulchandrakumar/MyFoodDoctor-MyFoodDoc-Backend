@@ -1,6 +1,7 @@
 ﻿using System;
 using MyFoodDoc.Application.Abstractions;
 using System.Collections.Generic;
+using MyFoodDoc.Application.Entities.Diary;
 
 namespace MyFoodDoc.Application.Entities
 {
@@ -75,5 +76,7 @@ namespace MyFoodDoc.Application.Entities
         public bool ContainsPlantProtein { get; set; }
 
         public ICollection<MealIngredient> Meals { get; set; }
+
+        public ICollection<FavouriteIngredient> Favourites { get; set; }
     }
 }

@@ -8,12 +8,13 @@ namespace MyFoodDoc.App.Application.Models
     {
         public int Id { get; set; }
 
-        public string Title { get; set; }
+        public string TitleShort { get; set; }
+
+        public string TitleLong { get; set; }
 
         public void Mapping(Profile profile)
         {
-            profile.CreateMap<LexiconEntry, LexiconShallowEntryDto>()
-                .ForMember(d => d.Title, opt => opt.MapFrom(s => s.TitleShort));
+            profile.CreateMap<LexiconEntry, LexiconShallowEntryDto>();
         }
     }
 }

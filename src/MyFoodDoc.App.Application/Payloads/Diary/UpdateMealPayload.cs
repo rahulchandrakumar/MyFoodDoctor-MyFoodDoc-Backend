@@ -12,6 +12,8 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
 
         public IEnumerable<IngredientPayload> Ingredients { get; set; }
 
+        public IEnumerable<MealFavouritePayload> Favourites { get; set; }
+
         public int? Mood { get; set; }
     }
 }

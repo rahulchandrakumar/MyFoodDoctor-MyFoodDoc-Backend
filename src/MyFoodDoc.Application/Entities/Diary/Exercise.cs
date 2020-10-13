@@ -1,7 +1,7 @@
 ﻿using MyFoodDoc.Application.Entities.Abstractions;
 using System;
 
-namespace MyFoodDoc.Application.Entities
+namespace MyFoodDoc.Application.Entities.Diary
 {
     public class Exercise : AbstractDiaryEntity<string>
     {

@@ -34,7 +34,14 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<MethodDto>();
 
-            if (!(await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).HasSubscription)
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            if (user.SubscriptionExpirationDate == null || user.SubscriptionExpirationDate.Value < DateTime.Now)
                 return result;
 
             var userDiets = await _context.UserDiets.AsNoTracking()

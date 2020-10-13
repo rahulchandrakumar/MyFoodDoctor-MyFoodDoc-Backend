@@ -147,5 +147,19 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPost("in-app-purchases/app-store/validate")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(AppStoreReceiptValidationResultDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<AppStoreReceiptValidationResultDto>> ValidateAppStoreInAppPurchase([FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var result = new AppStoreReceiptValidationResultDto
+            {
+                IsValid = await _service.ValidateAppStoreInAppPurchase(GetUserId(), payload, cancellationToken)
+            };
+
+            return Ok(result);
+        }
     }
 }

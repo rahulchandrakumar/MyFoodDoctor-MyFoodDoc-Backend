@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.Application.Entities.Abstractions;
+using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
@@ -36,6 +37,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<MealIngredient> MealIngredients { get; set; }
         public DbSet<Liquid> Liquids { get; set; }
         public DbSet<Exercise> Exercises { get; set; }
+        public DbSet<Favourite> Favourites { get; set; }
+        public DbSet<FavouriteIngredient> FavouriteIngredients { get; set; }
+        public DbSet<MealFavourite> MealFavourites { get; set; }
         #endregion
 
         #region System
@@ -65,6 +69,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
 
         #region Lexicon
         public DbSet<LexiconEntry> LexiconEntries { get; set; }
+
+        public DbSet<LexiconCategory> LexiconCategories { get; set; }
         #endregion
 
         #region Cms

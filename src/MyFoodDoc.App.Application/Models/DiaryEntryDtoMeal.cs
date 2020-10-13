@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Enums;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Application.Mappings;
 using System;
+using MyFoodDoc.Application.Entities.Diary;
 
 namespace MyFoodDoc.App.Application.Models
 {
@@ -18,6 +19,8 @@ namespace MyFoodDoc.App.Application.Models
         public int? Mood { get; set; }
 
         public ICollection<DiaryEntryDtoMealIngredient> Ingredients { get; set; }
+
+        public ICollection<MealFavouriteDto> Favourites { get; set; }
 
         public void Mapping(Profile profile) => profile.CreateMap(typeof(Meal), GetType());
     }

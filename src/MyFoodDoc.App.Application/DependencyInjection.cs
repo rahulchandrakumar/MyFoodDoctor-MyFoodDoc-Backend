@@ -9,6 +9,7 @@ using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.App.Application.Configuration;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Services;
+using MyFoodDoc.AppStoreClient;
 
 namespace MyFoodDoc.App.Application
 {
@@ -18,6 +19,7 @@ namespace MyFoodDoc.App.Application
         {
             services.Configure<StatisticsOptions>(configuration.GetSection("Statistics"));
 
+            services.AddSharedAppStoreClient(configuration);
             services.AddSharedFatSecretClient(configuration);
             services.AddSharedApplication();
 

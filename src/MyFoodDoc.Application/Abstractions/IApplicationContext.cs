@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +7,8 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
+using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Entities.TrackedValues;
@@ -31,6 +30,9 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<MealIngredient> MealIngredients { get; set; }
         DbSet<Liquid> Liquids { get; set; }
         DbSet<Exercise> Exercises { get; set; }
+        DbSet<Favourite> Favourites { get; set; }
+        DbSet<FavouriteIngredient> FavouriteIngredients { get; set; }
+        DbSet<MealFavourite> MealFavourites { get; set; }
         #endregion
 
         #region System
@@ -60,6 +62,8 @@ namespace MyFoodDoc.Application.Abstractions
 
         #region Lexicon
         DbSet<LexiconEntry> LexiconEntries { get; set; }
+
+        DbSet<LexiconCategory> LexiconCategories { get; set; }
         #endregion
 
         #region Cms

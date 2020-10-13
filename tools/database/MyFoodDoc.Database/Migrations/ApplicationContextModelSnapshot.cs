@@ -420,37 +420,7 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserAnswers","Course");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
-                {
-                    b.Property<int>("DietId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MethodId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DietId", "MethodId");
-
-                    b.HasIndex("MethodId");
-
-                    b.ToTable("DietMethods","System");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietTarget", b =>
-                {
-                    b.Property<int>("DietId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TargetId")
-                        .HasColumnType("int");
-
-                    b.HasKey("DietId", "TargetId");
-
-                    b.HasIndex("TargetId");
-
-                    b.ToTable("DietTargets","System");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Exercise", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Exercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -480,6 +450,189 @@ namespace MyFoodDoc.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Exercises","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Favourite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsGeneric")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)")
+                        .HasMaxLength(450);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Favourites","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.FavouriteIngredient", b =>
+                {
+                    b.Property<int>("FavouriteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("FavouriteId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("FavouritesIngredients","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Liquid", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("LastAdded")
+                        .HasColumnType("Time");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Liquids","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Meal", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("Mood")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Time")
+                        .HasColumnType("Time");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(10)")
+                        .HasMaxLength(10);
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId", "Date");
+
+                    b.ToTable("Meals","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.MealFavourite", b =>
+                {
+                    b.Property<int>("MealId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FavouriteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MealId", "FavouriteId");
+
+                    b.HasIndex("FavouriteId");
+
+                    b.ToTable("MealsFavourites","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.MealIngredient", b =>
+                {
+                    b.Property<int>("MealId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IngredientId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.HasKey("MealId", "IngredientId");
+
+                    b.HasIndex("IngredientId");
+
+                    b.ToTable("MealsIngredients","Diary");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
+                {
+                    b.Property<int>("DietId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DietId", "MethodId");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("DietMethods","System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.DietTarget", b =>
+                {
+                    b.Property<int>("DietId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TargetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DietId", "TargetId");
+
+                    b.HasIndex("TargetId");
+
+                    b.ToTable("DietTargets","System");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entities.Image", b =>
@@ -754,12 +907,43 @@ namespace MyFoodDoc.Database.Migrations
                         });
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)")
+                        .HasMaxLength(100);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Categories","Lexicon");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -786,98 +970,13 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("ImageId");
 
                     b.HasIndex("TitleShort", "TitleLong");
 
                     b.ToTable("Entries","Lexicon");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Liquid", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Amount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("LastAdded")
-                        .HasColumnType("Time");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Liquids","Diary");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Meal", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Mood")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Time")
-                        .HasColumnType("Time");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(10)")
-                        .HasMaxLength(10);
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId", "Date");
-
-                    b.ToTable("Meals","Diary");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.MealIngredient", b =>
-                {
-                    b.Property<int>("MealId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IngredientId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.HasKey("MealId", "IngredientId");
-
-                    b.HasIndex("IngredientId");
-
-                    b.ToTable("MealsIngredients","Diary");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.Method", b =>
@@ -1212,14 +1311,6 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("nvarchar(6)")
                         .HasMaxLength(6);
 
-                    b.Property<bool>("HasSubscription")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<DateTime?>("HasSubscriptionUpdated")
-                        .HasColumnType("datetime2");
-
                     b.Property<decimal?>("Height")
                         .HasColumnType("decimal(4,1)");
 
@@ -1259,6 +1350,12 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SubscriptionExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("SubscriptionExpirationDateUpdated")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
@@ -1917,6 +2014,81 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Exercise", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Favourite", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.FavouriteIngredient", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Diary.Favourite", "Favourite")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("FavouriteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Ingredient", "Ingredient")
+                        .WithMany("Favourites")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Liquid", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.Meal", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.MealFavourite", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Diary.Favourite", "Favourite")
+                        .WithMany("Meals")
+                        .HasForeignKey("FavouriteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Diary.Meal", "Meal")
+                        .WithMany("Favourites")
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Diary.MealIngredient", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Ingredient", "Ingredient")
+                        .WithMany("Meals")
+                        .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Diary.Meal", "Meal")
+                        .WithMany("Ingredients")
+                        .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.DietMethod", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.EnumEntities.Diet", "Diet")
@@ -1945,13 +2117,6 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .HasForeignKey("TargetId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Exercise", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entities.IndicationMethod", b =>
@@ -1984,41 +2149,27 @@ Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankunge
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconCategory", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Liquid", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Meal", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.MealIngredient", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entities.Ingredient", "Ingredient")
-                        .WithMany("Meals")
-                        .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
 
-                    b.HasOne("MyFoodDoc.Application.Entities.Meal", "Meal")
-                        .WithMany("Ingredients")
-                        .HasForeignKey("MealId")
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.LexiconEntry", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.LexiconCategory", "Category")
+                        .WithMany("Entries")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 

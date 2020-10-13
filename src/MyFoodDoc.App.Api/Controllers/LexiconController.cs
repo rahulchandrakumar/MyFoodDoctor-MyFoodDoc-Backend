@@ -22,8 +22,8 @@ namespace MyFoodDoc.App.Api.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<LexiconShallowEntryDto>), StatusCodes.Status200OK)]
+        [HttpGet("categories")]
+        [ProducesResponseType(typeof(IEnumerable<LexiconCategoryDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List(CancellationToken cancellationToken = default)
         {
             var result = await _service.GetAllAsync(cancellationToken);

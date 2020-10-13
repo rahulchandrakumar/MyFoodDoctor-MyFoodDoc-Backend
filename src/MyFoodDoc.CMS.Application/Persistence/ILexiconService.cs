@@ -3,7 +3,7 @@ using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface ILexiconService : IServiceBasePaginatedRead<LexiconModel, int>, IServiceBaseWrite<LexiconModel, int>
+    public interface ILexiconService : IServiceBasePaginatedChildrenRead<LexiconModel, int, int>, IServiceBaseWrite<LexiconModel, int>
     {
     }
 }
