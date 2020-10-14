@@ -66,20 +66,6 @@ namespace MyFoodDoc.App.Application.Services
 
             aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 
-            foreach (var meal in aggregation.Meals)
-                if (meal.Favourites != null)
-                    foreach (var favourite in meal.Favourites)
-                    foreach (var favouriteIngredients in await _context.FavouriteIngredients
-                        .Include(x => x.Ingredient)
-                        .Where(x => x.FavouriteId == favourite.Favourite.Id)
-                        .ToListAsync(cancellationToken))
-                    {
-                        favourite.Favourite.Fat += (favouriteIngredients.Ingredient.Fat ?? favouriteIngredients.Ingredient.FatExternal) * favouriteIngredients.Amount;
-                        favourite.Favourite.Protein += (favouriteIngredients.Ingredient.Protein ?? favouriteIngredients.Ingredient.ProteinExternal) * favouriteIngredients.Amount;
-                        favourite.Favourite.Sugar += (favouriteIngredients.Ingredient.Sugar ?? favouriteIngredients.Ingredient.SugarExternal) * favouriteIngredients.Amount;
-                        favourite.Favourite.Carbohydrate += (favouriteIngredients.Ingredient.Carbohydrate ?? favouriteIngredients.Ingredient.CarbohydrateExternal) * favouriteIngredients.Amount;
-                    }
-
             return aggregation;
         }
 
@@ -94,19 +80,6 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new NotFoundException(nameof(Meal), mealId);
             }
-
-            if (meal.Favourites != null)
-                foreach (var favourite in meal.Favourites)
-                    foreach (var favouriteIngredients in await _context.FavouriteIngredients
-                    .Include(x => x.Ingredient)
-                    .Where(x => x.FavouriteId == favourite.Favourite.Id)
-                    .ToListAsync(cancellationToken))
-                {
-                    favourite.Favourite.Fat += (favouriteIngredients.Ingredient.Fat ?? favouriteIngredients.Ingredient.FatExternal) * favouriteIngredients.Amount;
-                    favourite.Favourite.Protein += (favouriteIngredients.Ingredient.Protein ?? favouriteIngredients.Ingredient.ProteinExternal) * favouriteIngredients.Amount;
-                    favourite.Favourite.Sugar += (favouriteIngredients.Ingredient.Sugar ?? favouriteIngredients.Ingredient.SugarExternal) * favouriteIngredients.Amount;
-                    favourite.Favourite.Carbohydrate += (favouriteIngredients.Ingredient.Carbohydrate ?? favouriteIngredients.Ingredient.CarbohydrateExternal) * favouriteIngredients.Amount;
-                }
 
             return meal;
         }
@@ -449,18 +422,6 @@ namespace MyFoodDoc.App.Application.Services
                 .ProjectTo<FavouriteDto>(_mapper.ConfigurationProvider)
                 .ToListAsync(cancellationToken);
 
-            foreach (var favourite in favourites)
-                foreach (var favouriteIngredients in await _context.FavouriteIngredients
-                .Include(x => x.Ingredient)
-                .Where(x => x.FavouriteId == favourite.Id)
-                .ToListAsync(cancellationToken))
-            {
-                favourite.Fat += (favouriteIngredients.Ingredient.Fat ?? favouriteIngredients.Ingredient.FatExternal) * favouriteIngredients.Amount;
-                favourite.Protein += (favouriteIngredients.Ingredient.Protein ?? favouriteIngredients.Ingredient.ProteinExternal) * favouriteIngredients.Amount;
-                favourite.Sugar += (favouriteIngredients.Ingredient.Sugar ?? favouriteIngredients.Ingredient.SugarExternal) * favouriteIngredients.Amount;
-                favourite.Carbohydrate += (favouriteIngredients.Ingredient.Carbohydrate ?? favouriteIngredients.Ingredient.CarbohydrateExternal) * favouriteIngredients.Amount;
-            }
-
             return favourites;
         }
 
@@ -474,17 +435,6 @@ namespace MyFoodDoc.App.Application.Services
             if (favourite == null)
             {
                 throw new NotFoundException(nameof(Favourite), id);
-            }
-
-            foreach (var favouriteIngredients in await _context.FavouriteIngredients
-                .Include(x => x.Ingredient)
-                .Where(x => x.FavouriteId == id)
-                .ToListAsync(cancellationToken))
-            {
-                favourite.Fat += (favouriteIngredients.Ingredient.Fat ?? favouriteIngredients.Ingredient.FatExternal) * favouriteIngredients.Amount;
-                favourite.Protein += (favouriteIngredients.Ingredient.Protein ?? favouriteIngredients.Ingredient.ProteinExternal) * favouriteIngredients.Amount;
-                favourite.Sugar += (favouriteIngredients.Ingredient.Sugar ?? favouriteIngredients.Ingredient.SugarExternal) * favouriteIngredients.Amount;
-                favourite.Carbohydrate += (favouriteIngredients.Ingredient.Carbohydrate ?? favouriteIngredients.Ingredient.CarbohydrateExternal) * favouriteIngredients.Amount;
             }
 
             return favourite;

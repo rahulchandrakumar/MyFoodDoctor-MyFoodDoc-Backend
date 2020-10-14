@@ -94,6 +94,19 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             var orig = await _context.Ingredients.FindAsync(new object[] { entity.Id }, cancellationToken);
 
+            entity.CaloriesExternal = orig.CaloriesExternal;
+            entity.CarbohydrateExternal = orig.CarbohydrateExternal;
+            entity.ProteinExternal = orig.ProteinExternal;
+            entity.FatExternal = orig.FatExternal;
+            entity.SaturatedFatExternal = orig.SaturatedFatExternal;
+            entity.PolyunsaturatedFatExternal = orig.PolyunsaturatedFatExternal;
+            entity.MonounsaturatedFatExternal = orig.MonounsaturatedFatExternal;
+            entity.CholesterolExternal = orig.CholesterolExternal;
+            entity.SodiumExternal = orig.SodiumExternal;
+            entity.PotassiumExternal = orig.PotassiumExternal;
+            entity.FiberExternal = orig.FiberExternal;
+            entity.SugarExternal = orig.SugarExternal;
+
             _context.Entry(orig).CurrentValues.SetValues(entity);
 
             await _context.SaveChangesAsync(cancellationToken);
