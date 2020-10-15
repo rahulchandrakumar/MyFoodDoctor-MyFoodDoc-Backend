@@ -1,4 +1,4 @@
-﻿namespace MyFoodDoc.App.Application.Configuration
+﻿namespace MyFoodDoc.Application.Configuration
 {
     public class StatisticsOptions
     {

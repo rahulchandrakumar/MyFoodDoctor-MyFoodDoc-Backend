@@ -6,7 +6,6 @@ using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using MyFoodDoc.Application;
 using MyFoodDoc.FatSecretClient;
-using MyFoodDoc.App.Application.Configuration;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Services;
 using MyFoodDoc.AppStoreClient;
@@ -17,11 +16,9 @@ namespace MyFoodDoc.App.Application
     {
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<StatisticsOptions>(configuration.GetSection("Statistics"));
-
             services.AddSharedAppStoreClient(configuration);
             services.AddSharedFatSecretClient(configuration);
-            services.AddSharedApplication();
+            services.AddSharedApplication(configuration);
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 

@@ -3,6 +3,7 @@
                     store-name="lexicon"
                     editor-title-suffix="lexicon item"
                     :headers="mainHeaders"
+                    :parent="parent"
                     :before-save="beforeSave">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
@@ -88,7 +89,7 @@
                 parent: {
                     path: "Lexicon Categories",
                     title: "Lexicon Category",
-                    titleProperty: "totle",
+                    titleProperty: "title",
                     storeName: "lexiconcategories"
                 },
                 preview: false
