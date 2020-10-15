@@ -14,6 +14,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="1.15.0" />
+    <PackageReference Include="Google.Apis" Version="1.49.0" />
+    <PackageReference Include="Google.Apis.AndroidPublisher.v3" Version="1.49.0.2100" />
+    <PackageReference Include="Google.Cloud.PubSub.V1" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.7" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.9" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
@@ -24,6 +27,9 @@
     <ProjectReference Include="..\MyFoodDoc.Infrastructure\MyFoodDoc.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="google.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
