@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
-using MyFoodDoc.App.Application.Configuration;
+using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Target;
 using MyFoodDoc.Application.Abstractions;

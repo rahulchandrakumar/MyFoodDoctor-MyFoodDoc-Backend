@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.FatSecretClient.Abstractions;
 using MyFoodDoc.FatSecretClient.Clients;
-using MyFoodDoc.App.Application.Configuration;
+using MyFoodDoc.Application.Configuration;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Entities.Diary;
 

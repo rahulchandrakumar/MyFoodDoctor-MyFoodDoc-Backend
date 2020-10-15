@@ -4,6 +4,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyFoodDoc.Application;
 using MyFoodDoc.Infrastructure;
 using MyFoodDoc.Core.Configuration.ConfigurationMapper;
 using MyFoodDoc.FatSecretClient;
@@ -28,7 +29,7 @@ namespace MyFoodDoc.Functions
             builder.Services.AddSingleton<IConfiguration>(configuration);
 
             builder.Services.AddSharedInfrastructure(configuration, null);
-
+            builder.Services.AddSharedApplication(configuration);
             builder.Services.AddSharedFatSecretClient(configuration);
 
             builder.Services.Configure<FirebaseClientOptions>(
