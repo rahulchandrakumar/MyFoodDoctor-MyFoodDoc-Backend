@@ -75,6 +75,14 @@ export default [
     },
     {
         path: "/method-list",
+        name: "Generic methods",
+        view: "Data/MethodList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
+        path: "/method-list/:parentId",
         name: "Methods",
         view: "Data/MethodList",
         meta: {

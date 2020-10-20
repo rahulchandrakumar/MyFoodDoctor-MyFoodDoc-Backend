@@ -91,6 +91,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Include(x => x.Image)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
+            foreach (var child in await _context.Methods.Where(x => x.ParentId == id).ToListAsync(cancellationToken))
+                await DeleteItem(child.Id, cancellationToken);
+
             if (entity.Type == MethodType.Knowledge)
                 foreach (var methodMultipleChoice in await _context.MethodMultipleChoice.Where(x => x.MethodId == id).ToListAsync(cancellationToken))
                     await _methodMultipleChoiceService.DeleteItem(methodMultipleChoice.Id, cancellationToken);
@@ -123,7 +126,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return MethodModel.FromEntity(entity);
         }
 
-        public async Task<IList<Method>> GetItems(string search, CancellationToken cancellationToken = default)
+        public async Task<IList<Method>> GetItems(int? parentId, string search, CancellationToken cancellationToken = default)
         {
             var entities = await _context.Methods
                 .Include(x => x.Image)
@@ -132,6 +135,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
                 .AsNoTracking()
+                .Where(x=> x.ParentId == parentId)
                 .ToListAsync(cancellationToken);
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -144,18 +148,18 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return entities;
         }
 
-        public async Task<IList<MethodModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<IList<MethodModel>> GetItems(int? parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = (await GetItems(search, cancellationToken))
+            var entities = (await GetItems(parentId, search, cancellationToken))
                 .Skip(skip).Take(take)
                 .ToList();
 
             return entities.Select(MethodModel.FromEntity).ToList();
         }
 
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
+        public async Task<long> GetItemsCount(int? parentId, string search, CancellationToken cancellationToken = default)
         {
-            return (await GetItems(search, cancellationToken)).Count();
+            return (await GetItems(parentId, search, cancellationToken)).Count();
         }
 
         public async Task<MethodModel> UpdateItem(MethodModel item, CancellationToken cancellationToken = default)

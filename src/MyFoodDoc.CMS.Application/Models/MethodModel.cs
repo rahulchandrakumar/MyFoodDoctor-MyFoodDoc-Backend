@@ -14,6 +14,8 @@ namespace MyFoodDoc.CMS.Application.Models
         public string Text { get; set; }
         public int? Frequency { get; set; }
         public string FrequencyPeriod { get; set; }
+        public int? ParentId { get; set; }
+
         public ImageModel Image { get; set; }
         public IList<int> Targets { get; set; }
         public IList<int> Diets { get; set; }
@@ -30,6 +32,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Text = entity.Text,
                 Frequency = entity.Frequency,
                 FrequencyPeriod = entity.FrequencyPeriod?.ToString(),
+                ParentId = entity.ParentId,
                 Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
                 Targets = entity.Targets?.Select(x => x.TargetId).ToList(),
                 Diets = entity.Diets?.Select(x => x.DietId).ToList(),
@@ -48,6 +51,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Text = this.Text,
                 Frequency = this.Frequency,
                 FrequencyPeriod = string.IsNullOrEmpty(this.FrequencyPeriod) ? (MethodFrequencyPeriod?)null : Enum.Parse<MethodFrequencyPeriod>(this.FrequencyPeriod),
+                ParentId = this.ParentId,
                 ImageId = this.Image == null || string.IsNullOrEmpty(this.Image.Url) ? (int?)null : this.Image.Id,
             };
         }
