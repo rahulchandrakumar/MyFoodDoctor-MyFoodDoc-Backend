@@ -78,7 +78,7 @@ export default {
             commit("setItem", item)
         }
     },
-    itemDeleted: async ({ state, commit }, { Id, ParentId}) => {
+    itemDeleted: async ({ state, commit, dispatch }, { Id, ParentId}) => {
         var item = null;
         if (state.items.filter(i => i.id == Id).length > 0 && state.total > state.take) {
             item = await dispatch('loadOneMoreItem', { parentId: ParentId })

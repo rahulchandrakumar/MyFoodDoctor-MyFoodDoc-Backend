@@ -6,6 +6,7 @@
                     :before-add="init"
                     :before-edit="beforeEdit"
                     :before-save="beforeSave"
+                    :parent="parent"
                     :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
@@ -67,7 +68,7 @@
                            :items="methodFrequencyPeriods"
                            label="Frequency period" />
             </v-row>
-            <v-row>
+            <v-row v-if="item.type && item.type != 'Information' && item.type != 'Knowledge'">
                 <v-col>
                     <VeeCheckList title="Targets"
                                   :availableItems="targetList"
@@ -112,7 +113,8 @@ import { toggle } from '../../utils/vuex';
             VeeImage: () => import("@/components/inputs/VeeImage")
         },
         data() {
-            return {
+
+            var result = {
                 mainHeaders: [{
                     filterable: false,
                     sortable: false,
@@ -127,8 +129,13 @@ import { toggle } from '../../utils/vuex';
                     sortable: true,
                     value: "title",
                     text: "Title"
-                }],
+                    }],
+                parent: null,
                 childLinks: [{
+                    path: "Methods",
+                    title: "Edit methods",
+                    visible: (item) => item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals'
+                }, {
                     path: "Method Multiple Choices",
                     title: "Edit multiple choices",
                     visible: (item) => item.type == 'Knowledge'
@@ -139,9 +146,27 @@ import { toggle } from '../../utils/vuex';
                 motivationList: [],
                 preview: false
             }
+
+            if (this.$route.params != null && this.$route.params.parentId != null) {
+                result.parent = {
+                    path: "Generic methods",
+                    title: "Method",
+                    titleProperty: "title",
+                    storeName: "methods"
+                };
+            }
+
+            return result;
         },
         async created() {
             this.types = Object.values(MethodType);
+
+            if (this.$route.params != null && this.$route.params.parentId != null) {
+                this.types = [MethodType.INFORMATION, MethodType.KNOWLEDGE];
+            }
+            else {
+                this.types = Object.values(MethodType).filter((item) => item != MethodType.INFORMATION && item != MethodType.KNOWLEDGE);
+            }
 
             this.methodFrequencyPeriods = [''];
             this.methodFrequencyPeriods = this.methodFrequencyPeriods.concat(Object.values(MethodFrequencyPeriod));
@@ -171,6 +196,8 @@ import { toggle } from '../../utils/vuex';
                     item.frequency = null;
                     item.frequencyPeriod = null;
                 }
+
+                item.parentId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");

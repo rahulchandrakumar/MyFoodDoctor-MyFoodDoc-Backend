@@ -272,7 +272,11 @@
             },
             async deletedItems(newVal) {
                 while ((newVal || []).length > 0) {
-                    await this.$store.dispatch(this.storeName + "/itemDeleted", { Id: newVal.pop() })
+                    if (this.$route.params != null && this.$route.params.parentId != null) {
+                        await this.$store.dispatch(this.storeName + "/itemDeleted", { Id: newVal.pop(), ParentId: this.$route.params.parentId })
+                    } else {
+                        await this.$store.dispatch(this.storeName + "/itemDeleted", { Id: newVal.pop() })
+                    }
                 }
             }
         },

@@ -47,7 +47,7 @@
                 }],
                 parent: {
                     path: "Methods",
-                    parentIdProperty: "targetId",
+                    parentIdProperty: "parentId",
                     title: "Method",
                     titleProperty: "title",
                     storeName: "methods"
