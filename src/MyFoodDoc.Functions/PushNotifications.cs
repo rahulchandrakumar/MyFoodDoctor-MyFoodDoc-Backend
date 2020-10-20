@@ -102,7 +102,7 @@ namespace MyFoodDoc.Functions
                     var isFirstTargetsEvaluation = !(await _context.UserTargets.AnyAsync(x =>
                         x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode), cancellationToken));
 
-                    if (user.Created > dateToCheck.AddDays(-7) && !diaryRecords.Any())
+                    if (userCreatedDate <= dateToCheck.AddDays(-7) && !diaryRecords.Any())
                     {
                         notifications.Add(new FirebaseNotification()
                         {
@@ -111,7 +111,7 @@ namespace MyFoodDoc.Functions
                             DeviceToken = user.DeviceToken
                         });
                     }
-                    else if (user.Created > dateToCheck.AddDays(-5) && !diaryRecords.Any(x => x.Date == dateToCheck.AddDays(-5)))
+                    else if (userCreatedDate <= dateToCheck.AddDays(-5) && !diaryRecords.Any(x => x.Date == dateToCheck.AddDays(-5)))
                     {
                         notifications.Add(new FirebaseNotification()
                         {
