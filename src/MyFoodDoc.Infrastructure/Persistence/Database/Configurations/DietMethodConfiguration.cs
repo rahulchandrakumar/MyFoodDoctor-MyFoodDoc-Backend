@@ -13,6 +13,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         {
             builder.ToTable("DietMethods", "System");
             builder.HasKey(x => new { x.DietId, x.MethodId });
+            builder.Property(x => x.IsContraindication).HasDefaultValue(false);
 
             builder.HasOne(x => x.Diet)
                 .WithMany(x => x.Methods)
