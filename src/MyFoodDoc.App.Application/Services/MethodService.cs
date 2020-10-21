@@ -27,7 +27,7 @@ namespace MyFoodDoc.App.Application.Services
             _userHistoryService = userHistoryService;
         }
 
-        public async Task<ICollection<MethodDto>> GetAsync(string userId, CancellationToken cancellationToken)
+        public async Task<ICollection<MethodDto>> GetAsync(string userId, DateTime date, CancellationToken cancellationToken)
         {
             var result = new List<MethodDto>();
 
@@ -38,7 +38,7 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            if (user.SubscriptionExpirationDate == null || user.SubscriptionExpirationDate.Value < DateTime.Now)
+            if (user.SubscriptionExpirationDate == null || user.SubscriptionExpirationDate.Value < date)
                 return result;
 
             var userDiets = await _context.UserDiets.AsNoTracking()
@@ -74,8 +74,10 @@ namespace MyFoodDoc.App.Application.Services
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x => x.Image)
+                .Include(x=> x.Children)
+                .ThenInclude(x => x.Image)
                 .AsNoTracking()
-                .Where(x => availableMethodIds.Contains(x.Id))
+                .Where(x => availableMethodIds.Contains(x.Id) && x.ParentId == null)
                 .ToListAsync(cancellationToken))
             {
                 if (!method.Targets.Any() && method.Frequency == null && method.FrequencyPeriod == null)
@@ -84,75 +86,39 @@ namespace MyFoodDoc.App.Application.Services
                 if (method.Targets.Any() && !method.Targets.Any(x => userTargetIds.Contains(x.TargetId)))
                     continue;
 
-                if (method.Frequency != null && method.FrequencyPeriod != null)
+                if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals) && method.Children.Any())
                 {
-                    int daysInPeriod = 0;
+                    var userMethod = await _context.UserMethods.AsNoTracking()
+                        .Where(x =>
+                            x.UserId == userId && x.MethodId == method.Id).OrderBy(x => x.LastModified ?? x.Created)
+                        .LastOrDefaultAsync(cancellationToken);
 
-                    switch (method.FrequencyPeriod.Value)
-                    {
-                        case MethodFrequencyPeriod.Day:
-                            daysInPeriod = 1;
-                            break;
-                        case MethodFrequencyPeriod.Week:
-                            daysInPeriod = 7;
-                            break;
-                        case MethodFrequencyPeriod.Month:
-                            daysInPeriod = 30;
-                            break;
-                    }
-
-                    var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
-
-                    if (method.Type == MethodType.Information)
-                    {
-                        if (result.Any(x => Enum.Parse<MethodType>(x.Type) == MethodType.Information) ||
-                            (await _context.UserMethodShowHistory.Where(x => x.UserId == userId && x.MethodId == method.Id)
-                                .ToListAsync(cancellationToken))
-                            .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                            continue;
-                    }
-                    else
-                    {
-                        if ((await _context.UserMethods.AsNoTracking()
-                                .Where(x => x.UserId == userId && x.MethodId == method.Id)
-                                .ToListAsync(cancellationToken))
-                            .Any(x => x.Created.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                            continue;
-
-                        switch (method.Type)
+                    if (userMethod?.Answer != null && userMethod.Answer.Value)
+                        foreach (var childMethod in method.Children)
                         {
-                            case MethodType.AbdominalGirth:
-
-                                if ((await _context.UserAbdominalGirths.AsNoTracking()
-                                        .Where(x => x.UserId == userId)
-                                        .ToListAsync(cancellationToken))
-                                    .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                            if (childMethod.Frequency != null && childMethod.FrequencyPeriod != null)
+                            {
+                                //TODO: Check logic
+                                if (result.Any(x => Enum.Parse<MethodType>(x.Type) == childMethod.Type))
                                     continue;
 
-                                break;
-                            case MethodType.Mood:
-
-                                if ((await _context.Meals.AsNoTracking()
-                                        .Where(x => x.UserId == userId && x.Mood != null)
-                                        .ToListAsync(cancellationToken))
-                                    .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
+                                if (!await CheckFrequency(userId, childMethod, date, cancellationToken))
                                     continue;
+                            }
 
-                                break;
-                            case MethodType.Weight:
+                            var childMethodDto = await GetMethodWithAnswersAsync(userId, childMethod, date, cancellationToken);
 
-                                if ((await _context.UserWeights.AsNoTracking()
-                                        .Where(x => x.UserId == userId)
-                                        .ToListAsync(cancellationToken))
-                                    .Any(x => x.Date.ToLocalTime() > DateTime.Now.Subtract(checkPeriod)))
-                                    continue;
-
-                                break;
+                            result.Add(childMethodDto);
                         }
-                    }
                 }
 
-                var methodDto = await GetMethodWithAnswersAsync(userId, method, DateTime.Now, cancellationToken);
+                if (method.Frequency != null && method.FrequencyPeriod != null)
+                {
+                    if (!await CheckFrequency(userId, method, date, cancellationToken))
+                        continue;
+                }
+
+                var methodDto = await GetMethodWithAnswersAsync(userId, method, date, cancellationToken);
 
                 result.Add(methodDto);
             }
@@ -164,6 +130,75 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             return result;
+        }
+
+        private async Task<bool> CheckFrequency(string userId, Method method, DateTime date, CancellationToken cancellationToken)
+        {
+            int daysInPeriod = 0;
+
+            switch (method.FrequencyPeriod.Value)
+            {
+                case MethodFrequencyPeriod.Day:
+                    daysInPeriod = 1;
+                    break;
+                case MethodFrequencyPeriod.Week:
+                    daysInPeriod = 7;
+                    break;
+                case MethodFrequencyPeriod.Month:
+                    daysInPeriod = 30;
+                    break;
+            }
+
+            var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
+
+            if (method.Type == MethodType.Information)
+            {
+                if ((await _context.UserMethodShowHistory.Where(x => x.UserId == userId && x.MethodId == method.Id)
+                        .ToListAsync(cancellationToken))
+                    .Any(x => x.Date.ToLocalTime() > date.Subtract(checkPeriod)))
+                    return false;
+            }
+            else
+            {
+                if ((await _context.UserMethods.AsNoTracking()
+                        .Where(x => x.UserId == userId && x.MethodId == method.Id)
+                        .ToListAsync(cancellationToken))
+                    .Any(x => x.Created.ToLocalTime() > date.Subtract(checkPeriod)))
+                    return false;
+
+                switch (method.Type)
+                {
+                    case MethodType.AbdominalGirth:
+
+                        if ((await _context.UserAbdominalGirths.AsNoTracking()
+                                .Where(x => x.UserId == userId)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => x.Date.ToLocalTime() > date.Subtract(checkPeriod)))
+                            return false;
+
+                        break;
+                    case MethodType.Mood:
+
+                        if ((await _context.Meals.AsNoTracking()
+                                .Where(x => x.UserId == userId && x.Mood != null)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => x.Date.ToLocalTime() > date.Subtract(checkPeriod)))
+                            return false;
+
+                        break;
+                    case MethodType.Weight:
+
+                        if ((await _context.UserWeights.AsNoTracking()
+                                .Where(x => x.UserId == userId)
+                                .ToListAsync(cancellationToken))
+                            .Any(x => x.Date.ToLocalTime() > date.Subtract(checkPeriod)))
+                            return false;
+
+                        break;
+                }
+            }
+
+            return true;
         }
 
         public async Task<ICollection<MethodDto>> GetByDateAsync(string userId, DateTime date,

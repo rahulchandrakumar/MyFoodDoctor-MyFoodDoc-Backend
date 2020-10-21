@@ -253,11 +253,20 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.Id == userId)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (user.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var dateToCheck = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+            var userCreatedDate = new DateTime(user.Created.Year, user.Created.Month, user.Created.Day);
+
+            if (userCreatedDate > dateToCheck.AddDays(-_statisticsPeriod))
                 return false;
 
             return await _context.Meals
-                    .Where(x => x.UserId == userId && x.Date > DateTime.Now.AddDays(-_statisticsPeriod))
+                    .Where(x => x.UserId == userId && x.Date >= dateToCheck.AddDays(-_statisticsPeriod) && x.Date < dateToCheck)
                     .Select(x => x.Date)
                     .Distinct()
                     .CountAsync(cancellationToken) >= _statisticsMinimumDays;
