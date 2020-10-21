@@ -9,6 +9,8 @@ namespace MyFoodDoc.Application.Entities
 
         public int MethodId { get; set; }
 
+        public bool IsContraindication { get; set; }
+
         public Indication Indication { get; set; }
 
         public Method Method { get; set; }
