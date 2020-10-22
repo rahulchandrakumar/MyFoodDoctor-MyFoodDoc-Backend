@@ -35,7 +35,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("PushNotifications")]
         public async Task RunAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
@@ -214,7 +214,7 @@ namespace MyFoodDoc.Functions
                     else
                     {
                         var lastTargetActivated = await _context.UserTargets.Where(x =>
-                            x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderByDescending(x => x.Created).SingleOrDefaultAsync(cancellationToken);
+                            x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                         if (lastTargetActivated != null)
                         {
