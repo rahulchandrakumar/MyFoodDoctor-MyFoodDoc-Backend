@@ -19,8 +19,11 @@ namespace MyFoodDoc.CMS.Application.Models
         public ImageModel Image { get; set; }
         public IList<int> Targets { get; set; }
         public IList<int> Diets { get; set; }
+        public IList<int> ContraindicatedDiets { get; set; }
         public IList<int> Indications { get; set; }
+        public IList<int> Contraindications { get; set; }
         public IList<int> Motivations { get; set; }
+        public IList<int> ContraindicatedMotivations { get; set; }
 
         public static MethodModel FromEntity(Method entity)
         {
@@ -35,9 +38,12 @@ namespace MyFoodDoc.CMS.Application.Models
                 ParentId = entity.ParentId,
                 Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
                 Targets = entity.Targets?.Select(x => x.TargetId).ToList(),
-                Diets = entity.Diets?.Select(x => x.DietId).ToList(),
-                Indications = entity.Indications?.Select(x => x.IndicationId).ToList(),
-                Motivations = entity.Motivations?.Select(x => x.MotivationId).ToList()
+                Diets = entity.Diets?.Where(x=> !x.IsContraindication).Select(x => x.DietId).ToList(),
+                ContraindicatedDiets = entity.Diets?.Where(x => x.IsContraindication).Select(x => x.DietId).ToList(),
+                Indications = entity.Indications?.Where(x => !x.IsContraindication).Select(x => x.IndicationId).ToList(),
+                Contraindications = entity.Indications?.Where(x => x.IsContraindication).Select(x => x.IndicationId).ToList(),
+                Motivations = entity.Motivations?.Where(x => !x.IsContraindication).Select(x => x.MotivationId).ToList(),
+                ContraindicatedMotivations = entity.Motivations?.Where(x => x.IsContraindication).Select(x => x.MotivationId).ToList()
             };
         }
 
@@ -63,17 +69,43 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public IList<DietMethod> ToDietMethodEntities()
         {
-            return this.Diets?.Select(x => new DietMethod { DietId = x, MethodId = this.Id }).ToList();
+            var diets = this.Diets != null ? this.Diets.Select(x => new DietMethod
+                {DietId = x, MethodId = this.Id, IsContraindication = false}).ToList() : new List<DietMethod>();
+            
+            var contraindicatedDiets = this.ContraindicatedDiets != null ? this.ContraindicatedDiets.Select(x => new DietMethod
+                {DietId = x, MethodId = this.Id, IsContraindication = true}).ToList() : new List<DietMethod>();
+
+            return diets.Union(contraindicatedDiets).ToList();
         }
 
         public IList<IndicationMethod> ToIndicationMethodEntities()
         {
-            return this.Indications?.Select(x => new IndicationMethod { IndicationId = x, MethodId = this.Id }).ToList();
+            var indications = this.Indications != null
+                ? this.Indications.Select(x => new IndicationMethod
+                    {IndicationId = x, MethodId = this.Id, IsContraindication = false}).ToList()
+                : new List<IndicationMethod>();
+
+            var contraindications = this.Contraindications != null
+                ? this.Contraindications.Select(x => new IndicationMethod
+                    { IndicationId = x, MethodId = this.Id, IsContraindication = true }).ToList()
+                : new List<IndicationMethod>();
+
+            return indications.Union(contraindications).ToList();
         }
 
         public IList<MotivationMethod> ToMotivationMethodEntities()
         {
-            return this.Motivations?.Select(x => new MotivationMethod { MotivationId = x, MethodId = this.Id }).ToList();
+            var motivations = this.Motivations != null
+                ? this.Motivations.Select(x => new MotivationMethod
+                    {MotivationId = x, MethodId = this.Id, IsContraindication = false})
+                : new List<MotivationMethod>();
+
+            var contraindicatedMotivations = this.ContraindicatedMotivations != null
+                ? this.ContraindicatedMotivations.Select(x => new MotivationMethod
+                    { MotivationId = x, MethodId = this.Id, IsContraindication = true })
+                : new List<MotivationMethod>();
+
+            return motivations.Union(contraindicatedMotivations).ToList();
         }
     }
 }

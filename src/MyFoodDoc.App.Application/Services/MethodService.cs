@@ -48,23 +48,6 @@ namespace MyFoodDoc.App.Application.Services
             var userMotivations = await _context.UserMotivations.AsNoTracking()
                 .Where(x => x.UserId == userId).Select(x => x.MotivationId).ToListAsync(cancellationToken);
 
-            var dietMethods = userDiets.Any() ? await _context.DietMethods.AsNoTracking()
-                .Where(x => userDiets.Contains(x.DietId))
-                .Select(x => x.MethodId).ToListAsync(cancellationToken) : new List<int>();
-            var indicationMethods = userIndications.Any() ? await _context.IndicationMethods.AsNoTracking()
-                .Where(x => userIndications.Contains(x.IndicationId)).Select(x => x.MethodId)
-                .ToListAsync(cancellationToken) : new List<int>();
-            var motivationMethods = userMotivations.Any() ? await _context.MotivationMethods.AsNoTracking()
-                .Where(x => userMotivations.Contains(x.MotivationId)).Select(x => x.MethodId)
-                .ToListAsync(cancellationToken) : new List<int>();
-
-            var availableMethodIds = dietMethods
-                .Union(indicationMethods)
-                .Union(motivationMethods).Distinct().ToList();
-
-            if (!availableMethodIds.Any())
-                return result;
-
             var userTargetIds = (await _context.UserTargets.AsNoTracking()
                     .Where(x =>
                         x.UserId == userId)
@@ -73,19 +56,37 @@ namespace MyFoodDoc.App.Application.Services
 
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
+                .Include(x => x.Diets)
+                .Include(x => x.Indications)
+                .Include(x => x.Motivations)
                 .Include(x => x.Image)
                 .Include(x=> x.Children)
                 .ThenInclude(x => x.Image)
                 .AsNoTracking()
-                .Where(x => availableMethodIds.Contains(x.Id) && x.ParentId == null)
+                .Where(x => x.ParentId == null)
                 .ToListAsync(cancellationToken))
             {
+                //Frequency-based or target-based method check
                 if (!method.Targets.Any() && method.Frequency == null && method.FrequencyPeriod == null)
                     continue;
 
+                //Contraindications check
+                if (method.Diets.Any(x => x.IsContraindication && userDiets.Contains(x.DietId)) ||
+                    method.Indications.Any(x => x.IsContraindication && userIndications.Contains(x.IndicationId)) ||
+                    method.Motivations.Any(x => x.IsContraindication && userMotivations.Contains(x.MotivationId)))
+                    continue;
+
+                //Diets, indications and motivations check
+                if (!method.Diets.Any(x => !x.IsContraindication && userDiets.Contains(x.DietId)) &&
+                    !method.Indications.Any(x => !x.IsContraindication && userIndications.Contains(x.IndicationId)) &&
+                    !method.Motivations.Any(x => !x.IsContraindication && userMotivations.Contains(x.MotivationId)))
+                    continue;
+
+                //Target-based method check
                 if (method.Targets.Any() && !method.Targets.Any(x => userTargetIds.Contains(x.TargetId)))
                     continue;
 
+                //Child methods check
                 if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals) && method.Children.Any())
                 {
                     var userMethod = await _context.UserMethods.AsNoTracking()
@@ -96,6 +97,7 @@ namespace MyFoodDoc.App.Application.Services
                     if (userMethod?.Answer != null && userMethod.Answer.Value)
                         foreach (var childMethod in method.Children)
                         {
+                            //Frequency-based method check
                             if (childMethod.Frequency != null && childMethod.FrequencyPeriod != null)
                             {
                                 //TODO: Check logic
@@ -112,6 +114,7 @@ namespace MyFoodDoc.App.Application.Services
                         }
                 }
 
+                //Frequency-based method check
                 if (method.Frequency != null && method.FrequencyPeriod != null)
                 {
                     if (!await CheckFrequency(userId, method, date, cancellationToken))
