@@ -81,14 +81,29 @@
                                   :checkedItems="item.diets" />
                 </v-col>
                 <v-col>
+                    <VeeCheckList title="Contraindicated diets"
+                                  :availableItems="dietList"
+                                  :checkedItems="item.contraindicatedDiets" />
+                </v-col>
+                <v-col>
                     <VeeCheckList title="Indications"
                                   :availableItems="indicationList"
                                   :checkedItems="item.indications" />
                 </v-col>
                 <v-col>
+                    <VeeCheckList title="Contraindications"
+                                  :availableItems="indicationList"
+                                  :checkedItems="item.contraindications" />
+                </v-col>
+                <v-col>
                     <VeeCheckList title="Motivations"
                                   :availableItems="motivationList"
                                   :checkedItems="item.motivations" />
+                </v-col>
+                <v-col>
+                    <VeeCheckList title="Contraindicated motivations"
+                                  :availableItems="motivationList"
+                                  :checkedItems="item.contraindicatedMotivations" />
                 </v-col>
             </v-row>
         </template>
@@ -180,8 +195,11 @@ import { toggle } from '../../utils/vuex';
             async init(item) {
                 if (!item.targets) item.targets = [];
                 if (!item.diets) item.diets = [];
+                if (!item.contraindicatedDiets) item.contraindicatedDiets = [];
                 if (!item.indications) item.indications = [];
+                if (!item.contraindications) item.contraindications = [];
                 if (!item.motivations) item.motivations = [];
+                if (!item.contraindicatedMotivations) item.contraindicatedMotivations = [];
             },
             async beforeEdit(item) {
                 this.init(item);
