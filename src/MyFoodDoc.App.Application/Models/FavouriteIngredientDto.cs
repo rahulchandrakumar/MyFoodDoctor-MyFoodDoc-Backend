@@ -9,7 +9,7 @@ namespace MyFoodDoc.App.Application.Models
 {
     public class FavouriteIngredientDto : IMapFrom<FavouriteIngredient>
     {
-        public DiaryEntryDtoIngredient Ingredient { get; set; }
+        public IngredientDto Ingredient { get; set; }
 
         public decimal Amount { get; set; }
 
