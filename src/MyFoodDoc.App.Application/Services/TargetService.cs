@@ -23,6 +23,7 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IFoodService _foodService;
         private readonly IDiaryService _diaryService;
         private readonly int _statisticsPeriod;
+        private readonly int _statisticsMinimumDays;
 
         public TargetService(IApplicationContext context, IFoodService foodService, IDiaryService diaryService, IOptions<StatisticsOptions> statisticsOptions)
         {
@@ -30,6 +31,7 @@ namespace MyFoodDoc.App.Application.Services
             _foodService = foodService;
             _diaryService = diaryService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
+            _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
         public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, DateTime onDate, CancellationToken cancellationToken)
@@ -584,6 +586,64 @@ namespace MyFoodDoc.App.Application.Services
         {
             return await _context.UserTargets.AnyAsync(x =>
                 x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
+        }
+
+        public async Task<int> GetDaysTillEvaluationAsync(string userId, CancellationToken cancellationToken)
+        {
+            var user = await _context.Users
+                .Where(x => x.Id == userId)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            if (await AnyAnswered(userId, cancellationToken))
+                return 0;
+
+            var dateToCheck = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+
+            var userCreatedDate = new DateTime(user.Created.Year, user.Created.Month, user.Created.Day);
+
+            var daysSinceCreation = (dateToCheck - userCreatedDate).Days;
+
+            var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date >= dateToCheck.AddDays(-_statisticsPeriod) && x.Date < dateToCheck).ToListAsync(cancellationToken);
+
+            var daysRecorded = diaryRecords.Select(x => x.Date)
+                .Distinct()
+                .Count();
+
+            if (daysSinceCreation <= _statisticsPeriod - _statisticsMinimumDays)
+                return _statisticsPeriod - daysSinceCreation;
+            else if (daysSinceCreation > _statisticsPeriod - _statisticsMinimumDays && daysSinceCreation < _statisticsPeriod)
+            {
+                if (daysRecorded + _statisticsPeriod - daysSinceCreation >= _statisticsMinimumDays)
+                    return _statisticsPeriod - daysSinceCreation;
+                else
+                    return _statisticsMinimumDays - daysRecorded;
+            }
+            else
+            {
+                if (daysRecorded >= _statisticsMinimumDays)
+                    return 0;
+                else
+                {
+                    for (int i = 1; i < _statisticsMinimumDays; i++)
+                    {
+                        daysRecorded = diaryRecords.Where(x =>
+                                x.Date >= dateToCheck.AddDays(-_statisticsPeriod + i))
+                            .Select(x => x.Date)
+                            .Distinct()
+                            .Count();
+
+                        if (daysRecorded + i == _statisticsMinimumDays)
+                            return i;
+                    }
+
+                    return _statisticsMinimumDays;
+                }
+            }
         }
     }
 }
