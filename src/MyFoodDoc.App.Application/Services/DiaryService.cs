@@ -141,15 +141,20 @@ namespace MyFoodDoc.App.Application.Services
 
             if (oldMealFavourites.Any())
             {
-                var oldFavourites = oldMealFavourites.Select(x=> x.Favourite).ToList();
+                var favouritesToRemove = oldMealFavourites.
+                    Where(x => !x.Favourite.IsGeneric && !payload.Favourites.Any(y => y.FavouriteId == x.FavouriteId))
+                    .Select(x=> x.Favourite).ToList();
 
                 _context.MealFavourites.RemoveRange(oldMealFavourites);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Favourites.RemoveRange(oldFavourites);
+                if (favouritesToRemove.Any())
+                {
+                    _context.Favourites.RemoveRange(favouritesToRemove);
 
-                await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
             }
 
             await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
@@ -371,39 +376,50 @@ namespace MyFoodDoc.App.Application.Services
 
                 foreach (var favourite in favourites)
                 {
-                    var genericFavourite = await _context.Favourites
+                    var favouriteToInsert = await _context.Favourites
                         .Include(x => x.Ingredients)
                         .Where(x => x.Id == favourite.FavouriteId)
                         .SingleOrDefaultAsync(cancellationToken);
 
-                    if (genericFavourite == null)
+                    if (favouriteToInsert == null)
                     {
                         throw new NotFoundException(nameof(Favourite), favourite.FavouriteId);
                     }
 
-                    var copiedFavourite = new Favourite
+                    if (favouriteToInsert.IsGeneric)
                     {
-                        UserId = genericFavourite.UserId,
-                        Title = genericFavourite.Title,
-                        IsGeneric = false
-                    };
+                        var copiedFavourite = new Favourite
+                        {
+                            UserId = favouriteToInsert.UserId,
+                            Title = favouriteToInsert.Title,
+                            IsGeneric = false
+                        };
 
-                    await _context.Favourites.AddAsync(copiedFavourite, cancellationToken);
+                        await _context.Favourites.AddAsync(copiedFavourite, cancellationToken);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                        await _context.SaveChangesAsync(cancellationToken);
 
-                    var favouriteIngredients = new List<FavouriteIngredient>();
+                        var favouriteIngredients = new List<FavouriteIngredient>();
 
-                    foreach (var ingredient in genericFavourite.Ingredients)
-                    {
-                        favouriteIngredients.Add(new FavouriteIngredient { FavouriteId = copiedFavourite.Id, IngredientId = ingredient.IngredientId, Amount = ingredient.Amount});
+                        foreach (var ingredient in favouriteToInsert.Ingredients)
+                        {
+                            favouriteIngredients.Add(new FavouriteIngredient
+                            {
+                                FavouriteId = copiedFavourite.Id, IngredientId = ingredient.IngredientId,
+                                Amount = ingredient.Amount
+                            });
+                        }
+
+                        await _context.FavouriteIngredients.AddRangeAsync(favouriteIngredients, cancellationToken);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = copiedFavourite.Id });
                     }
-
-                    await _context.FavouriteIngredients.AddRangeAsync(favouriteIngredients, cancellationToken);
-
-                    await _context.SaveChangesAsync(cancellationToken);
-
-                    mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = copiedFavourite.Id });
+                    else
+                    {
+                        mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = favourite.FavouriteId });
+                    }
                 }
 
                 await _context.MealFavourites.AddRangeAsync(mealFavourites, cancellationToken);
