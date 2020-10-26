@@ -1,6 +1,7 @@
 <template>
     <div>
-        <span>{{ title }}</span>
+        <span v-if="title != null">{{ title }}</span>
+        <v-icon v-if="icon != null">{{ icon }}</v-icon>
         <ul>
             <li v-for="availableItem in availableItems">
                 <input type="checkbox" v-bind:checked="isListItemChecked(availableItem.id)" v-on:change="toggleListItemCheckBox($event)" v-bind:id="availableItem.id" />
@@ -14,8 +15,10 @@
     export default {
         props: {
             title: {
-                type: String,
-                required: true
+                type: String
+            },
+            icon: {
+                type: String
             },
             labelField: {
                 type: String

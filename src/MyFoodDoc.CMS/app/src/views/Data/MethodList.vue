@@ -69,42 +69,81 @@
                            label="Frequency period" />
             </v-row>
             <v-row v-if="item.type && item.type != 'Information' && item.type != 'Knowledge'">
-                <v-col>
-                    <VeeCheckList title="Targets"
-                                  :availableItems="targetList"
-                                  :checkedItems="item.targets"
-                                  labelField="title" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Diets"
-                                  :availableItems="dietList"
-                                  :checkedItems="item.diets" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Contraindicated diets"
-                                  :availableItems="dietList"
-                                  :checkedItems="item.contraindicatedDiets" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Indications"
-                                  :availableItems="indicationList"
-                                  :checkedItems="item.indications" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Contraindications"
-                                  :availableItems="indicationList"
-                                  :checkedItems="item.contraindications" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Motivations"
-                                  :availableItems="motivationList"
-                                  :checkedItems="item.motivations" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Contraindicated motivations"
-                                  :availableItems="motivationList"
-                                  :checkedItems="item.contraindicatedMotivations" />
-                </v-col>
+                <v-container>
+                    <v-layout justify-center row wrap>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <span style="font: bold">Targets</span>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList :availableItems="targetList"
+                                                  :checkedItems="item.targets"
+                                                  labelField="title" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <span>Diets</span>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-up-outline"
+                                                  :availableItems="dietList"
+                                                  :checkedItems="item.diets" />
+                                </v-col>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-down-outline"
+                                                  :availableItems="dietList"
+                                                  :checkedItems="item.contraindicatedDiets" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <span>Indications</span>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-up-outline"
+                                                  :availableItems="indicationList"
+                                                  :checkedItems="item.indications" />
+                                </v-col>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-down-outline"
+                                                  :availableItems="indicationList"
+                                                  :checkedItems="item.contraindications" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <span>Motivations</span>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-up-outline"
+                                                  :availableItems="motivationList"
+                                                  :checkedItems="item.motivations" />
+                                </v-col>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-down-outline"
+                                                  :availableItems="motivationList"
+                                                  :checkedItems="item.contraindicatedMotivations" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
             </v-row>
         </template>
     </ColabDataTable>
@@ -115,7 +154,7 @@
     import integration from "@/integration";
     import MethodType from "@/enums/MethodType";
     import MethodFrequencyPeriod from "@/enums/MethodFrequencyPeriod";
-import { toggle } from '../../utils/vuex';
+    import { toggle } from '../../utils/vuex';
 
     export default {
         components: {
@@ -144,7 +183,7 @@ import { toggle } from '../../utils/vuex';
                     sortable: true,
                     value: "title",
                     text: "Title"
-                    }],
+                }],
                 parent: null,
                 childLinks: [{
                     path: "Methods",
