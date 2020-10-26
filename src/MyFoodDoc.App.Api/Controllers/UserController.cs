@@ -122,7 +122,7 @@ namespace MyFoodDoc.App.Api.Controllers
                 HasNewTargetsTriggered = await _targetService.NewTriggered(user, cancellationToken),
                 IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(user, cancellationToken)),
                 HasTargetsActivated = await _targetService.AnyActivated(user, cancellationToken),
-                DaysTillEvaluation = await _targetService.GetDaysTillEvaluationAsync(user, cancellationToken)
+                DaysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(user, cancellationToken)
             };
 
             return Ok(result);

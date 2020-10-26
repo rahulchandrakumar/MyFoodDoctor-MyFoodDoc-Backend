@@ -588,7 +588,7 @@ namespace MyFoodDoc.App.Application.Services
                 x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
         }
 
-        public async Task<int> GetDaysTillEvaluationAsync(string userId, CancellationToken cancellationToken)
+        public async Task<int> GetDaysTillFirstEvaluationAsync(string userId, CancellationToken cancellationToken)
         {
             var user = await _context.Users
                 .Where(x => x.Id == userId)

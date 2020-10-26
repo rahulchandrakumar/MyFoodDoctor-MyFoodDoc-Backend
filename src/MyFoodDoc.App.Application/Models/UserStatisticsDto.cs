@@ -7,6 +7,6 @@
         public bool HasNewTargetsTriggered { get; set; }
         public bool IsFirstTargetsEvaluation { get; set; }
         public bool HasTargetsActivated { get; set; }
-        public int DaysTillEvaluation { get; set; }
+        public int DaysTillFirstEvaluation { get; set; }
     }
 }
