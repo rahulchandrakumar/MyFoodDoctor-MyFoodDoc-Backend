@@ -4,8 +4,8 @@ using System.Text;
 
 namespace MyFoodDoc.App.Application.Payloads.Diary
 {
-    public class MealFavouritePayload
+    public class MealFavouritePayload : FavouritePayload
     {
-        public int FavouriteId { get; set; }
+        public int? Id { get; set; }
     }
 }
