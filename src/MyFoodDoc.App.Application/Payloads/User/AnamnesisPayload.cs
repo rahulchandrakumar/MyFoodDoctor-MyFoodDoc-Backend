@@ -15,5 +15,7 @@ namespace MyFoodDoc.App.Application.Payloads.User
         public ICollection<string> Motivations { get; set; }
 
         public ICollection<string> Indications { get; set; }
+
+        public ICollection<string> Diets { get; set; }
     }
 }
