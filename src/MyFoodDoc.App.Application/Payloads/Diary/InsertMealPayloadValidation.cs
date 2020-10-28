@@ -15,6 +15,19 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
             {
                 i.RuleFor(x => x.Amount).GreaterThanOrEqualTo(0);
             });
+
+            RuleForEach(x => x.Favourites).ChildRules(i =>
+            {
+                i.RuleFor(x => x.Title).NotEmpty();
+
+                i.RuleFor(x => x.Ingredients).NotEmpty();
+
+                i.RuleForEach(x => x.Ingredients).ChildRules(j =>
+                {
+                    j.RuleFor(x => x.Amount).GreaterThanOrEqualTo(0);
+                });
+            });
+
             RuleFor(m => m.Mood).InclusiveBetween(1,5);
         }
     }

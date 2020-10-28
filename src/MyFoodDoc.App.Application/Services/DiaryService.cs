@@ -103,7 +103,7 @@ namespace MyFoodDoc.App.Application.Services
 
             await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
 
-            await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
+            await UpsertMealFavourites(userId, meal.Id, payload.Favourites, cancellationToken);
 
             return meal.Id;
         }
@@ -115,6 +115,11 @@ namespace MyFoodDoc.App.Application.Services
             Meal meal = await _context.Meals
                 .Where(x => x.UserId == userId && x.Id == mealId)
                 .SingleOrDefaultAsync(cancellationToken);
+
+            if (meal == null)
+            {
+                throw new NotFoundException(nameof(Meal), mealId);
+            }
 
             meal.Time = payload.Time;
             meal.Type = payload.Type;
@@ -142,7 +147,7 @@ namespace MyFoodDoc.App.Application.Services
             if (oldMealFavourites.Any())
             {
                 var favouritesToRemove = oldMealFavourites.
-                    Where(x => !x.Favourite.IsGeneric && !payload.Favourites.Any(y => y.FavouriteId == x.FavouriteId))
+                    Where(x => !payload.Favourites.Any(y => y.Id == x.FavouriteId))
                     .Select(x=> x.Favourite).ToList();
 
                 _context.MealFavourites.RemoveRange(oldMealFavourites);
@@ -157,7 +162,7 @@ namespace MyFoodDoc.App.Application.Services
                 }
             }
 
-            await UpsertMealFavourites(meal.Id, payload.Favourites, cancellationToken);
+            await UpsertMealFavourites(userId, meal.Id, payload.Favourites, cancellationToken);
 
             return meal.Id;
         }
@@ -167,6 +172,11 @@ namespace MyFoodDoc.App.Application.Services
             var meal = await _context.Meals
                 .Where(x => x.UserId == userId && x.Id == mealId)
                 .SingleOrDefaultAsync(cancellationToken);
+
+            if (meal == null)
+            {
+                throw new NotFoundException(nameof(Meal), mealId);
+            }
 
             var favourites = await _context.MealFavourites
                 .Include(x => x.Favourite)
@@ -368,7 +378,7 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
-        private async Task UpsertMealFavourites(int mealId, IEnumerable<MealFavouritePayload> favourites, CancellationToken cancellationToken)
+        private async Task UpsertMealFavourites(string userId, int mealId, IEnumerable<MealFavouritePayload> favourites, CancellationToken cancellationToken)
         {
             if (favourites != null)
             {
@@ -376,50 +386,16 @@ namespace MyFoodDoc.App.Application.Services
 
                 foreach (var favourite in favourites)
                 {
-                    var favouriteToInsert = await _context.Favourites
-                        .Include(x => x.Ingredients)
-                        .Where(x => x.Id == favourite.FavouriteId)
-                        .SingleOrDefaultAsync(cancellationToken);
-
-                    if (favouriteToInsert == null)
+                    if (favourite.Id == null)
                     {
-                        throw new NotFoundException(nameof(Favourite), favourite.FavouriteId);
-                    }
-
-                    if (favouriteToInsert.IsGeneric)
-                    {
-                        var copiedFavourite = new Favourite
-                        {
-                            UserId = favouriteToInsert.UserId,
-                            Title = favouriteToInsert.Title,
-                            IsGeneric = false
-                        };
-
-                        await _context.Favourites.AddAsync(copiedFavourite, cancellationToken);
-
-                        await _context.SaveChangesAsync(cancellationToken);
-
-                        var favouriteIngredients = new List<FavouriteIngredient>();
-
-                        foreach (var ingredient in favouriteToInsert.Ingredients)
-                        {
-                            favouriteIngredients.Add(new FavouriteIngredient
-                            {
-                                FavouriteId = copiedFavourite.Id, IngredientId = ingredient.IngredientId,
-                                Amount = ingredient.Amount
-                            });
-                        }
-
-                        await _context.FavouriteIngredients.AddRangeAsync(favouriteIngredients, cancellationToken);
-
-                        await _context.SaveChangesAsync(cancellationToken);
-
-                        mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = copiedFavourite.Id });
+                        favourite.Id = await InsertFavouriteAsync(userId, favourite, false, cancellationToken);
                     }
                     else
                     {
-                        mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = favourite.FavouriteId });
+                        await UpdateFavouriteAsync(userId, favourite.Id.Value, favourite, cancellationToken);
                     }
+
+                    mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = favourite.Id.Value });
                 }
 
                 await _context.MealFavourites.AddRangeAsync(mealFavourites, cancellationToken);
@@ -465,7 +441,7 @@ namespace MyFoodDoc.App.Application.Services
             return favourite;
         }
 
-        public async Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, CancellationToken cancellationToken)
+        public async Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, bool isGeneric, CancellationToken cancellationToken)
         {
             await CheckIngredients(payload.Ingredients, cancellationToken);
 
@@ -473,7 +449,7 @@ namespace MyFoodDoc.App.Application.Services
             {
                 UserId = userId,
                 Title = payload.Title,
-                IsGeneric = true
+                IsGeneric = isGeneric
             };
 
             await _context.Favourites.AddAsync(favourite, cancellationToken);
@@ -493,6 +469,11 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.UserId == userId && x.Id == id)
                 .SingleOrDefaultAsync(cancellationToken);
 
+            if (favourite == null)
+            {
+                throw new NotFoundException(nameof(Favourite), id);
+            }
+            
             favourite.Title = payload.Title;
 
             _context.Favourites.Update(favourite);
@@ -515,6 +496,11 @@ namespace MyFoodDoc.App.Application.Services
             var favourite = await _context.Favourites
                 .Where(x => x.UserId == userId && x.Id == id)
                 .SingleOrDefaultAsync(cancellationToken);
+
+            if (favourite == null)
+            {
+                throw new NotFoundException(nameof(Favourite), id);
+            }
 
             _context.Favourites.Remove(favourite);
 
