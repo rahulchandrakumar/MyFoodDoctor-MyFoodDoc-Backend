@@ -74,7 +74,7 @@
                         <v-flex md3>
                             <v-row>
                                 <v-col>
-                                    <span style="font: bold">Targets</span>
+                                    <span style="font-weight: bold">Targets</span>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -88,7 +88,9 @@
                         <v-flex md3>
                             <v-row>
                                 <v-col>
-                                    <span>Diets</span>
+                                    <div style="text-align: center">
+                                        <span style="font-weight: bold">Diets</span>
+                                    </div>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -107,7 +109,9 @@
                         <v-flex md3>
                             <v-row>
                                 <v-col>
-                                    <span>Indications</span>
+                                    <div style="text-align: center">
+                                        <span style="font-weight: bold">Indications</span>
+                                    </div>
                                 </v-col>
                             </v-row>
                             <v-row>
@@ -126,7 +130,9 @@
                         <v-flex md3>
                             <v-row>
                                 <v-col>
-                                    <span>Motivations</span>
+                                    <div style="text-align: center">
+                                        <span style="font-weight: bold">Motivations</span>
+                                    </div>
                                 </v-col>
                             </v-row>
                             <v-row>

@@ -1,7 +1,9 @@
 <template>
     <div>
         <span v-if="title != null">{{ title }}</span>
-        <v-icon v-if="icon != null">{{ icon }}</v-icon>
+        <div v-if="icon != null" style="text-align: center">
+            <v-icon>{{ icon }}</v-icon>
+        </div>
         <ul>
             <li v-for="availableItem in availableItems">
                 <input type="checkbox" v-bind:checked="isListItemChecked(availableItem.id)" v-on:change="toggleListItemCheckBox($event)" v-bind:id="availableItem.id" />
