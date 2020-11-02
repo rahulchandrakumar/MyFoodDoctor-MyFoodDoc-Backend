@@ -9,6 +9,5 @@ namespace MyFoodDoc.FatSecretClient.Clients
         public string Address { get; set; }
         public string ConsumerKey { get; set; }
         public string ConsumerSecret { get; set; }
-
     }
 }

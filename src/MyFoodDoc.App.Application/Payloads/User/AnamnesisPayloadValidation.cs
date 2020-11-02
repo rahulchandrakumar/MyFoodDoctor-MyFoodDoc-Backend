@@ -12,6 +12,7 @@ namespace MyFoodDoc.App.Application.Payloads.User
             RuleFor(x => x.Weight).NotEmpty();            
             RuleFor(m => m.Motivations).NotEmpty().When(m => m.Indications == null || !m.Indications.Any());
             RuleFor(m => m.Indications).NotEmpty().When(m => m.Motivations == null || !m.Motivations.Any());
+            RuleFor(m => m.Diets);
         }
     }
 }

@@ -35,7 +35,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("PushNotifications")]
         public async Task RunAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
@@ -102,7 +102,7 @@ namespace MyFoodDoc.Functions
                     var isFirstTargetsEvaluation = !(await _context.UserTargets.AnyAsync(x =>
                         x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode), cancellationToken));
 
-                    if (user.Created > dateToCheck.AddDays(-7) && !diaryRecords.Any())
+                    if (userCreatedDate <= dateToCheck.AddDays(-7) && !diaryRecords.Any())
                     {
                         notifications.Add(new FirebaseNotification()
                         {
@@ -111,7 +111,7 @@ namespace MyFoodDoc.Functions
                             DeviceToken = user.DeviceToken
                         });
                     }
-                    else if (user.Created > dateToCheck.AddDays(-5) && !diaryRecords.Any(x => x.Date == dateToCheck.AddDays(-5)))
+                    else if (userCreatedDate <= dateToCheck.AddDays(-5) && !diaryRecords.Any(x => x.Date == dateToCheck.AddDays(-5)))
                     {
                         notifications.Add(new FirebaseNotification()
                         {
@@ -214,7 +214,7 @@ namespace MyFoodDoc.Functions
                     else
                     {
                         var lastTargetActivated = await _context.UserTargets.Where(x =>
-                            x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderByDescending(x => x.Created).SingleOrDefaultAsync(cancellationToken);
+                            x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                         if (lastTargetActivated != null)
                         {

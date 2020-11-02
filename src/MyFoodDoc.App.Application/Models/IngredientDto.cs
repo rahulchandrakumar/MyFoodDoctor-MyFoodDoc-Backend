@@ -8,7 +8,21 @@ namespace MyFoodDoc.App.Application.Models
 {
     public class IngredientDto : IMapFrom<Ingredient>
     {
+        public int Id { get; set; }
+
+        public long FoodId { get; set; }
+
+        public string FoodName { get; set; }
+
         public long ServingId { get; set; }
+
+        public string ServingDescription { get; set; }
+
+        public decimal MetricServingAmount { get; set; }
+
+        public string MetricServingUnit { get; set; }
+
+        public string MeasurementDescription { get; set; }
 
         public decimal Calories { get; set; }
 

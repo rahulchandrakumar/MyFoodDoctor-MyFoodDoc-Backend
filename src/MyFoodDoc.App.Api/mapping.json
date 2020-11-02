@@ -7,7 +7,12 @@
   "AppStore": {
     "VerifyReceiptUrl": "{APP_STORE_VERIFY_RECEIPT_URL}",
     "VerifyReceiptSharedSecret": "{APP_STORE_VERIFY_RECEIPT_SHARED_SECRET}"
-  }, 
+  },
+  "EmailService": {
+    "FromAddress": "{EMAIL_SERVICE_FROM_ADDRESS}",
+    "FromName": "{EMAIL_SERVICE_FROM_NAME}",
+    "SendGridApiKey": "{EMAIL_SERVICE_SEND_GRID_API_KEY}"
+  },
   "FatSecretIdentityServer": {
     "Address": "{FAT_SECRET_IDENTITY_SERVER_ADDRESS}",
     "GrantType": "{FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE}",

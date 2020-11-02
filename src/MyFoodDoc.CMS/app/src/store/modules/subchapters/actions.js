@@ -66,7 +66,7 @@ export default {
         return state.items;
     },
     itemAdded: async ({ state, commit, dispatch }, { Id }) => {
-        if (state.skip == 0) {
+        if (state.total - state.skip < state.take) {
             var item = await dispatch('loadItem', { id: Id })
             commit("addItem", item)
         }
@@ -78,9 +78,9 @@ export default {
             commit("setItem", item)
         }
     },
-    itemDeleted: async ({ state, commit }, { Id, ParentId }) => {
+    itemDeleted: async ({ state, commit, dispatch }, { Id, ParentId }) => {
         var item = null;
-        if (state.items.filter(i => i.id == Id).length > 0 && state.total > state.take) {
+        if (state.items.filter(i => i.id == Id).length > 0 && state.total - state.skip > state.take) {
             item = await dispatch('loadOneMoreItem', { parentId: ParentId })
         }
         commit("deleteItem", { Id, item })

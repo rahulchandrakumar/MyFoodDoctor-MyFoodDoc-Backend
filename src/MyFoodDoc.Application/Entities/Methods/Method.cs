@@ -17,6 +17,8 @@ namespace MyFoodDoc.Application.Entities.Methods
 
         public int? Frequency { get; set; }
 
+        public int? ParentId { get; set; }
+
         public MethodFrequencyPeriod? FrequencyPeriod { get; set; }
 
         public ICollection<TargetMethod> Targets { get; set; }
@@ -28,5 +30,9 @@ namespace MyFoodDoc.Application.Entities.Methods
         public ICollection<DietMethod> Diets { get; set; }
 
         public Image Image { get; set; }
+
+        public Method Parent { get; set; }
+
+        public ICollection<Method> Children { get; set; }
     }
 }

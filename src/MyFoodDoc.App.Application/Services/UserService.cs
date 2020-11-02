@@ -108,6 +108,21 @@ namespace MyFoodDoc.App.Application.Services
                 await _context.UserMotivations.AddRangeAsync(userMotivations, cancellationToken);
             }
 
+            var oldDiets = await _context.UserDiets.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
+            _context.UserDiets.RemoveRange(oldDiets);
+
+            if (payload.Diets != null)
+            {
+                var dietIds = await _context.Diets
+                    .Where(x => payload.Diets.ToArray().Contains(x.Key))
+                    .Select(x => x.Id)
+                    .ToListAsync(cancellationToken);
+
+                var userDiets = dietIds.Select(motivationId => new UserDiet { UserId = userId, DietId = motivationId });
+
+                await _context.UserDiets.AddRangeAsync(userDiets, cancellationToken);
+            }
+
             // TODO: Add weight behavior
 
             await _context.SaveChangesAsync(cancellationToken);

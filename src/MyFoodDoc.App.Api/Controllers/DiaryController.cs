@@ -129,7 +129,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(FavouriteDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<FavouriteDto>> AddFavourite([FromBody] FavouritePayload payload, CancellationToken cancellationToken = default)
         {
-            var id = await _service.InsertFavouriteAsync(GetUserId(), payload, cancellationToken);
+            var id = await _service.InsertFavouriteAsync(GetUserId(), payload, true, cancellationToken);
 
             var result = await _service.GetFavouriteAsync(GetUserId(), id, cancellationToken);
 

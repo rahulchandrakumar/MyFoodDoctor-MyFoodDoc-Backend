@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201019100837_MethodsParent")]
+    partial class MethodsParent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -613,11 +615,6 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<int>("MethodId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsContraindication")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
                     b.HasKey("DietId", "MethodId");
 
                     b.HasIndex("MethodId");
@@ -670,11 +667,6 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.Property<int>("MethodId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsContraindication")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.HasKey("IndicationId", "MethodId");
 
@@ -1077,11 +1069,6 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.Property<int>("MethodId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsContraindication")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
 
                     b.HasKey("MotivationId", "MethodId");
 

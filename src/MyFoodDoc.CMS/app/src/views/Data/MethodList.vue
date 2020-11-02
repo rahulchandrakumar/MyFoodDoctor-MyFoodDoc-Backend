@@ -6,6 +6,7 @@
                     :before-add="init"
                     :before-edit="beforeEdit"
                     :before-save="beforeSave"
+                    :parent="parent"
                     :childLinks="childLinks">
         <template v-slot:item.text="{ item }">
             {{ stripHtml(item.text) | truncate(200) }}
@@ -67,28 +68,88 @@
                            :items="methodFrequencyPeriods"
                            label="Frequency period" />
             </v-row>
-            <v-row>
-                <v-col>
-                    <VeeCheckList title="Targets"
-                                  :availableItems="targetList"
-                                  :checkedItems="item.targets"
-                                  labelField="title" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Diets"
-                                  :availableItems="dietList"
-                                  :checkedItems="item.diets" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Indications"
-                                  :availableItems="indicationList"
-                                  :checkedItems="item.indications" />
-                </v-col>
-                <v-col>
-                    <VeeCheckList title="Motivations"
-                                  :availableItems="motivationList"
-                                  :checkedItems="item.motivations" />
-                </v-col>
+            <v-row v-if="item.type && item.type != 'Information' && item.type != 'Knowledge'">
+                <v-container>
+                    <v-layout justify-center row wrap>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <span style="font-weight: bold">Targets</span>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList :availableItems="targetList"
+                                                  :checkedItems="item.targets"
+                                                  labelField="title" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <div style="text-align: center">
+                                        <span style="font-weight: bold">Diets</span>
+                                    </div>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-up-outline"
+                                                  :availableItems="dietList"
+                                                  :checkedItems="item.diets" />
+                                </v-col>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-down-outline"
+                                                  :availableItems="dietList"
+                                                  :checkedItems="item.contraindicatedDiets" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <div style="text-align: center">
+                                        <span style="font-weight: bold">Indications</span>
+                                    </div>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-up-outline"
+                                                  :availableItems="indicationList"
+                                                  :checkedItems="item.indications" />
+                                </v-col>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-down-outline"
+                                                  :availableItems="indicationList"
+                                                  :checkedItems="item.contraindications" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                        <v-flex md3>
+                            <v-row>
+                                <v-col>
+                                    <div style="text-align: center">
+                                        <span style="font-weight: bold">Motivations</span>
+                                    </div>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-up-outline"
+                                                  :availableItems="motivationList"
+                                                  :checkedItems="item.motivations" />
+                                </v-col>
+                                <v-col>
+                                    <VeeCheckList icon="mdi-thumb-down-outline"
+                                                  :availableItems="motivationList"
+                                                  :checkedItems="item.contraindicatedMotivations" />
+                                </v-col>
+                            </v-row>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
             </v-row>
         </template>
     </ColabDataTable>
@@ -99,7 +160,7 @@
     import integration from "@/integration";
     import MethodType from "@/enums/MethodType";
     import MethodFrequencyPeriod from "@/enums/MethodFrequencyPeriod";
-import { toggle } from '../../utils/vuex';
+    import { toggle } from '../../utils/vuex';
 
     export default {
         components: {
@@ -112,7 +173,8 @@ import { toggle } from '../../utils/vuex';
             VeeImage: () => import("@/components/inputs/VeeImage")
         },
         data() {
-            return {
+
+            var result = {
                 mainHeaders: [{
                     filterable: false,
                     sortable: false,
@@ -128,7 +190,12 @@ import { toggle } from '../../utils/vuex';
                     value: "title",
                     text: "Title"
                 }],
+                parent: null,
                 childLinks: [{
+                    path: "Methods",
+                    title: "Edit methods",
+                    visible: (item) => item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals'
+                }, {
                     path: "Method Multiple Choices",
                     title: "Edit multiple choices",
                     visible: (item) => item.type == 'Knowledge'
@@ -139,9 +206,27 @@ import { toggle } from '../../utils/vuex';
                 motivationList: [],
                 preview: false
             }
+
+            if (this.$route.params != null && this.$route.params.parentId != null) {
+                result.parent = {
+                    path: "Generic methods",
+                    title: "Method",
+                    titleProperty: "title",
+                    storeName: "methods"
+                };
+            }
+
+            return result;
         },
         async created() {
             this.types = Object.values(MethodType);
+
+            if (this.$route.params != null && this.$route.params.parentId != null) {
+                this.types = [MethodType.INFORMATION, MethodType.KNOWLEDGE];
+            }
+            else {
+                this.types = Object.values(MethodType).filter((item) => item != MethodType.INFORMATION && item != MethodType.KNOWLEDGE);
+            }
 
             this.methodFrequencyPeriods = [''];
             this.methodFrequencyPeriods = this.methodFrequencyPeriods.concat(Object.values(MethodFrequencyPeriod));
@@ -155,8 +240,11 @@ import { toggle } from '../../utils/vuex';
             async init(item) {
                 if (!item.targets) item.targets = [];
                 if (!item.diets) item.diets = [];
+                if (!item.contraindicatedDiets) item.contraindicatedDiets = [];
                 if (!item.indications) item.indications = [];
+                if (!item.contraindications) item.contraindications = [];
                 if (!item.motivations) item.motivations = [];
+                if (!item.contraindicatedMotivations) item.contraindicatedMotivations = [];
             },
             async beforeEdit(item) {
                 this.init(item);
@@ -171,6 +259,8 @@ import { toggle } from '../../utils/vuex';
                     item.frequency = null;
                     item.frequencyPeriod = null;
                 }
+
+                item.parentId = Number.parseInt(this.$route.params.parentId);
             },
             stripHtml(html) {
                 var tmp = document.createElement("div");
