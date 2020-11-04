@@ -70,6 +70,9 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.Created.Date == lastUserTarget.Created.Date)
                 .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList() : new List<int>();
 
+            List<Method> childMethodsToShow = new List<Method>();
+            List<Method> parentFrequencyMethodsToShow = new List<Method>();
+
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x => x.Diets)
@@ -116,42 +119,115 @@ namespace MyFoodDoc.App.Application.Services
                             //Frequency-based method check
                             if (childMethod.Frequency != null && childMethod.FrequencyPeriod != null)
                             {
-                                //TODO: Check logic
-                                if (result.Any(x => Enum.Parse<MethodType>(x.Type) == MethodType.Information ||
-                                                    Enum.Parse<MethodType>(x.Type) == MethodType.Knowledge))
-                                    continue;
-
                                 if (!await CheckFrequency(userId, childMethod, date, cancellationToken))
                                     continue;
+
+                                childMethodsToShow.Add(childMethod);
                             }
-
-                            var childMethodDto = await GetMethodWithAnswersAsync(userId, childMethod, date, cancellationToken);
-
-                            result.Add(childMethodDto);
                         }
                 }
 
                 //Frequency-based method check
                 if (method.Frequency != null && method.FrequencyPeriod != null)
                 {
-                    if (result.Any(x => Enum.Parse<MethodType>(x.Type) == MethodType.AbdominalGirth ||
-                                        Enum.Parse<MethodType>(x.Type) == MethodType.Mood ||
-                                        Enum.Parse<MethodType>(x.Type) == MethodType.Sport ||
-                                        Enum.Parse<MethodType>(x.Type) == MethodType.Weight))
-                        continue;
-
                     if (!await CheckFrequency(userId, method, date, cancellationToken))
                         continue;
                 }
 
-                var methodDto = await GetMethodWithAnswersAsync(userId, method, date, cancellationToken);
+                if (method.Type == MethodType.Change || method.Type == MethodType.Drink ||
+                    method.Type == MethodType.Meals)
+                {
+                    var methodDto = await GetMethodWithAnswersAsync(userId, method, date, cancellationToken);
+
+                    result.Add(methodDto);
+                }
+                else
+                {
+                    parentFrequencyMethodsToShow.Add(method);
+                }
+            }
+
+            var userMethodShowHistory = (await _context.UserMethodShowHistory
+                    .Include(x => x.Method)
+                    .ThenInclude(x => x.Parent)
+                    .Where(x => x.UserId == userId)
+                    .ToListAsync(cancellationToken))
+                .Where(x => x.Date.ToLocalTime().Date >= lastUserTarget.Created.ToLocalTime().Date && x.Date.ToLocalTime().Date <= date.Date).ToList();
+
+            if (childMethodsToShow.Any())
+            {
+                //New parent method type
+                Method methodToShow = childMethodsToShow.FirstOrDefault(x =>
+                    !userMethodShowHistory.Any(y => y.Method.Parent != null && y.Method.Parent.Type == x.Parent.Type));
+
+                if (methodToShow == null)
+                {
+                    //New parent method
+                    methodToShow = childMethodsToShow.FirstOrDefault(x =>
+                        !userMethodShowHistory.Any(y => y.Method.Parent != null && y.Method.ParentId == x.ParentId));
+
+                    if (methodToShow == null)
+                    {
+                        //New method
+                        methodToShow = childMethodsToShow.FirstOrDefault(x =>
+                            !userMethodShowHistory.Any(y => y.MethodId == x.Id));
+
+                        if (methodToShow == null)
+                        {
+                            //Less shown method
+                            var methodIdToShow = userMethodShowHistory
+                                .Where(x => x.Method.Type == MethodType.Information ||
+                                            x.Method.Type == MethodType.Knowledge)
+                                .GroupBy(k => k.MethodId)
+                                .Select(g => new { MethodId = g.Key, Count = g.Count() })
+                                .OrderBy(x => x.Count).First().MethodId;
+
+                            methodToShow = childMethodsToShow.First(x => x.Id == methodIdToShow);
+                        }
+                    }
+                }
+
+                var methodDto = await GetMethodWithAnswersAsync(userId, methodToShow, date, cancellationToken);
+
+                result.Add(methodDto);
+            }
+
+            if (parentFrequencyMethodsToShow.Any())
+            {
+                //New method type
+                Method methodToShow = parentFrequencyMethodsToShow.FirstOrDefault(x => !userMethodShowHistory.Any(y => y.Method.Type == x.Type));
+
+                if (methodToShow == null)
+                {
+                    //New method
+                    methodToShow =
+                        parentFrequencyMethodsToShow.FirstOrDefault(x =>
+                            !userMethodShowHistory.Any(y => y.MethodId == x.Id));
+
+                    if (methodToShow == null)
+                    {
+                        //Less shown method
+                        var methodIdToShow = userMethodShowHistory
+                            .Where(x=> x.Method.Type == MethodType.AbdominalGirth ||
+                                       x.Method.Type == MethodType.Mood ||
+                                       x.Method.Type == MethodType.Sport ||
+                                       x.Method.Type == MethodType.Weight)
+                            .GroupBy(k => k.MethodId)
+                            .Select(g => new { MethodId = g.Key, Count = g.Count() })
+                            .OrderBy(x=> x.Count).First().MethodId;
+
+                        methodToShow = parentFrequencyMethodsToShow.First(x => x.Id == methodIdToShow);
+                    }
+                }
+
+                var methodDto = await GetMethodWithAnswersAsync(userId, methodToShow, date, cancellationToken);
 
                 result.Add(methodDto);
             }
 
             if (result.Any())
             {
-                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId }), cancellationToken);
+                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId, Date = date}), cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
