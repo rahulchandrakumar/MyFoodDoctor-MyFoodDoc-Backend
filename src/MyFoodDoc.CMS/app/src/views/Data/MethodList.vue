@@ -59,7 +59,7 @@
                            :label="mainHeaders.filter(h => h.value == 'type')[0].text"
                            rules="required" />
             </v-row>
-            <v-row>
+            <v-row v-if="item.type && item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals'">
                 <VeeTextField v-model="item.frequency"
                               label="Frequency"
                               rules="integer|min_value:1"
@@ -71,7 +71,7 @@
             <v-row v-if="item.type && item.type != 'Information' && item.type != 'Knowledge'">
                 <v-container>
                     <v-layout justify-center row wrap>
-                        <v-flex md3>
+                        <v-flex v-if="item.type && (item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals')">
                             <v-row>
                                 <v-col>
                                     <span style="font-weight: bold">Targets</span>
@@ -85,7 +85,7 @@
                                 </v-col>
                             </v-row>
                         </v-flex>
-                        <v-flex md3>
+                        <v-flex>
                             <v-row>
                                 <v-col>
                                     <div style="text-align: center">
@@ -106,7 +106,7 @@
                                 </v-col>
                             </v-row>
                         </v-flex>
-                        <v-flex md3>
+                        <v-flex>
                             <v-row>
                                 <v-col>
                                     <div style="text-align: center">
@@ -127,7 +127,7 @@
                                 </v-col>
                             </v-row>
                         </v-flex>
-                        <v-flex md3>
+                        <v-flex>
                             <v-row>
                                 <v-col>
                                     <div style="text-align: center">
@@ -255,10 +255,17 @@
                 else if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
-                if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
+                if (item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals') {
                     item.frequency = null;
                     item.frequencyPeriod = null;
-                }
+                } else {
+                    if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
+                        item.frequency = null;
+                        item.frequencyPeriod = null;
+                    }
+
+                    item.targets = [];
+                }             
 
                 item.parentId = Number.parseInt(this.$route.params.parentId);
             },
