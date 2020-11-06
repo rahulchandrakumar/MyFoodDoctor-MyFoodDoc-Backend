@@ -2,6 +2,7 @@
 {
     public enum OptimizationAreaType
     {
+        Calories,
         Protein,
         Sugar,
         Vegetables
