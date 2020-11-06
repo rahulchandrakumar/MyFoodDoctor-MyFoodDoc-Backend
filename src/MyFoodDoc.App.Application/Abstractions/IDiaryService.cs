@@ -24,5 +24,6 @@ namespace MyFoodDoc.App.Application.Abstractions
         Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, bool isGeneric, CancellationToken cancellationToken);
         Task<int> UpdateFavouriteAsync(string userId, int id, FavouritePayload payload, CancellationToken cancellationToken);
         Task RemoveFavouriteAsync(string userId, int id, CancellationToken cancellationToken);
+        decimal GetProteinsForTargetValue(decimal height, decimal weight, decimal targetValue);
     }
 }

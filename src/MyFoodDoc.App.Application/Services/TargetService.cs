@@ -308,16 +308,7 @@ namespace MyFoodDoc.App.Application.Services
 
                         var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
 
-                        decimal targetValue = 0;
-
-                        if (BMI((double)height, (double)weight) < 25)
-                        {
-                            targetValue = weight * adjustmentTarget.TargetValue;
-                        }
-                        else
-                        {
-                            targetValue = (height - 100) * adjustmentTarget.TargetValue;
-                        }
+                        decimal targetValue = _diaryService.GetProteinsForTargetValue(height, weight, adjustmentTarget.TargetValue);
 
                         //TODO: use constants or enums
                         if (recommendedValue < targetValue)
@@ -375,15 +366,8 @@ namespace MyFoodDoc.App.Application.Services
 
                         var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
 
-                        if (BMI((double)height, (double)weight) < 25)
-                        {
-                            analysisDto.LineGraph.Optimal = weight * target.OptimizationArea.LineGraphOptimal;
-                        }
-                        else
-                        {
-                            analysisDto.LineGraph.Optimal = (height - 100) * target.OptimizationArea.LineGraphOptimal;
-                        }
 
+                        analysisDto.LineGraph.Optimal = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphOptimal.Value);
                         analysisDto.LineGraph.UpperLimit = (decimal)1.1 * analysisDto.LineGraph.Optimal.Value;
                         analysisDto.LineGraph.LowerLimit = (decimal)0.9 * analysisDto.LineGraph.Optimal.Value;
 
@@ -501,11 +485,6 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             return result;
-        }
-
-        private double BMI(double height, double weight)
-        {
-            return (double)weight / Math.Pow((double)height / 100, 2);
         }
 
         private async Task<Dictionary<DateTime, MealNutritionsDto>> GetDailyUserIngredients(string userId, DateTime onDate, CancellationToken cancellationToken)
