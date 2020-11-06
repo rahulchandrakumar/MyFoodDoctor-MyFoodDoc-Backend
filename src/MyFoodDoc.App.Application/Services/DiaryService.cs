@@ -9,6 +9,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ using MyFoodDoc.FatSecretClient.Clients;
 using MyFoodDoc.Application.Configuration;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Entities.Diary;
+using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -44,6 +46,13 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default)
         {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
             var aggregation = new DiaryEntryDto
             {
                 Meals = await _context.Meals.AsNoTracking()
@@ -61,10 +70,31 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             var userWeight = await _context.UserWeights.AsNoTracking()
-                .Where(x => x.UserId == userId)
+                .Where(x => x.UserId == userId && x.Date <= start)
                 .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
 
             aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
+
+            aggregation.OptimizationAreas = new List<DiaryEntryDtoOptimizationArea>();
+
+            var optimizationAreas = await _context.OptimizationAreas.ToArrayAsync(cancellationToken);
+
+            var sugarOptimizationArea = optimizationAreas.Single(x=> x.Type == OptimizationAreaType.Sugar);
+
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = sugarOptimizationArea.Key, Optimal = sugarOptimizationArea.LineGraphOptimal.Value });
+
+            var proteinOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Protein);
+
+            var optimalProtein = GetProteinsForTargetValue(user.Height.Value, userWeight.Value,
+                proteinOptimizationArea.LineGraphOptimal.Value);
+
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = proteinOptimizationArea.Key, Optimal = optimalProtein });
+
+            //TODO: check default age
+            var optimalCalories = GetCaloriesOptimalValue(user.Birthday == null ? 40 : DateTime.UtcNow.Year - user.Birthday.Value.Year,
+                user.Gender.Value, userWeight.Value);
+
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Calories.ToString().ToLower(), Optimal = optimalCalories });
 
             return aggregation;
         }
@@ -287,6 +317,26 @@ namespace MyFoodDoc.App.Application.Services
                     .CountAsync(cancellationToken) >= _statisticsMinimumDays;
         }
 
+        public decimal GetProteinsForTargetValue(decimal height, decimal weight, decimal targetValue)
+        {
+            if (BMI((double)height, (double)weight) < 25)
+            {
+                return weight * targetValue;
+            }
+
+            return (height - 100) * targetValue;
+        }
+
+        private decimal GetCaloriesOptimalValue(int age, Gender gender, decimal weight)
+        {
+            return ((decimal)0.047 * weight + (gender == Gender.Female ? 0 : (decimal)1.009) - (decimal)0.01452 * age + (decimal)3.21) * 239 * (decimal)1.4;
+        }
+
+        private double BMI(double height, double weight)
+        {
+            return (double)weight / Math.Pow((double)height / 100, 2);
+        }
+
         private async Task<int> UpsertIngredient(long foodId, long servingId, CancellationToken cancellationToken)
         {
             var existingIngredient = await _context.Ingredients.SingleOrDefaultAsync(x =>
@@ -343,7 +393,7 @@ namespace MyFoodDoc.App.Application.Services
                 return existingIngredient.Id;
             }
         }
-        
+
         private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
         {
             if (ingredients != null)
