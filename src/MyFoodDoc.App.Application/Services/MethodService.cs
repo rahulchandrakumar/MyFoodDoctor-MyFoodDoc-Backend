@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ using MyFoodDoc.App.Application.Payloads.Method;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Services
@@ -234,6 +236,21 @@ namespace MyFoodDoc.App.Application.Services
             return result;
         }
 
+        private async Task<OptimizationArea> GetOptimizationAreaByMethodId(int methodId,
+            CancellationToken cancellationToken)
+        {
+            var targetMethod = await _context.TargetMethods.FirstOrDefaultAsync(x => x.MethodId == methodId, cancellationToken);
+
+            if (targetMethod == null)
+                return null;
+
+            var optimizationArea = (await _context.Targets
+                .Include(x=>x.OptimizationArea)
+                .SingleAsync(x => x.Id == targetMethod.TargetId, cancellationToken)).OptimizationArea;
+
+            return optimizationArea;
+        }
+
         private async Task<bool> CheckFrequency(string userId, Method method, DateTime date, CancellationToken cancellationToken)
         {
             int daysInPeriod = 0;
@@ -361,6 +378,10 @@ namespace MyFoodDoc.App.Application.Services
 
                     userMethod = userMethods.OrderBy(x => x.Created).LastOrDefault();
                 }
+
+                var optimizationArea = await GetOptimizationAreaByMethodId(method.Id, cancellationToken);
+
+                result.OptimizationAreaKey = optimizationArea?.Key;
             }
             else
             {
