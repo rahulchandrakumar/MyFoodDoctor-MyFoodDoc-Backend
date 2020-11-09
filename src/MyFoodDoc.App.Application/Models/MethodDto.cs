@@ -10,6 +10,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public string Type { get; set; }
 
+        public string OptimizationAreaKey { get; set; }
+
         public string Title { get; set; }
 
         public string Text { get; set; }
