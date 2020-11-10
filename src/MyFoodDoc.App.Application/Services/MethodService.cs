@@ -20,6 +20,8 @@ namespace MyFoodDoc.App.Application.Services
 {
     public class MethodService : IMethodService
     {
+        private const int MAX_METHODS_PER_OPTIMIZATION_AREA = 3;
+
         private readonly IApplicationContext _context;
         private readonly IUserHistoryService _userHistoryService;
 
@@ -74,6 +76,7 @@ namespace MyFoodDoc.App.Application.Services
 
             List<Method> childMethodsToShow = new List<Method>();
             List<Method> parentFrequencyMethodsToShow = new List<Method>();
+            List<MethodDto> parentMethodsToShow = new List<MethodDto>();
 
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
@@ -141,7 +144,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     var methodDto = await GetMethodWithAnswersAsync(userId, method, date, cancellationToken);
 
-                    result.Add(methodDto);
+                    parentMethodsToShow.Add(methodDto);
                 }
                 else
                 {
@@ -225,6 +228,22 @@ namespace MyFoodDoc.App.Application.Services
                 var methodDto = await GetMethodWithAnswersAsync(userId, methodToShow, date, cancellationToken);
 
                 result.Add(methodDto);
+            }
+
+            if (parentMethodsToShow.Any())
+            {
+                foreach (var group in parentMethodsToShow.GroupBy(g => g.OptimizationAreaKey))
+                {
+                    var answeredMethod =
+                        group.FirstOrDefault(x => x.UserAnswerBoolean != null && x.UserAnswerBoolean.Value);
+
+                    if (answeredMethod != null)
+                        result.Add(answeredMethod);
+                    else
+                    {
+                        result.AddRange(group.Take(MAX_METHODS_PER_OPTIMIZATION_AREA));
+                    }
+                }
             }
 
             if (result.Any())
