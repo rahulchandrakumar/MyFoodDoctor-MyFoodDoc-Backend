@@ -30,10 +30,12 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpGet]
         public async Task<object> Get([FromQuery] CoursesGetPayload payload, CancellationToken cancellationToken = default)
         {
+            var paginatedItems = await _courseService.GetItems(payload.Take, payload.Skip, payload.Search, cancellationToken);
+
             return new
             {
-                values = (await _courseService.GetItems(payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(Course.FromModel),
-                total = await _courseService.GetItemsCount(payload.Search, cancellationToken)
+                values = paginatedItems.Items.Select(Course.FromModel),
+                total = paginatedItems.TotalCount
             };
         }
 

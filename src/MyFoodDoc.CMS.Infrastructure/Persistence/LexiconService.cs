@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -64,7 +65,10 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public IQueryable<LexiconEntry> GetBaseQuery(int parentId, string search)
         {
-            IQueryable<LexiconEntry> baseQuery = _context.LexiconEntries.Where(x => x.CategoryId == parentId); ;
+            IQueryable<LexiconEntry> baseQuery = _context.LexiconEntries
+                .Include(x => x.Image)
+                .Where(x => x.CategoryId == parentId);
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
@@ -73,19 +77,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<LexiconModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<LexiconModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var lexiconEntities = await GetBaseQuery(parentId, search)
-                                                .Include(x => x.Image)
-                                                .Skip(skip).Take(take)                                                
-                                                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(parentId, search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return lexiconEntities.Select(LexiconModel.FromEntity).ToList();
-        }
-
-        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
+            return new PaginatedItems<LexiconModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(LexiconModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<LexiconModel> UpdateItem(LexiconModel item, CancellationToken cancellationToken = default)

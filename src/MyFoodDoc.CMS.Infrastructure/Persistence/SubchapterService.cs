@@ -9,6 +9,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -58,6 +59,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public IQueryable<Subchapter> GetBaseQuery(int parentId, string search)
         {
             IQueryable<Subchapter> baseQuery = _context.Subchapters.Where(x => x.ChapterId == parentId);
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchString = $"%{search}%";
@@ -66,19 +68,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<SubchapterModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<SubchapterModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(parentId, search)
-                .Skip(skip).Take(take)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(parentId, search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return entities.Select(SubchapterModel.FromEntity).OrderBy(x => x.Order).ToList();
-        }
-
-        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(parentId, search).AsNoTracking().CountAsync(cancellationToken);
+            return new PaginatedItems<SubchapterModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(SubchapterModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<SubchapterModel> UpdateItem(SubchapterModel item, CancellationToken cancellationToken = default)

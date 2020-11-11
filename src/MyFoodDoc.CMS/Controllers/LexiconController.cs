@@ -30,10 +30,12 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpGet]
         public async Task<object> Get([FromQuery] LexiconGetPayload payload, CancellationToken cancellationToken = default)
         {
+            var paginatedItems = await _lexiconService.GetItems(payload.CategoryId, payload.Take, payload.Skip, payload.Search, cancellationToken);
+
             return new
             {
-                values = (await _lexiconService.GetItems(payload.CategoryId, payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(LexiconItem.FromModel),
-                total = await _lexiconService.GetItemsCount(payload.CategoryId, payload.Search, cancellationToken)
+                values = paginatedItems.Items.Select(LexiconItem.FromModel),
+                total = paginatedItems.TotalCount
             };
         }
 

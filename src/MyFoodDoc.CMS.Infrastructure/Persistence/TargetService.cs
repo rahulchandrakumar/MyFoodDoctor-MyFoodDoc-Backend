@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -141,7 +142,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public IQueryable<Target> GetBaseQuery(int parentId, string search)
         {
-            IQueryable<Target> baseQuery = _context.Targets.Where(x => x.OptimizationAreaId == parentId);
+            IQueryable<Target> baseQuery = _context.Targets
+                .Include(x => x.Image)
+                .Include(x => x.Diets)
+                .Include(x => x.Indications)
+                .Include(x => x.Motivations)
+                .Where(x => x.OptimizationAreaId == parentId);
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
@@ -150,26 +157,18 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<TargetModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<TargetModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var targetEntities = await GetBaseQuery(parentId, search)
-                                                .Include(x => x.Image)
-                                                .Include(x => x.Diets)
-                                                .Include(x => x.Indications)
-                                                .Include(x => x.Motivations)
-                                                .Skip(skip).Take(take)
-                                                .AsNoTracking()
-                                                .ToListAsync(cancellationToken);
+            var targetEntities = await GetBaseQuery(parentId, search).AsNoTracking().ToListAsync(cancellationToken);
 
             var adjustmentTargetEntities = await _context.AdjustmentTargets
-                                                .ToListAsync(cancellationToken);
+                .ToListAsync(cancellationToken);
 
-            return targetEntities.Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList();
-        }
-
-        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(parentId, search).AsNoTracking().CountAsync(cancellationToken);
+            return new PaginatedItems<TargetModel>()
+            {
+                Items = targetEntities.Skip(skip).Take(take).Select(x => TargetModel.FromEntity(x, adjustmentTargetEntities.SingleOrDefault(y => y.TargetId == x.Id))).ToList(),
+                TotalCount = targetEntities.Count
+            };
         }
 
         public async Task<TargetModel> UpdateItem(TargetModel item, CancellationToken cancellationToken = default)

@@ -9,6 +9,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
@@ -76,7 +77,10 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public IQueryable<Chapter> GetBaseQuery(int parentId, string search)
         {
-            IQueryable<Chapter> baseQuery = _context.Chapters.Where(x => x.CourseId == parentId);
+            IQueryable<Chapter> baseQuery = _context.Chapters
+                .Include(x => x.Image)
+                .Where(x => x.CourseId == parentId);
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchString = $"%{search}%";
@@ -85,20 +89,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<ChapterModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<ChapterModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(parentId, search)
-                .Include(x => x.Image)
-                .Skip(skip).Take(take)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(parentId, search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return entities.Select(ChapterModel.FromEntity).OrderBy(x => x.Order).ToList();
-        }
-
-        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(parentId, search).AsNoTracking().CountAsync(cancellationToken);
+            return new PaginatedItems<ChapterModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(ChapterModel.FromEntity).OrderBy(x => x.Order).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<ChapterModel> UpdateItem(ChapterModel item, CancellationToken cancellationToken = default)
