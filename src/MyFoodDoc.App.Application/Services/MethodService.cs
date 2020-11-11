@@ -5,12 +5,14 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.Method;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.EnumEntities;
@@ -24,11 +26,13 @@ namespace MyFoodDoc.App.Application.Services
 
         private readonly IApplicationContext _context;
         private readonly IUserHistoryService _userHistoryService;
+        private readonly int _statisticsPeriod;
 
-        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService)
+        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _userHistoryService = userHistoryService;
+            _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
         public async Task<ICollection<MethodDto>> GetAsync(string userId, DateTime date, CancellationToken cancellationToken)
@@ -84,7 +88,7 @@ namespace MyFoodDoc.App.Application.Services
                 .Include(x => x.Indications)
                 .Include(x => x.Motivations)
                 .Include(x => x.Image)
-                .Include(x=> x.Children)
+                .Include(x => x.Children)
                 .ThenInclude(x => x.Image)
                 .AsNoTracking()
                 .Where(x => x.ParentId == null)
@@ -156,40 +160,56 @@ namespace MyFoodDoc.App.Application.Services
                     .Include(x => x.Method)
                     .ThenInclude(x => x.Parent)
                     .Where(x => x.UserId == userId)
-                    .ToListAsync(cancellationToken))
-                .Where(x => x.Date.ToLocalTime().Date >= lastUserTarget.Created.ToLocalTime().Date && x.Date.ToLocalTime().Date <= date.Date).ToList();
+                    .ToListAsync(cancellationToken));
+
+            var userMethodShowHistoryForPeriod = userMethodShowHistory.Where(x => x.Date.ToLocalTime().Date >= lastUserTarget.Created.ToLocalTime().Date && x.Date.ToLocalTime().Date <= date.Date).ToList();
 
             if (childMethodsToShow.Any())
             {
-                //New parent method type
-                Method methodToShow = childMethodsToShow.FirstOrDefault(x =>
-                    !userMethodShowHistory.Any(y => y.Method.Parent != null && y.Method.Parent.Type == x.Parent.Type));
+                Method methodToShow = null;
 
-                if (methodToShow == null)
+                if (userMethodShowHistoryForPeriod.Count(x => x.Method.Type == MethodType.Information ||
+                                                              x.Method.Type == MethodType.Knowledge) < _statisticsPeriod - 1)
                 {
-                    //New parent method
-                    methodToShow = childMethodsToShow.FirstOrDefault(x =>
-                        !userMethodShowHistory.Any(y => y.Method.Parent != null && y.Method.ParentId == x.ParentId));
+                    var groupedHistory = userMethodShowHistory
+                        .Where(x => childMethodsToShow.Any(y => y.Id == x.MethodId))
+                        .GroupBy(k => k.MethodId)
+                        .Select(g => new { MethodId = g.Key, Count = g.Count() }).ToList();
+
+                    var childMethodsToShowOrdered = childMethodsToShow.OrderBy(x => groupedHistory.FirstOrDefault(y => y.MethodId == x.Id)?.Count ?? 0).ToList();
+
+                    //New parent method type
+                    methodToShow = childMethodsToShowOrdered.FirstOrDefault(x =>
+                        !userMethodShowHistoryForPeriod.Any(
+                            y => y.Method.Parent != null && y.Method.Parent.Type == x.Parent.Type));
 
                     if (methodToShow == null)
                     {
-                        //New method
-                        methodToShow = childMethodsToShow.FirstOrDefault(x =>
-                            !userMethodShowHistory.Any(y => y.MethodId == x.Id));
+                        //New parent method
+                        methodToShow = childMethodsToShowOrdered.FirstOrDefault(x =>
+                            !userMethodShowHistoryForPeriod.Any(y =>
+                                y.Method.Parent != null && y.Method.ParentId == x.ParentId));
 
                         if (methodToShow == null)
                         {
-                            //Less shown method
-                            var methodIdToShow = userMethodShowHistory
-                                .Where(x => x.Method.Type == MethodType.Information ||
-                                            x.Method.Type == MethodType.Knowledge)
-                                .GroupBy(k => k.MethodId)
-                                .Select(g => new { MethodId = g.Key, Count = g.Count() })
-                                .OrderBy(x => x.Count).First().MethodId;
-
-                            methodToShow = childMethodsToShow.First(x => x.Id == methodIdToShow);
+                            //New method
+                            methodToShow = childMethodsToShowOrdered.FirstOrDefault(x =>
+                                !userMethodShowHistoryForPeriod.Any(y => y.MethodId == x.Id));
                         }
                     }
+                }
+
+                if (methodToShow == null)
+                {
+                    //Less shown method
+                    var methodIdToShow = userMethodShowHistoryForPeriod
+                        .Where(x => x.Method.Type == MethodType.Information ||
+                                    x.Method.Type == MethodType.Knowledge)
+                        .GroupBy(k => k.MethodId)
+                        .Select(g => new { MethodId = g.Key, Count = g.Count() })
+                        .OrderBy(x => x.Count).First().MethodId;
+
+                    methodToShow = childMethodsToShow.First(x => x.Id == methodIdToShow);
                 }
 
                 var methodDto = await GetMethodWithAnswersAsync(userId, methodToShow, date, cancellationToken);
@@ -200,19 +220,19 @@ namespace MyFoodDoc.App.Application.Services
             if (parentFrequencyMethodsToShow.Any())
             {
                 //New method type
-                Method methodToShow = parentFrequencyMethodsToShow.FirstOrDefault(x => !userMethodShowHistory.Any(y => y.Method.Type == x.Type));
+                Method methodToShow = parentFrequencyMethodsToShow.FirstOrDefault(x => !userMethodShowHistoryForPeriod.Any(y => y.Method.Type == x.Type));
 
                 if (methodToShow == null)
                 {
                     //New method
                     methodToShow =
                         parentFrequencyMethodsToShow.FirstOrDefault(x =>
-                            !userMethodShowHistory.Any(y => y.MethodId == x.Id));
+                            !userMethodShowHistoryForPeriod.Any(y => y.MethodId == x.Id));
 
                     if (methodToShow == null)
                     {
                         //Less shown method
-                        var methodIdToShow = userMethodShowHistory
+                        var methodIdToShow = userMethodShowHistoryForPeriod
                             .Where(x=> x.Method.Type == MethodType.AbdominalGirth ||
                                        x.Method.Type == MethodType.Mood ||
                                        x.Method.Type == MethodType.Sport ||
