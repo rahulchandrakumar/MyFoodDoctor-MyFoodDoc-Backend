@@ -9,6 +9,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -65,18 +66,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<MethodMultipleChoiceModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<MethodMultipleChoiceModel>> GetItems(int parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(parentId, search)
-                .Skip(skip).Take(take)
-                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(parentId, search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return entities.Select(MethodMultipleChoiceModel.FromEntity).ToList();
-        }
-
-        public async Task<long> GetItemsCount(int parentId, string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(parentId, search).CountAsync(cancellationToken);
+            return new PaginatedItems<MethodMultipleChoiceModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(MethodMultipleChoiceModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<MethodMultipleChoiceModel> UpdateItem(MethodMultipleChoiceModel item, CancellationToken cancellationToken = default)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -88,28 +89,29 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<PromotionModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<PromotionModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            return (await(from p in GetBaseQuery(search)
-                          select new
-                          {
-                              entity = p,
-                              CouponCount = p.Coupons.Count(),
-                              UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
-                          }).Skip(skip).Take(take).ToListAsync(cancellationToken))
-                   .Select(x =>
-                   {
-                       var model = PromotionModel.FromEntity(x.entity);
-                       model.CouponCount = x.CouponCount;
-                       model.UsedCouponCount = x.UsedCouponCount;
+            var entities = await GetBaseQuery(search).AsNoTracking().ToListAsync(cancellationToken);
 
-                       return model;
-                   }).ToList();
-        }
+            return new PaginatedItems<PromotionModel>()
+            {
+                Items = (from p in entities
+                        select new
+                        {
+                            entity = p,
+                            CouponCount = p.Coupons.Count(),
+                            UsedCouponCount = p.Coupons.Count(c => c.RedeemedBy != null)
+                        }).Skip(skip).Take(take)
+                    .Select(x =>
+                    {
+                        var model = PromotionModel.FromEntity(x.entity);
+                        model.CouponCount = x.CouponCount;
+                        model.UsedCouponCount = x.UsedCouponCount;
 
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+                        return model;
+                    }).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<PromotionModel> UpdateItem(PromotionModel item, CancellationToken cancellationToken = default)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -49,14 +50,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<WebViewModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<WebViewModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            return (await GetBaseQuery(search).Skip(skip).Take(take).ToListAsync(cancellationToken)).Select(WebViewModel.FromEntity).ToList();
-        }
+            var entities = await GetBaseQuery(search).AsNoTracking().ToListAsync(cancellationToken);
 
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+            return new PaginatedItems<WebViewModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(WebViewModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<WebViewModel> UpdateItem(WebViewModel item, CancellationToken cancellationToken = default)

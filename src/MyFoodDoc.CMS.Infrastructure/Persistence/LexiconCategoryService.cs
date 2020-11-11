@@ -9,6 +9,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
@@ -73,7 +74,8 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public IQueryable<LexiconCategory> GetBaseQuery(string search)
         {
-            IQueryable<LexiconCategory> baseQuery = _context.LexiconCategories;
+            IQueryable<LexiconCategory> baseQuery = _context.LexiconCategories.Include(x => x.Image);
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchString = $"%{search}%";
@@ -82,20 +84,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<LexiconCategoryModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<LexiconCategoryModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(search)
-                .Include(x => x.Image)
-                .Skip(skip).Take(take)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return entities.Select(x => LexiconCategoryModel.FromEntity(x)).ToList();
-        }
-
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(search).AsNoTracking().CountAsync(cancellationToken);
+            return new PaginatedItems<LexiconCategoryModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(LexiconCategoryModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<LexiconCategoryModel> UpdateItem(LexiconCategoryModel item, CancellationToken cancellationToken = default)

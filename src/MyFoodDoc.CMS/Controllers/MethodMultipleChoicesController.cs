@@ -31,10 +31,12 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpGet]
         public async Task<object> Get([FromQuery] MethodMultipleChoicesGetPayload payload, CancellationToken cancellationToken = default)
         {
+            var paginatedItems = await _methodMultipleChoiceService.GetItems(payload.MethodId, payload.Take, payload.Skip, payload.Search, cancellationToken);
+
             return new
             {
-                values = (await _methodMultipleChoiceService.GetItems(payload.MethodId, payload.Take, payload.Skip, payload.Search, cancellationToken)).Select(MethodMultipleChoice.FromModel),
-                total = await _methodMultipleChoiceService.GetItemsCount(payload.MethodId, payload.Search, cancellationToken)
+                values = paginatedItems.Items.Select(MethodMultipleChoice.FromModel),
+                total = paginatedItems.TotalCount
             };
         }
 

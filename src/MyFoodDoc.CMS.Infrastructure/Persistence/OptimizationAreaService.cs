@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -62,18 +63,10 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return OptimizationAreaModel.FromEntity(entity);
         }
 
-        public async Task<IList<OptimizationAreaModel>> GetItems(CancellationToken cancellationToken = default)
-        {
-            var entities = await _context.OptimizationAreas
-                                                .Include(x => x.Image)
-                                                .ToListAsync(cancellationToken);
-
-            return entities.Select(OptimizationAreaModel.FromEntity).ToList();
-        }
-
         public IQueryable<OptimizationArea> GetBaseQuery(string search)
         {
-            IQueryable<OptimizationArea> baseQuery = _context.OptimizationAreas;
+            IQueryable<OptimizationArea> baseQuery = _context.OptimizationAreas.Include(x => x.Image);
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchstring = $"%{search}%";
@@ -82,19 +75,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<OptimizationAreaModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<OptimizationAreaModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(search)
-                                                .Include(x => x.Image)
-                                                .Skip(skip).Take(take)
-                                                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return entities.Select(OptimizationAreaModel.FromEntity).ToList();
-        }
-
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(search).CountAsync(cancellationToken);
+            return new PaginatedItems<OptimizationAreaModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(OptimizationAreaModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<OptimizationAreaModel> UpdateItem(OptimizationAreaModel item, CancellationToken cancellationToken = default)
