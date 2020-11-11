@@ -9,6 +9,7 @@ using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
@@ -126,7 +127,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return MethodModel.FromEntity(entity);
         }
 
-        public async Task<IList<Method>> GetItems(int? parentId, string search, CancellationToken cancellationToken = default)
+        private async Task<IList<Method>> GetItems(int? parentId, string search, CancellationToken cancellationToken = default)
         {
             var entities = await _context.Methods
                 .Include(x => x.Image)
@@ -148,18 +149,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return entities;
         }
 
-        public async Task<IList<MethodModel>> GetItems(int? parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<MethodModel>> GetItems(int? parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = (await GetItems(parentId, search, cancellationToken))
-                .Skip(skip).Take(take)
-                .ToList();
-
-            return entities.Select(MethodModel.FromEntity).ToList();
-        }
-
-        public async Task<long> GetItemsCount(int? parentId, string search, CancellationToken cancellationToken = default)
-        {
-            return (await GetItems(parentId, search, cancellationToken)).Count();
+            var entities = await GetItems(parentId, search, cancellationToken);
+            
+            return new PaginatedItems<MethodModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(MethodModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<MethodModel> UpdateItem(MethodModel item, CancellationToken cancellationToken = default)

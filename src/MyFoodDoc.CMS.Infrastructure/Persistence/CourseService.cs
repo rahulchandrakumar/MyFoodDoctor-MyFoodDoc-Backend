@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -72,7 +73,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         
         public IQueryable<Course> GetBaseQuery(string search)
         {
-            IQueryable<Course> baseQuery = _context.Courses;
+            IQueryable<Course> baseQuery = _context.Courses.Include(x => x.Image);
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var searchString = $"%{search}%";
@@ -81,20 +82,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<CourseModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<CourseModel>> GetItems(int take, int skip, string search, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(search)
-                                                .Include(x => x.Image)
-                                                .Skip(skip).Take(take)
-                                                .AsNoTracking()
-                                                .ToListAsync(cancellationToken);
+            var entities = await GetBaseQuery(search).AsNoTracking().ToListAsync(cancellationToken);
 
-            return entities.Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).OrderBy(x => x.Order).ToList();
-        }
-
-        public async Task<long> GetItemsCount(string search, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(search).AsNoTracking().CountAsync(cancellationToken);
+            return new PaginatedItems<CourseModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).OrderBy(x => x.Order).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<CourseModel> UpdateItem(CourseModel item, CancellationToken cancellationToken = default)

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -78,14 +79,15 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return baseQuery;
         }
 
-        public async Task<IList<IngredientModel>> GetItems(int take, int skip, string search, IngredientFilter filter, CancellationToken cancellationToken = default)
+        public async Task<PaginatedItems<IngredientModel>> GetItems(int take, int skip, string search, IngredientFilter filter, CancellationToken cancellationToken = default)
         {
-            return (await GetBaseQuery(search, filter).Skip(skip).Take(take).ToListAsync(cancellationToken)).Select(IngredientModel.FromEntity).ToList();
-        }
+            var entities = await GetBaseQuery(search, filter).AsNoTracking().ToListAsync(cancellationToken);
 
-        public async Task<long> GetItemsCount(string search, IngredientFilter filter, CancellationToken cancellationToken = default)
-        {
-            return await GetBaseQuery(search, filter).CountAsync(cancellationToken);
+            return new PaginatedItems<IngredientModel>()
+            {
+                Items = entities.Skip(skip).Take(take).Select(IngredientModel.FromEntity).ToList(),
+                TotalCount = entities.Count
+            };
         }
 
         public async Task<IngredientModel> UpdateItem(IngredientModel item, CancellationToken cancellationToken = default)
