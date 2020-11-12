@@ -201,8 +201,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     //Less shown method
                     var methodIdToShow = userMethodShowHistoryForPeriod
-                        .Where(x => x.Method.Type == MethodType.Information ||
-                                    x.Method.Type == MethodType.Knowledge)
+                        .Where(x => childMethodsToShow.Any(y => y.Id == x.MethodId))
                         .GroupBy(k => k.MethodId)
                         .Select(g => new { MethodId = g.Key, Count = g.Count() })
                         .OrderBy(x => x.Count).First().MethodId;
@@ -231,10 +230,7 @@ namespace MyFoodDoc.App.Application.Services
                     {
                         //Less shown method
                         var methodIdToShow = userMethodShowHistoryForPeriod
-                            .Where(x=> x.Method.Type == MethodType.AbdominalGirth ||
-                                       x.Method.Type == MethodType.Mood ||
-                                       x.Method.Type == MethodType.Sport ||
-                                       x.Method.Type == MethodType.Weight)
+                            .Where(x => parentFrequencyMethodsToShow.Any(y => y.Id == x.MethodId))
                             .GroupBy(k => k.MethodId)
                             .Select(g => new { MethodId = g.Key, Count = g.Count() })
                             .OrderBy(x=> x.Count).First().MethodId;
