@@ -75,15 +75,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
-            entity = await _context.Methods
-                .Include(x => x.Image)
-                .Include(x => x.Targets)
-                .Include(x => x.Diets)
-                .Include(x => x.Indications)
-                .Include(x => x.Motivations)
-                .FirstOrDefaultAsync(u => u.Id == entity.Id, cancellationToken);
+            var result = await GetItem(entity.Id, cancellationToken);
 
-            return MethodModel.FromEntity(entity);
+            return result;
         }
 
         public async Task<bool> DeleteItem(int id, CancellationToken cancellationToken = default)
@@ -130,11 +124,6 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         private async Task<IList<Method>> GetItems(int? parentId, string search, CancellationToken cancellationToken = default)
         {
             var entities = await _context.Methods
-                //.Include(x => x.Image)
-                //.Include(x => x.Targets)
-                //.Include(x => x.Diets)
-                //.Include(x => x.Indications)
-                //.Include(x => x.Motivations)
                 .AsNoTracking()
                 .Where(x=> x.ParentId == parentId)
                 .ToListAsync(cancellationToken);
@@ -157,17 +146,9 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             foreach (var entity in entities.Skip(skip).Take(take).ToList())
             {
-                try
-                {
-                    var item = await GetItem(entity.Id, cancellationToken);
-                    result.Add(item);
-                }
-                catch (Exception e)
-                {
-                    throw;
-                }
-            } 
-
+                var item = await GetItem(entity.Id, cancellationToken);
+                result.Add(item);
+            }
 
             return new PaginatedItems<MethodModel>()
             {
