@@ -17,8 +17,7 @@ export default {
         return state.items;
     },
     loadItem: async ({ state }, { id }) => {
-        state.loaded = false
-
+        
         let response = await integration.methods.get(id);
         if (response.status !== 200) {
             throw new Error(`undefined error in backend (${response.status})`);
@@ -68,6 +67,7 @@ export default {
     },
     itemAdded: async ({ state, commit, dispatch }, { Id }) => {
         if (state.total - state.skip < state.take) {
+            state.loaded = false
             var item = await dispatch('loadItem', { id: Id })
             commit("addItem", item)
         }
@@ -75,6 +75,7 @@ export default {
     },
     itemUpdated: async ({ state, commit, dispatch }, { Id }) => {
         if (state.items.filter(i => i.id == Id).length > 0) {
+            state.loaded = false
             var item = await dispatch('loadItem', { id: Id })
             commit("setItem", item)
         }
