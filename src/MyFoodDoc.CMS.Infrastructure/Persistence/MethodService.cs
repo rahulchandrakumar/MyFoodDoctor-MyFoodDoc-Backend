@@ -130,11 +130,11 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         private async Task<IList<Method>> GetItems(int? parentId, string search, CancellationToken cancellationToken = default)
         {
             var entities = await _context.Methods
-                .Include(x => x.Image)
-                .Include(x => x.Targets)
-                .Include(x => x.Diets)
-                .Include(x => x.Indications)
-                .Include(x => x.Motivations)
+                //.Include(x => x.Image)
+                //.Include(x => x.Targets)
+                //.Include(x => x.Diets)
+                //.Include(x => x.Indications)
+                //.Include(x => x.Motivations)
                 .AsNoTracking()
                 .Where(x=> x.ParentId == parentId)
                 .ToListAsync(cancellationToken);
@@ -152,10 +152,26 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<PaginatedItems<MethodModel>> GetItems(int? parentId, int take, int skip, string search, CancellationToken cancellationToken = default)
         {
             var entities = await GetItems(parentId, search, cancellationToken);
-            
+
+            List<MethodModel> result = new List<MethodModel>();
+
+            foreach (var entity in entities.Skip(skip).Take(take).ToList())
+            {
+                try
+                {
+                    var item = await GetItem(entity.Id, cancellationToken);
+                    result.Add(item);
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
+            } 
+
+
             return new PaginatedItems<MethodModel>()
             {
-                Items = entities.Skip(skip).Take(take).Select(MethodModel.FromEntity).ToList(),
+                Items = result,
                 TotalCount = entities.Count
             };
         }
