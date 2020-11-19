@@ -17,6 +17,7 @@
     <ProjectReference Include="..\MyFoodDoc.AppStoreClient\MyFoodDoc.AppStoreClient.csproj" />
     <ProjectReference Include="..\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />
     <ProjectReference Include="..\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.GooglePlayStoreClient\MyFoodDoc.GooglePlayStoreClient.csproj" />
   </ItemGroup>
 
 </Project>

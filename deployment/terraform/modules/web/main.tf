@@ -334,32 +334,42 @@ resource "azurerm_app_service" "api" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT                      = var.apiapp_aspenv
-    APPINSIGHTS_INSTRUMENTATIONKEY              = azurerm_application_insights.appinsights.instrumentation_key
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
-    DOCKER_REGISTRY_SERVER_URL                  = var.containerregistry_url
-    DOCKER_REGISTRY_SERVER_USERNAME             = var.containerregistry_admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD             = var.containerregistry_admin_password
-    DOCKER_CUSTOM_IMAGE_NAME                    = "${var.projectname}-api"
-    DOCKER_ENABLE_CI                            = "false"
-    DEFAULT_DATABASE_CONNECTION                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
-    IDENTITY_SERVER_CLIENT                      = "myfooddoc_app"
-    IDENTITY_SERVER_SCOPE                       = "myfooddoc_api offline_access"
-    IDENTITY_SERVER_ADDRESS                     = "https://${local.authAppName}.azurewebsites.net"
-    EMAIL_SERVICE_FROM_ADDRESS                  = "app@myfooddoctor.de"
-    EMAIL_SERVICE_FROM_NAME                     = "My food doctor"
-    EMAIL_SERVICE_SEND_GRID_API_KEY             = ""
-    FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
-    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = ""
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = ""
-    FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
-    FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
-    FAT_SECRET_CONSUMER_KEY                     = ""
-    FAT_SECRET_CONSUMER_SECRET                  = ""
-    STATISTICS_PERIOD				            = 4
-    STATISTICS_MINIMUM_DAYS                     = 2
-    TZ                                          = "Europe/Berlin"
+    ASPNETCORE_ENVIRONMENT                                      = var.apiapp_aspenv
+    APPINSIGHTS_INSTRUMENTATIONKEY                              = azurerm_application_insights.appinsights.instrumentation_key
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE                         = "false"
+    DOCKER_REGISTRY_SERVER_URL                                  = var.containerregistry_url
+    DOCKER_REGISTRY_SERVER_USERNAME                             = var.containerregistry_admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD                             = var.containerregistry_admin_password
+    DOCKER_CUSTOM_IMAGE_NAME                                    = "${var.projectname}-api"
+    DOCKER_ENABLE_CI                                            = "false"
+    DEFAULT_DATABASE_CONNECTION                                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+    IDENTITY_SERVER_CLIENT                                      = "myfooddoc_app"
+    IDENTITY_SERVER_SCOPE                                       = "myfooddoc_api offline_access"
+    IDENTITY_SERVER_ADDRESS                                     = "https://${local.authAppName}.azurewebsites.net"
+    EMAIL_SERVICE_FROM_ADDRESS                                  = "app@myfooddoctor.de"
+    EMAIL_SERVICE_FROM_NAME                                     = "My food doctor"
+    EMAIL_SERVICE_SEND_GRID_API_KEY                             = ""
+    FAT_SECRET_IDENTITY_SERVER_SCOPE                            = "basic"
+    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE                       = "client_credentials"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET                    = ""
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID                        = ""
+    FAT_SECRET_IDENTITY_SERVER_ADDRESS                          = "https://oauth.fatsecret.com"
+    FAT_SECRET_ADDRESS                                          = "https://platform.fatsecret.com/rest/server.api"
+    FAT_SECRET_CONSUMER_KEY                                     = ""
+    FAT_SECRET_CONSUMER_SECRET                                  = ""
+    GOOGLE_PLAY_STORE_PACKAGE_NAME"                             = "de.medicum.myfooddoc",
+    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE"                         = "service_account",
+    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID"                   = "pc-api-6022083488696963110-239",
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"               = "",
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"                  = "",
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL"                 = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com",
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"                    = "",
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI"                     = "https://accounts.google.com/o/oauth2/auth",
+    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI"                    = "https://oauth2.googleapis.com/token",
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL"  = "https://www.googleapis.com/oauth2/v1/certs",
+    STATISTICS_PERIOD				                            = 4
+    STATISTICS_MINIMUM_DAYS                                     = 2
+    TZ                                                          = "Europe/Berlin"
   }
 
   identity {
