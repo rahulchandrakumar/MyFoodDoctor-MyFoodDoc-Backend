@@ -8,7 +8,6 @@ using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.TrackedValues;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +16,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.AppStoreClient.Abstractions;
+using MyFoodDoc.GooglePlayStoreClient.Abstractions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -27,19 +27,21 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IUserHistoryService _userHistoryService;
         private readonly UserManager<User> _userManager;
         private readonly IAppStoreClient _appStoreClient;
+        private readonly IGooglePlayStoreClient _googlePlayStoreClient;
 
         public UserService(
             IApplicationContext context, 
             IMapper mapper, 
             IUserHistoryService userHistoryService, 
             UserManager<User> userManager, 
-            IAppStoreClient appStoreClient)
+            IAppStoreClient appStoreClient,
+            IGooglePlayStoreClient googlePlayStoreClient)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
             _userHistoryService = userHistoryService;
-            _appStoreClient = appStoreClient;
+            _googlePlayStoreClient = googlePlayStoreClient;
         }
 
         public async Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default)
@@ -336,7 +338,28 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
+            return user.SubscriptionExpirationDate != null && user.SubscriptionExpirationDate.Value > DateTime.Now;
+        }
+
+        public async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(payload.SubscriptionId, payload.PurchaseToken);
+
+            user.SubscriptionExpirationDate = validateReceiptValidationResult.SubscriptionExpirationDate;
+            user.SubscriptionExpirationDateUpdated = DateTime.Now;
+
+            _context.Users.Update(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return user.SubscriptionExpirationDate != null && user.SubscriptionExpirationDate.Value > DateTime.Now;
         }
     }
 }

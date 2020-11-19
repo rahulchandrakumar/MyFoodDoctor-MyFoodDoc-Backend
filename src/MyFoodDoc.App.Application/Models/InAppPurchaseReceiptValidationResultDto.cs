@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MyFoodDoc.App.Application.Models
 {
-    public class AppStoreReceiptValidationResultDto
+    public class InAppPurchaseReceiptValidationResultDto
     {
         public bool IsValid { get; set; }
     }

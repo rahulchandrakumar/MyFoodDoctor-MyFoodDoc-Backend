@@ -9,6 +9,7 @@ using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Services;
 using MyFoodDoc.AppStoreClient;
+using MyFoodDoc.GooglePlayStoreClient;
 
 namespace MyFoodDoc.App.Application
 {
@@ -17,6 +18,7 @@ namespace MyFoodDoc.App.Application
         public static IServiceCollection AddApplication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSharedAppStoreClient(configuration);
+            services.AddSharedGooglePlayStoreClient(configuration);
             services.AddSharedFatSecretClient(configuration);
             services.AddSharedApplication(configuration);
 
