@@ -128,16 +128,6 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("subscription/{hasSubscription}")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateUserHasSubscription([FromRoute] bool hasSubscription, CancellationToken cancellationToken = default)
-        {
-            await _service.UpdateUserHasSubscription(GetUserId(), hasSubscription, cancellationToken);
-
-            return Ok();
-        }
-
         [HttpPost("notifications")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
