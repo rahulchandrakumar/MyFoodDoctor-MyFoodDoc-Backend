@@ -18,9 +18,6 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task ChangePasswordAsync(string userId, string oldPassword, string newPassword);
 
-        Task UpdateUserHasSubscription(string userId, bool hasSubscription,
-            CancellationToken cancellationToken = default);
-
         Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,
             CancellationToken cancellationToken = default);
 
