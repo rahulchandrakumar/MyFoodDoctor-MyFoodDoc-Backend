@@ -41,6 +41,7 @@ namespace MyFoodDoc.App.Application.Services
             _mapper = mapper;
             _userManager = userManager;
             _userHistoryService = userHistoryService;
+            _appStoreClient = appStoreClient;
             _googlePlayStoreClient = googlePlayStoreClient;
         }
 
