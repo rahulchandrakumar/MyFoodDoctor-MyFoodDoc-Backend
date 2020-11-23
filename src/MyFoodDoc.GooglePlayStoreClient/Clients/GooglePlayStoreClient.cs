@@ -31,7 +31,6 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
 
             try
             {
-
                 var publisherService = new AndroidPublisherService(new BaseClientService.Initializer
                 {
                     HttpClientInitializer = GoogleCredential
@@ -51,9 +50,15 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
 
                 return new PurchaseValidationResult()
                 {
-                    SubscriptionExpirationDate = response.ExpiryTimeMillis == null
+                    StartDate =  response.StartTimeMillis == null
+                        ? (DateTime?)null
+                        : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).DateTime,
+                    ExpirationDate = response.ExpiryTimeMillis == null
                         ? (DateTime?) null
-                        : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).Date
+                        : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).DateTime,
+                    AutoRenewing = response.AutoRenewing,
+                    CancelReason = response.CancelReason,
+                    LinkedPurchaseToken = response.LinkedPurchaseToken
                 };
             }
             catch (Exception e)

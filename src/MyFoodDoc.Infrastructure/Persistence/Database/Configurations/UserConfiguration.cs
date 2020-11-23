@@ -12,9 +12,11 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.HasKey(x => x.Id);
             builder.HasIndex(x => new { x.UserName, x.Gender });
             builder.HasIndex(x => x.Created);
+            builder.HasIndex(x => new { x.SubscriptionType, x.SubscriptionToken });
             builder.Property(x => x.Birthday).HasColumnType("Date");
             builder.Property(x => x.Gender).HasConversion<string>().HasMaxLength(6);
             builder.Property(x => x.Height).HasColumnType("decimal(4,1)");
+            builder.Property(x => x.SubscriptionType).HasConversion<string>().HasMaxLength(15);
             builder.Property(x => x.PushNotificationsEnabled).HasDefaultValue(false);
             builder.Property(o => o.DeviceToken).HasMaxLength(256);
 

@@ -46,7 +46,7 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            if (user.SubscriptionExpirationDate == null || user.SubscriptionExpirationDate.Value < date)
+            if (user.HasValidSubscription == null || !user.HasValidSubscription.Value)
                 return result;
 
             var userMethodShowHistory = await _context.UserMethodShowHistory
