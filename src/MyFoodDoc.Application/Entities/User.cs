@@ -19,9 +19,15 @@ namespace MyFoodDoc.Application.Entities
 
         public int? InsuranceId { get; set; }
 
-        public DateTime? SubscriptionExpirationDate { get; set; }
+        public SubscriptionType? SubscriptionType { get; set; }
 
-        public DateTime? SubscriptionExpirationDateUpdated { get; set; }
+        public string SubscriptionId { get; set; }
+
+        public string SubscriptionToken { get; set; }
+
+        public bool? HasValidSubscription { get; set; }
+
+        public DateTime? SubscriptionUpdated { get; set; }
 
         public bool PushNotificationsEnabled { get; set; }
 

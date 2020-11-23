@@ -58,7 +58,10 @@ namespace MyFoodDoc.AppStoreClient.Clients
                 System.Globalization.CultureInfo.InvariantCulture,
                 System.Globalization.DateTimeStyles.AssumeUniversal);
 
-            return new ReceiptValidationResult(){SubscriptionExpirationDate = subscriptionExpirationDateTime };
+            return new ReceiptValidationResult
+            {
+                SubscriptionExpirationDate = subscriptionExpirationDateTime
+            };
         }
     }
 }
