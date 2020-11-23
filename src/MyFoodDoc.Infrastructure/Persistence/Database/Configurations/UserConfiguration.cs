@@ -18,7 +18,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(x => x.Gender).HasConversion<string>().HasMaxLength(6);
             builder.Property(x => x.Height).HasColumnType("decimal(4,1)");
             builder.Property(x => x.SubscriptionType).HasConversion<string>().HasMaxLength(15);
-            builder.Property(o => o.PurchaseToken).HasMaxLength(1000);
+            builder.Property(o => o.PurchaseToken).HasColumnType("varchar(1000)");
+            builder.Property(o => o.ReceiptData).HasColumnType("varchar(max)");
             builder.Property(x => x.PushNotificationsEnabled).HasDefaultValue(false);
             builder.Property(o => o.DeviceToken).HasMaxLength(256);
 
