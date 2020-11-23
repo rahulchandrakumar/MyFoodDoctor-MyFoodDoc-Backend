@@ -318,7 +318,8 @@ namespace MyFoodDoc.App.Application.Services
 
             user.SubscriptionType = SubscriptionType.AppStore;
             user.SubscriptionId = null;
-            user.SubscriptionToken = payload.ReceiptData;
+            user.PurchaseToken = null;
+            user.ReceiptData = payload.ReceiptData;
             user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
             user.SubscriptionUpdated = DateTime.Now;
 
@@ -342,7 +343,8 @@ namespace MyFoodDoc.App.Application.Services
 
             user.SubscriptionType = SubscriptionType.GooglePlayStore;
             user.SubscriptionId = payload.SubscriptionId;
-            user.SubscriptionToken = payload.PurchaseToken;
+            user.PurchaseToken = payload.PurchaseToken;
+            user.ReceiptData = null;
             user.HasValidSubscription = validateReceiptValidationResult.CancelReason == null &&
                                         ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now && 
                                           validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
@@ -354,7 +356,7 @@ namespace MyFoodDoc.App.Application.Services
 
             if (!string.IsNullOrEmpty(validateReceiptValidationResult.LinkedPurchaseToken))
             {
-                var linkedUser = await _context.Users.SingleOrDefaultAsync(x => x.SubscriptionType == SubscriptionType.GooglePlayStore && x.SubscriptionToken == validateReceiptValidationResult.LinkedPurchaseToken, cancellationToken);
+                var linkedUser = await _context.Users.SingleOrDefaultAsync(x => x.PurchaseToken == validateReceiptValidationResult.LinkedPurchaseToken, cancellationToken);
 
                 if (linkedUser != null && linkedUser.UserName != user.UserName)
                 {
