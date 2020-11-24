@@ -22,8 +22,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\MyFoodDoc.AppStoreClient\MyFoodDoc.AppStoreClient.csproj" />
     <ProjectReference Include="..\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />
     <ProjectReference Include="..\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.FirebaseClient\MyFoodDoc.FirebaseClient.csproj" />
+    <ProjectReference Include="..\MyFoodDoc.GooglePlayStoreClient\MyFoodDoc.GooglePlayStoreClient.csproj" />
     <ProjectReference Include="..\MyFoodDoc.Infrastructure\MyFoodDoc.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>

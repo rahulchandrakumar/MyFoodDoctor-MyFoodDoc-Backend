@@ -1,4 +1,23 @@
 {
+  "AppStore": {
+    "VerifyReceiptUrl": "{APP_STORE_VERIFY_RECEIPT_URL}",
+    "VerifyReceiptSharedSecret": "{APP_STORE_VERIFY_RECEIPT_SHARED_SECRET}"
+  },
+  "GooglePlayStore": {
+    "PackageName": "{GOOGLE_PLAY_STORE_PACKAGE_NAME}",
+    "Certificate": {
+      "Type": "{GOOGLE_PLAY_STORE_CERTIFICATE_TYPE}",
+      "ProjectId": "{GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID}",
+      "PrivateKeyId": "{GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID}",
+      "PrivateKey": "{GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY}",
+      "ClientEmail": "{GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL}",
+      "ClientId": "{GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID}",
+      "AuthUri": "{GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI}",
+      "TokenUri": "{GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI}",
+      "AuthProviderX509CertUrl": "{GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL}",
+      "ClientX509CertUrl": "{GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_X509_CERT_URL}"
+    }
+  },
   "FatSecretIdentityServer": {
     "Address": "{FAT_SECRET_IDENTITY_SERVER_ADDRESS}",
     "GrantType": "{FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE}",

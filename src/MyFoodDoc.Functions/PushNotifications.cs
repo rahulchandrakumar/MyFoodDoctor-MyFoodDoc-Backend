@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Google.Apis.AndroidPublisher.v3;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Cloud.PubSub.V1;
 using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
-using MyFoodDoc.Functions.Firebase;
+using MyFoodDoc.FirebaseClient.Abstractions;
+using MyFoodDoc.FirebaseClient.Clients;
+
 
 namespace MyFoodDoc.Functions
 {
