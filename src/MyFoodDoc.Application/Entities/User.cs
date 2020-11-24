@@ -27,6 +27,10 @@ namespace MyFoodDoc.Application.Entities
 
         public string ReceiptData { get; set; }
 
+        public string ProductId { get; set; }
+
+        public string OriginalTransactionId { get; set; }
+
         public bool? HasValidSubscription { get; set; }
 
         public DateTime? SubscriptionUpdated { get; set; }

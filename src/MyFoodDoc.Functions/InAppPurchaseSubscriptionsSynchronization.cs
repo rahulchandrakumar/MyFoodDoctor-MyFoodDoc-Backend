@@ -50,6 +50,8 @@ namespace MyFoodDoc.Functions
                     {
                         var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(user.ReceiptData);
 
+                        user.ProductId = validateReceiptValidationResult.ProductId;
+                        user.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
                         user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
                         user.SubscriptionUpdated = DateTime.Now;
                     }
