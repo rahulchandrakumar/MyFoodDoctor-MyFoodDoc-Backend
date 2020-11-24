@@ -60,7 +60,9 @@ namespace MyFoodDoc.AppStoreClient.Clients
 
             return new ReceiptValidationResult
             {
-                SubscriptionExpirationDate = subscriptionExpirationDateTime
+                SubscriptionExpirationDate = subscriptionExpirationDateTime,
+                ProductId = result.latest_receipt_info[0].product_id,
+                OriginalTransactionId = result.latest_receipt_info[0].original_transaction_id
             };
         }
     }

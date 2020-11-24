@@ -316,10 +316,17 @@ namespace MyFoodDoc.App.Application.Services
 
             var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(payload.ReceiptData);
 
+            var users = await _context.Users.Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId == validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
+
+            if (users.Any(x => x.Id != userId))
+                throw new ConflictException("Receipt is already used by another user");
+
             user.SubscriptionType = SubscriptionType.AppStore;
             user.SubscriptionId = null;
             user.PurchaseToken = null;
             user.ReceiptData = payload.ReceiptData;
+            user.ProductId = validateReceiptValidationResult.ProductId;
+            user.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
             user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
             user.SubscriptionUpdated = DateTime.Now;
 
@@ -339,12 +346,19 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
+            var users = await _context.Users.Where(x => x.PurchaseToken == payload.PurchaseToken).ToListAsync(cancellationToken);
+
+            if (users.Any(x => x.Id != userId))
+                throw new ConflictException("PurchaseToken is already used by another user");
+
             var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(payload.SubscriptionId, payload.PurchaseToken);
 
             user.SubscriptionType = SubscriptionType.GooglePlayStore;
             user.SubscriptionId = payload.SubscriptionId;
             user.PurchaseToken = payload.PurchaseToken;
             user.ReceiptData = null;
+            user.ProductId = null;
+            user.OriginalTransactionId = null;
             user.HasValidSubscription = validateReceiptValidationResult.CancelReason == null &&
                                         ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now && 
                                           validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
