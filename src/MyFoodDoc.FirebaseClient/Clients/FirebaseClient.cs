@@ -8,9 +8,10 @@ using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MyFoodDoc.FirebaseClient.Abstractions;
 using Newtonsoft.Json;
 
-namespace MyFoodDoc.Functions.Firebase
+namespace MyFoodDoc.FirebaseClient.Clients
 {
     public class FirebaseClient : IFirebaseClient
     {

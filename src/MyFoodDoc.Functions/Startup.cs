@@ -8,7 +8,9 @@ using MyFoodDoc.Application;
 using MyFoodDoc.Infrastructure;
 using MyFoodDoc.Core.Configuration.ConfigurationMapper;
 using MyFoodDoc.FatSecretClient;
-using MyFoodDoc.Functions.Firebase;
+using MyFoodDoc.AppStoreClient;
+using MyFoodDoc.GooglePlayStoreClient;
+using MyFoodDoc.FirebaseClient;
 
 [assembly: WebJobsStartup(typeof(MyFoodDoc.Functions.Startup))]
 
@@ -30,12 +32,10 @@ namespace MyFoodDoc.Functions
 
             builder.Services.AddSharedInfrastructure(configuration, null);
             builder.Services.AddSharedApplication(configuration);
+            builder.Services.AddSharedAppStoreClient(configuration);
+            builder.Services.AddSharedGooglePlayStoreClient(configuration);
             builder.Services.AddSharedFatSecretClient(configuration);
-
-            builder.Services.Configure<FirebaseClientOptions>(
-                configuration.GetSection("Firebase"));
-
-            builder.Services.AddScoped<IFirebaseClient, FirebaseClient>();
+            builder.Services.AddSharedFirebaseClient(configuration);
         }
     }
 }
