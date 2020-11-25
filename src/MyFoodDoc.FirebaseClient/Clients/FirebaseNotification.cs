@@ -1,4 +1,4 @@
-﻿namespace MyFoodDoc.Functions.Firebase
+﻿namespace MyFoodDoc.FirebaseClient.Clients
 {
     public class FirebaseNotification
     {

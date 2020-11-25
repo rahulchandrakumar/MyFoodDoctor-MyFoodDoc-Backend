@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201123142153_UsersPurchaseTokenReceiptData")]
+    partial class UsersPurchaseTokenReceiptData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1357,9 +1359,6 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<string>("OriginalTransactionId")
-                        .HasColumnType("varchar(1000)");
-
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -1369,11 +1368,9 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ProductId")
-                        .HasColumnType("varchar(1000)");
-
                     b.Property<string>("PurchaseToken")
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("nvarchar(1000)")
+                        .HasMaxLength(1000);
 
                     b.Property<bool>("PushNotificationsEnabled")
                         .ValueGeneratedOnAdd()
@@ -1381,7 +1378,7 @@ namespace MyFoodDoc.Database.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<string>("ReceiptData")
-                        .HasColumnType("varchar(max)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -1421,7 +1418,7 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasIndex("SubscriptionUpdated");
 
-                    b.HasIndex("ProductId", "OriginalTransactionId");
+                    b.HasIndex("UserName", "Gender");
 
                     b.ToTable("Users","User");
                 });

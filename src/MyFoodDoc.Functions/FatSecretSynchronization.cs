@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.FatSecretClient.Abstractions;
@@ -28,7 +29,7 @@ namespace MyFoodDoc.Functions
             ILogger log, 
             CancellationToken cancellationToken)
         {
-            var ingredients = _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddDays(-1)).ToList();
+            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddDays(-1)).ToListAsync(cancellationToken);
 
             log.LogInformation($"{ingredients.Count()} records to update.");
 

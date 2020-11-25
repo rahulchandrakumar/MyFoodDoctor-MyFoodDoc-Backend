@@ -5,62 +5,6 @@
     <UserSecretsId>71bdabb2-f279-40b5-b8d7-1bfc0fef714b</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Migrations\20191202111749_Promotions.cs" />
-    <Compile Remove="Migrations\20191202111749_Promotions.Designer.cs" />
-    <Compile Remove="Migrations\20191202112422_Promotions.cs" />
-    <Compile Remove="Migrations\20191202112422_Promotions.Designer.cs" />
-    <Compile Remove="Migrations\20191204120736_UniqueCouponCode.cs" />
-    <Compile Remove="Migrations\20191204120736_UniqueCouponCode.Designer.cs" />
-    <Compile Remove="Migrations\20191204121759_UniqueCouponCode.cs" />
-    <Compile Remove="Migrations\20191204121759_UniqueCouponCode.Designer.cs" />
-    <Compile Remove="Migrations\20191204131058_UniqueCouponCode.cs" />
-    <Compile Remove="Migrations\20191204131058_UniqueCouponCode.Designer.cs" />
-    <Compile Remove="Migrations\20191205075820_UniqueCouponCode.cs" />
-    <Compile Remove="Migrations\20191205075820_UniqueCouponCode.Designer.cs" />
-    <Compile Remove="Migrations\20191205112503_UniqueCouponCodeUpd.cs" />
-    <Compile Remove="Migrations\20191205112503_UniqueCouponCodeUpd.Designer.cs" />
-    <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.cs" />
-    <Compile Remove="Migrations\20191205121139_UniqueCouponCode1.Designer.cs" />
-    <Compile Remove="Migrations\20191206081031_MotivationTypes.cs" />
-    <Compile Remove="Migrations\20191206081031_MotivationTypes.Designer.cs" />
-    <Compile Remove="Migrations\20200417151455_Targets.cs" />
-    <Compile Remove="Migrations\20200417151455_Targets.Designer.cs" />
-    <Compile Remove="Migrations\20200417160034_Targets.cs" />
-    <Compile Remove="Migrations\20200417160034_Targets.Designer.cs" />
-    <Compile Remove="Migrations\20200422144307_TargetsAddImageUrl.cs" />
-    <Compile Remove="Migrations\20200422144307_TargetsAddImageUrl.Designer.cs" />
-    <Compile Remove="Migrations\20200424151453_TargetsMandatoryImage.cs" />
-    <Compile Remove="Migrations\20200424151453_TargetsMandatoryImage.Designer.cs" />
-    <Compile Remove="Migrations\20200424152256_TargetsMandatoryImage.cs" />
-    <Compile Remove="Migrations\20200424152256_TargetsMandatoryImage.Designer.cs" />
-    <Compile Remove="Migrations\20200506145950_Courses.cs" />
-    <Compile Remove="Migrations\20200506145950_Courses.Designer.cs" />
-    <Compile Remove="Migrations\20200506163110_Courses.cs" />
-    <Compile Remove="Migrations\20200506163110_Courses.Designer.cs" />
-    <Compile Remove="Migrations\20200506164659_Courses.cs" />
-    <Compile Remove="Migrations\20200506164659_Courses.Designer.cs" />
-    <Compile Remove="Migrations\20200526100333_Methods.cs" />
-    <Compile Remove="Migrations\20200526100333_Methods.Designer.cs" />
-    <Compile Remove="Migrations\20200526100705_Methods.cs" />
-    <Compile Remove="Migrations\20200526100705_Methods.Designer.cs" />
-    <Compile Remove="Migrations\20200526115505_Methods.cs" />
-    <Compile Remove="Migrations\20200526115505_Methods.Designer.cs" />
-    <Compile Remove="Migrations\20200526163134_Methods.cs" />
-    <Compile Remove="Migrations\20200526163134_Methods.Designer.cs" />
-    <Compile Remove="Migrations\20200617081600_MethodsAddImage.cs" />
-    <Compile Remove="Migrations\20200617081600_MethodsAddImage.Designer.cs" />
-    <Compile Remove="Migrations\20200622154032_TargetMethods.cs" />
-    <Compile Remove="Migrations\20200622154032_TargetMethods.Designer.cs" />
-    <Compile Remove="Migrations\20200622161721_TargetMethods.cs" />
-    <Compile Remove="Migrations\20200622161721_TargetMethods.Designer.cs" />
-    <Compile Remove="Migrations\20200622164146_Test.cs" />
-    <Compile Remove="Migrations\20200622164146_Test.Designer.cs" />
-    <Compile Remove="Migrations\20201006141219_LexiconCategories.cs" />
-    <Compile Remove="Migrations\20201006141219_LexiconCategories.Designer.cs" />
-    <Compile Remove="Migrations\20201006151655_LexiconCategories.cs" />
-    <Compile Remove="Migrations\20201006151655_LexiconCategories.Designer.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Remove="mapping.json" />
   </ItemGroup>
   <ItemGroup>

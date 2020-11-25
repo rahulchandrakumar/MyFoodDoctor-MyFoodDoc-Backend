@@ -141,7 +141,9 @@ namespace MyFoodDoc.App.Api.Controllers
 
         [HttpPost("in-app-purchases/app-store/validate")]
         [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateAppStoreInAppPurchase([FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
@@ -155,7 +157,9 @@ namespace MyFoodDoc.App.Api.Controllers
 
         [HttpPost("in-app-purchases/google-play-store/validate")]
         [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateGooglePlayStoreInAppPurchase([FromBody] ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {

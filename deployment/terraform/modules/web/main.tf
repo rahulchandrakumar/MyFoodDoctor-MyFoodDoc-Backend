@@ -357,16 +357,18 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_ADDRESS                                          = "https://platform.fatsecret.com/rest/server.api"
     FAT_SECRET_CONSUMER_KEY                                     = ""
     FAT_SECRET_CONSUMER_SECRET                                  = ""
-    GOOGLE_PLAY_STORE_PACKAGE_NAME"                             = "de.medicum.myfooddoc",
-    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE"                         = "service_account",
-    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID"                   = "pc-api-6022083488696963110-239",
-    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"               = "",
-    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"                  = "",
-    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL"                 = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com",
-    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"                    = "",
-    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI"                     = "https://accounts.google.com/o/oauth2/auth",
-    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI"                    = "https://oauth2.googleapis.com/token",
-    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL"  = "https://www.googleapis.com/oauth2/v1/certs",
+    APP_STORE_VERIFY_RECEIPT_URL                                = "https://sandbox.itunes.apple.com/verifyReceipt"
+    APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
+    GOOGLE_PLAY_STORE_PACKAGE_NAME"                             = "de.medicum.myfooddoc"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE"                         = "service_account"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID"                   = "pc-api-6022083488696963110-239"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"               = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"                  = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL"                 = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com"
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"                    = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI"                     = "https://accounts.google.com/o/oauth2/auth"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI"                    = "https://oauth2.googleapis.com/token"
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL"  = "https://www.googleapis.com/oauth2/v1/certs"
     STATISTICS_PERIOD				                            = 4
     STATISTICS_MINIMUM_DAYS                                     = 2
     TZ                                                          = "Europe/Berlin"
@@ -404,38 +406,50 @@ resource "azurerm_function_app" "func" {
   }
 
   app_settings = {
-    ASPNETCORE_ENVIRONMENT                      = var.apiapp_aspenv
-    APPINSIGHTS_INSTRUMENTATIONKEY              = azurerm_application_insights.appinsights.instrumentation_key
-    AzureWebJobsStorage                         = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
-    DOCKER_REGISTRY_SERVER_URL                  = var.containerregistry_url
-    DOCKER_REGISTRY_SERVER_USERNAME             = var.containerregistry_admin_username
-    DOCKER_REGISTRY_SERVER_PASSWORD             = var.containerregistry_admin_password
-    DOCKER_CUSTOM_IMAGE_NAME                    = "${var.projectname}-func"
-    DOCKER_ENABLE_CI                            = "false"
-    DEFAULT_DATABASE_CONNECTION                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
-    FAT_SECRET_IDENTITY_SERVER_SCOPE            = "basic"
-    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE       = "client_credentials"
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET    = ""
-    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID        = ""
-    FAT_SECRET_IDENTITY_SERVER_ADDRESS          = "https://oauth.fatsecret.com"
-    FAT_SECRET_ADDRESS                          = "https://platform.fatsecret.com/rest/server.api"
-    FAT_SECRET_CONSUMER_KEY                     = ""
-    FAT_SECRET_CONSUMER_SECRET                  = ""
-    FIREBASE_TYPE                               = "service_account"
-    FIREBASE_PROJECT_ID                         = "medicum-myfooddoc"
-    FIREBASE_PRIVATE_KEY_ID                     = ""
-    FIREBASE_PRIVATE_KEY                        = ""
-    FIREBASE_CLIENT_EMAIL                       = "firebase-adminsdk-1mq1y@medicum-myfooddoc.iam.gserviceaccount.com"
-    FIREBASE_CLIENT_ID                          = ""
-    FIREBASE_AUTH_URI                           = "https://accounts.google.com/o/oauth2/auth"
-    FIREBASE_TOKEN_URI                          = "https://oauth2.googleapis.com/token"
-    FIREBASE_AUTH_PROVIDER_X509_CERT_URL        = "https://www.googleapis.com/oauth2/v1/certs"
-    FIREBASE_CLIENT_X509_CERT_URL               = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1mq1y%40medicum-myfooddoc.iam.gserviceaccount.com"
-    FUNCTIONS_WORKER_RUNTIME                    = "dotnet"
-    WEBSITES_ENABLE_APP_SERVICE_STORAGE         = "false"
-    WEBSITE_HTTPLOGGING_RETENTION_DAYS          = "14"
-    WEBSITE_RUN_FROM_PACKAGE                    = ""
-    TZ                                          = "Europe/Berlin"
+    ASPNETCORE_ENVIRONMENT                                      = var.apiapp_aspenv
+    APPINSIGHTS_INSTRUMENTATIONKEY                              = azurerm_application_insights.appinsights.instrumentation_key
+    AzureWebJobsStorage                                         = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+    DOCKER_REGISTRY_SERVER_URL                                  = var.containerregistry_url
+    DOCKER_REGISTRY_SERVER_USERNAME                             = var.containerregistry_admin_username
+    DOCKER_REGISTRY_SERVER_PASSWORD                             = var.containerregistry_admin_password
+    DOCKER_CUSTOM_IMAGE_NAME                                    = "${var.projectname}-func"
+    DOCKER_ENABLE_CI                                            = "false"
+    DEFAULT_DATABASE_CONNECTION                                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
+    FAT_SECRET_IDENTITY_SERVER_SCOPE                            = "basic"
+    FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE                       = "client_credentials"
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET                    = ""
+    FAT_SECRET_IDENTITY_SERVER_CLIENT_ID                        = ""
+    FAT_SECRET_IDENTITY_SERVER_ADDRESS                          = "https://oauth.fatsecret.com"
+    FAT_SECRET_ADDRESS                                          = "https://platform.fatsecret.com/rest/server.api"
+    FAT_SECRET_CONSUMER_KEY                                     = ""
+    FAT_SECRET_CONSUMER_SECRET                                  = ""
+    FIREBASE_TYPE                                               = "service_account"
+    FIREBASE_PROJECT_ID                                         = "medicum-myfooddoc"
+    FIREBASE_PRIVATE_KEY_ID                                     = ""
+    FIREBASE_PRIVATE_KEY                                        = ""
+    FIREBASE_CLIENT_EMAIL                                       = "firebase-adminsdk-1mq1y@medicum-myfooddoc.iam.gserviceaccount.com"
+    FIREBASE_CLIENT_ID                                          = ""
+    FIREBASE_AUTH_URI                                           = "https://accounts.google.com/o/oauth2/auth"
+    FIREBASE_TOKEN_URI                                          = "https://oauth2.googleapis.com/token"
+    FIREBASE_AUTH_PROVIDER_X509_CERT_URL                        = "https://www.googleapis.com/oauth2/v1/certs"
+    FIREBASE_CLIENT_X509_CERT_URL                               = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1mq1y%40medicum-myfooddoc.iam.gserviceaccount.com"
+    APP_STORE_VERIFY_RECEIPT_URL                                = "https://sandbox.itunes.apple.com/verifyReceipt"
+    APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
+    GOOGLE_PLAY_STORE_PACKAGE_NAME"                             = "de.medicum.myfooddoc"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE"                         = "service_account"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID"                   = "pc-api-6022083488696963110-239"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"               = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"                  = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL"                 = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com"
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"                    = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI"                     = "https://accounts.google.com/o/oauth2/auth"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI"                    = "https://oauth2.googleapis.com/token"
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL"  = "https://www.googleapis.com/oauth2/v1/certs"
+    FUNCTIONS_WORKER_RUNTIME                                    = "dotnet"
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE                         = "false"
+    WEBSITE_HTTPLOGGING_RETENTION_DAYS                          = "14"
+    WEBSITE_RUN_FROM_PACKAGE                                    = ""
+    TZ                                                          = "Europe/Berlin"
   }
 
   identity {

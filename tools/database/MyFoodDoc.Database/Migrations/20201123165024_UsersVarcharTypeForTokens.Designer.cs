@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201123165024_UsersVarcharTypeForTokens")]
+    partial class UsersVarcharTypeForTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1357,9 +1359,6 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
 
-                    b.Property<string>("OriginalTransactionId")
-                        .HasColumnType("varchar(1000)");
-
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
@@ -1368,9 +1367,6 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("PurchaseToken")
                         .HasColumnType("varchar(1000)");
@@ -1421,7 +1417,7 @@ namespace MyFoodDoc.Database.Migrations
 
                     b.HasIndex("SubscriptionUpdated");
 
-                    b.HasIndex("ProductId", "OriginalTransactionId");
+                    b.HasIndex("UserName", "Gender");
 
                     b.ToTable("Users","User");
                 });

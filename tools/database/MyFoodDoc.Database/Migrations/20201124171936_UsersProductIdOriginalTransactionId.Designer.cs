@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20201124171936_UsersProductIdOriginalTransactionId")]
+    partial class UsersProductIdOriginalTransactionId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1358,7 +1360,7 @@ namespace MyFoodDoc.Database.Migrations
                         .HasMaxLength(256);
 
                     b.Property<string>("OriginalTransactionId")
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -1370,7 +1372,7 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ProductId")
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PurchaseToken")
                         .HasColumnType("varchar(1000)");

@@ -7,7 +7,12 @@ namespace MyFoodDoc.AppStoreClient.Clients
     public class ReceiptValidationResult
     {
         public DateTime SubscriptionExpirationDate { get; set; }
+
+        public string ProductId { get; set; }
+
+        public string OriginalTransactionId { get; set; }
     }
+
     public class Rootobject
     {
         public string environment { get; set; }

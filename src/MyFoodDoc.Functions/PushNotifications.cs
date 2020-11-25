@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Google.Apis.AndroidPublisher.v3;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
-using Google.Cloud.PubSub.V1;
 using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
-using MyFoodDoc.Functions.Firebase;
+using MyFoodDoc.FirebaseClient.Abstractions;
+using MyFoodDoc.FirebaseClient.Clients;
+
 
 namespace MyFoodDoc.Functions
 {
@@ -40,42 +37,6 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            /*
-            try
-            {
-                        
-            var _credentialsJson = "google.json";
-
-            Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _credentialsJson));
-
-            GoogleCredential credentialsPlay;
-            using (var key = new FileStream(_credentialsJson, FileMode.Open, FileAccess.Read))
-                credentialsPlay = GoogleCredential.FromStream(key); //.CreateScoped("");
-
-            var publisherService = new AndroidPublisherService(new BaseClientService.Initializer
-            {
-                HttpClientInitializer = credentialsPlay
-            });
-
-            var request1 = publisherService.Purchases.Subscriptions.Get(
-                "de.medicum.myfooddoc", 
-                "medicum_monthly",
-                "cilljkojdcjcieibgfafnpje.AO-J1Owt468vgApydHWihk9bcjT0XRGQgAUMi7T0p2Up16yluZ5BbEQJ2J53tA8po3CFUNp4_VI2cKTaTcJaGfBayhur3rgVDQC-5LQraMirTCG5WCHEJjnt8rsLounx81tnXLRrnsn9");
-            var response1 = request1.Execute();
-            
-            }
-            catch (
-
-
-                Exception
-                e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
-            */
-
             log.LogInformation("PushNotifications. Start");
 
             var usersWithPushNotificationsEnabled = await _context.Users.Where(x => x.PushNotificationsEnabled && !string.IsNullOrEmpty(x.DeviceToken)).ToListAsync(cancellationToken);
