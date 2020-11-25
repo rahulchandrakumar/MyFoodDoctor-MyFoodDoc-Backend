@@ -16,12 +16,11 @@
       <Analyzer Remove="@(Analyzer)" />
     </ItemGroup>
   </Target>
-   
+    -->
   
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'True' And '$(DesignTimeBuild)' != 'True' And '$(BuildingProject)' == 'True'">
     <Analyzer Remove="@(Analyzer)" />
   </ItemGroup>
- -->
    
   <ItemGroup>
     <None Remove="mapping.json" />
@@ -35,6 +34,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.7">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.7" />
