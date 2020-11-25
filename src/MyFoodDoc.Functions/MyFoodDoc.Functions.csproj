@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
     <UserSecretsId>23c4d54d-f891-4bb9-bc83-ea9b8bee1acc</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
