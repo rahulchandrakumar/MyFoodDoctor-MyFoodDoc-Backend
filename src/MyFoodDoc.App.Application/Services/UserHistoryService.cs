@@ -28,12 +28,15 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<UserHistoryDto> GetAggregationAsync(string userId, CancellationToken cancellationToken = default)
         {
-            var result = await _context.Users
-                .Where(x => x.Id == userId)
-                .ProjectTo<UserHistoryDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(cancellationToken);
+            var weightHistory = await GetWeightHistoryAsync(userId, cancellationToken);
 
-            return result;
+            var abdominalGirthHistory = await GetAbdominalGirthHistoryAsync(userId, cancellationToken);
+
+            return new UserHistoryDto
+            {
+                Weight = weightHistory,
+                AbdominalGirth = abdominalGirthHistory
+            };
         }
 
         public async Task UpsertWeightHistoryAsync(string userId, WeightHistoryPayload payload, CancellationToken cancellationToken)
