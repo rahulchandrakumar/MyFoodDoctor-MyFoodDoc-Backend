@@ -10,15 +10,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         public override void Configure(EntityTypeBuilder<Meal> builder)
         {
             builder.ToTable("Meals", "Diary");
-            builder.HasKey(o => o.Id);
 
-            builder.HasIndex(p => new { p.UserId, p.Date });
+            builder.HasIndex(x => new { x.UserId, x.Date });
 
-            builder.Property(p => p.Id)
-                .IsRequired()
-                .ValueGeneratedOnAdd();
-
-            builder.Property(p => p.Time)
+            builder.Property(x => x.Time)
                 .IsRequired()
                 .HasColumnType("Time");
 
@@ -26,7 +21,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
                 .HasConversion<string>()
                 .HasMaxLength(10);
 
-            builder.Property(p => p.Mood);
+            builder.Property(x => x.Mood);
         }
     }
 }
