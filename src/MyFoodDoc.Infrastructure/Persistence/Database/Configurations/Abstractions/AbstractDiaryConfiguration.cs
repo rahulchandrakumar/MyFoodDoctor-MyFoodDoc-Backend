@@ -10,10 +10,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations.Abstracti
     {
         public virtual void Configure(EntityTypeBuilder<TEntity> builder)
         {
-            builder.HasKey(o => o.Id);
-            builder.HasIndex(e => new { e.UserId, e.Date });
-            builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
-            builder.Property(o => o.Date).IsRequired().HasColumnType("Date");
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Property(x => x.Date).IsRequired().HasColumnType("Date");
 
             builder.HasOne<User>().WithMany().HasForeignKey(x => x.UserId).IsRequired();
         }

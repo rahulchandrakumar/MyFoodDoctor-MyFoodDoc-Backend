@@ -10,8 +10,11 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         public override void Configure(EntityTypeBuilder<Liquid> builder)
         {
             builder.ToTable("Liquids", "Diary");
-            builder.Property(o => o.Amount).IsRequired();
-            builder.Property(o => o.LastAdded).IsRequired().HasColumnType("Time");
+
+            builder.HasIndex(x => new { x.UserId, x.Date });
+
+            builder.Property(x => x.Amount).IsRequired();
+            builder.Property(x => x.LastAdded).IsRequired().HasColumnType("Time");
         }
     }
 }
