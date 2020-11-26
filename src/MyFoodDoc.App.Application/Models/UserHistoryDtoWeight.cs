@@ -19,8 +19,8 @@ namespace MyFoodDoc.App.Application.Models
         {
             profile.CreateMap<UserWeight, HistoryEntry>();
             profile.CreateMap<IEnumerable<UserWeight>, UserHistoryDtoWeight>()
-                .ForMember(d => d.Initial, opt => opt.MapFrom(s => s.AsQueryable().OrderBy(x => x.Date).FirstOrDefault()))
-                .ForMember(d => d.History, opt => opt.MapFrom(s => s.AsQueryable().OrderBy(x => x.Date)));
+                .ForMember(d => d.Initial, opt => opt.MapFrom(s => s.OrderBy(x => x.Date).FirstOrDefault()))
+                .ForMember(d => d.History, opt => opt.MapFrom(s => s.OrderBy(x => x.Date)));
         }
 
         public class HistoryEntry

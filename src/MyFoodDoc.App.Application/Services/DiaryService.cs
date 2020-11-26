@@ -52,21 +52,29 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new NotFoundException(nameof(User), userId);
             }
+                        
+            var liquid = await _context.Liquids.AsNoTracking()
+                    .Where(x => x.UserId == userId && x.Date == start)
+                    .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
+                    .SingleOrDefaultAsync(cancellationToken);
+
+            var exercise = await _context.Exercises.AsNoTracking()
+                    .Where(x => x.UserId == userId && x.Date == start)
+                    .ProjectTo<DiaryEntryDtoExercise>(_mapper.ConfigurationProvider)
+                    .SingleOrDefaultAsync(cancellationToken);
+
+            List<DiaryEntryDtoMeal> meals = new List<DiaryEntryDtoMeal>();
+
+            foreach (var meal in await _context.Meals.AsNoTracking().Where(x => x.UserId == userId && x.Date == start).ToListAsync(cancellationToken))
+            {
+                meals.Add(await GetMealAsync(userId, meal.Id, cancellationToken));
+            }
 
             var aggregation = new DiaryEntryDto
             {
-                Meals = await _context.Meals.AsNoTracking()
-                    .Where(x => x.UserId == userId && x.Date == start)
-                    .ProjectTo<DiaryEntryDtoMeal>(_mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken),
-                Liquid = await _context.Liquids.AsNoTracking()
-                    .Where(x => x.UserId == userId && x.Date == start)
-                    .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
-                    .SingleOrDefaultAsync(cancellationToken) ?? _liquidDefault,
-                Exercise = await _context.Exercises.AsNoTracking()
-                    .Where(x => x.UserId == userId && x.Date == start)
-                    .ProjectTo<DiaryEntryDtoExercise>(_mapper.ConfigurationProvider)
-                    .SingleOrDefaultAsync(cancellationToken) ?? _exerciseDefault,
+                Meals = meals,
+                Liquid = liquid ?? _liquidDefault,
+                Exercise = exercise ?? _exerciseDefault,
             };
 
             var userWeight = await _context.UserWeights.AsNoTracking()
