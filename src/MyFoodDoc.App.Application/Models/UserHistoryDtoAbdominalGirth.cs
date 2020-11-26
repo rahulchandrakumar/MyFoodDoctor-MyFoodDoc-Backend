@@ -19,8 +19,8 @@ namespace MyFoodDoc.App.Application.Models
         {
             profile.CreateMap<UserAbdominalGirth, HistoryEntry>();
             profile.CreateMap<IEnumerable<UserAbdominalGirth>, UserHistoryDtoAbdominalGirth>()
-                .ForMember(d => d.Initial, opt => opt.MapFrom(s => s.AsQueryable().OrderBy(x => x.Date).FirstOrDefault()))
-                .ForMember(d => d.History, opt => opt.MapFrom(s => s.AsQueryable().OrderBy(x => x.Date)));
+                .ForMember(d => d.Initial, opt => opt.MapFrom(s => s.OrderBy(x => x.Date).FirstOrDefault()))
+                .ForMember(d => d.History, opt => opt.MapFrom(s => s.OrderBy(x => x.Date)));
         }
 
         public class HistoryEntry
