@@ -19,6 +19,10 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public int? ParentId { get; set; }
 
+        public int? TimeIntervalDay { get; set; }
+
+        public int? TimeIntervalNight { get; set; }
+
         public Image Image { get; set; }
 
         public IList<int> Targets { get; set; }
@@ -46,6 +50,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Frequency = model.Frequency,
                 FrequencyPeriod = model.FrequencyPeriod,
                 ParentId = model.ParentId,
+                TimeIntervalDay = model.TimeIntervalDay,
+                TimeIntervalNight = model.TimeIntervalNight,
                 Image = model.Image == null ? null : Image.FromModel(model.Image),
                 Targets = model.Targets?.ToList(),
                 Diets = model.Diets?.ToList(),
@@ -68,6 +74,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 Frequency = this.Frequency,
                 FrequencyPeriod = this.FrequencyPeriod,
                 ParentId = this.ParentId,
+                TimeIntervalDay = this.TimeIntervalDay,
+                TimeIntervalNight = this.TimeIntervalNight,
                 Image = this.Image?.ToModel(),
                 Targets = this.Targets?.ToList(),
                 Diets = this.Diets?.ToList(),

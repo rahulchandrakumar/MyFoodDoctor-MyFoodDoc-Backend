@@ -71,6 +71,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<ISubchapterService, SubchapterService>();
             services.AddTransient<IMethodService, MethodService>();
             services.AddTransient<IMethodMultipleChoiceService, MethodMultipleChoiceService>();
+            services.AddTransient<IMethodTextService, MethodTextService>();
             services.AddTransient<IDietService, DietService>();
             services.AddTransient<IIndicationService, IndicationService>();
             services.AddTransient<IMotivationService, MotivationService>();
