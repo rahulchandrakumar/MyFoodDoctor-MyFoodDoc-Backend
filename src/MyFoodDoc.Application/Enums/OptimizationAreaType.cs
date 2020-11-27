@@ -4,6 +4,7 @@
     {
         Calories,
         Protein,
+        Snacking,
         Sugar,
         Vegetables
     }
