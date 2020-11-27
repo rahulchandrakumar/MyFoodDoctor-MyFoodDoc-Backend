@@ -58,6 +58,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<UserTarget> UserTargets { get; set; }
         public DbSet<Method> Methods { get; set; }
         public DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
+        public DbSet<MethodText> MethodTexts { get; set; }
         public DbSet<UserMethod> UserMethods { get; set; }
         public DbSet<UserMethodShowHistoryItem> UserMethodShowHistory { get; set; }
         public DbSet<MotivationMethod> MotivationMethods { get; set; }

@@ -98,6 +98,14 @@ export default [
         }
     },
     {
+        path: "/methodtext-list/:parentId",
+        name: "Method Texts",
+        view: "Data/MethodTextList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
         path: "/course-list",
         name: "Courses",
         view: "Data/CourseList",

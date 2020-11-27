@@ -49,11 +49,13 @@
   <ItemGroup>
     <Folder Include="app\src\integration\modules\courses\" />
     <Folder Include="app\src\integration\modules\lexiconcategories\" />
+    <Folder Include="app\src\integration\modules\methodtexts\" />
     <Folder Include="app\src\integration\modules\servings\" />
     <Folder Include="app\src\integration\modules\targets\" />
     <Folder Include="app\src\integration\modules\optimizationareas\" />
     <Folder Include="app\src\store\modules\courses\" />
     <Folder Include="app\src\store\modules\lexiconcategories\" />
+    <Folder Include="app\src\store\modules\methodtexts\" />
     <Folder Include="app\src\store\modules\targets\" />
     <Folder Include="app\src\store\modules\optimizationareas\" />
   </ItemGroup>
