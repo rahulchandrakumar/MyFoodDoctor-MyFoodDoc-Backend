@@ -21,6 +21,10 @@ namespace MyFoodDoc.Application.Entities.Methods
 
         public MethodFrequencyPeriod? FrequencyPeriod { get; set; }
 
+        public int? TimeIntervalDay { get; set; }
+
+        public int? TimeIntervalNight { get; set; }
+
         public ICollection<TargetMethod> Targets { get; set; }
 
         public ICollection<MotivationMethod> Motivations { get; set; }

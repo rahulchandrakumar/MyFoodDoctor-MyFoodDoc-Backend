@@ -330,6 +330,16 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         LineGraphUpperLimit = null,
                         LineGraphLowerLimit = null,
                         LineGraphOptimal = 1
+                    },
+                    new OptimizationArea
+                    {
+                        Id = 4,
+                        Key = "snacking",
+                        Name = "Snacking",
+                        Text = "Snacking",
+                        LineGraphUpperLimit = null,
+                        LineGraphLowerLimit = null,
+                        LineGraphOptimal = null
                     });
             }
         }
