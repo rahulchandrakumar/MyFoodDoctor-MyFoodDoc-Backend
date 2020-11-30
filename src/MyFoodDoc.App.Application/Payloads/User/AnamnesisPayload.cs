@@ -6,6 +6,8 @@ namespace MyFoodDoc.App.Application.Payloads.User
 {
     public class AnamnesisPayload
     {
+        public int? Age { get; set; }
+
         public Gender Gender { get; set; }
 
         public decimal Height { get; set; }

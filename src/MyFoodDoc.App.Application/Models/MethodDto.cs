@@ -18,6 +18,10 @@ namespace MyFoodDoc.App.Application.Models
 
         public string ImageUrl { get; set; }
 
+        public int? TimeIntervalDay { get; set; }
+
+        public int? TimeIntervalNight { get; set; }
+
         public bool? UserAnswerBoolean { get; set; }
 
         public decimal? UserAnswerDecimal { get; set; }
@@ -29,6 +33,8 @@ namespace MyFoodDoc.App.Application.Models
         public TimeSpan? TimeAnswered { get; set; }
 
         public ICollection<MethodMultipleChoiceDto> Choices { get; set; }
+
+        public ICollection<MethodTextDto> Texts { get; set; }
 
     }
 }
