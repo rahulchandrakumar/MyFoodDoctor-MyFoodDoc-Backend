@@ -527,6 +527,12 @@ namespace MyFoodDoc.App.Application.Services
                             (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
                     }
 
+                    result.TimeIntervalDay = method.TimeIntervalDay;
+                    result.TimeIntervalNight = method.TimeIntervalNight;
+
+                    result.Texts = await _context.MethodTexts.AsNoTracking()
+                        .Where(x => x.MethodId == method.Id).Select(x => new MethodTextDto { Code = x.Code, Title = x.Title, Text = x.Text }).ToListAsync(cancellationToken);
+
                     break;
                 case MethodType.Weight:
 
