@@ -73,6 +73,11 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
+            if (payload.Age.HasValue)
+            {
+                user.Birthday = DateTime.UtcNow.Date.AddYears(-payload.Age.Value);
+            }
+
             user.Gender = payload.Gender;
             user.Height = payload.Height;
 
@@ -155,6 +160,7 @@ namespace MyFoodDoc.App.Application.Services
             if (payload.Age.HasValue) {
                 user.Birthday = DateTime.UtcNow.Date.AddYears(-payload.Age.Value);
             }
+
             user.Gender = payload.Gender;
             user.Height = payload.Height;
             user.InsuranceId = payload.InsuranceId;

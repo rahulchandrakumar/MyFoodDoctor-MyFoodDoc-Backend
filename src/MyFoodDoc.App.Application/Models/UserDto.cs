@@ -11,12 +11,11 @@ namespace MyFoodDoc.App.Application.Models
 {
     public class UserDto : IMapFrom<User>
     {
+        public DateTime Created { get; set; }
+
         public string Email { get; set; }
 
         public virtual bool IsAnamnesisCompleted => Gender != null && Height != null && (Indications != null || Motivations != null);
-
-        [Obsolete]
-        public virtual bool AnamnesisCompleted => IsAnamnesisCompleted;
 
         public int? Age { get; set; }
 
@@ -39,6 +38,7 @@ namespace MyFoodDoc.App.Application.Models
         public void Mapping(Profile profile) 
         {
             profile.CreateMap<User, UserDto>()
+                .ForMember(x => x.Created, opt => opt.MapFrom(src => src.Created.ToLocalTime().Date))
                 .ForMember(x => x.Age, opt => opt.MapFrom(src => src.Birthday == null ? null : (int?)(DateTime.UtcNow.Year - src.Birthday.Value.Year)))
                 .ForMember(x => x.HasSubscription, opt => opt.MapFrom(src => src.HasValidSubscription != null && src.HasValidSubscription.Value))
                 .ForMember(x => x.HasSubscriptionUpdated, opt => opt.MapFrom(src => src.SubscriptionUpdated))
