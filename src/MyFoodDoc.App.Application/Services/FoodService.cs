@@ -38,7 +38,8 @@ namespace MyFoodDoc.App.Application.Services
                 AnimalProtein = 0,
                 PlantProtein = 0,
                 Sugar = 0,
-                Vegetables = 0
+                Vegetables = 0,
+                Meals = 1
             };
 
             foreach (var mealIngredient in await _context.MealIngredients

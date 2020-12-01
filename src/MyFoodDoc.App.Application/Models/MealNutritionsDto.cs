@@ -15,5 +15,7 @@ namespace MyFoodDoc.App.Application.Models
         public decimal Sugar { get; set; }
 
         public decimal Vegetables { get; set; }
+
+        public int Meals { get; set; }
     }
 }
