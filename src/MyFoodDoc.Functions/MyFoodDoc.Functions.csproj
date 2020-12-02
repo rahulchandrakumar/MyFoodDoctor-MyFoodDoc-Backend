@@ -28,9 +28,6 @@
     <ProjectReference Include="..\MyFoodDoc.Infrastructure\MyFoodDoc.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="google.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

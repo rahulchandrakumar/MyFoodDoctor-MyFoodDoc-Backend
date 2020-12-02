@@ -207,19 +207,12 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     new Indication
                     {
                         Id = 3,
-                        Key = "gout",
-                        Name = "Gicht"
-                    },
-
-                    new Indication
-                    {
-                        Id = 4,
                         Key = "diabetes_type_1",
                         Name = "Diabetes Typ 1"
                     },
                     new Indication
                     {
-                        Id = 5,
+                        Id = 4,
                         Key = "diabetes_type_2",
                         Name = "Diabetes Typ 2"
                     }
@@ -282,18 +275,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Id = 5,
                         Key = "lactose_low",
                         Name = "Laktosearm"
-                    },
-                    new Diet
-                    {
-                        Id = 6,
-                        Key = "fructose_low",
-                        Name = "Fruktosearm"
-                    },
-                    new Diet
-                    {
-                        Id = 7,
-                        Key = "gluten_free",
-                        Name = "Glutenfrei"
                     }
                 );
 
