@@ -59,7 +59,7 @@
                              label="Text"
                              rules="required|min:1|max:1000" />
             </v-row>
-            <v-row v-if="item.type && item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals'">
+            <v-row>
                 <VeeTextField v-model="item.frequency"
                               label="Frequency"
                               rules="integer|min_value:1"
@@ -269,17 +269,14 @@
                 else if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
-                if (item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals') {
+                if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
                     item.frequency = null;
                     item.frequencyPeriod = null;
-                } else {
-                    if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
-                        item.frequency = null;
-                        item.frequencyPeriod = null;
-                    }
+                }
 
+                if (item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals') {
                     item.targets = [];
-                }             
+                }        
 
                 item.parentId = Number.parseInt(this.$route.params.parentId);
             },
