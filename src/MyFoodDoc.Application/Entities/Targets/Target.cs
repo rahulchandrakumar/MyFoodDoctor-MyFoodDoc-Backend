@@ -15,6 +15,8 @@ namespace MyFoodDoc.Application.Entities.Targets
 
         public int Threshold { get; set; }
 
+        public int? MinInterval { get; set; }
+
         public TargetPriority Priority { get; set; }
 
         public string Title { get; set; }
