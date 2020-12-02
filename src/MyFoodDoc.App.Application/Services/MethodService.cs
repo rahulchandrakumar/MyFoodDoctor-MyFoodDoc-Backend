@@ -119,6 +119,13 @@ namespace MyFoodDoc.App.Application.Services
                 if (method.Targets.Any() && !method.Targets.Any(x => userTargetIds.Contains(x.TargetId)))
                     continue;
 
+                //Frequency-based method check
+                if (method.Frequency != null && method.FrequencyPeriod != null)
+                {
+                    if (!await CheckFrequency(userId, method, date, userMethods, userMethodShowHistory, cancellationToken))
+                        continue;
+                }
+
                 //Child methods check
                 if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals) && method.Children.Any())
                 {
@@ -138,13 +145,6 @@ namespace MyFoodDoc.App.Application.Services
                                 childMethodsToShow.Add(childMethod);
                             }
                         }
-                }
-
-                //Frequency-based method check
-                if (method.Frequency != null && method.FrequencyPeriod != null)
-                {
-                    if (!await CheckFrequency(userId, method, date, userMethods, userMethodShowHistory, cancellationToken))
-                        continue;
                 }
 
                 if (method.Type == MethodType.Change || method.Type == MethodType.Drink ||
