@@ -16,6 +16,7 @@ namespace MyFoodDoc.CMS.Application.Models
         public string TriggerOperator { get; set; }
         public int TriggerValue { get; set; }
         public int Threshold { get; set; }
+        public int? MinInterval { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }
 
@@ -50,6 +51,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 TriggerOperator = target.TriggerOperator.ToString(),
                 TriggerValue = target.TriggerValue,
                 Threshold = target.Threshold,
+                MinInterval = target.MinInterval,
                 Priority = target.Priority.ToString(),
                 Type = target.Type.ToString(),
                 Image = ImageModel.FromEntity(target.Image),
@@ -88,6 +90,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 TriggerOperator = Enum.Parse<TriggerOperator>(this.TriggerOperator),
                 TriggerValue = this.TriggerValue,
                 Threshold = this.Threshold,
+                MinInterval = this.MinInterval,
                 Priority = Enum.Parse<TargetPriority>(this.Priority),
                 Type = Enum.Parse<TargetType>(this.Type),
                 ImageId = this.Image.Id,

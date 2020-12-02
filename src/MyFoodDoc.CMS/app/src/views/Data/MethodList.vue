@@ -59,15 +59,6 @@
                              label="Text"
                              rules="required|min:1|max:1000" />
             </v-row>
-            <v-row>
-                <VeeTextField v-model="item.frequency"
-                              label="Frequency"
-                              rules="integer|min_value:1"
-                              number />
-                <VeeSelect v-model="item.frequencyPeriod"
-                           :items="methodFrequencyPeriods"
-                           label="Frequency period" />
-            </v-row>
             <v-row v-if="item.type && item.type == 'Timer'">
                 <VeeTextField v-model="item.timeIntervalDay"
                               label="Time interval(day), min"
@@ -77,6 +68,15 @@
                               label="Time interval(night), min"
                               rules="integer|min_value:1"
                               number />
+            </v-row>
+            <v-row>
+                <VeeTextField v-model="item.frequency"
+                              label="Frequency"
+                              rules="integer|min_value:1"
+                              number />
+                <VeeSelect v-model="item.frequencyPeriod"
+                           :items="methodFrequencyPeriods"
+                           label="Frequency period" />
             </v-row>
             <v-row v-if="item.type && item.type != 'Information' && item.type != 'Knowledge'">
                 <v-container>
