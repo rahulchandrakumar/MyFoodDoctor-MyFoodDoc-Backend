@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using MyFoodDoc.Application.Entities.Methods;
 
 namespace MyFoodDoc.Application.Entities
 {
@@ -10,6 +11,10 @@ namespace MyFoodDoc.Application.Entities
 
         public DateTime ExpirationDate { get; set; }
 
+        public int MethodId { get; set; }
+
         public User User { get; set; }
+
+        public Method Method { get; set; }
     }
 }

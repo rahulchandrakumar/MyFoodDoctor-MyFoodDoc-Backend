@@ -424,6 +424,14 @@ namespace MyFoodDoc.App.Application.Services
 
                 result.OptimizationAreaKey = optimizationArea?.Key;
             }
+            else if (method.Type == MethodType.Timer)
+            {
+                userMethodHistory = userMethods
+                    .Where(x => x.MethodId == method.Id)
+                    .ToList();
+
+                userMethod = userMethodHistory.OrderBy(x => x.Created).LastOrDefault();
+            }
             else
             {
                 userMethodHistory = userMethods
@@ -530,13 +538,17 @@ namespace MyFoodDoc.App.Application.Services
                     break;
                 case MethodType.Timer:
 
-                    if (userMethod?.Answer != null && userMethod?.IntegerValue != null)
+                    //Method was answered today or timer is still running since yesterday
+                    if (userMethod != null && (userMethod.Created.ToLocalTime().Date == date.Date || (userMethod.Answer != null && userMethod.Answer.Value)))
                     {
-                        result.UserAnswerBoolean = userMethod.Answer;
-                        result.UserAnswerInteger = userMethod.IntegerValue;
-                        result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
-                        result.TimeAnswered =
-                            (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                        if (userMethod?.Answer != null && userMethod?.IntegerValue != null)
+                        {
+                            result.UserAnswerBoolean = userMethod.Answer;
+                            result.UserAnswerInteger = userMethod.IntegerValue;
+                            result.DateAnswered = (userMethod.LastModified ?? userMethod.Created).ToLocalTime().Date;
+                            result.TimeAnswered =
+                                (userMethod.LastModified ?? userMethod.Created).ToLocalTime().TimeOfDay;
+                        }
                     }
 
                     result.TimeIntervalDay = method.TimeIntervalDay;
@@ -637,17 +649,42 @@ namespace MyFoodDoc.App.Application.Services
                     case MethodType.Timer:
                         if (item.UserAnswerBoolean != null && item.UserAnswerInteger != null)
                         {
-                            var userMethod = (await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).Where(x => x.Created.ToLocalTime().Date == DateTime.Now.Date).OrderBy(x => x.Created).LastOrDefault();
+                            var userMethod = (await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
 
-                            if (userMethod == null)
-                            {
-                                await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswerBoolean, IntegerValue = item.UserAnswerInteger }, cancellationToken);
-                            }
-                            else
+                            //Method was answered today or timer is still running since yesterday
+                            if (userMethod != null && (userMethod.Created.ToLocalTime().Date == DateTime.Now.Date ||
+                                                       (userMethod.Answer != null && userMethod.Answer.Value)))
                             {
                                 userMethod.Answer = item.UserAnswerBoolean;
                                 userMethod.IntegerValue = item.UserAnswerInteger;
                                 _context.UserMethods.Update(userMethod);
+                            }
+                            else
+                            {
+                                await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswerBoolean, IntegerValue = item.UserAnswerInteger }, cancellationToken);
+                            }
+                            
+                            var userTimer = await _context.UserTimer.Where(x => x.UserId == userId)
+                                .SingleOrDefaultAsync(cancellationToken);
+                              
+                            if (item.UserAnswerBoolean.Value)
+                            {
+                                var expirationDate = DateTime.Now.AddMinutes(item.UserAnswerInteger.Value);
+
+                                if (userTimer == null)
+                                {
+                                    await _context.UserTimer.AddAsync(new UserTimer { UserId = userId, ExpirationDate = expirationDate, MethodId = method.Id }, cancellationToken);
+                                }
+                                else
+                                {
+                                    userTimer.ExpirationDate = expirationDate;
+
+                                    _context.UserTimer.Update(userTimer);
+                                }
+                            }
+                            else if (userTimer != null)
+                            {
+                                _context.UserTimer.Remove(userTimer);
                             }
                         }
 

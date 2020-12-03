@@ -58,6 +58,7 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<IndicationMethod> IndicationMethods { get; set; }
         DbSet<DietMethod> DietMethods { get; set; }
         DbSet<TargetMethod> TargetMethods { get; set; }
+        DbSet<UserTimer> UserTimer { get; set; }
 
         #endregion
 
