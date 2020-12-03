@@ -58,10 +58,6 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            //var indications = await GetIndicationsAsync(userId, cancellationToken);
-            //var motivations = await GetMotivationsAsync(userId, cancellationToken);
-            //var diets = await GetDietsAsync(userId, cancellationToken);
-
             return result;
         }
 

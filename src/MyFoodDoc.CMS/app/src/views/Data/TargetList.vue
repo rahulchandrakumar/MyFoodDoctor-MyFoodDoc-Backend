@@ -84,12 +84,6 @@
                               rules="required|decimal"
                               number />
             </v-row>
-            <v-row>
-                <VeeTextField v-model="item.minInterval"
-                              label="Min interval between meals, min"
-                              rules="integer|min_value:1"
-                              number />
-            </v-row>
             <v-row v-if="item.type == 'Adjustment'">
                 <VeeTextField v-model="item.targetValue"
                               label="Target value"

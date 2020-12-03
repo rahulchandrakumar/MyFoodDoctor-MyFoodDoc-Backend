@@ -409,12 +409,12 @@ namespace MyFoodDoc.App.Application.Services
 
                         var average = dailyUserIngredients.Average(x => x.Value.Protein);
 
-                        if (average > analysisDto.LineGraph.UpperLimit)
+                        if (average >= analysisDto.LineGraph.UpperLimit)
                         {
                             analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
                             analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
                         }
-                        else if (average < analysisDto.LineGraph.LowerLimit)
+                        else if (average <= analysisDto.LineGraph.LowerLimit)
                         {
                             analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
                             analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
@@ -469,7 +469,7 @@ namespace MyFoodDoc.App.Application.Services
 
                         var average = dailyUserIngredients.Average(x => x.Value.Sugar);
 
-                        if (average > target.OptimizationArea.LineGraphUpperLimit)
+                        if (average >= target.OptimizationArea.LineGraphUpperLimit)
                         {
                             analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
                             analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
@@ -491,7 +491,7 @@ namespace MyFoodDoc.App.Application.Services
 
                         var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
 
-                        if (average < target.OptimizationArea.LineGraphLowerLimit)
+                        if (average <= target.OptimizationArea.LineGraphLowerLimit)
                         {
                             analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
                             analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
@@ -513,12 +513,12 @@ namespace MyFoodDoc.App.Application.Services
 
                         var average = (decimal)dailyUserIngredients.Average(x => x.Value.Meals);
 
-                        if (average < target.OptimizationArea.LineGraphOptimal)
+                        if (average <= target.OptimizationArea.LineGraphLowerLimit)
                         {
                             analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
                             analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
                         }
-                        else if (average > target.OptimizationArea.LineGraphOptimal)
+                        else if (average >= target.OptimizationArea.LineGraphUpperLimit)
                         {
                             analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
                             analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;

@@ -1267,9 +1267,6 @@ namespace MyFoodDoc.Database.Migrations
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("MinInterval")
-                        .HasColumnType("int");
-
                     b.Property<int>("OptimizationAreaId")
                         .HasColumnType("int");
 

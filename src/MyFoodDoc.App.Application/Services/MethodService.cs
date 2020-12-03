@@ -86,7 +86,8 @@ namespace MyFoodDoc.App.Application.Services
             List<Method> childMethodsToShow = new List<Method>();
             List<Method> parentFrequencyMethodsToShow = new List<Method>();
             List<MethodDto> parentMethodsToShow = new List<MethodDto>();
-
+            List<MethodDto> timerMethodsToShow = new List<MethodDto>();
+            
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x => x.Diets)
@@ -153,6 +154,12 @@ namespace MyFoodDoc.App.Application.Services
                     var methodDto = await GetMethodWithAnswersAsync(userId, method, date, lastUserTarget, userMethods, cancellationToken);
 
                     parentMethodsToShow.Add(methodDto);
+                }
+                else if (method.Type == MethodType.Timer)
+                {
+                    var methodDto = await GetMethodWithAnswersAsync(userId, method, date, lastUserTarget, userMethods, cancellationToken);
+
+                    timerMethodsToShow.Add(methodDto);
                 }
                 else
                 {
@@ -258,6 +265,11 @@ namespace MyFoodDoc.App.Application.Services
                         result.AddRange(group.Take(MAX_METHODS_PER_OPTIMIZATION_AREA));
                     }
                 }
+            }
+
+            if (timerMethodsToShow.Any())
+            {
+                result.AddRange(timerMethodsToShow);
             }
 
             if (result.Any())
