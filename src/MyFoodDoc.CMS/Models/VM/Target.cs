@@ -13,7 +13,6 @@ namespace MyFoodDoc.CMS.Models.VM
         public string TriggerOperator { get; set; }
         public int TriggerValue { get; set; }
         public int Threshold { get; set; }
-        public int? MinInterval { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }
 
@@ -44,7 +43,6 @@ namespace MyFoodDoc.CMS.Models.VM
                 TriggerOperator = model.TriggerOperator,
                 TriggerValue = model.TriggerValue,
                 Threshold = model.Threshold,
-                MinInterval = model.MinInterval,
                 Priority = model.Priority,
                 Type = model.Type,
                 AdjustmentTargetId = model.AdjustmentTargetId,
@@ -72,7 +70,6 @@ namespace MyFoodDoc.CMS.Models.VM
                 TriggerOperator = this.TriggerOperator,
                 TriggerValue = this.TriggerValue,
                 Threshold = this.Threshold,
-                MinInterval = this.MinInterval,
                 Priority = this.Priority,
                 Type = this.Type,
                 AdjustmentTargetId = this.AdjustmentTargetId,
