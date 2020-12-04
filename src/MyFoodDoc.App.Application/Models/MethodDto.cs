@@ -18,6 +18,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public string ImageUrl { get; set; }
 
+        public int? ParentId { get; set; }
+
         public int? TimeIntervalDay { get; set; }
 
         public int? TimeIntervalNight { get; set; }
