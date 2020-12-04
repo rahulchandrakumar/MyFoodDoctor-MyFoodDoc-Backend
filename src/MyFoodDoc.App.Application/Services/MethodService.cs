@@ -402,7 +402,8 @@ namespace MyFoodDoc.App.Application.Services
                 Title = method.Title,
                 Text = method.Text,
                 Type = method.Type.ToString(),
-                ImageUrl = method.Image?.Url
+                ImageUrl = method.Image?.Url,
+                ParentId = method.ParentId
             };
 
             UserMethod userMethod = null;
