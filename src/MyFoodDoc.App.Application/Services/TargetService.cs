@@ -43,6 +43,8 @@ namespace MyFoodDoc.App.Application.Services
             var userTargetsForStatisticsPeriod = await _context.UserTargets.Where(x =>
                 x.UserId == userId && x.Created > onDate.AddDays(-_statisticsPeriod) && x.Created < onDate).ToListAsync(cancellationToken);
 
+            var dailyUserIngredientsDictionary = new Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>>();
+
             if (userTargetsForStatisticsPeriod.Any())
             {
                 userTargets = userTargetsForStatisticsPeriod
@@ -69,6 +71,10 @@ namespace MyFoodDoc.App.Application.Services
                     return result;
 
                 var dailyUserIngredients = await GetDailyUserIngredients(userId, onDate, cancellationToken);
+
+                var dateKey = new DateTime(onDate.Year, onDate.Month, onDate.Day);
+
+                dailyUserIngredientsDictionary[dateKey] = dailyUserIngredients;
 
                 foreach (var dailyMeals in _context.Meals
                     .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date < onDate).ToList().GroupBy(g => g.Date))
@@ -215,7 +221,12 @@ namespace MyFoodDoc.App.Application.Services
                     ImageUrl = target.Image.Url
                 };
 
-                var dailyUserIngredients = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
+                var dateKey = new DateTime(userTarget.Created.Year, userTarget.Created.Month, userTarget.Created.Day);
+                
+                if (!dailyUserIngredientsDictionary.ContainsKey(dateKey))
+                    dailyUserIngredientsDictionary[dateKey] = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
+
+                var dailyUserIngredients = dailyUserIngredientsDictionary[dateKey];
 
                 if (target.Type == TargetType.Adjustment)
                 {
@@ -547,12 +558,14 @@ namespace MyFoodDoc.App.Application.Services
             return result;
         }
 
-        private async Task<Dictionary<DateTime, MealNutritionsDto>> GetDailyUserIngredients(string userId, DateTime onDate, CancellationToken cancellationToken)
+        private async Task<Dictionary<DateTime, MealNutritionsDto>> GetDailyUserIngredients(string userId, DateTime onDateTime, CancellationToken cancellationToken)
         {
             var result = new Dictionary<DateTime, MealNutritionsDto>();
 
+            var onDate = new DateTime(onDateTime.Year, onDateTime.Month, onDateTime.Day);
+
             foreach (var dailyMeals in (await _context.Meals
-                .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date < onDate).ToListAsync(cancellationToken)).GroupBy(g => g.Date))
+                .Where(x => x.UserId == userId && x.Date >= onDate.AddDays(-_statisticsPeriod) && x.Date < onDate).ToListAsync(cancellationToken)).GroupBy(g => g.Date))
             {
                 var dailyNutritions = new MealNutritionsDto
                 {
