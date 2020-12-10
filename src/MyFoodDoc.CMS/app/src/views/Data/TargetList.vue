@@ -57,8 +57,7 @@
                 <VeeSelect v-model="item.type"
                            :items="types"
                            label="Type"
-                           rules="required"
-                           readonly />
+                           rules="required" />
             </v-row>
             <v-row>
                 <VeeSelect v-model="item.priority"
@@ -183,10 +182,6 @@
                     storeName: "optimizationareas"
                 },
                 preview: false,
-                priorities: [],
-                types: [],
-                operators: [],
-                stepDirections: [],
                 dietList: [],
                 indicationList: [],
                 motivationList: [],
