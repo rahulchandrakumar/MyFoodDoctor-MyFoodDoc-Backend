@@ -49,30 +49,34 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"Expired timers: {expiredTimers.Count()}");
 
-            var userTimersWithPushNotificationsEnabled = expiredTimers
-                .Where(x => x.User.PushNotificationsEnabled && !string.IsNullOrEmpty(x.User.DeviceToken))
-                .ToList();
-
-            log.LogInformation($"Users with push notifications enabled: {userTimersWithPushNotificationsEnabled.Count()}");
-
-            if (userTimersWithPushNotificationsEnabled.Any())
+            if (expiredTimers.Any())
             {
-                var notifications = userTimersWithPushNotificationsEnabled.Select(x => new FirebaseNotification()
-                {
-                    Body = "Du hast es geschafft",
-                    DeviceToken = x.User.DeviceToken
-                }).ToList();
+                var userTimersWithPushNotificationsEnabled = expiredTimers
+                    .Where(x => x.User.PushNotificationsEnabled && !string.IsNullOrEmpty(x.User.DeviceToken))
+                    .ToList();
 
-                log.LogInformation($"Notifications to send: {notifications.Count()}");
+                log.LogInformation(
+                    $"Users with push notifications enabled: {userTimersWithPushNotificationsEnabled.Count()}");
 
-                if (notifications.Any())
+                if (userTimersWithPushNotificationsEnabled.Any())
                 {
-                    var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                    var notifications = userTimersWithPushNotificationsEnabled.Select(x => new FirebaseNotification()
+                    {
+                        Body = "Du hast es geschafft",
+                        DeviceToken = x.User.DeviceToken
+                    }).ToList();
+
+                    log.LogInformation($"Notifications to send: {notifications.Count()}");
+
+                    if (notifications.Any())
+                    {
+                        var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                    }
                 }
 
                 var userMethodsToUpdate = new List<UserMethod>();
 
-                foreach (var userTimer in userTimersWithPushNotificationsEnabled)
+                foreach (var userTimer in expiredTimers)
                 {
                     var userMethod = (await _context.UserMethods.Where(x => x.UserId == userTimer.UserId && x.MethodId == userTimer.MethodId).ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
 
@@ -84,10 +88,10 @@ namespace MyFoodDoc.Functions
                     }
                 }
 
-                _context.UserTimer.RemoveRange(userTimersWithPushNotificationsEnabled);
+                _context.UserTimer.RemoveRange(expiredTimers);
 
                 _context.UserMethods.UpdateRange(userMethodsToUpdate);
-                
+
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
