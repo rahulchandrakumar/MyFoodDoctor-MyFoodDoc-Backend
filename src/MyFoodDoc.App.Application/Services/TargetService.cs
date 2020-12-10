@@ -77,7 +77,7 @@ namespace MyFoodDoc.App.Application.Services
                 dailyUserIngredientsDictionary[dateKey] = dailyUserIngredients;
 
                 foreach (var dailyMeals in _context.Meals
-                    .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date < onDate).ToList().GroupBy(g => g.Date))
+                    .Where(x => x.UserId == userId && x.Date >= dateKey.AddDays(-_statisticsPeriod) && x.Date < dateKey).ToList().GroupBy(g => g.Date))
                 {
                     var dailyNutritions = new MealNutritionsDto
                     {
