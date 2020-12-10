@@ -1020,6 +1020,12 @@ namespace MyFoodDoc.Database.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+                    b.Property<int?>("TimeIntervalDay")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TimeIntervalNight")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -1068,6 +1074,44 @@ namespace MyFoodDoc.Database.Migrations
                     b.HasIndex("MethodId");
 
                     b.ToTable("MethodMultipleChoice", "System");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.MethodText", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("MethodTexts", "System");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationMethod", b =>
@@ -1575,6 +1619,27 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserTargets", "System");
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserTimer", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MethodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId");
+
+                    b.HasIndex("ExpirationDate");
+
+                    b.HasIndex("MethodId");
+
+                    b.ToTable("UserTimer", "System");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.WebPage", b =>
                 {
                     b.Property<int>("Id")
@@ -1669,20 +1734,6 @@ namespace MyFoodDoc.Database.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Key = "lactose_low",
                             Name = "Laktosearm"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "fructose_low",
-                            Name = "Fruktosearm"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "gluten_free",
-                            Name = "Glutenfrei"
                         });
                 });
 
@@ -1734,19 +1785,12 @@ namespace MyFoodDoc.Database.Migrations
                         {
                             Id = 3,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Key = "gout",
-                            Name = "Gicht"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Key = "diabetes_type_1",
                             Name = "Diabetes Typ 1"
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 4,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Key = "diabetes_type_2",
                             Name = "Diabetes Typ 2"
@@ -1938,6 +1982,14 @@ namespace MyFoodDoc.Database.Migrations
                             LineGraphOptimal = 1m,
                             Name = "Proteine",
                             Text = "Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.\nZusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung."
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Key = "snacking",
+                            Name = "Snacking",
+                            Text = "Snacking"
                         });
                 });
 
@@ -2298,6 +2350,17 @@ namespace MyFoodDoc.Database.Migrations
                     b.Navigation("Method");
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Methods.MethodText", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Method");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.MotivationMethod", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
@@ -2537,6 +2600,25 @@ namespace MyFoodDoc.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Target");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.UserTimer", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
+                        .WithMany()
+                        .HasForeignKey("MethodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Method");
 
                     b.Navigation("User");
                 });

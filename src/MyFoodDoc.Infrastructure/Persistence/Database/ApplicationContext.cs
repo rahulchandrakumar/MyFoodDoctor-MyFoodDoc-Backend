@@ -58,12 +58,14 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<UserTarget> UserTargets { get; set; }
         public DbSet<Method> Methods { get; set; }
         public DbSet<MethodMultipleChoice> MethodMultipleChoice { get; set; }
+        public DbSet<MethodText> MethodTexts { get; set; }
         public DbSet<UserMethod> UserMethods { get; set; }
         public DbSet<UserMethodShowHistoryItem> UserMethodShowHistory { get; set; }
         public DbSet<MotivationMethod> MotivationMethods { get; set; }
         public DbSet<IndicationMethod> IndicationMethods { get; set; }
         public DbSet<DietMethod> DietMethods { get; set; }
         public DbSet<TargetMethod> TargetMethods { get; set; }
+        public DbSet<UserTimer> UserTimer { get; set; }
 
         #endregion
 
@@ -206,19 +208,12 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                     new Indication
                     {
                         Id = 3,
-                        Key = "gout",
-                        Name = "Gicht"
-                    },
-
-                    new Indication
-                    {
-                        Id = 4,
                         Key = "diabetes_type_1",
                         Name = "Diabetes Typ 1"
                     },
                     new Indication
                     {
-                        Id = 5,
+                        Id = 4,
                         Key = "diabetes_type_2",
                         Name = "Diabetes Typ 2"
                     }
@@ -281,18 +276,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Id = 5,
                         Key = "lactose_low",
                         Name = "Laktosearm"
-                    },
-                    new Diet
-                    {
-                        Id = 6,
-                        Key = "fructose_low",
-                        Name = "Fruktosearm"
-                    },
-                    new Diet
-                    {
-                        Id = 7,
-                        Key = "gluten_free",
-                        Name = "Glutenfrei"
                     }
                 );
 
@@ -330,6 +313,16 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         LineGraphUpperLimit = null,
                         LineGraphLowerLimit = null,
                         LineGraphOptimal = 1
+                    },
+                    new OptimizationArea
+                    {
+                        Id = 4,
+                        Key = "snacking",
+                        Name = "Snacking",
+                        Text = "Snacking",
+                        LineGraphUpperLimit = null,
+                        LineGraphLowerLimit = null,
+                        LineGraphOptimal = null
                     });
             }
         }

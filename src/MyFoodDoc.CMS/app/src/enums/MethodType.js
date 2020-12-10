@@ -7,6 +7,7 @@
     MEALS: "Meals",
     MOOD: "Mood",
     SPORT: "Sport",
+    TIMER: "Timer",
     WEIGHT: "Weight"
 });
 

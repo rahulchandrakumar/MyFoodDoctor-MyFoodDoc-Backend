@@ -19,7 +19,7 @@
                    width="210px" />
         </template>
         <template v-slot:editor="{ item }">
-            <v-row v-if="item.type != 'Mood'">
+            <v-row v-if="item.type != 'Mood' && item.type != 'Timer'">
                 <VeeImage v-if="item.type == 'Meals' || item.type == 'Knowledge'"
                           v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
@@ -32,6 +32,12 @@
                           rules="required"
                           :image-width="300"
                           :image-height="300" />
+            </v-row>
+            <v-row>
+                <VeeSelect v-model="item.type"
+                           :items="types"
+                           :label="mainHeaders.filter(h => h.value == 'type')[0].text"
+                           rules="required" />
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.title"
@@ -53,13 +59,17 @@
                              label="Text"
                              rules="required|min:1|max:1000" />
             </v-row>
-            <v-row>
-                <VeeSelect v-model="item.type"
-                           :items="types"
-                           :label="mainHeaders.filter(h => h.value == 'type')[0].text"
-                           rules="required" />
+            <v-row v-if="item.type && item.type == 'Timer'">
+                <VeeTextField v-model="item.timeIntervalDay"
+                              label="Time interval(day), min"
+                              rules="integer|min_value:1"
+                              number />
+                <VeeTextField v-model="item.timeIntervalNight"
+                              label="Time interval(night), min"
+                              rules="integer|min_value:1"
+                              number />
             </v-row>
-            <v-row v-if="item.type && item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals'">
+            <v-row>
                 <VeeTextField v-model="item.frequency"
                               label="Frequency"
                               rules="integer|min_value:1"
@@ -199,6 +209,10 @@
                     path: "Method Multiple Choices",
                     title: "Edit multiple choices",
                     visible: (item) => item.type == 'Knowledge'
+                }, {
+                    path: "Method Texts",
+                    title: "Edit texts",
+                    visible: (item) => item.type == 'Timer'
                 }],
                 targetList: [],
                 dietList: [],
@@ -250,22 +264,19 @@
                 this.init(item);
             },
             async beforeSave(item) {
-                if (item.type == 'Mood')
+                if (item.type == 'Mood' || item.type == 'Timer')
                     item.image = null;
                 else if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));
 
-                if (item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals') {
+                if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
                     item.frequency = null;
                     item.frequencyPeriod = null;
-                } else {
-                    if (!item.frequency || item.frequency < 1 || !item.frequencyPeriod) {
-                        item.frequency = null;
-                        item.frequencyPeriod = null;
-                    }
+                }
 
+                if (item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals') {
                     item.targets = [];
-                }             
+                }        
 
                 item.parentId = Number.parseInt(this.$route.params.parentId);
             },

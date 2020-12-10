@@ -98,6 +98,10 @@ namespace MyFoodDoc.App.Application.Services
 
             aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = proteinOptimizationArea.Key, Optimal = optimalProtein });
 
+            var snackingOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Snacking);
+
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = snackingOptimizationArea.Key, Optimal = snackingOptimizationArea.LineGraphOptimal.Value });
+
             //TODO: check default age
             var optimalCalories = GetCaloriesOptimalValue(user.Birthday == null ? 40 : DateTime.UtcNow.Year - user.Birthday.Value.Year,
                 user.Gender.Value, userWeight.Value);

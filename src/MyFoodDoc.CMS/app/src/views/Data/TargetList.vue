@@ -80,7 +80,7 @@
             </v-row>
             <v-row>
                 <VeeTextField v-model="item.threshold"
-                              label="Cases,%"
+                              label="Cases, %"
                               rules="required|decimal"
                               number />
             </v-row>

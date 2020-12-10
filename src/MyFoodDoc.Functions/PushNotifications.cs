@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.FirebaseClient.Abstractions;
 using MyFoodDoc.FirebaseClient.Clients;
 
@@ -30,14 +31,77 @@ namespace MyFoodDoc.Functions
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
-        [FunctionName("PushNotifications")]
-        public async Task RunAsync(
+        [FunctionName("TimerPushNotifications")]
+        public async Task RunTimerPushNotificationsAsync(
+            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            TimerInfo myTimer,
+            ILogger log,
+            CancellationToken cancellationToken)
+        {
+            log.LogInformation("TimerPushNotifications. Start");
+
+            var onDate = DateTime.Now;
+
+            var expiredTimers = await _context.UserTimer
+                .Include(x => x.User)
+                .Where(x => x.ExpirationDate <= onDate)
+                .ToListAsync(cancellationToken);
+
+            log.LogInformation($"Expired timers: {expiredTimers.Count()}");
+
+            var userTimersWithPushNotificationsEnabled = expiredTimers
+                .Where(x => x.User.PushNotificationsEnabled && !string.IsNullOrEmpty(x.User.DeviceToken))
+                .ToList();
+
+            log.LogInformation($"Users with push notifications enabled: {userTimersWithPushNotificationsEnabled.Count()}");
+
+            if (userTimersWithPushNotificationsEnabled.Any())
+            {
+                var notifications = userTimersWithPushNotificationsEnabled.Select(x => new FirebaseNotification()
+                {
+                    Body = "Du hast es geschafft",
+                    DeviceToken = x.User.DeviceToken
+                }).ToList();
+
+                log.LogInformation($"Notifications to send: {notifications.Count()}");
+
+                if (notifications.Any())
+                {
+                    var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                }
+
+                var userMethodsToUpdate = new List<UserMethod>();
+
+                foreach (var userTimer in userTimersWithPushNotificationsEnabled)
+                {
+                    var userMethod = (await _context.UserMethods.Where(x => x.UserId == userTimer.UserId && x.MethodId == userTimer.MethodId).ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
+
+                    if (userMethod != null)
+                    {
+                        userMethod.Answer = false;
+
+                        userMethodsToUpdate.Add(userMethod);
+                    }
+                }
+
+                _context.UserTimer.RemoveRange(userTimersWithPushNotificationsEnabled);
+
+                _context.UserMethods.UpdateRange(userMethodsToUpdate);
+                
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            log.LogInformation("TimerPushNotifications. End");
+        }
+
+        [FunctionName("DiaryPushNotifications")]
+        public async Task RunDiaryPushNotificationsAsync(
             [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
         {
-            log.LogInformation("PushNotifications. Start");
+            log.LogInformation("DiaryPushNotifications. Start");
 
             var usersWithPushNotificationsEnabled = await _context.Users.Where(x => x.PushNotificationsEnabled && !string.IsNullOrEmpty(x.DeviceToken)).ToListAsync(cancellationToken);
 
@@ -227,7 +291,7 @@ namespace MyFoodDoc.Functions
                 }
             }
 
-            log.LogInformation("PushNotifications. End");
+            log.LogInformation("DiaryPushNotifications. End");
         }
     }
 }

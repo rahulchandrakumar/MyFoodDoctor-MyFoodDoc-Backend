@@ -66,17 +66,19 @@ export default {
         return state.items;
     },
     itemAdded: async ({ state, commit, dispatch }, { Id }) => {
+        var item = null;
         if (state.total - state.skip < state.take) {
-            var item = await dispatch('loadItem', { id: Id })
-            commit("addItem", item)
+            item = await dispatch('loadItem', { id: Id })
         }
+        commit("addItem", item)
         state.total++
     },
     itemUpdated: async ({ state, commit, dispatch }, { Id }) => {
+        var item = null;
         if (state.items.filter(i => i.id == Id).length > 0) {
-            var item = await dispatch('loadItem', { id: Id })
-            commit("setItem", item)
+            item = await dispatch('loadItem', { id: Id })
         }
+        commit("setItem", item)
     },
     itemDeleted: async ({ state, commit, dispatch }, { Id, ParentId}) => {
         var item = null;

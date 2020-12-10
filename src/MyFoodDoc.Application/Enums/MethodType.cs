@@ -10,6 +10,7 @@
         Meals,
         Mood,
         Sport,
+        Timer,
         Weight
     }
 }
