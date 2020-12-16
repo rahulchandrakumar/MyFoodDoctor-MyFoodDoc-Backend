@@ -1,12 +1,12 @@
 <template>
-  <v-content>
+  <v-main>
     <div id="core-view">
       <v-fade-transition mode="out-in">
         <router-view :key="$route.fullPath" />
       </v-fade-transition>
     </div>
     <core-footer v-if="$route.name !== 'Maps'" />
-  </v-content>
+  </v-main>
 </template>
 
 <script>
