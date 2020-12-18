@@ -16,7 +16,7 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
         private CloudBlobClient _client = null;
         private CloudBlobContainer _container = null;
 
-        private const string htmlTemplate = "<!DOCTYPE html>\n<html><head><link rel=\"stylesheet\" href=\"{0}\"></head><body>{1}</body></html>";
+        private const string htmlTemplate = "<!DOCTYPE html>\n<html><head><meta http-equiv=\"Content-Type\" content=\"text/html charset =UTF-8\"/><link rel=\"stylesheet\" href=\"{0}\"></head><body>{1}</body></html>";
 
         public WebViewBlobService()
         {
