@@ -51,7 +51,15 @@ namespace MyFoodDoc.App.Api.Controllers
                 return BadRequest();
             }
 
-            var result = await _emailService.SendEmailAsync(payload.Email, "Willkommensmail", "Willkommen in My Food Doctor!");
+            var emailBody = "Hallo,<br/><br/>" +
+                            "Herzlich Willkommen bei myFoodDoctor, – dem erfolgreichsten digitalen Ernährungscoach für unterwegs & zuhause!<br/>" +
+                            "Wie schön, dass du deine Gesundheit und Ernährung mit der myFoodDoctor-App selbst in die Hand nehmen möchtest – ganz egal, welches persönliche Ziel du auch verfolgst: ob du abnehmen, die Symptome deiner Erkrankung lindern oder dich einfach rundum gesund und fit fühlen willst.<br/>" +
+                            "Lass' es uns gemeinsam angehen – aber ganz in einem Tempo.<br/>" +
+                            "Wir stehen dir mit professionellem Rat und Tat zur Seite.<br/>" +
+                            "Für Rückfragen wende dich an support@myfooddoctor.de. Wir helfen dir gerne!<br/><br/>" +
+                            "Herzliche Grüße<br/>" + "Dr. Matthias Riedl und das myFoodDoctor-Team";
+
+            var result = await _emailService.SendEmailAsync(payload.Email, "Willkommen bei myFoodDoctor – deiner Ernährungscoaching-App", emailBody);
 
             if (!result)
             {
@@ -69,7 +77,15 @@ namespace MyFoodDoc.App.Api.Controllers
         {
             string token = await _service.GeneratePasswordResetTokenAsync(tokenPayload.Email);
 
-            var result = await _emailService.SendEmailAsync(tokenPayload.Email, "Reset password pin", token);
+            var emailBody = "Hallo,<br/><br/>" +
+                            "hier ist die angeforderte PIN für die Bestätigung deines neuen Passwortes.<br/><br/>" +
+                            $"{token}<br/><br/>" + "Die PIN ist 5 Minuten lang gültig.<br/>" +
+                            "Wenn es nicht geklappt hat, ist entweder die PIN abgelaufen oder die Eingabe war fehlerhaft. Dann kannst du einfach eine neue PIN beantragen und es noch einmal versuchen.<br/>" +
+                            "Oder wende dich im Zweifelsfall an support@myfooddoctor.de. Wir helfen dir gerne weiter!<br/>" +
+                            "Sollte diese Anfrage nicht von dir kommen, melde uns dies bitte zum Schutz deiner Daten.<br/><br/>" +
+                            "Herzliche Grüße,<br/>" + "dein myFoodDoctor-Team";
+
+            var result = await _emailService.SendEmailAsync(tokenPayload.Email, "myFoodDoctor - Passwort zurücksetzen", emailBody);
 
             if (!result)
             {
