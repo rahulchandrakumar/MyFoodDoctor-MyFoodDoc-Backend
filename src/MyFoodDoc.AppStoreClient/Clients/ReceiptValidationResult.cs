@@ -30,7 +30,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
         public int app_item_id { get; set; }
         public string bundle_id { get; set; }
         public string application_version { get; set; }
-        public int download_id { get; set; }
+        public long download_id { get; set; }
         public int version_external_identifier { get; set; }
         public string receipt_creation_date { get; set; }
         public string receipt_creation_date_ms { get; set; }
