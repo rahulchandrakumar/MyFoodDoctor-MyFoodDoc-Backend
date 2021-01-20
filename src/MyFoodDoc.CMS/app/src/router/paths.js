@@ -38,7 +38,7 @@ export default [
         name: "Patients",
         view: "Data/PatientList",
         meta: {
-            role: UserRoles.VIEWER
+            role: UserRoles.ADMIN
         }
     },
     {
