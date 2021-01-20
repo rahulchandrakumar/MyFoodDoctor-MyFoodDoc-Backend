@@ -118,11 +118,6 @@
                     icon: "mdi-view-dashboard",
                     text: "Dashboard"
                 });
-                links.push({
-                    icon: "mdi-account-card-details-outline",
-                    to: "/patient-list",
-                    text: "Patients"
-                });
             }
 
             if (userRoles.includes(UserRoles.EDITOR)) {
@@ -138,6 +133,11 @@
                 });
             }
             if (userRoles.includes(UserRoles.ADMIN)) {
+                links.push({
+                    icon: "mdi-account-card-details-outline",
+                    to: "/patient-list",
+                    text: "Patients"
+                });
                 links.push({
                     icon: "mdi-dictionary",
                     to: "/lexicon-category-list",
