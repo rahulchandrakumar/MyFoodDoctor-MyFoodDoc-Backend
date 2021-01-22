@@ -34,6 +34,10 @@
                           :image-height="300" />
             </v-row>
             <v-row>
+                <v-switch v-model="item.isActive"
+                          :label="mainHeaders.filter(h => h.value == 'isActive')[0].text" />
+            </v-row>
+            <v-row>
                 <VeeSelect v-model="item.type"
                            :items="types"
                            :label="mainHeaders.filter(h => h.value == 'type')[0].text"
@@ -191,11 +195,18 @@
                     value: "image",
                     text: "Image",
                     width: "210px"
-                }, {
+                },
+                {
+                    sortable: true,
+                    value: "isActive",
+                    text: "Active"
+                },
+                {
                     sortable: true,
                     value: "type",
                     text: "Type"
-                }, {
+                },
+                {
                     sortable: true,
                     value: "title",
                     text: "Title"
