@@ -17,6 +17,7 @@ namespace MyFoodDoc.CMS.Application.Models
         public int? ParentId { get; set; }
         public int? TimeIntervalDay { get; set; }
         public int? TimeIntervalNight { get; set; }
+        public bool IsActive { get; set; }
         public ImageModel Image { get; set; }
         public IList<int> Targets { get; set; }
         public IList<int> Diets { get; set; }
@@ -39,6 +40,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 ParentId = entity.ParentId,
                 TimeIntervalDay = entity.TimeIntervalDay,
                 TimeIntervalNight = entity.TimeIntervalNight,
+                IsActive = entity.IsActive,
                 Image = entity.Image == null ? null : ImageModel.FromEntity(entity.Image),
                 Targets = entity.Targets?.Select(x => x.TargetId).ToList(),
                 Diets = entity.Diets?.Where(x=> !x.IsContraindication).Select(x => x.DietId).ToList(),
@@ -63,6 +65,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 ParentId = this.ParentId,
                 TimeIntervalDay = this.TimeIntervalDay,
                 TimeIntervalNight = this.TimeIntervalNight,
+                IsActive = this.IsActive,
                 ImageId = this.Image == null || string.IsNullOrEmpty(this.Image.Url) ? (int?)null : this.Image.Id,
             };
         }
