@@ -23,6 +23,8 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public int? TimeIntervalNight { get; set; }
 
+        public bool IsActive { get; set; }
+
         public Image Image { get; set; }
 
         public IList<int> Targets { get; set; }
@@ -52,6 +54,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 ParentId = model.ParentId,
                 TimeIntervalDay = model.TimeIntervalDay,
                 TimeIntervalNight = model.TimeIntervalNight,
+                IsActive = model.IsActive,
                 Image = model.Image == null ? null : Image.FromModel(model.Image),
                 Targets = model.Targets?.ToList(),
                 Diets = model.Diets?.ToList(),
@@ -76,6 +79,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 ParentId = this.ParentId,
                 TimeIntervalDay = this.TimeIntervalDay,
                 TimeIntervalNight = this.TimeIntervalNight,
+                IsActive = this.IsActive,
                 Image = this.Image?.ToModel(),
                 Targets = this.Targets?.ToList(),
                 Diets = this.Diets?.ToList(),
