@@ -25,6 +25,8 @@ namespace MyFoodDoc.Application.Entities.Methods
 
         public int? TimeIntervalNight { get; set; }
 
+        public bool IsActive { get; set; }
+
         public ICollection<TargetMethod> Targets { get; set; }
 
         public ICollection<MotivationMethod> Motivations { get; set; }

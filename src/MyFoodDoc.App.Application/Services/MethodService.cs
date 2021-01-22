@@ -97,7 +97,7 @@ namespace MyFoodDoc.App.Application.Services
                 .Include(x => x.Children)
                 .ThenInclude(x => x.Image)
                 .AsNoTracking()
-                .Where(x => x.ParentId == null)
+                .Where(x => x.IsActive && x.ParentId == null)
                 .ToListAsync(cancellationToken))
             {
                 //Frequency-based or target-based method check
@@ -128,14 +128,14 @@ namespace MyFoodDoc.App.Application.Services
                 }
 
                 //Child methods check
-                if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals) && method.Children.Any())
+                if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals) && method.Children.Any(x => x.IsActive))
                 {
                     var userMethod = userMethods
                         .Where(x => x.MethodId == method.Id).OrderBy(x => x.LastModified ?? x.Created)
                         .LastOrDefault();
 
                     if (userMethod?.Answer != null && userMethod.Answer.Value)
-                        foreach (var childMethod in method.Children)
+                        foreach (var childMethod in method.Children.Where(x => x.IsActive))
                         {
                             //Frequency-based method check
                             if (childMethod.Frequency != null && childMethod.FrequencyPeriod != null)
