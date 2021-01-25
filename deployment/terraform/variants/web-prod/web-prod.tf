@@ -39,14 +39,14 @@ module "global" {
   stage       = "prod"
 
   apiserver_plantier     = "Basic"
-  apiserver_plansize     = "B1"
+  apiserver_plansize     = "B3"
   apiserver_plancapacity = 1
 
   apiapp_alwayson        = false
   apiapp_aspenv          = "Production"
 
-  sqldb_tier                = "Basic"
-  sqldb_service_objective   = "Basic"
+  sqldb_tier                = "Standard"
+  sqldb_service_objective   = "S1"
 
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"
