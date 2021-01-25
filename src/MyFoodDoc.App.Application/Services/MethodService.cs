@@ -121,20 +121,24 @@ namespace MyFoodDoc.App.Application.Services
                     continue;
 
                 //Frequency-based method check
-                if (method.Frequency != null && method.FrequencyPeriod != null)
+                if (method.Frequency != null && method.FrequencyPeriod != null && !(method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals))
                 {
                     if (!await CheckFrequency(userId, method, date, userMethods, userMethodShowHistory, cancellationToken))
                         continue;
                 }
 
-                //Child methods check
-                if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals) && method.Children.Any(x => x.IsActive))
+                if ((method.Type == MethodType.Change || method.Type == MethodType.Drink || method.Type == MethodType.Meals))
                 {
                     var userMethod = userMethods
-                        .Where(x => x.MethodId == method.Id).OrderBy(x => x.LastModified ?? x.Created)
-                        .LastOrDefault();
+                            .Where(x => x.MethodId == method.Id && (lastUserTarget == null || x.Created >= lastUserTarget.Created) && x.Created.ToLocalTime().Date <= date.Date).OrderBy(x => x.LastModified ?? x.Created)
+                            .LastOrDefault();
 
-                    if (userMethod?.Answer != null && userMethod.Answer.Value)
+                    if (userMethod == null && !await CheckFrequency(userId, method, date, userMethods, userMethodShowHistory, cancellationToken))
+                        continue;
+
+                    //Child methods check
+                    if (method.Children.Any(x => x.IsActive) && userMethod?.Answer != null && userMethod.Answer.Value)
+                    {
                         foreach (var childMethod in method.Children.Where(x => x.IsActive))
                         {
                             //Frequency-based method check
@@ -146,6 +150,7 @@ namespace MyFoodDoc.App.Application.Services
                                 childMethodsToShow.Add(childMethod);
                             }
                         }
+                    }
                 }
 
                 if (method.Type == MethodType.Change || method.Type == MethodType.Drink ||
@@ -415,7 +420,7 @@ namespace MyFoodDoc.App.Application.Services
                 if (lastUserTarget != null)
                 {
                     userMethodHistory = userMethods
-                        .Where(x => x.MethodId == method.Id && (lastUserTarget == null || x.Created >= lastUserTarget.Created) && x.Created.ToLocalTime().Date <= date.Date)
+                        .Where(x => x.MethodId == method.Id && x.Created >= lastUserTarget.Created && x.Created.ToLocalTime().Date <= date.Date)
                         .ToList();
 
                     userMethod = userMethodHistory.OrderBy(x => x.Created).LastOrDefault();
