@@ -35,7 +35,7 @@
         },
         watch: {
             innerValue(newVal) {
-                this.$emit("input", (newVal == null || newVal == '') ? null : this.number ? this.parseNumber(newVal) : newVal);
+                this.$emit("input", (newVal == null || newVal === '') ? null : this.number ? this.parseNumber(newVal) : newVal);
             },
             value(newVal) {
                 this.innerValue = newVal;
