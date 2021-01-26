@@ -133,7 +133,7 @@ namespace MyFoodDoc.App.Application.Services
                             .Where(x => x.MethodId == method.Id && (lastUserTarget == null || x.Created >= lastUserTarget.Created) && x.Created.ToLocalTime().Date <= date.Date).OrderBy(x => x.LastModified ?? x.Created)
                             .LastOrDefault();
 
-                    if (userMethod == null && !await CheckFrequency(userId, method, date, userMethods, userMethodShowHistory, cancellationToken))
+                    if (userMethod == null && method.Frequency != null && method.FrequencyPeriod != null && !await CheckFrequency(userId, method, date, userMethods, userMethodShowHistory, cancellationToken))
                         continue;
 
                     //Child methods check
