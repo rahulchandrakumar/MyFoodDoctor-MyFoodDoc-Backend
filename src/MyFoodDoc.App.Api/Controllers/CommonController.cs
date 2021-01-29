@@ -54,7 +54,7 @@ namespace MyFoodDoc.App.Api.Controllers
             var emailBody = "Hallo,<br/><br/>" +
                             "Herzlich Willkommen bei myFoodDoctor, – dem erfolgreichsten digitalen Ernährungscoach für unterwegs & zuhause!<br/><br/>" +
                             "Wie schön, dass du deine Gesundheit und Ernährung mit der myFoodDoctor-App selbst in die Hand nehmen möchtest – ganz egal, welches persönliche Ziel du auch verfolgst: ob du abnehmen, die Symptome deiner Erkrankung lindern oder dich einfach rundum gesund und fit fühlen willst.<br/><br/>" +
-                            "Lass' es uns gemeinsam angehen – aber ganz in einem Tempo.<br/><br/>" +
+                            "Lass' es uns gemeinsam angehen – aber ganz in deinem Tempo.<br/><br/>" +
                             "Wir stehen dir mit professionellem Rat und Tat zur Seite.<br/><br/>" +
                             "Für Rückfragen wende dich an support@myfooddoctor.de. Wir helfen dir gerne!<br/><br/>" +
                             "Herzliche Grüße<br/><br/>" + "Dr. Matthias Riedl und das myFoodDoctor-Team";
