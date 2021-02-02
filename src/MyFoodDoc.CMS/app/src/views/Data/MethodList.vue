@@ -85,7 +85,7 @@
             <v-row v-if="item.type && item.type != 'Information' && item.type != 'Knowledge'">
                 <v-container>
                     <v-layout justify-center row wrap>
-                        <v-flex v-if="item.type && (item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals')">
+                        <v-flex v-if="item.type && (item.type == 'Change' || item.type == 'Drink' || item.type == 'Meals' || item.type == 'Timer')">
                             <v-row>
                                 <v-col>
                                     <span style="font-weight: bold">Targets</span>
@@ -285,7 +285,7 @@
                     item.frequencyPeriod = null;
                 }
 
-                if (item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals') {
+                if (item.type != 'Change' && item.type != 'Drink' && item.type != 'Meals' && item.type != 'Timer') {
                     item.targets = [];
                 }        
 
