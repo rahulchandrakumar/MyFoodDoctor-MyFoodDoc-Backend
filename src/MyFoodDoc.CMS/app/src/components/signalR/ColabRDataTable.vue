@@ -92,6 +92,12 @@
                             </v-btn>
                         </template>
                     </v-data-table>
+                    <div>
+                        <v-pagination v-model="page"
+                                      :length="pageCount"
+                                      :total-visible="7">
+                        </v-pagination>
+                    </div>
                 </material-card>
             </v-flex>
             <v-flex>
@@ -231,6 +237,9 @@
             },
             pageSize() {
                 return this.$store.getters[this.storeName + "/pageSize"]
+            },
+            pageCount() {
+                return Math.ceil(this.tableItemsCount / this.pageSize)
             },
             stateDict() {
                 return this.$store.getters["edit-state/states"][this.storeName] || {}
