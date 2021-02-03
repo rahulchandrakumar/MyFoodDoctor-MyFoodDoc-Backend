@@ -40,6 +40,7 @@ namespace MyFoodDoc.Functions
             log.LogInformation($"{users.Count()} records to update.");
 
             int updated = 0;
+            int errors = 0;
             int inconsistent = 0;
 
             if (users.Any())
@@ -48,23 +49,45 @@ namespace MyFoodDoc.Functions
                 {
                     if (user.SubscriptionType == SubscriptionType.AppStore && !string.IsNullOrEmpty(user.ReceiptData))
                     {
-                        var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(user.ReceiptData);
+                        try
+                        {
+                            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(user.ReceiptData);
 
-                        user.ProductId = validateReceiptValidationResult.ProductId;
-                        user.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
-                        user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
-                        user.SubscriptionUpdated = DateTime.Now;
+                            user.ProductId = validateReceiptValidationResult.ProductId;
+                            user.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
+                            user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
+                            user.SubscriptionUpdated = DateTime.Now;
+                        }
+                        catch (Exception e)
+                        {
+                            log.LogError(e,$"Error on validating AppStore user '{user.Id}'");
+
+                            errors++;
+
+                            continue;
+                        }
                     }
                     else if (user.SubscriptionType == SubscriptionType.GooglePlayStore && !string.IsNullOrEmpty(user.SubscriptionId) && !string.IsNullOrEmpty(user.PurchaseToken))
                     {
-                        var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(user.SubscriptionId, user.PurchaseToken);
+                        try
+                        {
+                            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(user.SubscriptionId, user.PurchaseToken);
 
-                        user.HasValidSubscription = validateReceiptValidationResult.CancelReason == null &&
-                                                    ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
-                                                      validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
-                                                     || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
-                                                         validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now));
-                        user.SubscriptionUpdated = DateTime.Now;
+                            user.HasValidSubscription = validateReceiptValidationResult.CancelReason == null &&
+                                                        ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+                                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
+                                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
+                                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now));
+                            user.SubscriptionUpdated = DateTime.Now;
+                        }
+                        catch (Exception e)
+                        {
+                            log.LogError(e, $"Error on validating GooglePlayStore user '{user.Id}'");
+
+                            errors++;
+
+                            continue;
+                        }
                     }
                     else
                     {
@@ -82,7 +105,10 @@ namespace MyFoodDoc.Functions
                 log.LogInformation($"{updated} records updated.");
 
                 if (inconsistent > 0)
-                    log.LogInformation($"{inconsistent} records are inconsistent.");
+                    log.LogWarning($"{inconsistent} records are inconsistent.");
+
+                if (errors > 0)
+                    log.LogError($"{errors} records cause error on validation.");
             }
         }
     }
