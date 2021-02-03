@@ -81,12 +81,16 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
         public async Task<PaginatedItems<IngredientModel>> GetItems(int take, int skip, string search, IngredientFilter filter, CancellationToken cancellationToken = default)
         {
-            var entities = await GetBaseQuery(search, filter).AsNoTracking().ToListAsync(cancellationToken);
+            var baseQuery = GetBaseQuery(search, filter);
 
+            var count = await baseQuery.CountAsync(cancellationToken);
+
+            var entities = await baseQuery.Skip(skip).Take(take).ToListAsync(cancellationToken);
+            
             return new PaginatedItems<IngredientModel>()
             {
-                Items = entities.Skip(skip).Take(take).Select(IngredientModel.FromEntity).ToList(),
-                TotalCount = entities.Count
+                Items = entities.Select(IngredientModel.FromEntity).ToList(),
+                TotalCount = count
             };
         }
 
