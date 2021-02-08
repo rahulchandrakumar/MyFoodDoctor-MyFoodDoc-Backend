@@ -79,6 +79,7 @@ namespace MyFoodDoc.App.Application.Services
                 .GroupBy(g => g.TargetId).Select(x => x.OrderBy(y => y.Created).Last()).Select(x => x.TargetId).ToList() : new List<int>();
 
             var userMethods = await _context.UserMethods.AsNoTracking()
+                .Include(x => x.Method)
                 .Where(x =>
                     x.UserId == userId)
                 .ToListAsync(cancellationToken);
@@ -268,6 +269,39 @@ namespace MyFoodDoc.App.Application.Services
                     else
                     {
                         result.AddRange(group.Take(MAX_METHODS_PER_OPTIMIZATION_AREA));
+                    }
+                }
+            }
+
+            //Delete running timer for the previous period if different
+            if (lastUserTarget != null)
+            {
+                var previousTimerMethod = userMethods
+                    .Where(x => x.Method.Type == MethodType.Timer && x.Created < lastUserTarget.Created)
+                    .OrderBy(x => x.LastModified ?? x.Created)
+                    .LastOrDefault();
+
+                if (previousTimerMethod?.Answer != null &&
+                    previousTimerMethod.Answer.Value)
+                {
+                    if (!timerMethodsToShow.Any(x => x.Id == previousTimerMethod.MethodId))
+                    {
+                        previousTimerMethod.Answer = false;
+
+                        _context.UserMethods.Update(previousTimerMethod);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        var userTimer = await _context.UserTimer
+                            .Where(x => x.UserId == userId && x.MethodId == previousTimerMethod.MethodId)
+                            .FirstOrDefaultAsync(cancellationToken);
+
+                        if (userTimer != null)
+                        {
+                            _context.UserTimer.Remove(userTimer);
+
+                            await _context.SaveChangesAsync(cancellationToken);
+                        }
                     }
                 }
             }
@@ -656,7 +690,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (item.UserAnswerBoolean != null && item.UserAnswerInteger != null)
                         {
                             var userMethod = (await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
-
+                            
                             //Method was answered today or timer is still running since yesterday
                             if (userMethod != null && (userMethod.Created.ToLocalTime().Date == DateTime.Now.Date ||
                                                        (userMethod.Answer != null && userMethod.Answer.Value)))
