@@ -62,7 +62,7 @@ namespace MyFoodDoc.Functions
                 {
                     var notifications = userTimersWithPushNotificationsEnabled.Select(x => new FirebaseNotification()
                     {
-                        Body = "Du hast es geschafft",
+                        Body = "Achtung, die Timer-Zeit ist abgelaufen, schau in die App für den nächsten Schritt!",
                         DeviceToken = x.User.DeviceToken
                     }).ToList();
 
