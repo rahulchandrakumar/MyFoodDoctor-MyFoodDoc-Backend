@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Exceptions;
@@ -26,17 +26,21 @@ namespace MyFoodDoc.App.Application.Services
 
         private readonly IApplicationContext _context;
         private readonly IUserHistoryService _userHistoryService;
+        private readonly ILogger<MethodService> _logger;
         private readonly int _statisticsPeriod;
 
-        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, IOptions<StatisticsOptions> statisticsOptions)
+        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, ILogger<MethodService> logger, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _userHistoryService = userHistoryService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ICollection<MethodDto>> GetAsync(string userId, DateTime date, CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"START MethodService.GetAsync. userId={userId}, date={date}, localDate={date.ToLocalTime()}.");
+
             var result = new List<MethodDto>();
 
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
