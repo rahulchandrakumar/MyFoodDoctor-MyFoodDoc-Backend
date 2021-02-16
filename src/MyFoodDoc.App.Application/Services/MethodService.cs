@@ -59,11 +59,6 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.UserId == userId)
                 .ToListAsync(cancellationToken);
 
-            foreach (var umsh in userMethodShowHistory)
-            {
-                _logger.LogInformation($"UserMethodShowHistory. DBdateTime={umsh.Date}, DBlocalDateTime={umsh.Date.ToLocalTime()}, DBlocalDate={umsh.Date.ToLocalTime().Date}, dateDate={date.Date}, check={umsh.Date.ToLocalTime().Date == date.Date}.");
-            }
-
             //Check history on date
             if (userMethodShowHistory.Any(x => x.Date.ToLocalTime().Date == date.Date))
                 return await GetByDateAsync(userId, date, cancellationToken);
@@ -322,7 +317,7 @@ namespace MyFoodDoc.App.Application.Services
 
             if (result.Any())
             {
-                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId, Date = date}), cancellationToken);
+                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId}), cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
