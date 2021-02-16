@@ -39,7 +39,7 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<ICollection<MethodDto>> GetAsync(string userId, DateTime date, CancellationToken cancellationToken)
         {
-            _logger.LogInformation($"START MethodService.GetAsync. userId={userId}, date={date}, localDate={date.ToLocalTime()}.");
+            _logger.LogInformation($"START MethodService.GetAsync. Now={DateTime.Now} userId={userId}, date={date}, localDate={date.ToLocalTime()}.");
 
             var result = new List<MethodDto>();
 
@@ -61,7 +61,7 @@ namespace MyFoodDoc.App.Application.Services
 
             foreach (var umsh in userMethodShowHistory)
             {
-                _logger.LogInformation($"UserMethodShowHistory. dateTime={umsh}, localDateTime={umsh.Date.ToLocalTime()}, localDate={umsh.Date.ToLocalTime().Date}, dateDate={date.Date}, check={umsh.Date.ToLocalTime().Date == date.Date}.");
+                _logger.LogInformation($"UserMethodShowHistory. DBdateTime={umsh.Date}, DBlocalDateTime={umsh.Date.ToLocalTime()}, DBlocalDate={umsh.Date.ToLocalTime().Date}, dateDate={date.Date}, check={umsh.Date.ToLocalTime().Date == date.Date}.");
             }
 
             //Check history on date
