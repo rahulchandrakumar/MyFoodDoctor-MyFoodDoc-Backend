@@ -103,8 +103,8 @@ namespace MyFoodDoc.App.Application.Services
             aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = snackingOptimizationArea.Key, Optimal = snackingOptimizationArea.LineGraphOptimal.Value });
 
             //TODO: check default age
-            var optimalCalories = GetCaloriesOptimalValue(user.Birthday == null ? 40 : DateTime.UtcNow.Year - user.Birthday.Value.Year,
-                user.Gender.Value, userWeight.Value);
+            var optimalCalories = GetCaloriesOptimalValue(userId, user.Birthday == null ? 40 : DateTime.UtcNow.Year - user.Birthday.Value.Year,
+                user.Height.Value, userWeight.Value, user.Gender.Value);
 
             aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Calories.ToString().ToLower(), Optimal = optimalCalories });
 
@@ -339,9 +339,25 @@ namespace MyFoodDoc.App.Application.Services
             return (height - 100) * targetValue;
         }
 
-        private decimal GetCaloriesOptimalValue(int age, Gender gender, decimal weight)
+        private decimal GetCaloriesOptimalValue(string userId, int age, decimal height, decimal weight, Gender gender)
         {
-            return ((decimal)0.047 * weight + (gender == Gender.Female ? 0 : (decimal)1.009) - (decimal)0.01452 * age + (decimal)3.21) * 239 * (decimal)1.4;
+            var optimalValue =((decimal)0.047 * weight + (gender == Gender.Female ? 0 : (decimal)1.009) - (decimal)0.01452 * age + (decimal)3.21) * 239 * (decimal)1.4;
+
+            if (BMI((double)height, (double)weight) < 30)
+            {
+                //TODO: create enums for Diets, Indications and Motivations
+                var adipositas = _context.UserIndications.Where(x => x.UserId == userId).Any(x => x.IndicationId == 2);
+                var reduceWeight = _context.UserMotivations.Where(x => x.UserId == userId).Any(x => x.MotivationId == 3);
+
+                if (adipositas || reduceWeight)
+                    optimalValue -= 300;
+            }
+            else
+            {
+                optimalValue -= 500;
+            }
+
+            return optimalValue;
         }
 
         private double BMI(double height, double weight)

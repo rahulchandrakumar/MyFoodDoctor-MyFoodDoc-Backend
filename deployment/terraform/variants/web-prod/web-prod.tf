@@ -51,6 +51,8 @@ module "global" {
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"
 
+  app_store_verify_receipt_url = "https://buy.itunes.apple.com/verifyReceipt"
+
   keyvault_id            = data.terraform_remote_state.shared.outputs.keyvault_id
   keyvault_name          = data.terraform_remote_state.shared.outputs.keyvault_name
 
