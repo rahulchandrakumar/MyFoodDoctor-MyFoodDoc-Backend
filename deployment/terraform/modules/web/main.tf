@@ -359,16 +359,17 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_CONSUMER_SECRET                                  = ""
     APP_STORE_VERIFY_RECEIPT_URL                                = "https://sandbox.itunes.apple.com/verifyReceipt"
     APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
-    GOOGLE_PLAY_STORE_PACKAGE_NAME"                             = "de.medicum.myfooddoc"
-    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE"                         = "service_account"
-    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID"                   = "pc-api-6022083488696963110-239"
-    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"               = ""
-    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"                  = ""
-    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL"                 = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com"
-    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"                    = ""
-    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI"                     = "https://accounts.google.com/o/oauth2/auth"
-    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI"                    = "https://oauth2.googleapis.com/token"
-    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL"  = "https://www.googleapis.com/oauth2/v1/certs"
+    GOOGLE_PLAY_STORE_PACKAGE_NAME                              = "de.myfooddoctor.app"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE                          = "service_account"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID                    = "pc-api-6022083488696963110-239"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID                = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY                   = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL                  = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com"
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID                     = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI                      = "https://accounts.google.com/o/oauth2/auth"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI                     = "https://oauth2.googleapis.com/token"
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL   = "https://www.googleapis.com/oauth2/v1/certs"
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_X509_CERT_URL          = "https://www.googleapis.com/robot/v1/metadata/x509/server-purchase%40pc-api-6022083488696963110-239.iam.gserviceaccount.com"
     STATISTICS_PERIOD				                            = 4
     STATISTICS_MINIMUM_DAYS                                     = 2
     TZ                                                          = "Europe/Berlin"
@@ -383,10 +384,13 @@ resource "azurerm_app_service" "api" {
     ignore_changes = [
       site_config,
       app_settings["DOCKER_CUSTOM_IMAGE_NAME"],
+      app_settings["APP_STORE_VERIFY_RECEIPT_SHARED_SECRET"],
+      app_settings["EMAIL_SERVICE_SEND_GRID_API_KEY"],
       app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_ID"],
       app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET"],
       app_settings["FAT_SECRET_CONSUMER_KEY"],
-      app_settings["FAT_SECRET_CONSUMER_SECRET"]
+      app_settings["FAT_SECRET_CONSUMER_SECRET"],
+      
     ]
   }
 }
@@ -435,20 +439,23 @@ resource "azurerm_function_app" "func" {
     FIREBASE_CLIENT_X509_CERT_URL                               = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1mq1y%40medicum-myfooddoc.iam.gserviceaccount.com"
     APP_STORE_VERIFY_RECEIPT_URL                                = "https://sandbox.itunes.apple.com/verifyReceipt"
     APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
-    GOOGLE_PLAY_STORE_PACKAGE_NAME"                             = "de.medicum.myfooddoc"
-    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE"                         = "service_account"
-    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID"                   = "pc-api-6022083488696963110-239"
-    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"               = ""
-    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"                  = ""
-    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL"                 = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com"
-    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"                    = ""
-    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI"                     = "https://accounts.google.com/o/oauth2/auth"
-    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI"                    = "https://oauth2.googleapis.com/token"
-    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL"  = "https://www.googleapis.com/oauth2/v1/certs"
+    GOOGLE_PLAY_STORE_PACKAGE_NAME                              = "de.myfooddoctor.app"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TYPE                          = "service_account"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID                    = "pc-api-6022083488696963110-239"
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID                = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY                   = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_EMAIL                  = "server-purchase@pc-api-6022083488696963110-239.iam.gserviceaccount.com"
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID                     = ""
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_URI                      = "https://accounts.google.com/o/oauth2/auth"
+    GOOGLE_PLAY_STORE_CERTIFICATE_TOKEN_URI                     = "https://oauth2.googleapis.com/token"
+    GOOGLE_PLAY_STORE_CERTIFICATE_AUTH_PROVIDER_X509_CERT_URL   = "https://www.googleapis.com/oauth2/v1/certs"
+    GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_X509_CERT_URL          = "https://www.googleapis.com/robot/v1/metadata/x509/server-purchase%40pc-api-6022083488696963110-239.iam.gserviceaccount.com"
     FUNCTIONS_WORKER_RUNTIME                                    = "dotnet"
     WEBSITES_ENABLE_APP_SERVICE_STORAGE                         = "false"
-    WEBSITE_HTTPLOGGING_RETENTION_DAYS                          = "14"
+    WEBSITE_HTTPLOGGING_RETENTION_DAYS                          = 14
     WEBSITE_RUN_FROM_PACKAGE                                    = ""
+    STATISTICS_PERIOD				                            = 4
+    STATISTICS_MINIMUM_DAYS                                     = 2
     TZ                                                          = "Europe/Berlin"
   }
 
@@ -462,13 +469,17 @@ resource "azurerm_function_app" "func" {
       site_config,
       app_settings["DOCKER_CUSTOM_IMAGE_NAME"],
       app_settings["AzureWebJobsStorage"],
+      app_settings["APP_STORE_VERIFY_RECEIPT_SHARED_SECRET"],
       app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_ID"],
       app_settings["FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET"],
       app_settings["FAT_SECRET_CONSUMER_KEY"],
       app_settings["FAT_SECRET_CONSUMER_SECRET"],
       app_settings["FIREBASE_CLIENT_ID"],
       app_settings["FIREBASE_PRIVATE_KEY_ID"],
-      app_settings["FIREBASE_PRIVATE_KEY"]
+      app_settings["FIREBASE_PRIVATE_KEY"],
+      app_settings["GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY_ID"],
+      app_settings["GOOGLE_PLAY_STORE_CERTIFICATE_PRIVATE_KEY"],
+      app_settings["GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_ID"]
     ]
   }
 }
