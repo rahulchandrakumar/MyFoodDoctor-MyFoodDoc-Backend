@@ -26,6 +26,7 @@ variable "keyvault_name" {}
 variable "containerregistry_url" {}
 variable "containerregistry_admin_username" {}
 variable "containerregistry_admin_password" {}
+variable "app_store_verify_receipt_url" {}
 
 data "azurerm_client_config" "current" {}
 
@@ -357,7 +358,7 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_ADDRESS                                          = "https://platform.fatsecret.com/rest/server.api"
     FAT_SECRET_CONSUMER_KEY                                     = ""
     FAT_SECRET_CONSUMER_SECRET                                  = ""
-    APP_STORE_VERIFY_RECEIPT_URL                                = "https://sandbox.itunes.apple.com/verifyReceipt"
+    APP_STORE_VERIFY_RECEIPT_URL                                = var.app_store_verify_receipt_url
     APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
     GOOGLE_PLAY_STORE_PACKAGE_NAME                              = "de.myfooddoctor.app"
     GOOGLE_PLAY_STORE_CERTIFICATE_TYPE                          = "service_account"
@@ -437,7 +438,7 @@ resource "azurerm_function_app" "func" {
     FIREBASE_TOKEN_URI                                          = "https://oauth2.googleapis.com/token"
     FIREBASE_AUTH_PROVIDER_X509_CERT_URL                        = "https://www.googleapis.com/oauth2/v1/certs"
     FIREBASE_CLIENT_X509_CERT_URL                               = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1mq1y%40medicum-myfooddoc.iam.gserviceaccount.com"
-    APP_STORE_VERIFY_RECEIPT_URL                                = "https://sandbox.itunes.apple.com/verifyReceipt"
+    APP_STORE_VERIFY_RECEIPT_URL                                = var.app_store_verify_receipt_url
     APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
     GOOGLE_PLAY_STORE_PACKAGE_NAME                              = "de.myfooddoctor.app"
     GOOGLE_PLAY_STORE_CERTIFICATE_TYPE                          = "service_account"
