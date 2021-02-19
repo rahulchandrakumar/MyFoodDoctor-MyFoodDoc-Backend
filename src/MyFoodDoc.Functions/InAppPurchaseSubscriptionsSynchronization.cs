@@ -35,7 +35,7 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null).ToListAsync(cancellationToken);
+            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null && x.SubscriptionUpdated.Value < DateTime.Now.AddDays(-1)).ToListAsync(cancellationToken);
 
             log.LogInformation($"{users.Count()} records to update.");
 
@@ -73,11 +73,10 @@ namespace MyFoodDoc.Functions
                         {
                             var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(user.SubscriptionId, user.PurchaseToken);
 
-                            user.HasValidSubscription = validateReceiptValidationResult.CancelReason == null &&
-                                                        ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+                            user.HasValidSubscription = (validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
                                                           validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
                                                          || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
-                                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now));
+                                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now);
                             user.SubscriptionUpdated = DateTime.Now;
                         }
                         catch (Exception e)
