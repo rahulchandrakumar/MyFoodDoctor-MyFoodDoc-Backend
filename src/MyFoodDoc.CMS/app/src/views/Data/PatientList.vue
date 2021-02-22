@@ -61,10 +61,6 @@ export default {
   data() {
     return {
       mainHeaders: [{
-          sortable: false,
-          value: "email",
-          text: "Email"
-        }, {
           sortable: true,
           value: "insurance",
           text: "Insurance"
