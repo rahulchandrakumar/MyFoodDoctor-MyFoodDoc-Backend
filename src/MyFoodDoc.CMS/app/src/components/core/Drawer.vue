@@ -114,17 +114,16 @@
 
             if (userRoles.includes(UserRoles.VIEWER)) {
                 links.push({
-                    to: "/",
-                    icon: "mdi-view-dashboard",
-                    text: "Dashboard"
-                });
-            }
-
-            if (userRoles.includes(UserRoles.EDITOR)) {
-                links.push({
                     icon: "mdi-food-fork-drink",
                     to: "/portion-list",
                     text: "Portions"
+                });
+            }
+            if (userRoles.includes(UserRoles.EDITOR)) {
+                links.push({
+                    to: "/",
+                    icon: "mdi-view-dashboard",
+                    text: "Dashboard"
                 });
                 links.push({
                     icon: "mdi-ticket-percent",
