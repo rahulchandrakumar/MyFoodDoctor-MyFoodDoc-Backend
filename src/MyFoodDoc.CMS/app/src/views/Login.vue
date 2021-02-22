@@ -76,7 +76,7 @@ export default Vue.extend({
         if (success) {
           this.loginForm.username = "";
           this.loginForm.password = "";
-          this.$router.push({ name: "Dashboard" });
+          this.$router.push({ name: "Portions" });
         } else {
           this.hasFailed = true;
         }
