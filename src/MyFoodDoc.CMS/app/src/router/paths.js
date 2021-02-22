@@ -14,7 +14,7 @@ export default [
         // Relative to /src/views
         view: "Dashboard",
         meta: {
-            role: UserRoles.VIEWER
+            role: UserRoles.EDITOR
         }
     },
     {
@@ -30,7 +30,7 @@ export default [
         name: "Portions",
         view: "Data/PortionList",
         meta: {
-            role: UserRoles.EDITOR
+            role: UserRoles.VIEWER
         }
     },
     {
