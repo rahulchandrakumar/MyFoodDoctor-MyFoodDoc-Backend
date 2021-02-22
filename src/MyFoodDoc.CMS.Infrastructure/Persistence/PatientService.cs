@@ -61,11 +61,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                 if (genders.Count > 0)
                 {
                     var gender = genders.First();
-                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring) || f.Gender == gender);
-                }
-                else
-                {
-                    baseQuery = baseQuery.Where(f => EF.Functions.Like(f.Email, searchstring));
+                    baseQuery = baseQuery.Where(f => f.Gender == gender);
                 }
             }
 
