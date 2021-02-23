@@ -35,7 +35,7 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null && x.SubscriptionUpdated.Value < DateTime.Now.AddDays(-1)).ToListAsync(cancellationToken);
+            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null && x.SubscriptionUpdated.Value < DateTime.Now.AddDays(-1)).OrderBy(x => x.SubscriptionUpdated).Take(200).ToListAsync(cancellationToken);
 
             log.LogInformation($"{users.Count()} records to update.");
 
