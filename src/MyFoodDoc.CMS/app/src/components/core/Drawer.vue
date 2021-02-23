@@ -115,13 +115,13 @@
             if (userRoles.includes(UserRoles.VIEWER)) {
                 links.push({
                     icon: "mdi-food-fork-drink",
-                    to: "/portion-list",
+                    to: "/",
                     text: "Portions"
                 });
             }
             if (userRoles.includes(UserRoles.EDITOR)) {
                 links.push({
-                    to: "/",
+                    to: "/dashboard",
                     icon: "mdi-view-dashboard",
                     text: "Dashboard"
                 });
