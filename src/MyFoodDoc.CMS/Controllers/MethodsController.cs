@@ -11,7 +11,7 @@ using MyFoodDoc.CMS.Payloads;
 
 namespace MyFoodDoc.CMS.Controllers
 {
-    [Authorize(Roles = "Editor")]
+    [Authorize(Roles = "Admin")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class MethodsController : ControllerBase

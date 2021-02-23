@@ -5,14 +5,13 @@ using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Hubs;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.Payloads;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Controllers
 {
-    [Authorize(Roles = "Editor")]
+    [Authorize(Roles = "Viewer")]
     [Route("api/v1/[controller]")]
     [ApiController]
     public class PortionsController : ControllerBase
