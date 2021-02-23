@@ -112,15 +112,6 @@ resource "azurerm_sql_server" "sqlserver" {
   }
 }
 
-# create Firewall rule to have an access to that DB from Azure resources
-resource "azurerm_sql_firewall_rule" "sqlfirewall" {
-  name                = "Allow All Azure Service"
-  resource_group_name = azurerm_sql_server.sqlserver.resource_group_name
-  server_name         = azurerm_sql_server.sqlserver.name
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
-}
-
 # create Azure SQL DB
 resource "azurerm_sql_database" "sqldb" {
   name                              = local.sqlDbName
@@ -404,10 +395,12 @@ resource "azurerm_function_app" "func" {
   storage_connection_string = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
   tags                      = local.resource_tags
   version                   = "~3"
+  enable_builtin_logging    = true
 
   site_config {
     linux_fx_version        = "DOCKER|${var.containerregistry_url}/${var.projectname}-func:latest"
     always_on               = var.apiapp_alwayson
+    http2_enabled           = true
   }
 
   app_settings = {
