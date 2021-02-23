@@ -10,7 +10,7 @@ export default [
         }
     },
     {
-        path: "",
+        path: "/dashboard",
         // Relative to /src/views
         view: "Dashboard",
         meta: {
@@ -26,7 +26,7 @@ export default [
         }
     },
     {
-        path: "/portion-list",
+        path: "",
         name: "Portions",
         view: "Data/PortionList",
         meta: {
