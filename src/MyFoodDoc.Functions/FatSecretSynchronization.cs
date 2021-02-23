@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.FatSecretClient.Abstractions;
 
 
@@ -31,9 +33,9 @@ namespace MyFoodDoc.Functions
         {
             var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-23)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync(cancellationToken);
 
-            log.LogInformation($"{ingredients.Count()} records to update.");
+            log.LogInformation($"{ingredients.Count} ingredients to update.");
 
-            int updated = 0;
+            var ingredientsToUpdate = new List<Ingredient>();
 
             if (ingredients.Any())
             {
@@ -75,14 +77,14 @@ namespace MyFoodDoc.Functions
                     ingredient.SugarExternal = serving.Sugar;
                     ingredient.LastSynchronized = DateTime.Now;
 
-                    _context.Ingredients.Update(ingredient);
-
-                    updated++;
+                    ingredientsToUpdate.Add(ingredient);
                 }
+
+                _context.Ingredients.UpdateRange(ingredientsToUpdate);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                log.LogInformation($"{updated} records updated.");
+                log.LogInformation($"{ingredientsToUpdate.Count} ingredients updated.");
             }
         }
     }

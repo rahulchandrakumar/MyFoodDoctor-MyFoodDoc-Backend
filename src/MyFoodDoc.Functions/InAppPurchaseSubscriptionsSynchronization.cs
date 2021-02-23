@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
@@ -35,11 +37,12 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null && x.SubscriptionUpdated.Value < DateTime.Now.AddDays(-1)).OrderBy(x => x.SubscriptionUpdated).Take(200).ToListAsync(cancellationToken);
+            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null).OrderBy(x => x.SubscriptionUpdated).Take(200).ToListAsync(cancellationToken);
 
-            log.LogInformation($"{users.Count()} records to update.");
+            log.LogInformation($"{users.Count} users to update.");
 
-            int updated = 0;
+            var usersToUpdate = new List<User>();
+
             int errors = 0;
             int inconsistent = 0;
 
@@ -94,20 +97,20 @@ namespace MyFoodDoc.Functions
                         continue;
                     }
 
-                    _context.Users.Update(user);
-
-                    updated++;
+                    usersToUpdate.Add(user);
                 }
+
+                _context.Users.UpdateRange(usersToUpdate);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                log.LogInformation($"{updated} records updated.");
+                log.LogInformation($"{usersToUpdate.Count} users updated.");
 
                 if (inconsistent > 0)
-                    log.LogWarning($"{inconsistent} records are inconsistent.");
+                    log.LogWarning($"{inconsistent} users are inconsistent.");
 
                 if (errors > 0)
-                    log.LogError($"{errors} records cause error on validation.");
+                    log.LogError($"{errors} users cause error on validation.");
             }
         }
     }
