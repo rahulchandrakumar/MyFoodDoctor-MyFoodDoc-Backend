@@ -21,7 +21,7 @@ function route(path, view, name, meta) {
   return {
     name: name || view,
     path,
-    component: resovle => import(`@/views/${view}.vue`).then(resovle),
+    component: resolve => import(`@/views/${view}.vue`).then(resolve),
     meta: meta
   };
 }
