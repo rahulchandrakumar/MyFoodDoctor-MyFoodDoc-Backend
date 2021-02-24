@@ -39,7 +39,7 @@ module "global" {
   stage       = "dev"
 
   apiserver_plantier     = "Basic"
-  apiserver_plansize     = "B3"
+  apiserver_plansize     = "B1"
   apiserver_plancapacity = 1
 
   apiapp_alwayson        = false
