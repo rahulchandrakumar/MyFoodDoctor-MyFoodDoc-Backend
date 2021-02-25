@@ -31,7 +31,7 @@ namespace MyFoodDoc.Functions
             ILogger log, 
             CancellationToken cancellationToken)
         {
-            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-23)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync(cancellationToken);
+            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync(cancellationToken);
 
             log.LogInformation($"{ingredients.Count} ingredients to update.");
 
