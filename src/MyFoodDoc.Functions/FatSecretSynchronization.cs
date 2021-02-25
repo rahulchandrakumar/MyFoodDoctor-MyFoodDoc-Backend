@@ -35,6 +35,9 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"{ingredients.Count} ingredients to update.");
 
+            int currentBatchCount = 0;
+            int batchSize = 40;
+
             var ingredientsToUpdate = new List<Ingredient>();
 
             if (ingredients.Any())
@@ -78,13 +81,29 @@ namespace MyFoodDoc.Functions
                     ingredient.LastSynchronized = DateTime.Now;
 
                     ingredientsToUpdate.Add(ingredient);
+                    currentBatchCount++;
+
+                    if (currentBatchCount == batchSize)
+                    {
+                        _context.Ingredients.UpdateRange(ingredientsToUpdate);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        log.LogInformation($"{currentBatchCount} ingredients updated.");
+
+                        currentBatchCount = 0;
+                        ingredientsToUpdate = new List<Ingredient>();
+                    }
                 }
 
-                _context.Ingredients.UpdateRange(ingredientsToUpdate);
+                if (currentBatchCount > 0)
+                {
+                    _context.Ingredients.UpdateRange(ingredientsToUpdate);
 
-                await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
 
-                log.LogInformation($"{ingredientsToUpdate.Count} ingredients updated.");
+                    log.LogInformation($"{currentBatchCount} ingredients updated.");
+                }
             }
         }
     }
