@@ -37,9 +37,12 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            var users = await _context.Users.Where(x => x.SubscriptionUpdated != null).OrderBy(x => x.SubscriptionUpdated).Take(500).ToListAsync(cancellationToken);
+            var users = await _context.Users.Where(x => x.SubscriptionUpdated < DateTime.Now).OrderBy(x => x.SubscriptionUpdated).Take(500).ToListAsync(cancellationToken);
 
             log.LogInformation($"{users.Count} users to update.");
+
+            int currentBatchCount = 0;
+            int batchSize = 40;
 
             var usersToUpdate = new List<User>();
 
@@ -98,13 +101,29 @@ namespace MyFoodDoc.Functions
                     }
 
                     usersToUpdate.Add(user);
+                    currentBatchCount++;
+
+                    if (currentBatchCount == batchSize)
+                    {
+                        _context.Users.UpdateRange(usersToUpdate);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        log.LogInformation($"{currentBatchCount} users updated.");
+
+                        currentBatchCount = 0;
+                        usersToUpdate = new List<User>();
+                    }
                 }
 
-                _context.Users.UpdateRange(usersToUpdate);
+                if (currentBatchCount > 0)
+                {
+                    _context.Users.UpdateRange(usersToUpdate);
 
-                await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(cancellationToken);
 
-                log.LogInformation($"{usersToUpdate.Count} users updated.");
+                    log.LogInformation($"{currentBatchCount} users updated.");
+                }
 
                 if (inconsistent > 0)
                     log.LogWarning($"{inconsistent} users are inconsistent.");
