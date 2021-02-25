@@ -46,7 +46,7 @@ module "global" {
   apiapp_aspenv          = "Production"
 
   sqldb_tier                = "Standard"
-  sqldb_service_objective   = "S1"
+  sqldb_service_objective   = "S2"
 
   storageaccount_replication_type = "LRS"
   storageaccount_tier = "Standard"
