@@ -18,7 +18,7 @@ namespace MyFoodDoc.App.Application.Abstractions
         Task UpsertLiquidAsync(string userId, LiquidPayload payload, CancellationToken cancellationToken);
         Task<DiaryEntryDtoExercise> GetExerciseAsync(string userId, DateTime date, CancellationToken cancellationToken);
         Task UpsertExerciseAsync(string userId, ExercisePayload payload, CancellationToken cancellationToken);
-        Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken);
+        Task<bool> IsDiaryFull(string userId, DateTime onDate, CancellationToken cancellationToken);
         Task<ICollection<FavouriteDto>> GetFavouritesAsync(string userId, CancellationToken cancellationToken);
         Task<FavouriteDto> GetFavouriteAsync(string userId, int id, CancellationToken cancellationToken);
         Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, bool isGeneric, CancellationToken cancellationToken);

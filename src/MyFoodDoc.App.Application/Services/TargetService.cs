@@ -52,7 +52,7 @@ namespace MyFoodDoc.App.Application.Services
             }
             else
             {
-                if (!await _diaryService.IsDiaryFull(userId, cancellationToken))
+                if (!await _diaryService.IsDiaryFull(userId, onDate, cancellationToken))
                     return result;
 
                 var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);

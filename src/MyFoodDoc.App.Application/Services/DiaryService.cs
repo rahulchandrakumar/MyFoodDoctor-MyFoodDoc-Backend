@@ -304,7 +304,7 @@ namespace MyFoodDoc.App.Application.Services
                 .RunAsync(cancellationToken);
         }
 
-        public async Task<bool> IsDiaryFull(string userId, CancellationToken cancellationToken)
+        public async Task<bool> IsDiaryFull(string userId, DateTime onDate, CancellationToken cancellationToken)
         {
             var user = await _context.Users
                 .Where(x => x.Id == userId)
@@ -315,7 +315,7 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var dateToCheck = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
+            var dateToCheck = new DateTime(onDate.Year, onDate.Month, onDate.Day);
 
             var userCreatedDate = new DateTime(user.Created.Year, user.Created.Month, user.Created.Day);
 
