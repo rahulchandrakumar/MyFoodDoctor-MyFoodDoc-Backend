@@ -10,6 +10,7 @@ using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.Entities.Psychogramm;
 using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
@@ -88,6 +89,15 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<Chapter> Chapters { get; set; }
         DbSet<Subchapter> Subchapters { get; set; }
         DbSet<UserAnswer> UserAnswers { get; set; }
+
+        #endregion
+
+        #region Psychogramm
+
+        DbSet<Scale> Scales { get; set; }
+        DbSet<Question> Questions { get; set; }
+        DbSet<Choice> Choices { get; set; }
+        DbSet<UserChoice> UserChoices { get; set; }
 
         #endregion
 
