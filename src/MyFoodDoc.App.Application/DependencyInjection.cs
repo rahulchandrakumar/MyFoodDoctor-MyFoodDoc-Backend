@@ -35,6 +35,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserHistoryService, UserHistoryService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IPsychogrammService, PsychogrammService>();
 
             return services;
         }

@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Payloads.Psychogramm;
+
+namespace MyFoodDoc.App.Api.Controllers
+{
+    [Authorize]
+    public class PsychogrammController : BaseController
+    {
+        private readonly ILogger _logger;
+        private readonly IPsychogrammService _service;
+
+        public PsychogrammController(IPsychogrammService service, ILogger<PsychogrammController> logger)
+        {
+            _service = service;
+            _logger = logger;
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(ICollection<ScaleDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ICollection<ScaleDto>>> Get(CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetAsync(GetUserId(), cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpPost("{id}/choices")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> InsertChoices([FromRoute(Name = "id")] int scaleId, [FromBody] InsertChoicesPayload payload, CancellationToken cancellationToken = default)
+        {
+            await _service.InsertChoices(GetUserId(), scaleId, payload, cancellationToken);
+
+            return Ok();
+        }
+    }
+}

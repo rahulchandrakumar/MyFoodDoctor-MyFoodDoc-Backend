@@ -46,7 +46,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPost("{id}/chapter")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AddReportOptimizations([FromRoute(Name = "id")] int courseId, [FromBody] AnswerPayload payload, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> InsertAnswer([FromRoute(Name = "id")] int courseId, [FromBody] AnswerPayload payload, CancellationToken cancellationToken = default)
         {
             await _service.InsertAnswerAsync(GetUserId(), courseId, payload, cancellationToken);
 
