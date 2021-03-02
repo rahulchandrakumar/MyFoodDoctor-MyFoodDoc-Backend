@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.Entities.Psychogramm;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -94,6 +95,15 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Subchapter> Subchapters { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
+
+        #endregion
+
+        #region Psychogramm
+
+        public DbSet<Scale> Scales { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Choice> Choices { get; set; }
+        public DbSet<UserChoice> UserChoices { get; set; }
 
         #endregion
 
