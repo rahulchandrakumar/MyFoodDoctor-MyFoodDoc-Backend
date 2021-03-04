@@ -158,6 +158,11 @@
                     text: "Courses"
                 });
                 links.push({
+                    icon: "mdi-chart-bar",
+                    to: "/scale-list",
+                    text: "Psychogramm"
+                });
+                links.push({
                     icon: "mdi-web",
                     to: "/webview-list",
                     text: "Web Views"

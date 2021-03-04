@@ -170,11 +170,9 @@
 </template>
 
 <script>
-    import Vue from 'vue'
     import integration from "@/integration";
     import MethodType from "@/enums/MethodType";
     import MethodFrequencyPeriod from "@/enums/MethodFrequencyPeriod";
-    import { toggle } from '../../utils/vuex';
 
     export default {
         components: {
