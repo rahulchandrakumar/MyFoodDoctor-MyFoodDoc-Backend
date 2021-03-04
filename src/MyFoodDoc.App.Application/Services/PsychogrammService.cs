@@ -4,10 +4,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Psychogramm;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Psychogramm;
+using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -81,9 +83,18 @@ namespace MyFoodDoc.App.Application.Services
 
                 foreach (var question in payload.Questions)
                 {
+                    var questionEntity =
+                        await _context.Questions.FirstOrDefaultAsync(x => x.Id == question.Id, cancellationToken);
+
+                    if (questionEntity == null)
+                        throw new NotFoundException(nameof(Question), question.Id);
+
+                    if (questionEntity.Type != QuestionType.Multiple && question.Choices.Count() > 1)
+                        throw new BadRequestException($"Question with id={question.Id} doesn't support multiple choice");
+
                     if (userChoices.Any(x => x.Choice.QuestionId == question.Id))
                         _context.UserChoices.RemoveRange(userChoices.Where(x => x.Choice.QuestionId == question.Id));
-                    
+
                     if (question.Choices.Any())
                         await _context.UserChoices.AddRangeAsync(question.Choices.Select(x => new UserChoice
                         {

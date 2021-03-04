@@ -1,7 +1,7 @@
 <template>
-    <ColabDataTable title="Courses"
-                    store-name="courses"
-                    editor-title-suffix="course item"
+    <ColabDataTable title="Scales"
+                    store-name="scales"
+                    editor-title-suffix="scale item"
                     :headers="mainHeaders"
                     :before-save="beforeSave"
                     :childLinks="childLinks">
@@ -24,10 +24,6 @@
                           :image-height="300" />
             </v-row>
             <v-row>
-                <v-switch v-model="item.isActive"
-                          :label="mainHeaders.filter(h => h.value == 'isActive')[0].text" />
-            </v-row>
-            <v-row>
                 <VeeTextField v-model="item.title"
                               :label="mainHeaders.filter(h => h.value == 'title')[0].text"
                               rules="required|max:100"
@@ -40,11 +36,11 @@
             <v-row>
                 <VeeRichTextArea v-if="!preview"
                                  v-model="item.text"
-                                 label="Text"
+                                 :label="mainHeaders.filter(h => h.value == 'text')[0].text"
                                  rules="required|min:8|max:1000" />
                 <VeeTextArea v-else
                              v-model="item.text"
-                             label="Text"
+                             :label="mainHeaders.filter(h => h.value == 'text')[0].text"
                              rules="required|min:1|max:1000" />
             </v-row>
             <v-row>
@@ -76,32 +72,22 @@
                     value: "image",
                     text: "Image",
                     width: "210px"
-                },
-                {
-                    sortable: true,
-                    value: "isActive",
-                    text: "Active"
-                },
-                {
+                }, {
                     sortable: true,
                     value: "title",
                     text: "Title"
                 }, {
                     sortable: true,
+                    value: "text",
+                    text: "Text"
+                }, {
+                    sortable: true,
                     value: "order",
                     text: "Order"
-                }, {
-                    sortable: true,
-                    value: "usersCount",
-                    text: "Users"
-                }, {
-                    sortable: true,
-                    value: "completedByUsersCount",
-                    text: "Completed by users"
                 }],
                 childLinks: [{
-                    path: "Chapters",
-                    title: "Edit chapters",
+                    path: "Questions",
+                    title: "Edit questions",
                 }],
                 preview: false
             }

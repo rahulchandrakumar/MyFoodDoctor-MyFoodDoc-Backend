@@ -75,6 +75,9 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IDietService, DietService>();
             services.AddTransient<IIndicationService, IndicationService>();
             services.AddTransient<IMotivationService, MotivationService>();
+            services.AddTransient<IScaleService, ScaleService>();
+            services.AddTransient<IQuestionService, QuestionService>();
+            services.AddTransient<IChoiceService, ChoiceService>();
             services.AddApplicationDI(Configuration);
             services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnection"), Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
