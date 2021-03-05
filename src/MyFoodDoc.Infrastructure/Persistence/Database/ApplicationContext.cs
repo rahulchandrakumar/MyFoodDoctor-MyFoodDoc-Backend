@@ -320,8 +320,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Name = "Proteine",
                         Text = "Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.\n" +
                                 "Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung.",
-                        LineGraphUpperLimit = null,
-                        LineGraphLowerLimit = null,
+                        LineGraphUpperLimit = 1.5m,
+                        LineGraphLowerLimit = 0.8m,
                         LineGraphOptimal = 1
                     },
                     new OptimizationArea
