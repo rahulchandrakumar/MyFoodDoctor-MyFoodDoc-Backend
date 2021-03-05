@@ -88,7 +88,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             return new PaginatedItems<CourseModel>()
             {
-                Items = entities.Skip(skip).Take(take).Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).OrderBy(x => x.Order).ToList(),
+                Items = entities.OrderBy(x => x.Order).Skip(skip).Take(take).Select(x => CourseModel.FromEntity(x, GetUsersCount(x.Id), GetCompletedByUsersCount(x.Id))).ToList(),
                 TotalCount = entities.Count
             };
         }
