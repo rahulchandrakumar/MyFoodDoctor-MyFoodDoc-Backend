@@ -119,6 +119,7 @@ namespace MyFoodDoc.App.Api.Controllers
 
             var result = new UserStatisticsDto
             {
+                IsZPPForbidden = await _diaryService.IsZPPForbidden(user, DateTime.Now, cancellationToken),
                 HasSubscription = (await _service.GetUserAsync(user, cancellationToken)).HasSubscription,
                 IsDiaryFull = await _diaryService.IsDiaryFull(user, DateTime.Now, cancellationToken),
                 HasNewTargetsTriggered = await _targetService.NewTriggered(user, cancellationToken),

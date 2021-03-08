@@ -2,6 +2,7 @@
 {
     public class UserStatisticsDto
     {
+        public bool IsZPPForbidden { get; set; }
         public bool HasSubscription { get; set; }
         public bool IsDiaryFull { get; set; }
         public bool HasNewTargetsTriggered { get; set; }
