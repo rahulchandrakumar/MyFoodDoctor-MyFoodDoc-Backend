@@ -226,6 +226,12 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Id = 4,
                         Key = "diabetes_type_2",
                         Name = "Diabetes Typ 2"
+                    },
+                    new Indication
+                    {
+                        Id = 5,
+                        Key = "eating_disorder",
+                        Name = "Essstörungen oder psychiatrische Grunderkrankung"
                     }
                 );
 
