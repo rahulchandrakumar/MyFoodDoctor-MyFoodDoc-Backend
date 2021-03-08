@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.FatSecretClient.Abstractions;
@@ -327,6 +328,37 @@ namespace MyFoodDoc.App.Application.Services
                     .Select(x => x.Date)
                     .Distinct()
                     .CountAsync(cancellationToken) >= _statisticsMinimumDays;
+        }
+
+        public async Task<bool> IsZPPForbidden(string userId, DateTime onDate, CancellationToken cancellationToken)
+        {
+            var user = await _context.Users
+                .Where(x => x.Id == userId)
+                .SingleOrDefaultAsync(cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var eatingDisorder = _context.UserIndications
+                .Where(x => x.UserId == userId)
+                .Any(x => x.IndicationId == 5);
+
+            if (eatingDisorder)
+                return true;
+
+            var weight = await _context.UserWeights
+                .Where(x => x.UserId == userId && x.Date <= onDate)
+                .OrderBy(x => x.Date)
+                .LastOrDefaultAsync(cancellationToken);
+
+            var BMIValue = BMI((double)user.Height.Value, (double)weight.Value);
+
+            if (BMIValue < 18.5 || BMIValue > 35)
+                return true;
+
+            return false;
         }
 
         public decimal GetProteinsForTargetValue(decimal height, decimal weight, decimal targetValue)
