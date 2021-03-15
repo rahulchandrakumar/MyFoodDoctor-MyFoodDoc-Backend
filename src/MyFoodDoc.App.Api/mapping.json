@@ -44,6 +44,9 @@
     "Period": "{STATISTICS_PERIOD}",
     "MinimumDays": "{STATISTICS_MINIMUM_DAYS}"
   },
+  "AokClient": {
+    "Address": "{AOK_SERVICE_BASE_URL}"
+  },
   "ConnectionStrings": {
     "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }
