@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Aok;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
@@ -100,6 +101,11 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<UserChoice> UserChoices { get; set; }
 
         #endregion
+
+        #region AOK
+        DbSet<AokUser> AokUsers { get; set; }
+        #endregion
+
 
         int SaveChanges();
 

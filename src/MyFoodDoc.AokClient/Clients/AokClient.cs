@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using MyFoodDoc.AokClient.Abstractions;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,7 +35,12 @@ namespace MyFoodDoc.AokClient.Clients
 
             if(!response.IsSuccessStatusCode)
             {
-                if(response.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity)
+                if(response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    return new ValidateResponse();
+                }
+
+                if(response.StatusCode == HttpStatusCode.UnprocessableEntity)
                 {
                     var errorResponse = await GetUnprocessableEntityResponse(response);
                     var err = $"The call to AOK validate endpoint failed with errors: {string.Join(';', errorResponse.Errors)}";
@@ -59,7 +65,7 @@ namespace MyFoodDoc.AokClient.Clients
             var parameters = new Dictionary<string, string>()
             {
                 { "insurance_number", request.InsuranceNumber },
-                { "date_of_birth", request.BirthDate.ToString(DateFormat) },
+                { "date_of_birth", request.Birthday.ToString(DateFormat) },
                 { "source", request.Source }
             };
 
