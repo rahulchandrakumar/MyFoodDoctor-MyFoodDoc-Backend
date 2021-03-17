@@ -49,6 +49,58 @@
                               rules="required|integer|min_value:1"
                               number />
             </v-row>
+            <v-row>
+                <VeeTextField v-model="item.typeCode"
+                              label="Type code"
+                              rules="required|max:6"
+                              :counter="6" />
+            </v-row>
+            <v-row>
+                <VeeTextField v-model="item.typeTitle"
+                              label="Type title"
+                              rules="required|max:100"
+                              :counter="100" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.typeText"
+                                 label="Type text"
+                                 rules="required|min:8|max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.typeText"
+                             label="Type text"
+                             rules="required|min:1|max:1000" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.characterization"
+                                 label="Characterization"
+                                 rules="required|min:8|max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.characterization"
+                             label="Characterization"
+                             rules="required|min:1|max:1000" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.reason"
+                                 label="Reason"
+                                 rules="required|min:8|max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.reason"
+                             label="Reason"
+                             rules="required|min:1|max:1000" />
+            </v-row>
+            <v-row>
+                <VeeRichTextArea v-if="!preview"
+                                 v-model="item.treatment"
+                                 label="Treatment"
+                                 rules="required|min:8|max:1000" />
+                <VeeTextArea v-else
+                             v-model="item.treatment"
+                             label="Treatment"
+                             rules="required|min:1|max:1000" />
+            </v-row>
         </template>
     </ColabDataTable>
 </template>

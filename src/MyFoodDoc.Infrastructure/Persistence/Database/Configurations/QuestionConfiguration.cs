@@ -15,6 +15,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.Text).IsRequired().HasMaxLength(1000);
             builder.Property(o => o.Order).IsRequired();
             builder.Property(o => o.Type).HasConversion<string>().HasMaxLength(9);
+            builder.Property(o => o.Extra).HasDefaultValue(false);
 
             builder.HasOne(x => x.Scale).WithMany(x => x.Questions).HasForeignKey(x => x.ScaleId).OnDelete(DeleteBehavior.Cascade);
         }

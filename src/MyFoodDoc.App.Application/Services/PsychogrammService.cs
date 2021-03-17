@@ -44,7 +44,7 @@ namespace MyFoodDoc.App.Application.Services
                     Text = scale.Text,
                     Order = scale.Order,
                     ImageUrl = scale.Image.Url,
-                    Questions = scale.Questions.Select(x => new QuestionDto
+                    Questions = scale.Questions.Where(x=> !x.Extra).Select(x => new QuestionDto
                     {
                         Id = x.Id,
                         Type = x.Type.ToString(),
@@ -59,10 +59,10 @@ namespace MyFoodDoc.App.Application.Services
                                 Checked = userChoices.Any(z => z.ChoiceId == y.Id)
                         })
                             .OrderBy(x => x.Order).ToList()
-                    }).OrderBy(x => x.Order).ToList(),
-                    QuestionsCount = scale.Questions.Count
+                    }).OrderBy(x => x.Order).ToList()
                 };
 
+                scaleDto.QuestionsCount = scaleDto.Questions.Count();
                 scaleDto.CompletedQuestionsCount = scaleDto.Questions
                     .Count(x => x.Choices.Any(y => y.Checked));
 

@@ -16,6 +16,8 @@ namespace MyFoodDoc.Application.Entities.Psychogramm
 
         public QuestionType Type { get; set; }
 
+        public bool Extra { get; set; }
+
         public int ScaleId { get; set; }
 
         public ICollection<Choice> Choices { get; set; }

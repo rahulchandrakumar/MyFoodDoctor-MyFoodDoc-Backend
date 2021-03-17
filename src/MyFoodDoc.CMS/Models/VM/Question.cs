@@ -12,6 +12,8 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public string Type { get; set; }
 
+        public bool Extra { get; set; }
+
         public int ScaleId { get; set; }
 
         public static Question FromModel(QuestionModel model)
@@ -23,6 +25,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Order = model.Order,
                 VerticalAlignment = model.VerticalAlignment,
                 Type = model.Type,
+                Extra = model.Extra,
                 ScaleId = model.ScaleId
             };
         }
@@ -36,6 +39,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 Order = this.Order,
                 VerticalAlignment = this.VerticalAlignment,
                 Type = this.Type,
+                Extra = this.Extra,
                 ScaleId = this.ScaleId
             };
         }
