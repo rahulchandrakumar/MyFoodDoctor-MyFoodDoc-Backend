@@ -10,7 +10,7 @@ namespace MyFoodDoc.AokClient
     {
         public static IServiceCollection AddSharedAokClient(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<AokClientOptions>(configuration.GetSection("Aok"));
+            services.Configure<AokClientOptions>(configuration.GetSection("AokClient"));
 
             var aokServiceUrl = configuration.GetValue<string>("AokClient:Address");
 

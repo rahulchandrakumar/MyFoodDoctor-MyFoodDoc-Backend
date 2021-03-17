@@ -43,5 +43,14 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok();
         }
+
+        [HttpGet("evaluation")]
+        [ProducesResponseType(typeof(PsychogrammEvaluationResultDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PsychogrammEvaluationResultDto>> GetEvaluation(CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetEvaluationAsync(GetUserId(), cancellationToken);
+
+            return Ok(result);
+        }
     }
 }
