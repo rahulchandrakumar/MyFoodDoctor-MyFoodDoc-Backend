@@ -72,7 +72,7 @@ namespace MyFoodDoc.App.Application.Services
             return result;
         }
 
-        public async Task InsertChoices(string userId, int scaleId, InsertChoicesPayload payload, CancellationToken cancellationToken)
+        public async Task InsertChoices(string userId, InsertChoicesPayload payload, CancellationToken cancellationToken)
         {
             if (payload.Questions.Any())
             {

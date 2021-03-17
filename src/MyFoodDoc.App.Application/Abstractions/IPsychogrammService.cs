@@ -10,6 +10,6 @@ namespace MyFoodDoc.App.Application.Abstractions
     {
         Task<ICollection<ScaleDto>> GetAsync(string userId, CancellationToken cancellationToken);
 
-        Task InsertChoices(string userId, int scaleId, InsertChoicesPayload payload, CancellationToken cancellationToken);
+        Task InsertChoices(string userId, InsertChoicesPayload payload, CancellationToken cancellationToken);
     }
 }
