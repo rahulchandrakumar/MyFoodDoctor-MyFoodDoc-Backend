@@ -33,6 +33,10 @@
                            :label="mainHeaders.filter(h => h.value == 'type')[0].text"
                            rules="required" />
             </v-row>
+            <v-row>
+                <v-switch v-model="item.extra"
+                          label="Extra question" />
+            </v-row>
         </template>
     </ColabDataTable>
 </template>
