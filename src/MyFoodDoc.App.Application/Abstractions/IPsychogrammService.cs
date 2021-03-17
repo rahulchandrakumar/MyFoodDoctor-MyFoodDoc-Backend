@@ -11,5 +11,7 @@ namespace MyFoodDoc.App.Application.Abstractions
         Task<ICollection<ScaleDto>> GetAsync(string userId, CancellationToken cancellationToken);
 
         Task InsertChoices(string userId, InsertChoicesPayload payload, CancellationToken cancellationToken);
+
+        Task<PsychogrammEvaluationResultDto> GetEvaluationAsync(string userId, CancellationToken cancellationToken);
     }
 }
