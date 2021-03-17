@@ -34,12 +34,12 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost("{id}/choices")]
+        [HttpPost("choices")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> InsertChoices([FromRoute(Name = "id")] int scaleId, [FromBody] InsertChoicesPayload payload, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> InsertChoices([FromBody] InsertChoicesPayload payload, CancellationToken cancellationToken = default)
         {
-            await _service.InsertChoices(GetUserId(), scaleId, payload, cancellationToken);
+            await _service.InsertChoices(GetUserId(), payload, cancellationToken);
 
             return Ok();
         }
