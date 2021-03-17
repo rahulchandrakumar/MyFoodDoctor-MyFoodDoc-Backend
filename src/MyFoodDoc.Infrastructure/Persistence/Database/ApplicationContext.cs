@@ -21,6 +21,7 @@ using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Psychogramm;
+using MyFoodDoc.Application.Entities.Aok;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -105,6 +106,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Choice> Choices { get; set; }
         public DbSet<UserChoice> UserChoices { get; set; }
 
+        #endregion
+
+        #region AOK
+        public DbSet<AokUser> AokUsers { get; set; }
         #endregion
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
