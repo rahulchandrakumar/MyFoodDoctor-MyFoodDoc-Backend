@@ -8,7 +8,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
     {
         public void Configure(EntityTypeBuilder<AokUser> builder)
         {
-            builder.ToTable("AokDiets", "User");
+            builder.ToTable("AokUsers", "User");
             builder.HasKey(x => new { x.UserId });
 
             builder.HasOne(x => x.User)
