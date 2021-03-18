@@ -94,6 +94,8 @@ namespace MyFoodDoc.App.Application.Services
             if (userChoices.Count < questionsCount)
             {
                 result.Status = PsychogrammEvaluationStatus.NotReady.ToString();
+
+                return result;
             }
 
             var scorableUserChoices = userChoices.Where(x => x.Choice.Scorable)
