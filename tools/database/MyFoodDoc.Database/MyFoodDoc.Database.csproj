@@ -21,6 +21,13 @@
   <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'True' And '$(DesignTimeBuild)' != 'True' And '$(BuildingProject)' == 'True'">
     <Analyzer Remove="@(Analyzer)" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Migrations\20210302143627_Psychogramm.cs" />
+    <Compile Remove="Migrations\20210302143627_Psychogramm.Designer.cs" />
+    <Compile Remove="Migrations\20210302144633_Psychogramm.cs" />
+    <Compile Remove="Migrations\20210302144633_Psychogramm.Designer.cs" />
+  </ItemGroup>
    
   <ItemGroup>
     <None Remove="mapping.json" />

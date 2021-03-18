@@ -11,7 +11,7 @@ namespace MyFoodDoc.Application.Entities.Targets
 
         public TriggerOperator TriggerOperator { get; set; }
 
-        public int TriggerValue { get; set; }
+        public decimal TriggerValue { get; set; }
 
         public int Threshold { get; set; }
 

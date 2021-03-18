@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.Entities.Psychogramm;
+using MyFoodDoc.Application.Entities.Aok;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -95,6 +97,19 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Subchapter> Subchapters { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
 
+        #endregion
+
+        #region Psychogramm
+
+        public DbSet<Scale> Scales { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Choice> Choices { get; set; }
+        public DbSet<UserChoice> UserChoices { get; set; }
+
+        #endregion
+
+        #region AOK
+        public DbSet<AokUser> AokUsers { get; set; }
         #endregion
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
@@ -216,6 +231,12 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Id = 4,
                         Key = "diabetes_type_2",
                         Name = "Diabetes Typ 2"
+                    },
+                    new Indication
+                    {
+                        Id = 5,
+                        Key = "eating_disorder",
+                        Name = "Essstörungen oder psychiatrische Grunderkrankung"
                     }
                 );
 
@@ -310,8 +331,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
                         Name = "Proteine",
                         Text = "Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.\n" +
                                 "Zusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung.",
-                        LineGraphUpperLimit = null,
-                        LineGraphLowerLimit = null,
+                        LineGraphUpperLimit = 1.5m,
+                        LineGraphLowerLimit = 0.8m,
                         LineGraphOptimal = 1
                     },
                     new OptimizationArea

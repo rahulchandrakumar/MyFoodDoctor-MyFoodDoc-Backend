@@ -14,7 +14,7 @@ namespace MyFoodDoc.CMS.Application.Models
         public string Title { get; set; }
         public string Text { get; set; }
         public string TriggerOperator { get; set; }
-        public int TriggerValue { get; set; }
+        public decimal TriggerValue { get; set; }
         public int Threshold { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }

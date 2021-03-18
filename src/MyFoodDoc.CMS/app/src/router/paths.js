@@ -130,6 +130,30 @@ export default [
         }
     },
     {
+        path: "/scale-list",
+        name: "Scales",
+        view: "Data/ScaleList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
+        path: "/question-list/:parentId",
+        name: "Questions",
+        view: "Data/QuestionList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
+        path: "/choice-list/:parentId",
+        name: "Choices",
+        view: "Data/ChoiceList",
+        meta: {
+            role: UserRoles.ADMIN
+        }
+    },
+    {
         path: "/webview-list",
         name: "WebView List",
         view: "Data/WebViewList",

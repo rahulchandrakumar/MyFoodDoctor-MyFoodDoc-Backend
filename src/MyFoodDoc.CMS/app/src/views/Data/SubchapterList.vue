@@ -41,9 +41,6 @@
 </template>
 
 <script>
-    import Vue from 'vue'
-    import integration from "@/integration";
-
     export default {
         components: {
             ColabDataTable: () => import("@/components/signalR/ColabRDataTable"),

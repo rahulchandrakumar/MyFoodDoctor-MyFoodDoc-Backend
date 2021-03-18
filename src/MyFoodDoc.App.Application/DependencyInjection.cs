@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyFoodDoc.AokClient;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Services;
-using System.Reflection;
-using Microsoft.Extensions.Configuration;
 using MyFoodDoc.Application;
-using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Services;
 using MyFoodDoc.AppStoreClient;
+using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.GooglePlayStoreClient;
+using System.Reflection;
 
 namespace MyFoodDoc.App.Application
 {
@@ -21,6 +22,7 @@ namespace MyFoodDoc.App.Application
             services.AddSharedGooglePlayStoreClient(configuration);
             services.AddSharedFatSecretClient(configuration);
             services.AddSharedApplication(configuration);
+            services.AddSharedAokClient(configuration);
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -35,6 +37,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserHistoryService, UserHistoryService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IPsychogrammService, PsychogrammService>();
 
             return services;
         }

@@ -58,7 +58,6 @@
 </template>
 
 <script>
-    import Vue from 'vue'
     import integration from "@/integration";
 
     export default {

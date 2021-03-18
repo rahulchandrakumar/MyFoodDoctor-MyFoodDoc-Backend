@@ -52,7 +52,7 @@ namespace MyFoodDoc.App.Application.Services
             }
             else
             {
-                if (!await _diaryService.IsDiaryFull(userId, cancellationToken))
+                if (!await _diaryService.IsDiaryFull(userId, onDate, cancellationToken))
                     return result;
 
                 var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
@@ -410,10 +410,9 @@ namespace MyFoodDoc.App.Application.Services
 
                         var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
 
-
+                        analysisDto.LineGraph.UpperLimit = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphUpperLimit.Value);
+                        analysisDto.LineGraph.LowerLimit = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphLowerLimit.Value);
                         analysisDto.LineGraph.Optimal = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphOptimal.Value);
-                        analysisDto.LineGraph.UpperLimit = (decimal)1.1 * analysisDto.LineGraph.Optimal.Value;
-                        analysisDto.LineGraph.LowerLimit = (decimal)0.9 * analysisDto.LineGraph.Optimal.Value;
 
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                         { Date = x.Key, Value = x.Value.Protein }).ToList();

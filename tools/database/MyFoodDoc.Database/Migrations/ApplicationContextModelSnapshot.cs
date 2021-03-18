@@ -169,6 +169,19 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserToken", "User");
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Aok.AokUser", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("AokUsers", "User");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.CmsUser", b =>
                 {
                     b.Property<int>("Id")
@@ -1192,6 +1205,180 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("Promotions", "Coupon");
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Choice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Scorable")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("Choices", "Psychogramm");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Question", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Extra")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ScaleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.Property<bool>("VerticalAlignment")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScaleId");
+
+                    b.ToTable("Questions", "Psychogramm");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Scale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Characterization")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Treatment")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("TypeCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
+
+                    b.Property<string>("TypeText")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("TypeTitle")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.ToTable("Scales", "Psychogramm");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.UserChoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("ChoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChoiceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserChoices", "Psychogramm");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.TargetMethod", b =>
                 {
                     b.Property<int>("TargetId")
@@ -1298,8 +1485,8 @@ namespace MyFoodDoc.Database.Migrations
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
 
-                    b.Property<int>("TriggerValue")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TriggerValue")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -1799,6 +1986,13 @@ namespace MyFoodDoc.Database.Migrations
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Key = "diabetes_type_2",
                             Name = "Diabetes Typ 2"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Key = "eating_disorder",
+                            Name = "Essstörungen oder psychiatrische Grunderkrankung"
                         });
                 });
 
@@ -1984,7 +2178,9 @@ namespace MyFoodDoc.Database.Migrations
                             Id = 3,
                             Created = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Key = "protein",
+                            LineGraphLowerLimit = 0.8m,
                             LineGraphOptimal = 1m,
+                            LineGraphUpperLimit = 1.5m,
                             Name = "Proteine",
                             Text = "Eiweiß ist ein lebensnotweniger Nährstoff. Es sorgt für den Erhalt und den Aufbau unserer Muskulatur und unterstützt unser Immunsystem.\nZusätzlich sorgt eine eiweißreiche Mahlzeit für weniger Blutzuckerschwankungen und eine lang anhaltende Sättigung."
                         },
@@ -2047,6 +2243,17 @@ namespace MyFoodDoc.Database.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Aok.AokUser", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithOne()
+                        .HasForeignKey("MyFoodDoc.Application.Entities.Aok.AokUser", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entities.Coupon", b =>
@@ -2415,6 +2622,58 @@ namespace MyFoodDoc.Database.Migrations
                     b.Navigation("Insurance");
                 });
 
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Choice", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Psychogramm.Question", "Question")
+                        .WithMany("Choices")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Question", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Psychogramm.Scale", "Scale")
+                        .WithMany("Questions")
+                        .HasForeignKey("ScaleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Scale");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Scale", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Image", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.UserChoice", b =>
+                {
+                    b.HasOne("MyFoodDoc.Application.Entities.Psychogramm.Choice", "Choice")
+                        .WithMany()
+                        .HasForeignKey("ChoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Choice");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("MyFoodDoc.Application.Entities.TargetMethod", b =>
                 {
                     b.HasOne("MyFoodDoc.Application.Entities.Methods.Method", "Method")
@@ -2690,6 +2949,16 @@ namespace MyFoodDoc.Database.Migrations
             modelBuilder.Entity("MyFoodDoc.Application.Entities.Promotion", b =>
                 {
                     b.Navigation("Coupons");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Question", b =>
+                {
+                    b.Navigation("Choices");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Psychogramm.Scale", b =>
+                {
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("MyFoodDoc.Application.Entities.Targets.Target", b =>

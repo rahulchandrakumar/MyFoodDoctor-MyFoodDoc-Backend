@@ -1,4 +1,6 @@
 ﻿//using MyFoodDoc.Shared.MailSender;
+
+using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -117,8 +119,9 @@ namespace MyFoodDoc.App.Api.Controllers
 
             var result = new UserStatisticsDto
             {
+                IsZPPForbidden = await _diaryService.IsZPPForbidden(user, DateTime.Now, cancellationToken),
                 HasSubscription = (await _service.GetUserAsync(user, cancellationToken)).HasSubscription,
-                IsDiaryFull = await _diaryService.IsDiaryFull(user, cancellationToken),
+                IsDiaryFull = await _diaryService.IsDiaryFull(user, DateTime.Now, cancellationToken),
                 HasNewTargetsTriggered = await _targetService.NewTriggered(user, cancellationToken),
                 IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(user, cancellationToken)),
                 HasTargetsActivated = await _targetService.AnyActivated(user, cancellationToken),

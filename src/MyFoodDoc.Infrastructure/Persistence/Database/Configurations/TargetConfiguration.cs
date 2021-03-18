@@ -18,7 +18,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(o => o.TriggerOperator).HasConversion<string>().HasMaxLength(11);
-            builder.Property(o => o.TriggerValue).IsRequired();
+            builder.Property(o => o.TriggerValue).IsRequired().HasColumnType("decimal(18,2)");
             builder.Property(o => o.Threshold).IsRequired();
             builder.Property(o => o.Priority).HasConversion<string>().HasMaxLength(6);
             builder.Property(o => o.Title).IsRequired().HasMaxLength(1000);
