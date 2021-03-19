@@ -502,6 +502,20 @@ namespace MyFoodDoc.App.Application.Services
                     }
                     else
                     {
+                        Favourite favouriteToUpdate = await _context.Favourites
+                            .Where(x => x.UserId == userId && x.Id == favourite.Id.Value)
+                            .SingleOrDefaultAsync(cancellationToken);
+
+                        if (favouriteToUpdate == null)
+                        {
+                            throw new NotFoundException(nameof(Favourite), favourite.Id);
+                        }
+
+                        if (favouriteToUpdate.IsGeneric)
+                        {
+                            throw new Exception($"A generic favourite with id={favouriteToUpdate.Id} cannot be used in meal");
+                        }
+
                         await UpdateFavouriteAsync(userId, favourite.Id.Value, favourite, cancellationToken);
                     }
 
