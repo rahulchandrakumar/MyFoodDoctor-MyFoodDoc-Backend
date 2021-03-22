@@ -27,8 +27,19 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<CourseDto>();
 
-            foreach(var course in await _context.Courses.Where(x => x.IsActive).Include(x => x.Image).Include(x => x.Chapters).OrderBy(x => x.Order).ToListAsync(cancellationToken))
+            var userAnswers = await _context.UserAnswers.Where(x => x.UserId == userId).ToListAsync(cancellationToken);
+
+            var isNextCourseAvailable = true;
+
+            var onDate = DateTime.Now;
+
+            foreach (var course in await _context.Courses.Where(x => x.IsActive).Include(x => x.Image).Include(x => x.Chapters).OrderBy(x => x.Order).ToListAsync(cancellationToken))
             {
+                var completedChapters = userAnswers.Where(x =>
+                    course.Chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)).ToList();
+                var completedChaptersCount = completedChapters.Count();
+                var chaptersCount = course.Chapters.Count();
+                
                 result.Add(new CourseDto
                 {
                     Id = course.Id,
@@ -36,9 +47,25 @@ namespace MyFoodDoc.App.Application.Services
                     Text = course.Text,
                     Order = course.Order,
                     ImageUrl = course.Image.Url,
-                    CompletedChaptersCount = (await _context.UserAnswers.Where(x => x.UserId == userId).ToListAsync(cancellationToken)).Count(x => course.Chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)),
-                    ChaptersCount = course.Chapters.Count()
+                    CompletedChaptersCount = completedChaptersCount,
+                    ChaptersCount = chaptersCount,
+                    IsAvailable = isNextCourseAvailable
                 });
+
+                if (isNextCourseAvailable)
+                {
+                    if (completedChaptersCount == chaptersCount)
+                    {
+                        var firstAnswer = completedChapters.OrderBy(x => x.Created).First();
+                        var lastAnswer = completedChapters.OrderBy(x => x.LastModified ?? x.Created).Last();
+
+                        if (onDate.AddDays(-7).Date < firstAnswer.Created.ToLocalTime().Date 
+                            || onDate.AddDays(-1).Date < (lastAnswer.LastModified ?? lastAnswer.Created).ToLocalTime().Date)
+                            isNextCourseAvailable = false;
+                    }
+                    else
+                        isNextCourseAvailable = false;
+                }
             }
 
             return result;
