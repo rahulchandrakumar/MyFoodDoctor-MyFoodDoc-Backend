@@ -19,5 +19,7 @@ namespace MyFoodDoc.App.Application.Models
         public int CompletedChaptersCount { get; set; }
 
         public int ChaptersCount { get; set; }
+
+        public bool IsAvailable { get; set; }
     }
 }
