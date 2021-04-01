@@ -58,6 +58,8 @@ namespace MyFoodDoc.Functions
                 log.LogInformation(
                     $"Users with push notifications enabled: {userTimersWithPushNotificationsEnabled.Count()}");
 
+                var result = false;
+
                 if (userTimersWithPushNotificationsEnabled.Any())
                 {
                     var notifications = userTimersWithPushNotificationsEnabled.Select(x => new FirebaseNotification()
@@ -70,29 +72,42 @@ namespace MyFoodDoc.Functions
 
                     if (notifications.Any())
                     {
-                        var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                        try
+                        {
+                            result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                        }
+                        catch (Exception e)
+                        {
+                            log.LogError(e.Message + e.StackTrace);
+                        }
                     }
                 }
 
-                var userMethodsToUpdate = new List<UserMethod>();
-
-                foreach (var userTimer in expiredTimers)
+                if (result)
                 {
-                    var userMethod = (await _context.UserMethods.Where(x => x.UserId == userTimer.UserId && x.MethodId == userTimer.MethodId).ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
+                    var userMethodsToUpdate = new List<UserMethod>();
 
-                    if (userMethod != null)
+                    foreach (var userTimer in expiredTimers)
                     {
-                        userMethod.Answer = false;
+                        var userMethod =
+                            (await _context.UserMethods
+                                .Where(x => x.UserId == userTimer.UserId && x.MethodId == userTimer.MethodId)
+                                .ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
 
-                        userMethodsToUpdate.Add(userMethod);
+                        if (userMethod != null)
+                        {
+                            userMethod.Answer = false;
+
+                            userMethodsToUpdate.Add(userMethod);
+                        }
                     }
+
+                    _context.UserTimer.RemoveRange(expiredTimers);
+
+                    _context.UserMethods.UpdateRange(userMethodsToUpdate);
+
+                    await _context.SaveChangesAsync(cancellationToken);
                 }
-
-                _context.UserTimer.RemoveRange(expiredTimers);
-
-                _context.UserMethods.UpdateRange(userMethodsToUpdate);
-
-                await _context.SaveChangesAsync(cancellationToken);
             }
 
             log.LogInformation("TimerPushNotifications. End");
@@ -291,7 +306,14 @@ namespace MyFoodDoc.Functions
 
                 if (notifications.Any())
                 {
-                    var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                    try
+                    {
+                        var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                    }
+                    catch (Exception e)
+                    {
+                        log.LogError(e.Message + e.StackTrace);
+                    }
                 }
             }
 
