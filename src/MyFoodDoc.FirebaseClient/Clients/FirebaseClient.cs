@@ -71,7 +71,7 @@ namespace MyFoodDoc.FirebaseClient.Clients
             {
                 _logger.LogError(e.Message + e.StackTrace);
 
-                return false;
+                throw e;
             }
         }
     }
