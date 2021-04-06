@@ -173,5 +173,37 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("zpp/app-store/validate")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateAppStoreZPPSubscription([FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var result = new InAppPurchaseReceiptValidationResultDto
+            {
+                IsValid = await _service.ValidateAppStoreZPPSubscription(GetUserId(), payload, cancellationToken)
+            };
+
+            return Ok(result);
+        }
+
+        [HttpPost("zpp/google-play-store/validate")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateGooglePlayStoreZPPSubscription([FromBody] ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var result = new InAppPurchaseReceiptValidationResultDto
+            {
+                IsValid = await _service.ValidateGooglePlayStoreZPPSubscription(GetUserId(), payload, cancellationToken)
+            };
+
+            return Ok(result);
+        }
     }
 }
