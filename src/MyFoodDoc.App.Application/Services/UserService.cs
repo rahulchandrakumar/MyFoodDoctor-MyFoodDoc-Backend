@@ -142,7 +142,6 @@ namespace MyFoodDoc.App.Application.Services
                 .SingleOrDefaultAsync(cancellationToken);
 
             return result;
-
         }
 
         public async Task<UserDto> UpdateUserAsync(string userId, UpdateUserPayload payload, CancellationToken cancellationToken = default)
@@ -385,6 +384,34 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
 
             return user.HasValidSubscription != null && user.HasValidSubscription.Value;
+        }
+
+        public async Task<bool> ValidateAppStoreZPPSubscription(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            //TODO: implement
+
+            return false;
+        }
+
+        public async Task<bool> ValidateGooglePlayStoreZPPSubscription(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            //TODO: implement
+
+            return false;
         }
     }
 }

@@ -27,6 +27,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public bool HasSubscription { get; set; }
 
+        public bool HasZPPSubscription { get; set; }
+
         public DateTime? HasSubscriptionUpdated { get; set; }
 
         public ICollection<string> Motivations { get; set; }
