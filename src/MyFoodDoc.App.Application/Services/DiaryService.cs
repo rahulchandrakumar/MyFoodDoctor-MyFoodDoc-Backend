@@ -94,8 +94,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var proteinOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Protein);
 
-            var optimalProtein = GetProteinsForTargetValue(user.Height.Value, userWeight.Value,
-                proteinOptimizationArea.LineGraphOptimal.Value);
+            var optimalProtein = GetCorrectedWeight(user.Height.Value, userWeight.Value) * proteinOptimizationArea.LineGraphOptimal.Value;
 
             aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = proteinOptimizationArea.Key, Optimal = optimalProtein });
 
@@ -361,14 +360,14 @@ namespace MyFoodDoc.App.Application.Services
             return false;
         }
 
-        public decimal GetProteinsForTargetValue(decimal height, decimal weight, decimal targetValue)
+        public decimal GetCorrectedWeight(decimal height, decimal weight)
         {
             if (BMI((double)height, (double)weight) < 25)
             {
-                return weight * targetValue;
+                return weight;
             }
 
-            return (height - 100) * targetValue;
+            return height - 100;
         }
 
         private decimal GetCaloriesOptimalValue(string userId, int age, decimal height, decimal weight, Gender gender)
