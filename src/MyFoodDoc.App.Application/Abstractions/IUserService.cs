@@ -26,5 +26,11 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload,
             CancellationToken cancellationToken = default);
+
+        Task<bool> ValidateAppStoreZPPSubscription(string userId, ValidateAppStoreInAppPurchasePayload payload,
+            CancellationToken cancellationToken = default);
+
+        Task<bool> ValidateGooglePlayStoreZPPSubscription(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload,
+            CancellationToken cancellationToken = default);
     }
 }

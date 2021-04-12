@@ -36,6 +36,12 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, DateTime onDate, CancellationToken cancellationToken)
         {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
             var result = new List<OptimizationAreaDto>();
 
             List<UserTarget> userTargets = new List<UserTarget>();
@@ -134,15 +140,17 @@ namespace MyFoodDoc.App.Application.Services
                             }
                         }
 
+                        var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
+
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight > target.TriggerValue);
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight > target.TriggerValue);
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
                         else
                         {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight < target.TriggerValue);
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight < target.TriggerValue);
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
@@ -260,16 +268,18 @@ namespace MyFoodDoc.App.Application.Services
                             }
                         }
 
+                        var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
+
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight > target.TriggerValue);
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight > target.TriggerValue);
 
                             if (triggeredDays.Any())
                                 bestValue = triggeredDays.Min(x => x.Protein);
                         }
                         else
                         {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / weight < target.TriggerValue);
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight < target.TriggerValue);
 
                             if (triggeredDays.Any())
                                 bestValue = triggeredDays.Max(x => x.Protein);
@@ -350,9 +360,7 @@ namespace MyFoodDoc.App.Application.Services
                                 .OrderBy(x => x.Date).LastAsync(cancellationToken)).Value;
                         }
 
-                        var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
-
-                        decimal targetValue = _diaryService.GetProteinsForTargetValue(height, weight, adjustmentTarget.TargetValue);
+                        decimal targetValue = _diaryService.GetCorrectedWeight(user.Height.Value, weight) * adjustmentTarget.TargetValue;
 
                         //TODO: use constants or enums
                         if (recommendedValue < targetValue)
@@ -408,11 +416,11 @@ namespace MyFoodDoc.App.Application.Services
                                 .OrderBy(x => x.Date).Last().Value;
                         }
 
-                        var height = (await _context.Users.SingleAsync(x => x.Id == userId, cancellationToken)).Height.Value;
+                        var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
 
-                        analysisDto.LineGraph.UpperLimit = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphUpperLimit.Value);
-                        analysisDto.LineGraph.LowerLimit = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphLowerLimit.Value);
-                        analysisDto.LineGraph.Optimal = _diaryService.GetProteinsForTargetValue(height, weight, target.OptimizationArea.LineGraphOptimal.Value);
+                        analysisDto.LineGraph.UpperLimit = correctedWeight * target.OptimizationArea.LineGraphUpperLimit.Value;
+                        analysisDto.LineGraph.LowerLimit = correctedWeight * target.OptimizationArea.LineGraphLowerLimit.Value;
+                        analysisDto.LineGraph.Optimal = correctedWeight * target.OptimizationArea.LineGraphOptimal.Value;
 
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                         { Date = x.Key, Value = x.Value.Protein }).ToList();
