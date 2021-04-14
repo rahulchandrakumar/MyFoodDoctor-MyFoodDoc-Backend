@@ -35,4 +35,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <Target Name="CopyFiles" AfterTargets="_FunctionsPostPublish">
+    <Copy SourceFiles="$(TargetDir)runtimes\linux-x64\native\libSkiaSharp.so" DestinationFolder="$(TargetDir)bin\" />
+  </Target>
 </Project>
