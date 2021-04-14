@@ -128,6 +128,25 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            await CheckCoursesCompleted(userId, cancellationToken);
+        }
+
+        private async Task CheckCoursesCompleted(string userId, CancellationToken cancellationToken)
+        {
+            var userCourses = await GetAsync(userId, cancellationToken);
+
+            if (userCourses.All(x => x.CompletedChaptersCount == x.ChaptersCount))
+            {
+                var completedCourse = await _context.CompletedCourses.SingleOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
+                if (completedCourse == null)
+                {
+                    await _context.CompletedCourses.AddAsync(new CompletedCourse { UserId = userId, CompletionDate = DateTime.Now }, cancellationToken);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
+            }
         }
     }
 }

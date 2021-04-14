@@ -11,13 +11,8 @@ using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
 using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.Application.Entities.Abstractions;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Psychogramm;
@@ -96,6 +91,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Subchapter> Subchapters { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
+        public DbSet<CompletedCourse> CompletedCourses { get; set; }
 
         #endregion
 
