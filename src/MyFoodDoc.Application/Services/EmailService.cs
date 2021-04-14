@@ -23,7 +23,7 @@ namespace MyFoodDoc.Application.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<bool> SendEmailAsync(string email, string subject, string body)
+        public async Task<bool> SendEmailAsync(string email, string subject, string body, Abstractions.Attachment[] attachments = null)
         {
             var sendGridClient = new SendGridClient(_options.SendGridApiKey);
 
@@ -40,7 +40,24 @@ namespace MyFoodDoc.Application.Services
                 PlainTextContent = body,
                 HtmlContent = body
             };
-            
+
+            if (attachments != null)
+            {
+                sendGridMail.Attachments = new List<SendGrid.Helpers.Mail.Attachment>();
+
+                foreach (var attachment in attachments)
+                {
+                    sendGridMail.Attachments.Add(
+                    new SendGrid.Helpers.Mail.Attachment
+                    {
+                        Content = Convert.ToBase64String(attachment.Content),
+                        Filename = attachment.Filename,
+                        Type = attachment.Type,
+                        Disposition = "attachment"
+                    });
+                }
+            }
+
             // Send email
             Response response = await sendGridClient.SendEmailAsync(sendGridMail);
 
