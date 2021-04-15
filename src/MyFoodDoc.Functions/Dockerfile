@@ -2,8 +2,6 @@
 
 FROM mcr.microsoft.com/azure-functions/dotnet:3.0 AS base
 
-RUN apt-get update && apt-get install -y fontconfig
-
 WORKDIR /app
 EXPOSE 80
 
@@ -23,6 +21,21 @@ FROM build AS publish
 RUN dotnet publish "MyFoodDoc.Functions.csproj" -c Release -o /app/publish
 
 FROM base AS final
+
+# Downloads the package lists from the repositories.
+RUN apt-get update
+
+# Install System.Drawing.Common dependency.
+RUN apt-get install -y libgdiplus
+
+# Install Microsoft TrueType core fonts.
+RUN apt-get install -y ttf-mscorefonts-installer
+
+RUN apt-get install -y fontconfig
+
+RUN apt-get install -y libfontconfig1
+
+
 WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
