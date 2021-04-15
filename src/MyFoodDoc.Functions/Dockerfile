@@ -4,6 +4,8 @@ FROM mcr.microsoft.com/azure-functions/dotnet:3.0 AS base
 
 #RUN apt-get update && apt-get install -y libfontconfig1
 
+RUN apk add --no-cache fontconfig
+
 WORKDIR /app
 EXPOSE 80
 
