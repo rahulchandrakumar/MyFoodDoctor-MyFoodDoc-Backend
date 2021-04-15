@@ -22,18 +22,16 @@ RUN dotnet publish "MyFoodDoc.Functions.csproj" -c Release -o /app/publish
 
 FROM base AS final
 
+# Update package sources to include supplemental packages (contrib archive area).
+RUN sed -i 's/main/main contrib/g' /etc/apt/sources.list
+
 # Downloads the package lists from the repositories.
 RUN apt-get update
 
 # Install System.Drawing.Common dependency.
 RUN apt-get install -y libgdiplus
 
-# Install Microsoft TrueType core fonts.
-
-RUN apt-get install -y fontconfig
-
 RUN apt-get install -y libfontconfig1
-
 
 WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
