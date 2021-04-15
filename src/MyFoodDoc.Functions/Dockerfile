@@ -29,7 +29,6 @@ RUN apt-get update
 RUN apt-get install -y libgdiplus
 
 # Install Microsoft TrueType core fonts.
-RUN apt-get install -y ttf-mscorefonts-installer
 
 RUN apt-get install -y fontconfig
 
