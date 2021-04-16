@@ -34,9 +34,9 @@ namespace MyFoodDoc.Functions
             _templateUrl = cloudStorageUrl + @"templates/teilnahmebescheinigung-praeventionskurs.pdf";
         }
 
-        //[FunctionName("CompletedCoursesEmailNotifications")]
+        [FunctionName("CompletedCoursesEmailNotifications")]
         public async Task RunCompletedCoursesEmailNotificationsAsync(
-            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 */5 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
@@ -60,7 +60,9 @@ namespace MyFoodDoc.Functions
                 {
                     var template = client.DownloadData(_templateUrl);
 
-                    bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
+                    //TODO: Choose working pdf-conversion tool for linux containers
+                    //bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
+                    bytes = template;
                 }
 
                 foreach (var user in usersToNotify)
