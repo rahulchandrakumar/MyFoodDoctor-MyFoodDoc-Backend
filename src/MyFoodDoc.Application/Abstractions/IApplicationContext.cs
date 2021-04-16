@@ -90,6 +90,7 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<Chapter> Chapters { get; set; }
         DbSet<Subchapter> Subchapters { get; set; }
         DbSet<UserAnswer> UserAnswers { get; set; }
+        DbSet<CompletedCourse> CompletedCourses { get; set; }
 
         #endregion
 

@@ -177,7 +177,7 @@ namespace MyFoodDoc.App.Application.Services
                 }
             }
 
-            var userMethodShowHistoryForPeriod = userMethodShowHistory.Where(x => (lastUserTarget == null || x.Date.ToLocalTime().Date >= lastUserTarget.Created.ToLocalTime().Date) && x.Date.ToLocalTime().Date <= date.Date).ToList();
+            var userMethodShowHistoryForPeriod = userMethodShowHistory.Where(x => (lastUserTarget == null || x.Date.ToLocalTime() > lastUserTarget.Created.ToLocalTime()) && x.Date.ToLocalTime().Date <= date.Date).ToList();
 
             if (childMethodsToShow.Any())
             {
