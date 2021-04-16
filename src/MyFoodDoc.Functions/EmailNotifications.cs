@@ -34,7 +34,7 @@ namespace MyFoodDoc.Functions
             _templateUrl = cloudStorageUrl + @"templates/teilnahmebescheinigung-praeventionskurs.pdf";
         }
 
-        [FunctionName("CompletedCoursesEmailNotifications")]
+        //[FunctionName("CompletedCoursesEmailNotifications")]
         public async Task RunCompletedCoursesEmailNotificationsAsync(
             [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer,
