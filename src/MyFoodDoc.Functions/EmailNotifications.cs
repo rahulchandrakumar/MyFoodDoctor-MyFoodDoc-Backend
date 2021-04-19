@@ -3,7 +3,6 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +10,7 @@ using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using System.Net;
+using System.Reflection;
 
 namespace MyFoodDoc.Functions
 {
@@ -65,12 +65,22 @@ namespace MyFoodDoc.Functions
                     bytes = template;
                 }
 
+                Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.EmailTemplate.html");
+
+                if (bodyTemplateStream == null)
+                {
+                    throw new ArgumentNullException(nameof(bodyTemplateStream));
+                }
+
+                StreamReader reader = new StreamReader(bodyTemplateStream);
+                string body = reader.ReadToEnd();
+
                 foreach (var user in usersToNotify)
                 {
                     var result = await _emailService.SendEmailAsync(
                         user.User.Email,
-                        "Test subject",
-                        "Test body",
+                        "Teilnahmebescheinigung myFoodDoctor Kurs \"Schlank und gesund\"",
+                        body,
                         new[] {
                             new Attachment()
                             {
