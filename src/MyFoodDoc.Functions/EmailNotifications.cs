@@ -60,9 +60,7 @@ namespace MyFoodDoc.Functions
                 {
                     var template = client.DownloadData(_templateUrl);
 
-                    //TODO: Choose working pdf-conversion tool for linux containers
-                    //bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
-                    bytes = template;
+                    bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
                 }
 
                 Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.EmailTemplate.html");
