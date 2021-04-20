@@ -334,6 +334,7 @@ resource "azurerm_app_service" "api" {
     DOCKER_REGISTRY_SERVER_PASSWORD                             = var.containerregistry_admin_password
     DOCKER_CUSTOM_IMAGE_NAME                                    = "${var.projectname}-api"
     DOCKER_ENABLE_CI                                            = "false"
+    BLOB_STORAGE_CONNECTION                                     = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
     DEFAULT_DATABASE_CONNECTION                                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
     IDENTITY_SERVER_CLIENT                                      = "myfooddoc_app"
     IDENTITY_SERVER_SCOPE                                       = "myfooddoc_api offline_access"
@@ -413,10 +414,6 @@ resource "azurerm_function_app" "func" {
     DOCKER_CUSTOM_IMAGE_NAME                                    = "${var.projectname}-func"
     DOCKER_ENABLE_CI                                            = "false"
     BLOB_STORAGE_CONNECTION                                     = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
-    DEFAULT_DATABASE_CONNECTION                                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
-    EMAIL_SERVICE_FROM_ADDRESS                                  = "app@myfooddoctor.de"
-    EMAIL_SERVICE_FROM_NAME                                     = "My food doctor"
-    EMAIL_SERVICE_SEND_GRID_API_KEY                             = ""
     FAT_SECRET_IDENTITY_SERVER_SCOPE                            = "basic"
     FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE                       = "client_credentials"
     FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET                    = ""

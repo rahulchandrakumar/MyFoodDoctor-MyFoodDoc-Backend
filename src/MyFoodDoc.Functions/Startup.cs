@@ -11,8 +11,6 @@ using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.AppStoreClient;
 using MyFoodDoc.GooglePlayStoreClient;
 using MyFoodDoc.FirebaseClient;
-using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Services;
 
 [assembly: WebJobsStartup(typeof(MyFoodDoc.Functions.Startup))]
 
@@ -38,8 +36,6 @@ namespace MyFoodDoc.Functions
             builder.Services.AddSharedGooglePlayStoreClient(configuration);
             builder.Services.AddSharedFatSecretClient(configuration);
             builder.Services.AddSharedFirebaseClient(configuration);
-            builder.Services.AddScoped<IEmailService, EmailService>();
-            builder.Services.AddScoped<IPdfService, PdfService>();
         }
     }
 }
