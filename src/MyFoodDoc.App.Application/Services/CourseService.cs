@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Azure.Storage;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Course;
@@ -6,9 +8,10 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
+using System.Net;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,10 +20,21 @@ namespace MyFoodDoc.App.Application.Services
     public class CourseService : ICourseService
     {
         private readonly IApplicationContext _context;
+        private readonly IPdfService _pdfService;
+        private readonly IEmailService _emailService;
+        private readonly string _templateUrl;
 
-        public CourseService(IApplicationContext context)
+        public CourseService(IConfiguration configuration, IApplicationContext context, IPdfService pdfService, IEmailService emailService)
         {
             _context = context;
+            _pdfService = pdfService;
+            _emailService = emailService;
+
+            var connectionString = configuration.GetConnectionString("BlobStorageConnection");
+
+            var cloudStorageUrl = CloudStorageAccount.Parse(connectionString).BlobStorageUri.PrimaryUri.AbsoluteUri;
+
+            _templateUrl = cloudStorageUrl + @"templates/teilnahmebescheinigung-praeventionskurs.pdf";
         }
 
         public async Task<ICollection<CourseDto>> GetAsync(string userId, CancellationToken cancellationToken)
@@ -138,14 +152,44 @@ namespace MyFoodDoc.App.Application.Services
 
             if (userCourses.All(x => x.CompletedChaptersCount == x.ChaptersCount))
             {
-                var completedCourse = await _context.CompletedCourses.SingleOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
-                if (completedCourse == null)
+                byte[] bytes = null;
+
+                using (WebClient client = new WebClient())
                 {
-                    await _context.CompletedCourses.AddAsync(new CompletedCourse { UserId = userId, CompletionDate = DateTime.Now }, cancellationToken);
+                    var template = client.DownloadData(_templateUrl);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
                 }
+
+                Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.EmailTemplate.html");
+
+                if (bodyTemplateStream == null)
+                {
+                    throw new ArgumentNullException(nameof(bodyTemplateStream));
+                }
+
+                StreamReader reader = new StreamReader(bodyTemplateStream);
+                string body = reader.ReadToEnd();
+
+                    var result = await _emailService.SendEmailAsync(
+                        user.Email,
+                        "Teilnahmebescheinigung myFoodDoctor Kurs \"Schlank und gesund\"",
+                        body,
+                        new[] {
+                            new Attachment()
+                            {
+                                Content = bytes,
+                                Filename = "teilnahmebescheinigung-praeventionskurs.pdf",
+                                Type = "application/pdf"
+                            }
+                        });
+
+                    if (!result)
+                    {
+                        //TODO: Rollback latest commit
+                    }
             }
         }
     }

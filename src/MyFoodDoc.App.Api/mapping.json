@@ -48,6 +48,7 @@
     "Address": "{AOK_SERVICE_BASE_URL}"
   },
   "ConnectionStrings": {
-    "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
+    "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}",
+    "BlobStorageConnection": "{BLOB_STORAGE_CONNECTION}"
   }
 }
