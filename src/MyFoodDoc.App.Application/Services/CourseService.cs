@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Course;
@@ -22,13 +23,15 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IApplicationContext _context;
         private readonly IPdfService _pdfService;
         private readonly IEmailService _emailService;
+        private readonly ILogger<CourseService> _logger;
         private readonly string _templateUrl;
 
-        public CourseService(IConfiguration configuration, IApplicationContext context, IPdfService pdfService, IEmailService emailService)
+        public CourseService(IConfiguration configuration, IApplicationContext context, IPdfService pdfService, IEmailService emailService, ILogger<CourseService> logger)
         {
             _context = context;
             _pdfService = pdfService;
             _emailService = emailService;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             var connectionString = configuration.GetConnectionString("BlobStorageConnection");
 
@@ -143,7 +146,20 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            await CheckCoursesCompleted(userId, cancellationToken);
+            try
+            {
+                await CheckCoursesCompleted(userId, cancellationToken);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message + e.StackTrace);
+                if (e.InnerException != null)
+                {
+                    _logger.LogError(e.InnerException.Message + e.InnerException.StackTrace);
+                }
+
+                throw e;
+            }  
         }
 
         private async Task CheckCoursesCompleted(string userId, CancellationToken cancellationToken)
