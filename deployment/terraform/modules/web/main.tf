@@ -340,7 +340,7 @@ resource "azurerm_app_service" "api" {
     IDENTITY_SERVER_SCOPE                                       = "myfooddoc_api offline_access"
     IDENTITY_SERVER_ADDRESS                                     = "https://${local.authAppName}.azurewebsites.net"
     EMAIL_SERVICE_FROM_ADDRESS                                  = "app@myfooddoctor.de"
-    EMAIL_SERVICE_FROM_NAME                                     = "My food doctor"
+    EMAIL_SERVICE_FROM_NAME                                     = "myFoodDoctor"
     EMAIL_SERVICE_SEND_GRID_API_KEY                             = ""
     FAT_SECRET_IDENTITY_SERVER_SCOPE                            = "basic"
     FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE                       = "client_credentials"
