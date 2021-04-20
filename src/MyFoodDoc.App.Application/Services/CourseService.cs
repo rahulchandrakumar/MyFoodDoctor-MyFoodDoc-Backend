@@ -56,7 +56,7 @@ namespace MyFoodDoc.App.Application.Services
                     course.Chapters.Any(y => y.Id == x.ChapterId && y.Answer == x.Answer)).ToList();
                 var completedChaptersCount = completedChapters.Count();
                 var chaptersCount = course.Chapters.Count();
-                
+
                 result.Add(new CourseDto
                 {
                     Id = course.Id,
@@ -76,7 +76,7 @@ namespace MyFoodDoc.App.Application.Services
                         var firstAnswer = completedChapters.OrderBy(x => x.Created).First();
                         var lastAnswer = completedChapters.OrderBy(x => x.LastModified ?? x.Created).Last();
 
-                        if (onDate.AddDays(-7).Date < firstAnswer.Created.ToLocalTime().Date 
+                        if (onDate.AddDays(-7).Date < firstAnswer.Created.ToLocalTime().Date
                             || onDate.AddDays(-1).Date < (lastAnswer.LastModified ?? lastAnswer.Created).ToLocalTime().Date)
                             isNextCourseAvailable = false;
                     }
@@ -159,7 +159,7 @@ namespace MyFoodDoc.App.Application.Services
                 }
 
                 throw e;
-            }  
+            }
         }
 
         private async Task CheckCoursesCompleted(string userId, CancellationToken cancellationToken)
@@ -189,24 +189,25 @@ namespace MyFoodDoc.App.Application.Services
                 StreamReader reader = new StreamReader(bodyTemplateStream);
                 string body = reader.ReadToEnd();
 
-                    var result = await _emailService.SendEmailAsync(
-                        user.Email,
-                        "Teilnahmebescheinigung myFoodDoctor Kurs \"Schlank und gesund\"",
-                        body,
-                        new[] {
+                var result = await _emailService.SendEmailAsync(
+                    user.Email,
+                    "Teilnahmebescheinigung myFoodDoctor Kurs \"Schlank und gesund\"",
+                    body,
+                    new[] {
                             new Attachment()
                             {
                                 Content = bytes,
                                 Filename = "teilnahmebescheinigung-praeventionskurs.pdf",
                                 Type = "application/pdf"
                             }
-                        });
+                    });
 
-                    if (!result)
-                    {
-                        //TODO: Rollback latest commit
-                    }
+                if (!result)
+                {
+                    throw new Exception($"Unable to send an email to {user.Email}");
+                }
             }
         }
     }
 }
+

@@ -18,11 +18,6 @@
       "ClientX509CertUrl": "{GOOGLE_PLAY_STORE_CERTIFICATE_CLIENT_X509_CERT_URL}"
     }
   },
-  "EmailService": {
-    "FromAddress": "{EMAIL_SERVICE_FROM_ADDRESS}",
-    "FromName": "{EMAIL_SERVICE_FROM_NAME}",
-    "SendGridApiKey": "{EMAIL_SERVICE_SEND_GRID_API_KEY}"
-  },
   "FatSecretIdentityServer": {
     "Address": "{FAT_SECRET_IDENTITY_SERVER_ADDRESS}",
     "GrantType": "{FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE}",
@@ -52,7 +47,6 @@
     "MinimumDays": "{STATISTICS_MINIMUM_DAYS}"
   },
   "ConnectionStrings": {
-    "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}",
-    "BlobStorageConnection": "{BLOB_STORAGE_CONNECTION}"
+    "DefaultConnection": "{DEFAULT_DATABASE_CONNECTION}"
   }
 }

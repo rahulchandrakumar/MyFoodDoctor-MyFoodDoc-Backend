@@ -1,6 +1,4 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -91,7 +89,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Subchapter> Subchapters { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
-        public DbSet<CompletedCourse> CompletedCourses { get; set; }
 
         #endregion
 

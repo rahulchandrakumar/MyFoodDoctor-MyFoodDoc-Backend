@@ -5,11 +5,9 @@
     <UserSecretsId>23c4d54d-f891-4bb9-bc83-ea9b8bee1acc</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="EmailTemplate.html" />
     <None Remove="mapping.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="EmailTemplate.html" />
     <EmbeddedResource Include="mapping.json" />
   </ItemGroup>
   <ItemGroup>
@@ -37,10 +35,4 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <Target Name="CopyFilesAfterPublish" AfterTargets="_FunctionsPostPublish">
-    <Copy SourceFiles="$(TargetDir)runtimes\linux-x64\native\libSkiaSharp.so" DestinationFolder="$(TargetDir)bin\" />
-    <Copy SourceFiles="$(TargetDir)runtimes\linux-x64\native\libSkiaSharp.so" DestinationFolder="$(TargetDir)" />
-  </Target>
-
 </Project>
