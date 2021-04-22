@@ -15,6 +15,7 @@ using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Psychogramm;
 using MyFoodDoc.Application.Entities.Aok;
+using MyFoodDoc.Application.Entities.Subscriptions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -81,6 +82,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<UserDiet> UserDiets { get; set; }
         public DbSet<UserWeight> UserWeights { get; set; }
         public DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
+        public DbSet<AppStoreSubscription> AppStoreSubscriptions { get; set; }
+        public DbSet<GooglePlayStoreSubscription> GooglePlayStoreSubscriptions { get; set; }
         #endregion
 
         #region Courses
