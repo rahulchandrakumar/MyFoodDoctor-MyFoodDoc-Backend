@@ -12,6 +12,7 @@ using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Psychogramm;
+using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
@@ -82,6 +83,8 @@ namespace MyFoodDoc.Application.Abstractions
         DbSet<UserDiet> UserDiets { get; set; }
         DbSet<UserWeight> UserWeights { get; set; }
         DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
+        DbSet<AppStoreSubscription> AppStoreSubscriptions { get; set; }
+        DbSet<GooglePlayStoreSubscription> GooglePlayStoreSubscriptions { get; set; }
         #endregion
 
         #region Courses
