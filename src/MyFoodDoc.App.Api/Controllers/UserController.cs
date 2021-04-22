@@ -115,17 +115,20 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
         {
-            var user = GetUserId();
+            var userId = GetUserId();
+
+            var user = await _service.GetUserAsync(userId, cancellationToken);
 
             var result = new UserStatisticsDto
             {
-                IsZPPForbidden = await _diaryService.IsZPPForbidden(user, DateTime.Now, cancellationToken),
-                HasSubscription = (await _service.GetUserAsync(user, cancellationToken)).HasSubscription,
-                IsDiaryFull = await _diaryService.IsDiaryFull(user, DateTime.Now, cancellationToken),
-                HasNewTargetsTriggered = await _targetService.NewTriggered(user, cancellationToken),
-                IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(user, cancellationToken)),
-                HasTargetsActivated = await _targetService.AnyActivated(user, cancellationToken),
-                DaysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(user, cancellationToken)
+                IsZPPForbidden = await _diaryService.IsZPPForbidden(userId, DateTime.Now, cancellationToken),
+                HasSubscription = user.HasSubscription,
+                HasZPPSubscription = user.HasZPPSubscription,
+                IsDiaryFull = await _diaryService.IsDiaryFull(userId, DateTime.Now, cancellationToken),
+                HasNewTargetsTriggered = await _targetService.NewTriggered(userId, cancellationToken),
+                IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(userId, cancellationToken)),
+                HasTargetsActivated = await _targetService.AnyActivated(userId, cancellationToken),
+                DaysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(userId, cancellationToken)
             };
 
             return Ok(result);

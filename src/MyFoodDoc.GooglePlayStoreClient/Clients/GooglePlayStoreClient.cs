@@ -5,6 +5,7 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MyFoodDoc.Application.Enums;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
 using Newtonsoft.Json;
 
@@ -22,7 +23,7 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<PurchaseValidationResult> ValidatePurchase(string subscriptionId, string purchaseToken)
+        public async Task<PurchaseValidationResult> ValidatePurchase(SubscriptionType subscriptionType, string subscriptionId, string purchaseToken)
         {
             //Azure key vault adds extra slash before new line
             _options.Certificate.PrivateKey = _options.Certificate.PrivateKey.Replace("\\n", "\n");
@@ -40,26 +41,46 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
                     ApplicationName = "MyFoodDoc"
                 });
 
-                var request = publisherService.Purchases.Subscriptions.Get(
-                    _options.PackageName,
-                    subscriptionId,
-                    purchaseToken
-                );
-
-                var response = await request.ExecuteAsync().ConfigureAwait(false);
-
-                return new PurchaseValidationResult()
+                if (subscriptionType == SubscriptionType.MyFoodDoc)
                 {
-                    StartDate =  response.StartTimeMillis == null
-                        ? (DateTime?)null
-                        : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).DateTime,
-                    ExpirationDate = response.ExpiryTimeMillis == null
-                        ? (DateTime?) null
-                        : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).DateTime,
-                    AutoRenewing = response.AutoRenewing,
-                    CancelReason = response.CancelReason,
-                    LinkedPurchaseToken = response.LinkedPurchaseToken
-                };
+                    var request = publisherService.Purchases.Subscriptions.Get(
+                        _options.PackageName,
+                        subscriptionId,
+                        purchaseToken
+                    );
+
+                    var response = await request.ExecuteAsync().ConfigureAwait(false);
+
+                    return new PurchaseValidationResult()
+                    {
+                        StartDate = response.StartTimeMillis == null
+                            ? (DateTime?)null
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).DateTime,
+                        ExpirationDate = response.ExpiryTimeMillis == null
+                            ? (DateTime?)null
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).DateTime,
+                        AutoRenewing = response.AutoRenewing,
+                        CancelReason = response.CancelReason,
+                        LinkedPurchaseToken = response.LinkedPurchaseToken
+                    };
+                }
+                else
+                {
+                    var request = publisherService.Purchases.Products.Get(
+                        _options.PackageName,
+                        subscriptionId,
+                        purchaseToken
+                    );
+
+                    var response = await request.ExecuteAsync().ConfigureAwait(false);
+
+                    return new PurchaseValidationResult()
+                    {
+                        PurchaseDate = response.PurchaseTimeMillis == null
+                            ? (DateTime?)null
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.PurchaseTimeMillis.Value).DateTime
+                    };
+                }
             }
             catch (Exception e)
             {

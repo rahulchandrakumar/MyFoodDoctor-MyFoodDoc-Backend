@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -52,14 +51,27 @@ namespace MyFoodDoc.AppStoreClient.Clients
                 throw new Exception($"latest_receipt_info is missing: {content}");
             }
 
-            DateTime subscriptionExpirationDateTime = DateTime.ParseExact(
-                result.latest_receipt_info[0].expires_date,
-                "yyyy-MM-dd HH:mm:ss 'Etc/GMT'",
-                System.Globalization.CultureInfo.InvariantCulture,
-                System.Globalization.DateTimeStyles.AssumeUniversal);
+            DateTime? purchaseDateDateTime = null;
+
+            if (!string.IsNullOrEmpty(result.latest_receipt_info[0].purchase_date))
+                purchaseDateDateTime = DateTime.ParseExact(
+                    result.latest_receipt_info[0].purchase_date,
+                    "yyyy-MM-dd HH:mm:ss 'Etc/GMT'",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.AssumeUniversal);
+
+            DateTime? subscriptionExpirationDateTime = null;
+
+            if (!string.IsNullOrEmpty(result.latest_receipt_info[0].expires_date))
+                subscriptionExpirationDateTime = DateTime.ParseExact(
+                    result.latest_receipt_info[0].expires_date,
+                    "yyyy-MM-dd HH:mm:ss 'Etc/GMT'",
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    System.Globalization.DateTimeStyles.AssumeUniversal);
 
             return new ReceiptValidationResult
             {
+                PurchaseDate = purchaseDateDateTime,
                 SubscriptionExpirationDate = subscriptionExpirationDateTime,
                 ProductId = result.latest_receipt_info[0].product_id,
                 OriginalTransactionId = result.latest_receipt_info[0].original_transaction_id
