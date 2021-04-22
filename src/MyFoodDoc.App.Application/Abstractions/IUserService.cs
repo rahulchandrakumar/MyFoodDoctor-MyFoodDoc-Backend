@@ -1,5 +1,6 @@
 ﻿using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.User;
+using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,6 +21,8 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,
             CancellationToken cancellationToken = default);
+
+        Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType, CancellationToken cancellationToken = default);
 
         Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload,
             CancellationToken cancellationToken = default);
