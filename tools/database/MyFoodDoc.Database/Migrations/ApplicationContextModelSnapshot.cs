@@ -1394,50 +1394,6 @@ namespace MyFoodDoc.Database.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("getutcdate()");
 
-                    b.Property<string>("PurchaseToken")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("SubscriptionId")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LastSynchronized");
-
-                    b.HasIndex("PurchaseToken");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("AppStoreSubscriptions", "User");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Subscriptions.GooglePlayStoreSubscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastSynchronized")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getutcdate()");
-
                     b.Property<string>("OriginalTransactionId")
                         .IsRequired()
                         .HasColumnType("varchar(1000)");
@@ -1467,6 +1423,50 @@ namespace MyFoodDoc.Database.Migrations
                     b.HasIndex("UserId");
 
                     b.HasIndex("ProductId", "OriginalTransactionId");
+
+                    b.ToTable("AppStoreSubscriptions", "User");
+                });
+
+            modelBuilder.Entity("MyFoodDoc.Application.Entities.Subscriptions.GooglePlayStoreSubscription", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastSynchronized")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getutcdate()");
+
+                    b.Property<string>("PurchaseToken")
+                        .IsRequired()
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("SubscriptionId")
+                        .IsRequired()
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("nvarchar(15)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LastSynchronized");
+
+                    b.HasIndex("PurchaseToken");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("GooglePlayStoreSubscriptions", "User");
                 });

@@ -2,8 +2,10 @@
 {
     public class AppStoreSubscription : AbstractSubscription
     {
-        public string SubscriptionId { get; set; }
+        public string ReceiptData { get; set; }
 
-        public string PurchaseToken { get; set; }
+        public string ProductId { get; set; }
+
+        public string OriginalTransactionId { get; set; }
     }
 }

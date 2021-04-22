@@ -14,8 +14,9 @@ namespace MyFoodDoc.Database.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SubscriptionId = table.Column<string>(type: "varchar(1000)", nullable: false),
-                    PurchaseToken = table.Column<string>(type: "varchar(1000)", nullable: false),
+                    ReceiptData = table.Column<string>(type: "varchar(max)", nullable: false),
+                    ProductId = table.Column<string>(type: "varchar(1000)", nullable: false),
+                    OriginalTransactionId = table.Column<string>(type: "varchar(1000)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     LastSynchronized = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()"),
@@ -40,9 +41,8 @@ namespace MyFoodDoc.Database.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ReceiptData = table.Column<string>(type: "varchar(max)", nullable: false),
-                    ProductId = table.Column<string>(type: "varchar(1000)", nullable: false),
-                    OriginalTransactionId = table.Column<string>(type: "varchar(1000)", nullable: false),
+                    SubscriptionId = table.Column<string>(type: "varchar(1000)", nullable: false),
+                    PurchaseToken = table.Column<string>(type: "varchar(1000)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(15)", maxLength: 15, nullable: false),
                     LastSynchronized = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getutcdate()"),
@@ -67,10 +67,10 @@ namespace MyFoodDoc.Database.Migrations
                 column: "LastSynchronized");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AppStoreSubscriptions_PurchaseToken",
+                name: "IX_AppStoreSubscriptions_ProductId_OriginalTransactionId",
                 schema: "User",
                 table: "AppStoreSubscriptions",
-                column: "PurchaseToken");
+                columns: new[] { "ProductId", "OriginalTransactionId" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AppStoreSubscriptions_UserId",
@@ -85,10 +85,10 @@ namespace MyFoodDoc.Database.Migrations
                 column: "LastSynchronized");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GooglePlayStoreSubscriptions_ProductId_OriginalTransactionId",
+                name: "IX_GooglePlayStoreSubscriptions_PurchaseToken",
                 schema: "User",
                 table: "GooglePlayStoreSubscriptions",
-                columns: new[] { "ProductId", "OriginalTransactionId" });
+                column: "PurchaseToken");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GooglePlayStoreSubscriptions_UserId",
