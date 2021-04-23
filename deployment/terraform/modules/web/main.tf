@@ -352,6 +352,8 @@ resource "azurerm_app_service" "api" {
     FAT_SECRET_CONSUMER_SECRET                                  = ""
     APP_STORE_VERIFY_RECEIPT_URL                                = var.app_store_verify_receipt_url
     APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
+    APP_STORE_SUBSCRIPTION_PRODUCTS                             = "de.myfooddoctor.app.monthly,de.myfooddoctor.app.semiannually,de.myfooddoctor.app.annually"
+    APP_STORE_ZPP_SUBSCRIPTION_PRODUCTS                         = "de.myfooddoctor.app.zpp"
     GOOGLE_PLAY_STORE_PACKAGE_NAME                              = "de.myfooddoctor.app"
     GOOGLE_PLAY_STORE_CERTIFICATE_TYPE                          = "service_account"
     GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID                    = "pc-api-6022083488696963110-239"
@@ -434,6 +436,8 @@ resource "azurerm_function_app" "func" {
     FIREBASE_CLIENT_X509_CERT_URL                               = "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1mq1y%40medicum-myfooddoc.iam.gserviceaccount.com"
     APP_STORE_VERIFY_RECEIPT_URL                                = var.app_store_verify_receipt_url
     APP_STORE_VERIFY_RECEIPT_SHARED_SECRET                      = ""
+    APP_STORE_SUBSCRIPTION_PRODUCTS                             = "de.myfooddoctor.app.monthly,de.myfooddoctor.app.semiannually,de.myfooddoctor.app.annually"
+    APP_STORE_ZPP_SUBSCRIPTION_PRODUCTS                         = "de.myfooddoctor.app.zpp"
     GOOGLE_PLAY_STORE_PACKAGE_NAME                              = "de.myfooddoctor.app"
     GOOGLE_PLAY_STORE_CERTIFICATE_TYPE                          = "service_account"
     GOOGLE_PLAY_STORE_CERTIFICATE_PROJECT_ID                    = "pc-api-6022083488696963110-239"

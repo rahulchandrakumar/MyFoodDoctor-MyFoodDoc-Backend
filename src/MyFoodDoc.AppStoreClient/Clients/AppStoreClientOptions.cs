@@ -8,5 +8,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
     {
         public string VerifyReceiptUrl { get; set; }
         public string VerifyReceiptSharedSecret { get; set; }
+        public string SubscriptionProducts { get; set; }
+        public string ZppSubscriptionProducts { get; set; }
     }
 }

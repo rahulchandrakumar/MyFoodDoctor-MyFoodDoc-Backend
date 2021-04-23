@@ -62,7 +62,7 @@ namespace MyFoodDoc.Functions
 
                     try
                     {
-                        var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(appStoreSubscription.ReceiptData);
+                        var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(appStoreSubscription.Type, appStoreSubscription.ReceiptData);
 
                         appStoreSubscription.LastSynchronized = DateTime.Now;
                         appStoreSubscription.IsValid = validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;

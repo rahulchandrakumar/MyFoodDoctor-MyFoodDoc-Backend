@@ -1,7 +1,9 @@
 {
   "AppStore": {
     "VerifyReceiptUrl": "{APP_STORE_VERIFY_RECEIPT_URL}",
-    "VerifyReceiptSharedSecret": "{APP_STORE_VERIFY_RECEIPT_SHARED_SECRET}"
+    "VerifyReceiptSharedSecret": "{APP_STORE_VERIFY_RECEIPT_SHARED_SECRET}",
+    "SubscriptionProducts": "{APP_STORE_SUBSCRIPTION_PRODUCTS}",
+    "ZppSubscriptionProducts": "{APP_STORE_ZPP_SUBSCRIPTION_PRODUCTS}"
   },
   "GooglePlayStore": {
     "PackageName": "{GOOGLE_PLAY_STORE_PACKAGE_NAME}",
