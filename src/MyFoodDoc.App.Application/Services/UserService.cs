@@ -333,7 +333,7 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(payload.ReceiptData);
+            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(subscriptionType, payload.ReceiptData);
             var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
 
             var existingSubscriptions = await _context.AppStoreSubscriptions.Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId == validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
