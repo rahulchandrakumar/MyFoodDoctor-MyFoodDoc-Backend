@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.TrackedValues;
-using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyFoodDoc.Application.Entities
 {
@@ -18,22 +16,6 @@ namespace MyFoodDoc.Application.Entities
         public decimal? Height { get; set; }
 
         public int? InsuranceId { get; set; }
-
-        public SubscriptionType? SubscriptionType { get; set; }
-
-        public string SubscriptionId { get; set; }
-
-        public string PurchaseToken { get; set; }
-
-        public string ReceiptData { get; set; }
-
-        public string ProductId { get; set; }
-
-        public string OriginalTransactionId { get; set; }
-
-        public bool? HasValidSubscription { get; set; }
-
-        public DateTime? SubscriptionUpdated { get; set; }
 
         public bool PushNotificationsEnabled { get; set; }
 

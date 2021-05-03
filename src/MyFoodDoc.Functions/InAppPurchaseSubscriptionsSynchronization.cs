@@ -71,7 +71,7 @@ namespace MyFoodDoc.Functions
                     }
                     catch (Exception e)
                     {
-                        log.LogError(e, $"Error on validating AppStore user '{appStoreSubscription.UserId}'");
+                        log.LogError(e, $"Error on validating AppStore user '{appStoreSubscription.UserId}'. Message = {e.Message}. StackTrace = {e.StackTrace}");
 
                         errors++;
 
@@ -140,7 +140,7 @@ namespace MyFoodDoc.Functions
                     }
                     catch (Exception e)
                     {
-                        log.LogError(e, $"Error on validating GooglePlayStore user '{googlePlayStoreSubscription.UserId}'");
+                        log.LogError(e, $"Error on validating GooglePlayStore user '{googlePlayStoreSubscription.UserId}'. Message = {e.Message}. StackTrace = {e.StackTrace}");
 
                         errors++;
 
