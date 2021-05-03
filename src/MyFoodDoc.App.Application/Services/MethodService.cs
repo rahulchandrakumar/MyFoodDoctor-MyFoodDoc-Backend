@@ -50,7 +50,16 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            if (user.HasValidSubscription == null || !user.HasValidSubscription.Value)
+            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+
+            if (appStoreSubscription == null && googlePlayStoreSubscription == null)
+                return result;
+
+            if (appStoreSubscription != null && !appStoreSubscription.IsValid)
+                return result;
+
+            if (googlePlayStoreSubscription != null && !googlePlayStoreSubscription.IsValid)
                 return result;
 
             var userMethodShowHistory = await _context.UserMethodShowHistory
