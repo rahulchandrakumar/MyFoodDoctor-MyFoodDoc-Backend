@@ -29,8 +29,6 @@ namespace MyFoodDoc.App.Application.Models
 
         public bool HasZPPSubscription { get; set; }
 
-        public DateTime? HasSubscriptionUpdated { get; set; }
-
         public ICollection<string> Motivations { get; set; }
 
         public ICollection<string> Indications { get; set; }
@@ -42,8 +40,6 @@ namespace MyFoodDoc.App.Application.Models
             profile.CreateMap<User, UserDto>()
                 .ForMember(x => x.Created, opt => opt.MapFrom(src => src.Created.ToLocalTime().Date))
                 .ForMember(x => x.Age, opt => opt.MapFrom(src => src.Birthday == null ? null : (int?)(DateTime.UtcNow.Year - src.Birthday.Value.Year)))
-                .ForMember(x => x.HasSubscription, opt => opt.MapFrom(src => src.HasValidSubscription != null && src.HasValidSubscription.Value))
-                .ForMember(x => x.HasSubscriptionUpdated, opt => opt.MapFrom(src => src.SubscriptionUpdated))
                 .ForMember(x => x.Indications, opt => opt.MapFrom(src => src.Indications.Select(x => x.Indication.Key)))
                 .ForMember(x => x.Motivations, opt => opt.MapFrom(src => src.Motivations.Select(x => x.Motivation.Key)))
                 .ForMember(x => x.Diets, opt => opt.MapFrom(src => src.Diets.Select(x => x.Diet.Key)));

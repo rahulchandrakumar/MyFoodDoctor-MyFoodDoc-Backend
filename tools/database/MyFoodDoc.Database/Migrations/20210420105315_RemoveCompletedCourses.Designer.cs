@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.Database.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20210420105315_RemoveCompletedCourses")]
+    partial class RemoveCompletedCourses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1379,98 +1381,6 @@ namespace MyFoodDoc.Database.Migrations
                     b.ToTable("UserChoices", "Psychogramm");
                 });
 
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Subscriptions.AppStoreSubscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastSynchronized")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getutcdate()");
-
-                    b.Property<string>("OriginalTransactionId")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("ReceiptData")
-                        .IsRequired()
-                        .HasColumnType("varchar(max)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LastSynchronized");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("ProductId", "OriginalTransactionId");
-
-                    b.ToTable("AppStoreSubscriptions", "User");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Subscriptions.GooglePlayStoreSubscription", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<bool>("IsValid")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastSynchronized")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("getutcdate()");
-
-                    b.Property<string>("PurchaseToken")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("SubscriptionId")
-                        .IsRequired()
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .HasColumnType("nvarchar(15)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LastSynchronized");
-
-                    b.HasIndex("PurchaseToken");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("GooglePlayStoreSubscriptions", "User");
-                });
-
             modelBuilder.Entity("MyFoodDoc.Application.Entities.TargetMethod", b =>
                 {
                     b.Property<int>("TargetId")
@@ -2762,28 +2672,6 @@ namespace MyFoodDoc.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("Choice");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Subscriptions.AppStoreSubscription", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("MyFoodDoc.Application.Entities.Subscriptions.GooglePlayStoreSubscription", b =>
-                {
-                    b.HasOne("MyFoodDoc.Application.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("User");
                 });

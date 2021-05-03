@@ -1,6 +1,4 @@
-﻿using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,6 +15,7 @@ using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Entities.Psychogramm;
 using MyFoodDoc.Application.Entities.Aok;
+using MyFoodDoc.Application.Entities.Subscriptions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -83,6 +82,8 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<UserDiet> UserDiets { get; set; }
         public DbSet<UserWeight> UserWeights { get; set; }
         public DbSet<UserAbdominalGirth> UserAbdominalGirths { get; set; }
+        public DbSet<AppStoreSubscription> AppStoreSubscriptions { get; set; }
+        public DbSet<GooglePlayStoreSubscription> GooglePlayStoreSubscriptions { get; set; }
         #endregion
 
         #region Courses
@@ -91,7 +92,6 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<Subchapter> Subchapters { get; set; }
         public DbSet<UserAnswer> UserAnswers { get; set; }
-        public DbSet<CompletedCourse> CompletedCourses { get; set; }
 
         #endregion
 

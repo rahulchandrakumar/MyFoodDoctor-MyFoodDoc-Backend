@@ -7,7 +7,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
@@ -37,99 +37,143 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            var users = await _context.Users.Where(x => x.SubscriptionUpdated < DateTime.Now).OrderBy(x => x.SubscriptionUpdated).Take(500).ToListAsync(cancellationToken);
+            await AppStoreSubscriptionsSynchronization(log, cancellationToken);
+            await GooglePlayStoreSubscriptionsSynchronization(log, cancellationToken);
+        }
 
-            log.LogInformation($"{users.Count} users to update.");
+        private async Task AppStoreSubscriptionsSynchronization(ILogger log,
+            CancellationToken cancellationToken)
+        {
+            var appStoreSubscriptions = await _context.AppStoreSubscriptions.OrderBy(x => x.LastSynchronized).Take(500).ToListAsync(cancellationToken);
+
+            log.LogInformation($"{appStoreSubscriptions.Count} AppStore subscriptions to update.");
 
             int currentBatchCount = 0;
             int batchSize = 40;
 
-            var usersToUpdate = new List<User>();
+            var appStoreSubscriptionsToUpdate = new List<AppStoreSubscription>();
 
             int errors = 0;
-            int inconsistent = 0;
 
-            if (users.Any())
+            if (appStoreSubscriptions.Any())
             {
-                foreach (var user in users)
+                foreach (var appStoreSubscription in appStoreSubscriptions)
                 {
-                    if (user.SubscriptionType == SubscriptionType.AppStore && !string.IsNullOrEmpty(user.ReceiptData))
+
+                    try
                     {
-                        try
-                        {
-                            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(user.ReceiptData);
+                        var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(appStoreSubscription.Type, appStoreSubscription.ReceiptData);
 
-                            user.ProductId = validateReceiptValidationResult.ProductId;
-                            user.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
-                            user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
-                            user.SubscriptionUpdated = DateTime.Now;
-                        }
-                        catch (Exception e)
-                        {
-                            log.LogError(e,$"Error on validating AppStore user '{user.Id}'");
-
-                            errors++;
-
-                            continue;
-                        }
+                        appStoreSubscription.LastSynchronized = DateTime.Now;
+                        appStoreSubscription.IsValid = validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+                        appStoreSubscription.ProductId = validateReceiptValidationResult.ProductId;
+                        appStoreSubscription.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
                     }
-                    else if (user.SubscriptionType == SubscriptionType.GooglePlayStore && !string.IsNullOrEmpty(user.SubscriptionId) && !string.IsNullOrEmpty(user.PurchaseToken))
+                    catch (Exception e)
                     {
-                        try
-                        {
-                            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(user.SubscriptionId, user.PurchaseToken);
+                        log.LogError(e, $"Error on validating AppStore user '{appStoreSubscription.UserId}'");
 
-                            user.HasValidSubscription = (validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
-                                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
-                                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
-                                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now);
-                            user.SubscriptionUpdated = DateTime.Now;
-                        }
-                        catch (Exception e)
-                        {
-                            log.LogError(e, $"Error on validating GooglePlayStore user '{user.Id}'");
+                        errors++;
 
-                            errors++;
-
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        inconsistent++;
                         continue;
                     }
 
-                    usersToUpdate.Add(user);
+                    appStoreSubscriptionsToUpdate.Add(appStoreSubscription);
                     currentBatchCount++;
 
                     if (currentBatchCount == batchSize)
                     {
-                        _context.Users.UpdateRange(usersToUpdate);
+                        _context.AppStoreSubscriptions.UpdateRange(appStoreSubscriptionsToUpdate);
 
                         await _context.SaveChangesAsync(cancellationToken);
 
-                        log.LogInformation($"{currentBatchCount} users updated.");
+                        log.LogInformation($"{currentBatchCount} AppStore subscriptions updated.");
 
                         currentBatchCount = 0;
-                        usersToUpdate = new List<User>();
+                        appStoreSubscriptionsToUpdate = new List<AppStoreSubscription>();
                     }
                 }
 
                 if (currentBatchCount > 0)
                 {
-                    _context.Users.UpdateRange(usersToUpdate);
+                    _context.AppStoreSubscriptions.UpdateRange(appStoreSubscriptions);
 
                     await _context.SaveChangesAsync(cancellationToken);
 
-                    log.LogInformation($"{currentBatchCount} users updated.");
+                    log.LogInformation($"{currentBatchCount} AppStore subscriptions updated.");
                 }
 
-                if (inconsistent > 0)
-                    log.LogWarning($"{inconsistent} users are inconsistent.");
+                if (errors > 0)
+                    log.LogError($"{errors} AppStore subscriptions cause error on validation.");
+            }
+        }
+
+        private async Task GooglePlayStoreSubscriptionsSynchronization(ILogger log,
+            CancellationToken cancellationToken)
+        {
+            var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions.OrderBy(x => x.LastSynchronized).Take(500).ToListAsync(cancellationToken);
+
+            log.LogInformation($"{googlePlayStoreSubscriptions.Count} GooglePlayStore subscriptions to update.");
+
+            int currentBatchCount = 0;
+            int batchSize = 40;
+
+            var googlePlayStoreSubscriptionsToUpdate = new List<GooglePlayStoreSubscription>();
+
+            int errors = 0;
+
+            if (googlePlayStoreSubscriptions.Any())
+            {
+                foreach (var googlePlayStoreSubscription in googlePlayStoreSubscriptions)
+                {
+                    try
+                    {
+                        var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(googlePlayStoreSubscription.Type, googlePlayStoreSubscription.SubscriptionId, googlePlayStoreSubscription.PurchaseToken);
+
+                        googlePlayStoreSubscription.LastSynchronized = DateTime.Now;
+                        googlePlayStoreSubscription.IsValid = googlePlayStoreSubscription.Type == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.CancelReason == null &&
+                                        ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
+                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
+                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+
+                    }
+                    catch (Exception e)
+                    {
+                        log.LogError(e, $"Error on validating GooglePlayStore user '{googlePlayStoreSubscription.UserId}'");
+
+                        errors++;
+
+                        continue;
+                    }
+
+                    googlePlayStoreSubscriptionsToUpdate.Add(googlePlayStoreSubscription);
+                    currentBatchCount++;
+
+                    if (currentBatchCount == batchSize)
+                    {
+                        _context.GooglePlayStoreSubscriptions.UpdateRange(googlePlayStoreSubscriptionsToUpdate);
+
+                        await _context.SaveChangesAsync(cancellationToken);
+
+                        log.LogInformation($"{currentBatchCount} GooglePlayStore subscriptions updated.");
+
+                        currentBatchCount = 0;
+                        googlePlayStoreSubscriptionsToUpdate = new List<GooglePlayStoreSubscription>();
+                    }
+                }
+
+                if (currentBatchCount > 0)
+                {
+                    _context.GooglePlayStoreSubscriptions.UpdateRange(googlePlayStoreSubscriptionsToUpdate);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    log.LogInformation($"{currentBatchCount} GooglePlayStore subscriptions updated.");
+                }
 
                 if (errors > 0)
-                    log.LogError($"{errors} users cause error on validation.");
+                    log.LogError($"{errors} GooglePlayStore subscriptions cause error on validation.");
             }
         }
     }

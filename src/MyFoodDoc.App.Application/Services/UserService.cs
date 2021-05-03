@@ -11,13 +11,13 @@ using MyFoodDoc.Application.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
+using MyFoodDoc.Application.Entities.Subscriptions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -57,6 +57,9 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new NotFoundException(nameof(User), userId);
             }
+
+            result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
+            result.HasSubscription = result.HasZPPSubscription ? true : await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
 
             return result;
         }
@@ -136,12 +139,7 @@ namespace MyFoodDoc.App.Application.Services
             //var motivations = await GetMotivationsAsync(userId, cancellationToken);
             //var diets = await GetDietsAsync(userId, cancellationToken);
 
-            var result = await _context.Users
-                .Where(x => x.Id == userId)
-                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(cancellationToken);
-
-            return result;
+            return await GetUserAsync(userId, cancellationToken);
         }
 
         public async Task<UserDto> UpdateUserAsync(string userId, UpdateUserPayload payload, CancellationToken cancellationToken = default)
@@ -213,12 +211,7 @@ namespace MyFoodDoc.App.Application.Services
             //var motivations = await GetMotivationsAsync(userId, cancellationToken);
             //var diets = await GetDietsAsync(userId, cancellationToken);
 
-            var result = await _context.Users
-                .Where(x => x.Id == userId)
-                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(cancellationToken);
-
-            return result;
+            return await GetUserAsync(userId, cancellationToken);
         }
 
         private async Task<IList<string>> GetIndicationsAsync(string userId, CancellationToken cancellationToken = default)
@@ -306,101 +299,32 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
 
-            if (user == null)
-            {
-                throw new NotFoundException(nameof(User), userId);
-            }
+            if (appStoreSubscription != null && appStoreSubscription.IsValid)
+                return true;
 
-            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(payload.ReceiptData);
+            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
 
-            var users = await _context.Users.Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId == validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
+            if (googlePlayStoreSubscription != null && googlePlayStoreSubscription.IsValid)
+                return true;
 
-            if (users.Any(x => x.Id != userId))
-                throw new ConflictException("Receipt is already used by another user");
-
-            user.SubscriptionType = SubscriptionType.AppStore;
-            user.SubscriptionId = null;
-            user.PurchaseToken = null;
-            user.ReceiptData = payload.ReceiptData;
-            user.ProductId = validateReceiptValidationResult.ProductId;
-            user.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
-            user.HasValidSubscription = validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now;
-            user.SubscriptionUpdated = DateTime.Now;
-
-            _context.Users.Update(user);
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return user.HasValidSubscription != null && user.HasValidSubscription.Value;
+            return false;
         }
 
-        public async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-
-            if (user == null)
-            {
-                throw new NotFoundException(nameof(User), userId);
-            }
-
-            var users = await _context.Users.Where(x => x.PurchaseToken == payload.PurchaseToken).ToListAsync(cancellationToken);
-
-            if (users.Any(x => x.Id != userId))
-                throw new ConflictException("PurchaseToken is already used by another user");
-
-            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(payload.SubscriptionId, payload.PurchaseToken);
-
-            user.SubscriptionType = SubscriptionType.GooglePlayStore;
-            user.SubscriptionId = payload.SubscriptionId;
-            user.PurchaseToken = payload.PurchaseToken;
-            user.ReceiptData = null;
-            user.ProductId = null;
-            user.OriginalTransactionId = null;
-            user.HasValidSubscription = validateReceiptValidationResult.CancelReason == null &&
-                                        ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now && 
-                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
-                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value && 
-                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now));
-            user.SubscriptionUpdated = DateTime.Now;
-
-            _context.Users.Update(user);
-
-            if (!string.IsNullOrEmpty(validateReceiptValidationResult.LinkedPurchaseToken))
-            {
-                var linkedUser = await _context.Users.SingleOrDefaultAsync(x => x.PurchaseToken == validateReceiptValidationResult.LinkedPurchaseToken, cancellationToken);
-
-                if (linkedUser != null && linkedUser.UserName != user.UserName)
-                {
-                    linkedUser.HasValidSubscription = false;
-
-                    _context.Users.Update(linkedUser);
-                }
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return user.HasValidSubscription != null && user.HasValidSubscription.Value;
+            return await ValidateAppStoreInAppPurchase(userId, payload, SubscriptionType.MyFoodDoc, cancellationToken);
         }
 
         public async Task<bool> ValidateAppStoreZPPSubscription(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-
-            if (user == null)
-            {
-                throw new NotFoundException(nameof(User), userId);
-            }
-
-            //TODO: implement
-
-            return false;
+            return await ValidateAppStoreInAppPurchase(userId, payload, SubscriptionType.ZPP, cancellationToken);
         }
 
-        public async Task<bool> ValidateGooglePlayStoreZPPSubscription(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        private async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
@@ -409,9 +333,133 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            //TODO: implement
+            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(subscriptionType, payload.ReceiptData);
+            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
 
-            return false;
+            var existingSubscriptions = await _context.AppStoreSubscriptions.Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId == validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
+
+            if (existingSubscriptions.Any(x => x.UserId != userId))
+                throw new ConflictException("Receipt is already used by another user");
+
+            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
+
+            if (appStoreSubscription == null)
+            {
+                appStoreSubscription = new AppStoreSubscription
+                {
+                    UserId = userId,
+                    Type = subscriptionType,
+                    LastSynchronized = DateTime.Now,
+                    IsValid = isValid,
+                    ReceiptData = payload.ReceiptData,
+                    ProductId = validateReceiptValidationResult.ProductId,
+                    OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId
+                };
+
+                await _context.AppStoreSubscriptions.AddAsync(appStoreSubscription, cancellationToken);
+            }
+            else
+            {
+                appStoreSubscription.LastSynchronized = DateTime.Now;
+                appStoreSubscription.IsValid = isValid;
+                appStoreSubscription.ReceiptData = payload.ReceiptData;
+                appStoreSubscription.ProductId = validateReceiptValidationResult.ProductId;
+                appStoreSubscription.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
+
+                _context.AppStoreSubscriptions.Update(appStoreSubscription);
+            }
+
+            var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions.Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
+
+            if (googlePlayStoreSubscriptions.Any())
+            {
+                _context.GooglePlayStoreSubscriptions.RemoveRange(googlePlayStoreSubscriptions);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return appStoreSubscription.IsValid;
+        }
+
+        public async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            return await ValidateGooglePlayStoreInAppPurchase(userId, payload, SubscriptionType.MyFoodDoc, cancellationToken);
+        }
+
+        public async Task<bool> ValidateGooglePlayStoreZPPSubscription(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        {
+            return await ValidateGooglePlayStoreInAppPurchase(userId, payload, SubscriptionType.ZPP, cancellationToken);
+        }
+
+        private async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var existingSubscriptions = await _context.GooglePlayStoreSubscriptions.Where(x => x.PurchaseToken == payload.PurchaseToken).ToListAsync(cancellationToken);
+
+            if (existingSubscriptions.Any(x => x.UserId != userId))
+                throw new ConflictException("PurchaseToken is already used by another user");
+
+            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(subscriptionType, payload.SubscriptionId, payload.PurchaseToken);
+            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.CancelReason == null &&
+                                        ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
+                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
+                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+
+            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
+
+            if (googlePlayStoreSubscription == null)
+            {
+                googlePlayStoreSubscription = new GooglePlayStoreSubscription
+                {
+                    UserId = userId,
+                    Type = subscriptionType,
+                    LastSynchronized = DateTime.Now,
+                    IsValid = isValid,
+                    SubscriptionId = payload.SubscriptionId,
+                    PurchaseToken = payload.PurchaseToken
+                };
+
+                await _context.GooglePlayStoreSubscriptions.AddAsync(googlePlayStoreSubscription, cancellationToken);
+            }
+            else
+            {
+                googlePlayStoreSubscription.LastSynchronized = DateTime.Now;
+                googlePlayStoreSubscription.IsValid = isValid;
+                googlePlayStoreSubscription.SubscriptionId = payload.SubscriptionId;
+                googlePlayStoreSubscription.PurchaseToken = payload.PurchaseToken;
+
+                _context.GooglePlayStoreSubscriptions.Update(googlePlayStoreSubscription);
+            }
+
+            if (!string.IsNullOrEmpty(validateReceiptValidationResult.LinkedPurchaseToken))
+            {
+                var linkedGooglePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.Include(x => x.User).SingleOrDefaultAsync(x => x.PurchaseToken == validateReceiptValidationResult.LinkedPurchaseToken, cancellationToken);
+
+                if (linkedGooglePlayStoreSubscription != null && linkedGooglePlayStoreSubscription.User.UserName != user.UserName)
+                {
+                    linkedGooglePlayStoreSubscription.IsValid = false;
+
+                    _context.GooglePlayStoreSubscriptions.Update(linkedGooglePlayStoreSubscription);
+                }
+            }
+
+            var appStoreSubscriptions = await _context.AppStoreSubscriptions.Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
+
+            if (appStoreSubscriptions.Any())
+            {
+                _context.AppStoreSubscriptions.RemoveRange(appStoreSubscriptions);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return googlePlayStoreSubscription.IsValid;
         }
     }
 }

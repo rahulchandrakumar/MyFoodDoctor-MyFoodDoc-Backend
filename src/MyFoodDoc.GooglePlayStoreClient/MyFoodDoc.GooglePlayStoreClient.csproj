@@ -9,4 +9,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.10" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.10" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MyFoodDoc.Application\MyFoodDoc.Application.csproj" />
+  </ItemGroup>
 </Project>

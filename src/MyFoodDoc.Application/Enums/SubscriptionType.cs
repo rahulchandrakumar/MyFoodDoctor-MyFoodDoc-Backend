@@ -7,6 +7,8 @@ namespace MyFoodDoc.Application.Enums
     public enum SubscriptionType
     {
         AppStore,
-        GooglePlayStore
+        GooglePlayStore,
+        MyFoodDoc,
+        ZPP
     }
 }
