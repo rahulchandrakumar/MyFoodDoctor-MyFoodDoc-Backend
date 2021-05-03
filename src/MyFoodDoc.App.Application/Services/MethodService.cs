@@ -25,13 +25,15 @@ namespace MyFoodDoc.App.Application.Services
         private const int MAX_METHODS_PER_OPTIMIZATION_AREA = 3;
 
         private readonly IApplicationContext _context;
+        private readonly IUserService _userService;
         private readonly IUserHistoryService _userHistoryService;
         private readonly ILogger<MethodService> _logger;
         private readonly int _statisticsPeriod;
 
-        public MethodService(IApplicationContext context, IUserHistoryService userHistoryService, ILogger<MethodService> logger, IOptions<StatisticsOptions> statisticsOptions)
+        public MethodService(IApplicationContext context, IUserService userService, IUserHistoryService userHistoryService, ILogger<MethodService> logger, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
+            _userService = userService;
             _userHistoryService = userHistoryService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -50,16 +52,10 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId, cancellationToken);
-            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            var hasZPPSubscription = await _userService.HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
+            var hasSubscription = await _userService.HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
 
-            if (appStoreSubscription == null && googlePlayStoreSubscription == null)
-                return result;
-
-            if (appStoreSubscription != null && !appStoreSubscription.IsValid)
-                return result;
-
-            if (googlePlayStoreSubscription != null && !googlePlayStoreSubscription.IsValid)
+            if (!hasZPPSubscription && !hasSubscription)
                 return result;
 
             var userMethodShowHistory = await _context.UserMethodShowHistory
