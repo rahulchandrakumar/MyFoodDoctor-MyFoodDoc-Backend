@@ -13,7 +13,7 @@ RUN dotnet build "MyFoodDoc.CMS.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "MyFoodDoc.CMS.csproj" -c Release -o /app/publish
 
-FROM node:latest as webbuild
+FROM node:12-alpine as webbuild
 WORKDIR /app
 COPY src/MyFoodDoc.CMS/app/package*.json ./
 RUN npm install

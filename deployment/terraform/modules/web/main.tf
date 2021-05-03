@@ -415,7 +415,7 @@ resource "azurerm_function_app" "func" {
     DOCKER_REGISTRY_SERVER_PASSWORD                             = var.containerregistry_admin_password
     DOCKER_CUSTOM_IMAGE_NAME                                    = "${var.projectname}-func"
     DOCKER_ENABLE_CI                                            = "false"
-    BLOB_STORAGE_CONNECTION                                     = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultStorKey}/)"
+    DEFAULT_DATABASE_CONNECTION                                 = "@Microsoft.KeyVault(SecretUri=https://${var.keyvault_name}.vault.azure.net/secrets/${local.keyvaultDbKey}/)"
     FAT_SECRET_IDENTITY_SERVER_SCOPE                            = "basic"
     FAT_SECRET_IDENTITY_SERVER_GRANT_TYPE                       = "client_credentials"
     FAT_SECRET_IDENTITY_SERVER_CLIENT_SECRET                    = ""
