@@ -7,6 +7,9 @@ using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Course;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
+using MyFoodDoc.Application.Enums;
+using MyFoodDoc.AppStoreClient.Abstractions;
+using MyFoodDoc.GooglePlayStoreClient.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,14 +26,25 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IApplicationContext _context;
         private readonly IPdfService _pdfService;
         private readonly IEmailService _emailService;
+        private readonly IAppStoreClient _appStoreClient;
+        private readonly IGooglePlayStoreClient _googlePlayStoreClient;
         private readonly ILogger<CourseService> _logger;
         private readonly string _templateUrl;
 
-        public CourseService(IConfiguration configuration, IApplicationContext context, IPdfService pdfService, IEmailService emailService, ILogger<CourseService> logger)
+        public CourseService(
+            IConfiguration configuration, 
+            IApplicationContext context, 
+            IPdfService pdfService, 
+            IEmailService emailService, 
+            IAppStoreClient appStoreClient,
+            IGooglePlayStoreClient googlePlayStoreClient, 
+            ILogger<CourseService> logger)
         {
             _context = context;
             _pdfService = pdfService;
             _emailService = emailService;
+            _appStoreClient = appStoreClient;
+            _googlePlayStoreClient = googlePlayStoreClient;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             var connectionString = configuration.GetConnectionString("BlobStorageConnection");
@@ -168,43 +182,66 @@ namespace MyFoodDoc.App.Application.Services
 
             if (userCourses.All(x => x.CompletedChaptersCount == x.ChaptersCount))
             {
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+                bool sendEmail = false;
 
-                byte[] bytes = null;
+                var appStoreZPPSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == SubscriptionType.ZPP, cancellationToken);
 
-                using (WebClient client = new WebClient())
+                if (appStoreZPPSubscription != null && appStoreZPPSubscription.IsValid)
                 {
-                    var template = client.DownloadData(_templateUrl);
+                    var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(SubscriptionType.ZPP, appStoreZPPSubscription.ReceiptData);
+                    sendEmail = validateReceiptValidationResult.PurchaseDate.Value.AddMonths(6) > DateTime.Now;
+                }
+                else
+                {
+                    var googlePlayStoreZPPSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == SubscriptionType.ZPP, cancellationToken);
 
-                    bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
+                    if (googlePlayStoreZPPSubscription != null && googlePlayStoreZPPSubscription.IsValid)
+                    {
+                        var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(SubscriptionType.ZPP, googlePlayStoreZPPSubscription.SubscriptionId, googlePlayStoreZPPSubscription.PurchaseToken);
+                        sendEmail = validateReceiptValidationResult.PurchaseDate.Value.AddMonths(6) > DateTime.Now;
+                    }
                 }
 
-                Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.EmailTemplate.html");
-
-                if (bodyTemplateStream == null)
+                if (sendEmail)
                 {
-                    throw new ArgumentNullException(nameof(bodyTemplateStream));
-                }
+                    var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
-                StreamReader reader = new StreamReader(bodyTemplateStream);
-                string body = reader.ReadToEnd();
+                    byte[] bytes = null;
 
-                var result = await _emailService.SendEmailAsync(
-                    user.Email,
-                    "Teilnahmebescheinigung myFoodDoctor Kurs \"Schlank und gesund\"",
-                    body,
-                    new[] {
+                    using (WebClient client = new WebClient())
+                    {
+                        var template = client.DownloadData(_templateUrl);
+
+                        bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
+                    }
+
+                    Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.EmailTemplate.html");
+
+                    if (bodyTemplateStream == null)
+                    {
+                        throw new ArgumentNullException(nameof(bodyTemplateStream));
+                    }
+
+                    StreamReader reader = new StreamReader(bodyTemplateStream);
+                    string body = reader.ReadToEnd();
+
+                    var result = await _emailService.SendEmailAsync(
+                        user.Email,
+                        "Teilnahmebescheinigung myFoodDoctor Kurs \"Schlank und gesund\"",
+                        body,
+                        new[] {
                             new Attachment()
                             {
                                 Content = bytes,
                                 Filename = "teilnahmebescheinigung-praeventionskurs.pdf",
                                 Type = "application/pdf"
                             }
-                    });
+                        });
 
-                if (!result)
-                {
-                    throw new Exception($"Unable to send an email to {user.Email}");
+                    if (!result)
+                    {
+                        throw new Exception($"Unable to send an email to {user.Email}");
+                    }
                 }
             }
         }
