@@ -359,6 +359,9 @@ namespace MyFoodDoc.App.Application.Services
                 case MethodFrequencyPeriod.Month:
                     daysInPeriod = 30;
                     break;
+                case MethodFrequencyPeriod.Year:
+                    daysInPeriod = 365;
+                    break;
             }
 
             var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
