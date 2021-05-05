@@ -32,7 +32,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("InAppPurchaseSubscriptionsSynchronization")]
         public async Task RunAsync(
-            [TimerTrigger("0 */30 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 */20 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
@@ -65,7 +65,7 @@ namespace MyFoodDoc.Functions
                         var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(appStoreSubscription.Type, appStoreSubscription.ReceiptData);
 
                         appStoreSubscription.LastSynchronized = DateTime.Now;
-                        appStoreSubscription.IsValid = validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+                        appStoreSubscription.IsValid = appStoreSubscription.Type == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
                         appStoreSubscription.ProductId = validateReceiptValidationResult.ProductId;
                         appStoreSubscription.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
                     }
@@ -131,7 +131,7 @@ namespace MyFoodDoc.Functions
                         var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(googlePlayStoreSubscription.Type, googlePlayStoreSubscription.SubscriptionId, googlePlayStoreSubscription.PurchaseToken);
 
                         googlePlayStoreSubscription.LastSynchronized = DateTime.Now;
-                        googlePlayStoreSubscription.IsValid = googlePlayStoreSubscription.Type == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.CancelReason == null &&
+                        googlePlayStoreSubscription.IsValid = googlePlayStoreSubscription.Type == SubscriptionType.MyFoodDoc ?
                                         ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
                                           validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
                                          || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&

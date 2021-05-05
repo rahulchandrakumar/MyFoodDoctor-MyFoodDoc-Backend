@@ -406,8 +406,7 @@ namespace MyFoodDoc.App.Application.Services
                 throw new ConflictException("PurchaseToken is already used by another user");
 
             var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(subscriptionType, payload.SubscriptionId, payload.PurchaseToken);
-            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.CancelReason == null &&
-                                        ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
                                           validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
                                          || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
                                              validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
