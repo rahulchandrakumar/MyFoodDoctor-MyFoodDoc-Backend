@@ -55,10 +55,10 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
                     {
                         StartDate = response.StartTimeMillis == null
                             ? (DateTime?)null
-                            : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).DateTime,
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).LocalDateTime,
                         ExpirationDate = response.ExpiryTimeMillis == null
                             ? (DateTime?)null
-                            : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).DateTime,
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).LocalDateTime,
                         AutoRenewing = response.AutoRenewing,
                         CancelReason = response.CancelReason,
                         LinkedPurchaseToken = response.LinkedPurchaseToken
@@ -78,7 +78,7 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
                     {
                         PurchaseDate = response.PurchaseTimeMillis == null
                             ? (DateTime?)null
-                            : DateTimeOffset.FromUnixTimeMilliseconds(response.PurchaseTimeMillis.Value).DateTime
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.PurchaseTimeMillis.Value).LocalDateTime
                     };
                 }
             }
