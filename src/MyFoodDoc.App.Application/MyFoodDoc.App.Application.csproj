@@ -6,10 +6,14 @@
 
   <ItemGroup>
     <None Remove="EmailTemplate.html" />
+    <None Remove="Services\DiaryExportEmailTemplate.html" />
+    <None Remove="Services\Logo.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Services\EmailTemplate.html" />
+    <EmbeddedResource Include="Services\CoursesEmailTemplate.html" />
+    <EmbeddedResource Include="Services\DiaryExportEmailTemplate.html" />
+    <EmbeddedResource Include="Services\Logo.png" />
   </ItemGroup>
 
   <ItemGroup>

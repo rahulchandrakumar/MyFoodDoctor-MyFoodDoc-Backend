@@ -5,11 +5,143 @@ using System.Drawing;
 using Spire.Pdf.Graphics;
 using System.IO;
 using System;
+using Spire.Pdf.Grid;
 
 namespace MyFoodDoc.Application.Services
 {
     public class PdfService : IPdfService
     {
+        public byte[] GenerateExport(DiaryExportModel data, Stream logoStream)
+        {
+            PdfDocument doc = new PdfDocument();
+
+            PdfUnitConvertor unitCvtr = new PdfUnitConvertor();
+            PdfMargins margin = new PdfMargins();
+            margin.Top = unitCvtr.ConvertUnits(1.5f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+            margin.Bottom = unitCvtr.ConvertUnits(1.0f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+            margin.Left = unitCvtr.ConvertUnits(1.0f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+            margin.Right = unitCvtr.ConvertUnits(1.0f, PdfGraphicsUnit.Centimeter, PdfGraphicsUnit.Point);
+
+            PdfPageSettings ps = new PdfPageSettings(PdfPageSize.A4, PdfPageOrientation.Landscape);
+            PdfSection section = doc.Sections.Add(ps);
+            section.PageSettings.Margins = margin;
+            PdfNewPage page = section.Pages.Add();
+
+            float y = 15;
+            float x = 5;
+
+            PdfImage image = PdfImage.FromStream(logoStream);
+            page.Canvas.DrawImage(image, 600, 0);
+
+            PdfBrush brush1 = PdfBrushes.Black;
+            PdfFont font1 = new PdfFont(PdfFontFamily.Helvetica, 16f, PdfFontStyle.Bold);
+            PdfStringFormat format1 = new PdfStringFormat(PdfTextAlignment.Left);
+            string title = "Ernährungs - Tagebuch";
+            page.Canvas.DrawString(title, font1, brush1, x, y, format1);
+            y = y + font1.MeasureString(title, format1).Height;
+            PdfFont font2 = new PdfFont(PdfFontFamily.Helvetica, 10f, PdfFontStyle.Bold);
+            page.Canvas.DrawString("erstellt von der myFoodDoctor App", font2, brush1, x, y, format1);
+            
+            y = y + 35;
+            
+            PdfFont font3 = new PdfFont(PdfFontFamily.Helvetica, 9f, PdfFontStyle.Regular);
+            page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font3, brush1, 600, y, format1);
+
+            page.Canvas.DrawRectangle(PdfPens.Black, 600 - 2, y - 2, 160, 14);
+
+            y = y + 20;
+
+            PdfPageTemplateElement footerSpace = new PdfPageTemplateElement(ps.Size.Width, margin.Bottom);
+
+            footerSpace.Foreground = false;
+
+            float x1 = margin.Left;
+            float y1 = 0;
+
+            PdfPen pen = new PdfPen(PdfBrushes.Gray, 1);
+            footerSpace.Graphics.DrawLine(pen, x1, y1, ps.Size.Width - x1, y1);
+
+            y1 = y1 + 20;
+            PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Center);
+            String footerText = "myFoodDoctor GmbH | Unterglinderweg 47a |D-25482 Appen - www.myfooddoctor.de";
+            footerSpace.Graphics.DrawString(footerText, font3, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
+
+            doc.Template.Bottom = footerSpace;
+
+            PdfGrid grid = new PdfGrid();
+            grid.Style.CellPadding = new PdfPaddings(4, 4, 1, 1);
+
+            grid.Columns.Add(10);
+            float width = page.Canvas.ClientSize.Width - (grid.Columns.Count + 1);
+
+            grid.Columns[0].Width = width * 0.05f;
+            grid.Columns[1].Width = width * 0.05f;
+            grid.Columns[2].Width = width * 0.15f;
+            grid.Columns[3].Width = width * 0.05f;
+            grid.Columns[4].Width = width * 0.15f;
+            grid.Columns[5].Width = width * 0.05f;
+            grid.Columns[6].Width = width * 0.15f;
+            grid.Columns[7].Width = width * 0.05f;
+            grid.Columns[8].Width = width * 0.15f;
+            grid.Columns[9].Width = width * 0.15f;
+
+            PdfGridRow row0 = grid.Headers.Add(1)[0];
+
+            float height = 20.0f;
+            row0.Height = height;
+
+            foreach (PdfGridCell cell in row0.Cells)
+                cell.StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+
+            row0.Cells[0].Value = "Datum";
+            row0.Cells[0].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+
+            row0.Cells[1].Value = "Zeit";
+            row0.Cells[1].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+            row0.Cells[1].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+
+            row0.Cells[2].Value = "Frühstück";
+            row0.Cells[2].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+            row0.Cells[2].Style.BackgroundBrush = PdfBrushes.DarkGray;
+
+            row0.Cells[3].Value = "Zeit";
+            row0.Cells[3].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+            row0.Cells[3].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+            
+            row0.Cells[4].Value = "Mittagessen";
+            row0.Cells[4].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+            row0.Cells[4].Style.BackgroundBrush = PdfBrushes.DarkGray;
+
+            row0.Cells[5].Value = "Zeit";
+            row0.Cells[5].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+            row0.Cells[5].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+
+            row0.Cells[6].Value = "Abendessen";
+            row0.Cells[6].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+            row0.Cells[6].Style.BackgroundBrush = PdfBrushes.DarkGray;
+
+            row0.Cells[7].Value = "Zeit";
+            row0.Cells[7].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+            row0.Cells[7].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+
+            row0.Cells[8].Value = "Snacks";
+            row0.Cells[8].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+            row0.Cells[8].Style.BackgroundBrush = PdfBrushes.DarkGray;
+
+            row0.Cells[9].Value = "Tageswerte";
+            row0.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+            row0.Cells[9].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+
+            //TODO: Add data rows
+
+            grid.Draw(page, new PointF(0, y));
+
+            var memoryStream = new MemoryStream();
+            doc.SaveToStream(memoryStream);
+
+            return memoryStream.ToArray();
+        }
+
         public byte[] ReplaceText(byte[] bytes, string oldValue, string newValue)
         {
             if (bytes == null || bytes.Length == 0)

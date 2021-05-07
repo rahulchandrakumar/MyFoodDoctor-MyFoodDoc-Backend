@@ -158,5 +158,15 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok();
         }
+
+        [HttpGet("export")]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Export([FromBody] ExportPayload payload, CancellationToken cancellationToken = default)
+        {
+            await _service.ExportAsync(GetUserId(), payload, cancellationToken);
+
+            return Ok();
+        }
     }
 }

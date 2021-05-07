@@ -9,9 +9,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.FatSecretClient.Abstractions;
@@ -20,6 +18,8 @@ using MyFoodDoc.Application.Configuration;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Enums;
+using System.IO;
+using System.Reflection;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -33,14 +33,24 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
+        private readonly IPdfService _pdfService;
+        private readonly IEmailService _emailService;
         private readonly int _statisticsPeriod;
         private readonly int _statisticsMinimumDays;
 
-        public DiaryService(IApplicationContext context, IMapper mapper, IFatSecretClient fatSecretClient, IOptions<StatisticsOptions> statisticsOptions)
+        public DiaryService(
+            IApplicationContext context, 
+            IMapper mapper, 
+            IFatSecretClient fatSecretClient, 
+            IPdfService pdfService,
+            IEmailService emailService, 
+            IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _mapper = mapper;
             _fatSecretClient = fatSecretClient;
+            _pdfService = pdfService;
+            _emailService = emailService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
@@ -628,6 +638,63 @@ namespace MyFoodDoc.App.Application.Services
             _context.Favourites.Remove(favourite);
 
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task ExportAsync(string userId, ExportPayload payload, CancellationToken cancellationToken)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            Stream logoStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.Logo.png");
+
+            if (logoStream == null)
+            {
+                throw new ArgumentNullException(nameof(logoStream));
+            }
+
+            var data = new DiaryExportModel() { DateFrom = payload.DateFrom, DateTo = payload.DateTo };
+
+            var meals = await _context.Meals
+                    .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
+
+            data.Days = meals.GroupBy(g => g.Date).Select(x => new DiaryExportDayModel { Date = x.Key, Meals = x.Select(y => new DiaryExportMealModel { Time = y.Time, Type = y.Type }).ToList() }).ToList();
+
+            //TODO: fill DiaryExportModel
+
+            var bytes = _pdfService.GenerateExport(data, logoStream);
+
+            Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.DiaryExportEmailTemplate.html");
+
+            if (bodyTemplateStream == null)
+            {
+                throw new ArgumentNullException(nameof(bodyTemplateStream));
+            }
+
+            StreamReader reader = new StreamReader(bodyTemplateStream);
+            string body = reader.ReadToEnd();
+
+            var result = await _emailService.SendEmailAsync(
+                user.Email,
+                "Tagebuchexport",
+                body,
+                new[] {
+                            new Attachment()
+                            {
+                                Content = bytes,
+                                Filename = "Tagebuch.pdf",
+                                Type = "application/pdf"
+                            }
+                });
+
+            if (!result)
+            {
+                throw new Exception($"Unable to send an email to {user.Email}");
+            }
+
         }
     }
 }
