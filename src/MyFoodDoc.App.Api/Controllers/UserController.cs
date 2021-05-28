@@ -55,6 +55,15 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
+        [HttpDelete]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete(CancellationToken cancellationToken = default)
+        {
+            await _service.DeleteUserAsync(GetUserId(), cancellationToken);
+
+            return Ok();
+        }
+
         [HttpPost("anamnesis")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
