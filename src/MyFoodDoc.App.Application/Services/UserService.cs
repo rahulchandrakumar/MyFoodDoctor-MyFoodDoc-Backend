@@ -460,5 +460,26 @@ namespace MyFoodDoc.App.Application.Services
 
             return googlePlayStoreSubscription.IsValid;
         }
+
+        public async Task DeleteUserAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var meals = await _context.Meals
+                .Where(x => x.UserId == userId)
+                .ToListAsync(cancellationToken);
+
+            if (meals.Any())
+                _context.Meals.RemoveRange(meals);
+
+            _context.Users.Remove(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
