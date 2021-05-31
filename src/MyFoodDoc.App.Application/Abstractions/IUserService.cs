@@ -17,6 +17,8 @@ namespace MyFoodDoc.App.Application.Abstractions
 
         Task<UserDto> UpdateUserAsync(string userId, UpdateUserPayload payload, CancellationToken cancellationToken = default);
 
+        Task DeleteUserAsync(string userId, CancellationToken cancellationToken = default);
+
         Task ChangePasswordAsync(string userId, string oldPassword, string newPassword);
 
         Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,

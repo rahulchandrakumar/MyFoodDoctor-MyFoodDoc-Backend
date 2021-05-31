@@ -215,7 +215,7 @@ namespace MyFoodDoc.App.Application.Services
                         bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
                     }
 
-                    Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.EmailTemplate.html");
+                    Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.CoursesEmailTemplate.html");
 
                     if (bodyTemplateStream == null)
                     {

@@ -161,9 +161,11 @@ namespace MyFoodDoc.App.Application.Services
             _context.Users.Update(user);
 
             var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
-            _context.UserIndications.RemoveRange(oldIndications);
+            
+            if (oldIndications.Any())
+                _context.UserIndications.RemoveRange(oldIndications);
 
-            if (payload.Indications != null)
+            if (payload.Indications != null && payload.Indications.Any())
             {
                 var indicationsIds = await _context.Indications
                     .Where(x => payload.Indications.ToArray().Contains(x.Key))
@@ -176,9 +178,11 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
-            _context.UserMotivations.RemoveRange(oldMotivations);
+            
+            if (oldMotivations.Any())
+                _context.UserMotivations.RemoveRange(oldMotivations);
 
-            if (payload.Motivations != null)
+            if (payload.Motivations != null && payload.Motivations.Any())
             {
                 var motivationIds = await _context.Motivations
                     .Where(x => payload.Motivations.ToArray().Contains(x.Key))
@@ -191,25 +195,23 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             var oldDiets = _context.UserDiets.Where(x => x.UserId.Equals(userId));
-            _context.UserDiets.RemoveRange(oldDiets);
+            
+            if (oldDiets.Any())
+                _context.UserDiets.RemoveRange(oldDiets);
 
-            if (payload.Diets != null)
+            if (payload.Diets != null && payload.Diets.Any())
             {
                 var dietIds = await _context.Diets
                     .Where(x => payload.Diets.ToArray().Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userDiets = dietIds.Select(motivationId => new UserDiet { UserId = userId, DietId = motivationId });
+                var userDiets = dietIds.Select(dietId => new UserDiet { UserId = userId, DietId = dietId });
 
                 await _context.UserDiets.AddRangeAsync(userDiets, cancellationToken);
             }
 
             await _context.SaveChangesAsync(cancellationToken);
-
-            //var indications = await GetIndicationsAsync(userId, cancellationToken);
-            //var motivations = await GetMotivationsAsync(userId, cancellationToken);
-            //var diets = await GetDietsAsync(userId, cancellationToken);
 
             return await GetUserAsync(userId, cancellationToken);
         }
@@ -459,6 +461,27 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
 
             return googlePlayStoreSubscription.IsValid;
+        }
+
+        public async Task DeleteUserAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+            if (user == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            var meals = await _context.Meals
+                .Where(x => x.UserId == userId)
+                .ToListAsync(cancellationToken);
+
+            if (meals.Any())
+                _context.Meals.RemoveRange(meals);
+
+            _context.Users.Remove(user);
+
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

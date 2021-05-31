@@ -15,6 +15,8 @@ namespace MyFoodDoc.FirebaseClient.Clients
 {
     public class FirebaseClient : IFirebaseClient
     {
+        private const int MAX_BATCH_SIZE = 500;
+
         private readonly ILogger<FirebaseClient> _logger;
         private FirebaseClientOptions _settings;
 
@@ -61,9 +63,16 @@ namespace MyFoodDoc.FirebaseClient.Clients
             {
                 var messaging = FirebaseMessagingInstance;
 
-                var result = await messaging.SendAllAsync(messages, cancellationToken);
+                var batches = messages.Count / MAX_BATCH_SIZE + (messages.Count % MAX_BATCH_SIZE > 0 ? 1 : 0);
 
-                _logger.LogInformation($"Notifications batch count={messages.Count()}. Success count={result.SuccessCount}, Error count={result.FailureCount}");
+                for (int i = 0; i < batches; i++)
+                {
+                    var batchMessages = messages.Skip(i * MAX_BATCH_SIZE).Take(MAX_BATCH_SIZE);
+
+                    var result = await messaging.SendAllAsync(batchMessages, cancellationToken);
+
+                    _logger.LogInformation($"Notifications batch count={batchMessages.Count()}. Success count={result.SuccessCount}, Error count={result.FailureCount}");
+                }
 
                 return true;
             }
