@@ -23,6 +23,7 @@ namespace MyFoodDoc.App.Application.Services
     public class MethodService : IMethodService
     {
         private const int MAX_METHODS_PER_OPTIMIZATION_AREA = 3;
+        private const int MAX_PARENT_FREQUENCY_METHODS_PER_DAY = 2;
 
         private readonly IApplicationContext _context;
         private readonly IUserService _userService;
@@ -238,32 +239,35 @@ namespace MyFoodDoc.App.Application.Services
 
             if (parentFrequencyMethodsToShow.Any())
             {
-                //New method type
-                Method methodToShow = parentFrequencyMethodsToShow.FirstOrDefault(x => !userMethodShowHistoryForPeriod.Any(y => y.Method.Type == x.Type));
+                //New method types
+                var newMethodsToShow = parentFrequencyMethodsToShow.Where(x => !userMethodShowHistoryForPeriod.Any(y => y.Method.Type == x.Type)).Take(MAX_PARENT_FREQUENCY_METHODS_PER_DAY);
 
-                if (methodToShow == null)
+                foreach (var newMethodToShow in newMethodsToShow)
                 {
-                    //New method
-                    methodToShow =
-                        parentFrequencyMethodsToShow.FirstOrDefault(x =>
-                            !userMethodShowHistoryForPeriod.Any(y => y.MethodId == x.Id));
+                    var methodDto = await GetMethodWithAnswersAsync(userId, newMethodToShow, date, lastUserTarget, userMethods, cancellationToken);
 
-                    if (methodToShow == null)
-                    {
-                        //Less shown method
-                        var methodIdToShow = userMethodShowHistoryForPeriod
+                    result.Add(methodDto);
+                }
+
+                //Less shown methods
+                if (newMethodsToShow.Count() < MAX_PARENT_FREQUENCY_METHODS_PER_DAY)
+                {
+                    var oldMethodIdsToShow = userMethodShowHistoryForPeriod
                             .Where(x => parentFrequencyMethodsToShow.Any(y => y.Id == x.MethodId))
                             .GroupBy(k => k.MethodId)
                             .Select(g => new { MethodId = g.Key, Count = g.Count() })
-                            .OrderBy(x=> x.Count).First().MethodId;
+                            .OrderBy(x => x.Count)
+                            .Take(MAX_PARENT_FREQUENCY_METHODS_PER_DAY - newMethodsToShow.Count())
+                            .Select(x => x.MethodId);
 
-                        methodToShow = parentFrequencyMethodsToShow.First(x => x.Id == methodIdToShow);
+                    foreach (var oldMethodIdToShow in oldMethodIdsToShow)
+                    {
+                        var oldMethodToShow = parentFrequencyMethodsToShow.First(x => x.Id == oldMethodIdToShow);
+                        var methodDto = await GetMethodWithAnswersAsync(userId, oldMethodToShow, date, lastUserTarget, userMethods, cancellationToken);
+
+                        result.Add(methodDto);
                     }
                 }
-
-                var methodDto = await GetMethodWithAnswersAsync(userId, methodToShow, date, lastUserTarget, userMethods, cancellationToken);
-
-                result.Add(methodDto);
             }
 
             if (parentMethodsToShow.Any())
@@ -366,7 +370,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
 
-            if (method.Type == MethodType.Information)
+            if (method.Type == MethodType.EatYourselfHealthy || method.Type == MethodType.Information || method.Type == MethodType.Learning)
             {
                 if (userMethodShowHistory.Any(x => x.MethodId == method.Id && x.Date.ToLocalTime() > date.Subtract(checkPeriod)))
                     return false;
