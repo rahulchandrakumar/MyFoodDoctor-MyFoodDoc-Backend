@@ -24,8 +24,6 @@ namespace MyFoodDoc.Application.Abstractions
 
         public decimal Sugar { get; set; }
 
-        public int MealCount { get; set; }
-
         public int LiquidAmount { get; set; }
 
         public int ExerciseDuration { get; set; }
@@ -39,6 +37,15 @@ namespace MyFoodDoc.Application.Abstractions
 
         public MealType Type { get; set; }
 
-        //TODO: Add meal details
+        public ICollection<DiaryExportMealIngredientModel> Ingredients { get; set; }
+    }
+
+    public class DiaryExportMealIngredientModel
+    {
+        public string FoodName { get; set; }
+
+        public string ServingDescription { get; set; }
+
+        public decimal Amount { get; set; }
     }
 }

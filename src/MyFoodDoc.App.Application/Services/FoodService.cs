@@ -37,6 +37,7 @@ namespace MyFoodDoc.App.Application.Services
             {
                 AnimalProtein = 0,
                 PlantProtein = 0,
+                Calories = 0,
                 Sugar = 0,
                 Vegetables = 0,
                 Meals = 1
@@ -54,6 +55,7 @@ namespace MyFoodDoc.App.Application.Services
                 else
                     result.AnimalProtein += protein;
 
+                result.Calories += (mealIngredient.Ingredient.Calories ?? mealIngredient.Ingredient.CaloriesExternal) * mealIngredient.Amount;
                 result.Sugar += (mealIngredient.Ingredient.Sugar ?? mealIngredient.Ingredient.SugarExternal) * mealIngredient.Amount;
                 result.Vegetables += (mealIngredient.Ingredient.Vegetables ?? 0) * mealIngredient.Amount;
             }
@@ -74,6 +76,7 @@ namespace MyFoodDoc.App.Application.Services
                     else
                         result.AnimalProtein += protein;
 
+                    result.Calories += (favouriteIngredient.Ingredient.Calories ?? favouriteIngredient.Ingredient.CaloriesExternal) * favouriteIngredient.Amount;
                     result.Sugar += (favouriteIngredient.Ingredient.Sugar ?? favouriteIngredient.Ingredient.SugarExternal) * favouriteIngredient.Amount;
                     result.Vegetables += (favouriteIngredient.Ingredient.Vegetables ?? 0) * favouriteIngredient.Amount;
                 }
