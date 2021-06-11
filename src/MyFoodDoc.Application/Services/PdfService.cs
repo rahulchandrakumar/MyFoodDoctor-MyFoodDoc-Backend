@@ -72,6 +72,7 @@ namespace MyFoodDoc.Application.Services
 
             PdfGrid grid = new PdfGrid();
             grid.Style.CellPadding = new PdfPaddings(4, 4, 4, 4);
+            grid.AllowCrossPages = true;
 
             grid.Columns.Add(10);
             float width = page.Canvas.ClientSize.Width - (grid.Columns.Count + 1);
@@ -143,6 +144,8 @@ namespace MyFoodDoc.Application.Services
             row0.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
             row0.Cells[9].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
             row0.Cells[9].Style.Borders.All = new PdfPen(Color.Transparent);
+
+            grid.RepeatHeader = true;
 
             foreach (var day in data.Days)
             {
