@@ -11,6 +11,8 @@ namespace MyFoodDoc.CMS.Models
 
         public string FoodName { get; set; }
 
+        public string BrandName { get; set; }
+
         public long ServingId { get; set; }
 
         public string ServingDescription { get; set; }

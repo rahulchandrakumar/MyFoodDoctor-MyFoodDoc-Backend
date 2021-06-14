@@ -240,7 +240,11 @@ namespace MyFoodDoc.App.Application.Services
             if (parentFrequencyMethodsToShow.Any())
             {
                 //New method types
-                var newMethodsToShow = parentFrequencyMethodsToShow.Where(x => !userMethodShowHistoryForPeriod.Any(y => y.Method.Type == x.Type)).Take(MAX_PARENT_FREQUENCY_METHODS_PER_DAY);
+                var newMethodsToShow = parentFrequencyMethodsToShow.Where(x => !userMethodShowHistoryForPeriod.Any(y => y.MethodId == x.Id))
+                    .GroupBy(g => g.Type)
+                    .Take(MAX_PARENT_FREQUENCY_METHODS_PER_DAY)
+                    .Select(x => x.First())
+                    .ToList();
 
                 foreach (var newMethodToShow in newMethodsToShow)
                 {
@@ -252,18 +256,19 @@ namespace MyFoodDoc.App.Application.Services
                 //Less shown methods
                 if (newMethodsToShow.Count() < MAX_PARENT_FREQUENCY_METHODS_PER_DAY)
                 {
-                    var oldMethodIdsToShow = userMethodShowHistoryForPeriod
-                            .Where(x => parentFrequencyMethodsToShow.Any(y => y.Id == x.MethodId))
+                    var oldMethodsToShow = userMethodShowHistoryForPeriod
+                            .Where(x => parentFrequencyMethodsToShow.Any(y => y.Id == x.MethodId) && !newMethodsToShow.Any(z => z.Type == x.Method.Type))
                             .GroupBy(k => k.MethodId)
-                            .Select(g => new { MethodId = g.Key, Count = g.Count() })
+                            .Select(g => new { Method = g.First(), Count = g.Count() })
+                            .GroupBy(g => g.Method.Method.Type)
+                            .Select(g => g.OrderBy(x => x.Count).First())
                             .OrderBy(x => x.Count)
                             .Take(MAX_PARENT_FREQUENCY_METHODS_PER_DAY - newMethodsToShow.Count())
-                            .Select(x => x.MethodId);
+                            .ToList();
 
-                    foreach (var oldMethodIdToShow in oldMethodIdsToShow)
+                    foreach (var oldMethodToShow in oldMethodsToShow)
                     {
-                        var oldMethodToShow = parentFrequencyMethodsToShow.First(x => x.Id == oldMethodIdToShow);
-                        var methodDto = await GetMethodWithAnswersAsync(userId, oldMethodToShow, date, lastUserTarget, userMethods, cancellationToken);
+                        var methodDto = await GetMethodWithAnswersAsync(userId, oldMethodToShow.Method.Method, date, lastUserTarget, userMethods, cancellationToken);
 
                         result.Add(methodDto);
                     }

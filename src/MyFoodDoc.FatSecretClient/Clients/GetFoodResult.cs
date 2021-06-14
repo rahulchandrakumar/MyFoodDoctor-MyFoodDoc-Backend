@@ -20,6 +20,9 @@ namespace MyFoodDoc.FatSecretClient.Clients
         [JsonProperty("food_name")]
         public string Name { get; set; }
 
+        [JsonProperty("brand_name")]
+        public string BrandName { get; set; }
+
         [JsonProperty("food_type")]
         public string Type { get; set; }
 
