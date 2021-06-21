@@ -8,6 +8,8 @@ namespace MyFoodDoc.App.Application.Models
     {
         public decimal AnimalProtein { get; set; }
 
+        public decimal Calories { get; set; }
+
         public decimal PlantProtein { get; set; }
 
         public decimal Protein => AnimalProtein + PlantProtein;

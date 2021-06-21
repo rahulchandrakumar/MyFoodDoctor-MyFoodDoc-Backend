@@ -33,6 +33,7 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
+        private readonly IFoodService _foodService;
         private readonly IPdfService _pdfService;
         private readonly IEmailService _emailService;
         private readonly int _statisticsPeriod;
@@ -41,7 +42,8 @@ namespace MyFoodDoc.App.Application.Services
         public DiaryService(
             IApplicationContext context, 
             IMapper mapper, 
-            IFatSecretClient fatSecretClient, 
+            IFatSecretClient fatSecretClient,
+            IFoodService foodService,
             IPdfService pdfService,
             IEmailService emailService, 
             IOptions<StatisticsOptions> statisticsOptions)
@@ -49,6 +51,7 @@ namespace MyFoodDoc.App.Application.Services
             _context = context;
             _mapper = mapper;
             _fatSecretClient = fatSecretClient;
+            _foodService = foodService;
             _pdfService = pdfService;
             _emailService = emailService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
@@ -661,9 +664,62 @@ namespace MyFoodDoc.App.Application.Services
             var meals = await _context.Meals
                     .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
 
-            data.Days = meals.GroupBy(g => g.Date).Select(x => new DiaryExportDayModel { Date = x.Key, Meals = x.Select(y => new DiaryExportMealModel { Time = y.Time, Type = y.Type }).ToList() }).ToList();
+            var liquids = await _context.Liquids
+                    .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
 
-            //TODO: fill DiaryExportModel
+            var exercises = await _context.Exercises
+                   .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
+
+            var dates = meals.Select(x => x.Date).Union(liquids.Select(x => x.Date)).Union(exercises.Select(x => x.Date)).OrderBy(x => x);
+
+            data.Days = new List<DiaryExportDayModel>();
+
+            foreach (var date in dates)
+            {
+                var day = new DiaryExportDayModel
+                {
+                    Date = date,
+                    LiquidAmount = liquids.Where(x => x.Date == date).Sum(y => y.Amount),
+                    ExerciseDuration = exercises.Where(x => x.Date == date).Sum(y => y.Duration)
+                };
+
+                var dayMeals = meals.Where(x => x.Date == day.Date);
+
+                day.Calories = 0;
+                day.Protein = 0;
+                day.Sugar = 0;
+                day.Vegetables = 0;
+
+                day.Meals = new List<DiaryExportMealModel>();
+
+                foreach (var dayMeal in dayMeals)
+                {
+                    var mealNutritions = await _foodService.GetMealNutritionsAsync(dayMeal.Id, cancellationToken);
+
+                    day.Calories += mealNutritions.Calories;
+                    day.Protein += mealNutritions.Protein;
+                    day.Sugar += mealNutritions.Sugar;
+                    day.Vegetables += mealNutritions.Vegetables;
+
+                    var meal = new DiaryExportMealModel { Time = dayMeal.Time, Type = dayMeal.Type };
+
+                    meal.Ingredients = new List<DiaryExportMealIngredientModel>();
+
+                    foreach (var mealIngredient in await _context.MealIngredients
+                                                    .Include(x => x.Ingredient)
+                                                    .Where(x => x.MealId == dayMeal.Id)
+                                                    .ToListAsync(cancellationToken))
+                        meal.Ingredients.Add(new DiaryExportMealIngredientModel { 
+                            FoodName = mealIngredient.Ingredient.FoodName,
+                            ServingDescription = mealIngredient.Ingredient.ServingDescription,
+                            Amount = mealIngredient.Amount
+                        });
+
+                    day.Meals.Add(meal);
+                }
+
+                data.Days.Add(day);
+            }
 
             var bytes = _pdfService.GenerateExport(data, logoStream);
 
@@ -694,7 +750,6 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new Exception($"Unable to send an email to {user.Email}");
             }
-
         }
     }
 }

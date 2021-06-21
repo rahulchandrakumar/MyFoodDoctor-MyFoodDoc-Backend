@@ -35,6 +35,7 @@ namespace MyFoodDoc.CMS.Controllers
             {
                 FoodId = food.Id,
                 FoodName = food.Name,
+                BrandName = food.BrandName,
                 ServingId = serving.Id,
                 ServingDescription = serving.Description,
                 MetricServingAmount = serving.MetricServingAmount,

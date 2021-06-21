@@ -6,6 +6,8 @@ using Spire.Pdf.Graphics;
 using System.IO;
 using System;
 using Spire.Pdf.Grid;
+using MyFoodDoc.Application.Enums;
+using System.Linq;
 
 namespace MyFoodDoc.Application.Services
 {
@@ -56,12 +58,12 @@ namespace MyFoodDoc.Application.Services
             footerSpace.Foreground = false;
 
             float x1 = margin.Left;
-            float y1 = 0;
+            float y1 = 5;
 
             PdfPen pen = new PdfPen(PdfBrushes.Gray, 1);
             footerSpace.Graphics.DrawLine(pen, x1, y1, ps.Size.Width - x1, y1);
 
-            y1 = y1 + 20;
+            y1 = y1 + 13;
             PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Center);
             String footerText = "myFoodDoctor GmbH | Unterglinderweg 47a |D-25482 Appen - www.myfooddoctor.de";
             footerSpace.Graphics.DrawString(footerText, font3, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
@@ -69,7 +71,8 @@ namespace MyFoodDoc.Application.Services
             doc.Template.Bottom = footerSpace;
 
             PdfGrid grid = new PdfGrid();
-            grid.Style.CellPadding = new PdfPaddings(4, 4, 1, 1);
+            grid.Style.CellPadding = new PdfPaddings(4, 4, 4, 4);
+            grid.AllowCrossPages = true;
 
             grid.Columns.Add(10);
             float width = page.Canvas.ClientSize.Width - (grid.Columns.Count + 1);
@@ -95,44 +98,153 @@ namespace MyFoodDoc.Application.Services
 
             row0.Cells[0].Value = "Datum";
             row0.Cells[0].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+            row0.Cells[0].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[1].Value = "Zeit";
             row0.Cells[1].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
             row0.Cells[1].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+            row0.Cells[1].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[2].Value = "Frühstück";
             row0.Cells[2].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
             row0.Cells[2].Style.BackgroundBrush = PdfBrushes.DarkGray;
+            row0.Cells[2].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[3].Value = "Zeit";
             row0.Cells[3].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
             row0.Cells[3].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
-            
+            row0.Cells[3].Style.Borders.All = new PdfPen(Color.Transparent);
+
             row0.Cells[4].Value = "Mittagessen";
             row0.Cells[4].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
             row0.Cells[4].Style.BackgroundBrush = PdfBrushes.DarkGray;
+            row0.Cells[4].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[5].Value = "Zeit";
             row0.Cells[5].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
             row0.Cells[5].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+            row0.Cells[5].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[6].Value = "Abendessen";
             row0.Cells[6].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
             row0.Cells[6].Style.BackgroundBrush = PdfBrushes.DarkGray;
+            row0.Cells[6].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[7].Value = "Zeit";
             row0.Cells[7].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
             row0.Cells[7].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+            row0.Cells[7].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[8].Value = "Snacks";
             row0.Cells[8].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
             row0.Cells[8].Style.BackgroundBrush = PdfBrushes.DarkGray;
+            row0.Cells[8].Style.Borders.All = new PdfPen(Color.Transparent);
 
             row0.Cells[9].Value = "Tageswerte";
             row0.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
             row0.Cells[9].Style.BackgroundBrush = PdfBrushes.LightSteelBlue;
+            row0.Cells[9].Style.Borders.All = new PdfPen(Color.Transparent);
 
-            //TODO: Add data rows
+            grid.RepeatHeader = true;
+
+            foreach (var day in data.Days)
+            {
+                PdfGridRow row = grid.Rows.Add();
+
+                row.Cells[0].Value = day.Date.ToString("dd.MM");
+                row.Cells[0].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+                row.Cells[0].Style.BackgroundBrush = PdfBrushes.WhiteSmoke;
+                row.Cells[0].Style.Borders.All = new PdfPen(Color.White, 5);
+
+                row.Cells[1].ColumnSpan = 2;
+                row.Cells[1].Style.BackgroundBrush = PdfBrushes.GhostWhite;
+                row.Cells[1].Style.Borders.Top = new PdfPen(Color.White, 5);
+                row.Cells[1].Style.Borders.Bottom = new PdfPen(Color.White, 5);
+                row.Cells[1].Style.Borders.Left = new PdfPen(Color.White, 5);
+                row.Cells[1].Style.Borders.Right = new PdfPen(Color.White, 5);
+
+                row.Cells[3].ColumnSpan = 2;
+                row.Cells[3].Style.BackgroundBrush = PdfBrushes.GhostWhite;
+                row.Cells[3].Style.Borders.Top = new PdfPen(Color.White, 5);
+                row.Cells[3].Style.Borders.Bottom = new PdfPen(Color.White, 5);
+                row.Cells[3].Style.Borders.Left = new PdfPen(Color.White, 5);
+                row.Cells[3].Style.Borders.Right = new PdfPen(Color.White, 5);
+
+                row.Cells[5].ColumnSpan = 2;
+                row.Cells[5].Style.BackgroundBrush = PdfBrushes.GhostWhite;
+                row.Cells[5].Style.Borders.Top = new PdfPen(Color.White, 5);
+                row.Cells[5].Style.Borders.Bottom = new PdfPen(Color.White, 5);
+                row.Cells[5].Style.Borders.Left = new PdfPen(Color.White, 5);
+                row.Cells[5].Style.Borders.Right = new PdfPen(Color.White, 5);
+
+                row.Cells[7].ColumnSpan = 2;
+                row.Cells[7].Style.BackgroundBrush = PdfBrushes.GhostWhite;
+                row.Cells[7].Style.Borders.Top = new PdfPen(Color.White, 5);
+                row.Cells[7].Style.Borders.Bottom = new PdfPen(Color.White, 5);
+                row.Cells[7].Style.Borders.Left = new PdfPen(Color.White, 5);
+                row.Cells[7].Style.Borders.Right = new PdfPen(Color.White, 5);
+
+                foreach (var mealGroup in day.Meals.GroupBy(g => g.Type))
+                {
+                    PdfGrid embedGrid = new PdfGrid();
+
+                    embedGrid.Columns.Add(2);
+
+                    embedGrid.Columns[0].Width = width * 0.05f;
+                    embedGrid.Columns[1].Width = width * 0.15f;
+
+                    foreach (var meal in mealGroup)
+                    {
+                        PdfGridRow newRow = embedGrid.Rows.Add();
+
+                        newRow.Cells[0].Value = meal.Time.ToString("hh':'mm");
+                        newRow.Cells[0].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
+                        newRow.Cells[0].Style.BackgroundBrush = PdfBrushes.GhostWhite;
+                        newRow.Cells[0].Style.Borders.All = new PdfPen(Color.Transparent);
+
+                        newRow.Cells[1].Value = string.Join('\n', meal.Ingredients.Select(x => $"{x.FoodName}.\n{x.Amount.ToString("G29")} x {x.ServingDescription}"));
+                        newRow.Cells[1].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
+                        newRow.Cells[1].Style.BackgroundBrush = PdfBrushes.GhostWhite;
+                        newRow.Cells[1].Style.Borders.All = new PdfPen(Color.Transparent);
+                    }
+
+                    switch (mealGroup.Key)
+                    {
+                        case MealType.Breakfast:
+
+                            row.Cells[1].Value = embedGrid;
+
+                            break;
+                        case MealType.Lunch:
+
+                            row.Cells[3].Value = embedGrid;
+
+                            break;
+                        case MealType.Dinner:
+
+                            row.Cells[5].Value = embedGrid;
+
+                            break;
+                        case MealType.Snack:
+
+                            row.Cells[7].Value = embedGrid;
+
+                            break;
+                    }
+                }
+
+                string total = $"Kalorien: {day.Calories.ToString("G29")}\n" +
+                                $"Gemüse: {day.Vegetables.ToString("G29")}\n" +
+                                $"Proteine: {day.Protein.ToString("G29")}\n" +
+                                $"Zucker: {day.Sugar.ToString("G29")}\n" +
+                                $"Mahlzeiten: {day.Meals.Count}\n" +
+                                $"Flüssigkeit: {day.LiquidAmount.ToString("G29")} ml\n" +
+                                $"Bewegungsdauer: {day.ExerciseDuration.ToString("G29")} m";
+
+                row.Cells[9].Value = total;
+                row.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
+                row.Cells[9].Style.Borders.All = new PdfPen(Color.White, 5);
+            }
 
             grid.Draw(page, new PointF(0, y));
 

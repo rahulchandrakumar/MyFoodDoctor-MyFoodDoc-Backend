@@ -32,6 +32,11 @@
                               readonly />
             </v-row>
             <v-row>
+                <VeeTextField v-model="item.fatSecretServing.brandName"
+                              label="Brand name"
+                              readonly />
+            </v-row>
+            <v-row>
                 <VeeTextField v-model="item.servingId"
                               :label="mainHeaders.filter(h => h.value == 'servingId')[0].text"
                               readonly />
