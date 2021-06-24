@@ -53,7 +53,8 @@ namespace MyFoodDoc.App.Auth
                     AccessTokenType = AccessTokenType.Reference,
                     RequireClientSecret = false,
                     AllowedScopes = {"myfooddoc_api", IdentityServerConstants.StandardScopes.OfflineAccess},
-                    AccessTokenLifetime = 3600 * 7,
+                    //AccessTokenLifetime = 3600 * 7,
+                    AccessTokenLifetime = 5*60,
                     AllowOfflineAccess = true,
                     RefreshTokenExpiration = TokenExpiration.Absolute,
                     RefreshTokenUsage = TokenUsage.OneTimeOnly
