@@ -19,7 +19,7 @@
                    width="210px" />
         </template>
         <template v-slot:editor="{ item }">
-            <v-row v-if="item.type != 'EatYourselfHealthy' && item.type != 'Learning' && item.type != 'Mood' && item.type != 'Timer'">
+            <v-row v-if="item.type != 'EatYourselfHealthy' && item.type != 'Learning' && item.type != 'Microbiome' && item.type != 'Mood' && item.type != 'Timer'">
                 <VeeImage v-if="item.type == 'Meals' || item.type == 'Knowledge'"
                           v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
@@ -273,7 +273,7 @@
                 this.init(item);
             },
             async beforeSave(item) {
-                if (item.type == MethodType.EATYOURSELFHEALTHY || item.type == MethodType.LEARNING || item.type == MethodType.MOOD || item.type == MethodType.TIMER)
+                if (item.type == MethodType.EATYOURSELFHEALTHY || item.type == MethodType.LEARNING || item.type == MethodType.MICROBIOME || item.type == MethodType.MOOD || item.type == MethodType.TIMER)
                     item.image = null;
                 else if (item.image && item.image.Url && !item.image.Url.startsWith('http'))
                     item.image = Object.assign(item.image, await integration.images.uploadImage(item.image.Url));

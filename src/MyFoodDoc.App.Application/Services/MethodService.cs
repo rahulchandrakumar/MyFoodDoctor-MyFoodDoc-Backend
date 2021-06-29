@@ -375,7 +375,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var checkPeriod = TimeSpan.FromDays(daysInPeriod).Divide(method.Frequency.Value);
 
-            if (method.Type == MethodType.EatYourselfHealthy || method.Type == MethodType.Information || method.Type == MethodType.Learning)
+            if (method.Type == MethodType.EatYourselfHealthy || method.Type == MethodType.Information || method.Type == MethodType.Learning || method.Type == MethodType.Microbiome)
             {
                 if (userMethodShowHistory.Any(x => x.MethodId == method.Id && x.Date.ToLocalTime() > date.Subtract(checkPeriod)))
                     return false;
