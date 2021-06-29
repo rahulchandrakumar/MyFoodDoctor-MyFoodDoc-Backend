@@ -7,6 +7,7 @@
     KNOWLEDGE: "Knowledge",
     LEARNING: "Learning",
     MEALS: "Meals",
+    MICROBIOME: "Microbiome",
     MOOD: "Mood",
     SPORT: "Sport",
     TIMER: "Timer",

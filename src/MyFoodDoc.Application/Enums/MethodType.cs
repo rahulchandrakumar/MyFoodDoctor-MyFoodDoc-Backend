@@ -10,6 +10,7 @@
         Knowledge,
         Learning,
         Meals,
+        Microbiome,
         Mood,
         Sport,
         Timer,
