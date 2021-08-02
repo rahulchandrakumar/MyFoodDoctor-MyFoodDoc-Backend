@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.FatSecretClient.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace MyFoodDoc.Functions

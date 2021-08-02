@@ -28,17 +28,30 @@ namespace MyFoodDoc.AppStoreClient.Clients
 
         public async Task<ReceiptValidationResult> ValidateReceipt(SubscriptionType subscriptionType, string receiptData)
         {
-            var response = await _httpClient.PostAsync(_options.VerifyReceiptUrl, new StringContent(JsonConvert.SerializeObject(new ReceiptValidationRequest(){Password = _options.VerifyReceiptSharedSecret, ExcludeOldTransactions = true, ReceiptData = receiptData}), Encoding.UTF8, "application/json"));
+            var content = await ValidateReceiptEnvironment(receiptData, _options.VerifyReceiptUrl);
 
-            if (!response.IsSuccessStatusCode)
+            if (string.IsNullOrWhiteSpace(content))
             {
-                _logger.LogError(response.StatusCode.ToString());
-                throw new Exception("Failed to call app store validation endpoint.");
+                _logger.LogError("AppStoreClient > ValidateReceipt > No valid response.");
+                throw new Exception("AppStoreClient > ValidateReceipt > No valid response.");
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-
             var result = JsonConvert.DeserializeObject<Rootobject>(content);
+
+            // workAround apple bug 
+            if (result?.status == 21007)
+            {
+                content = await ValidateReceiptEnvironment(receiptData, _options.VerifyReceiptSandBoxUrl);
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    _logger.LogError("AppStoreClient > ValidateReceipt > No valid response.");
+                    throw new Exception("AppStoreClient > ValidateReceipt > No valid response.");
+                }
+
+                result = JsonConvert.DeserializeObject<Rootobject>(content);
+            }
+
 
             if (result == null)
             {
@@ -82,6 +95,26 @@ namespace MyFoodDoc.AppStoreClient.Clients
                 ProductId = latestReceiptInfo.product_id,
                 OriginalTransactionId = latestReceiptInfo.original_transaction_id
             };
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="subscriptionType"></param>
+        /// <param name="receiptData"></param>
+        /// <returns></returns>
+        /// <remarks> <seealso cref="https://developer.apple.com/forums/thread/675893"/> </remarks>
+        public async Task<string> ValidateReceiptEnvironment(string receiptData, string url)
+        {
+            var response = await _httpClient.PostAsync(url, new StringContent(JsonConvert.SerializeObject(new ReceiptValidationRequest() { Password = _options.VerifyReceiptSharedSecret, ExcludeOldTransactions = true, ReceiptData = receiptData }), Encoding.UTF8, "application/json"));
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError(response.StatusCode.ToString());
+                throw new Exception("Failed to call app store validation endpoint.");
+            }
+
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

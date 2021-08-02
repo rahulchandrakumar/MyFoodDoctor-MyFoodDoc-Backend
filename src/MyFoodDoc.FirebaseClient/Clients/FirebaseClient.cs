@@ -57,13 +57,13 @@ namespace MyFoodDoc.FirebaseClient.Clients
                     Body = x.Body
                 },
                 Token = x.DeviceToken
-            }).ToList();
+            });
             
             try
             {
                 var messaging = FirebaseMessagingInstance;
 
-                var batches = messages.Count / MAX_BATCH_SIZE + (messages.Count % MAX_BATCH_SIZE > 0 ? 1 : 0);
+                var batches = messages.Count() / MAX_BATCH_SIZE + (messages.Count() % MAX_BATCH_SIZE > 0 ? 1 : 0);
 
                 for (int i = 0; i < batches; i++)
                 {

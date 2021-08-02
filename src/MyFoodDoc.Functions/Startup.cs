@@ -11,14 +11,14 @@ using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.AppStoreClient;
 using MyFoodDoc.GooglePlayStoreClient;
 using MyFoodDoc.FirebaseClient;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 
-[assembly: WebJobsStartup(typeof(MyFoodDoc.Functions.Startup))]
-
+[assembly: FunctionsStartup(typeof(MyFoodDoc.Functions.Startup))]
 namespace MyFoodDoc.Functions
 {
-    class Startup : IWebJobsStartup
+    public class Startup : FunctionsStartup
     {
-        public void Configure(IWebJobsBuilder builder)
+        public override void Configure(IFunctionsHostBuilder builder)
         {
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Environment.CurrentDirectory)

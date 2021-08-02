@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
@@ -11,6 +6,11 @@ using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.Functions
 {
@@ -44,7 +44,7 @@ namespace MyFoodDoc.Functions
         private async Task AppStoreSubscriptionsSynchronization(ILogger log,
             CancellationToken cancellationToken)
         {
-            var appStoreSubscriptions = await _context.AppStoreSubscriptions.OrderBy(x => x.LastSynchronized).Take(500).ToListAsync(cancellationToken);
+            var appStoreSubscriptions = await _context.AppStoreSubscriptions.OrderBy(x => x.LastSynchronized).Take(400).ToListAsync(cancellationToken);
 
             log.LogInformation($"{appStoreSubscriptions.Count} AppStore subscriptions to update.");
 
@@ -55,7 +55,7 @@ namespace MyFoodDoc.Functions
 
             int errors = 0;
 
-            if (appStoreSubscriptions.Any())
+            if (appStoreSubscriptions?.Any() == true)
             {
                 foreach (var appStoreSubscription in appStoreSubscriptions)
                 {
@@ -111,7 +111,7 @@ namespace MyFoodDoc.Functions
         private async Task GooglePlayStoreSubscriptionsSynchronization(ILogger log,
             CancellationToken cancellationToken)
         {
-            var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions.OrderBy(x => x.LastSynchronized).Take(500).ToListAsync(cancellationToken);
+            var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions.OrderBy(x => x.LastSynchronized).Take(400).ToListAsync(cancellationToken);
 
             log.LogInformation($"{googlePlayStoreSubscriptions.Count} GooglePlayStore subscriptions to update.");
 
