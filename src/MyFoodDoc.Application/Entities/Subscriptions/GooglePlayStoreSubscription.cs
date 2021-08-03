@@ -5,5 +5,7 @@
         public string SubscriptionId { get; set; }
 
         public string PurchaseToken { get; set; }
+
+        public bool IsExpired { get; set; } = false;
     }
 }

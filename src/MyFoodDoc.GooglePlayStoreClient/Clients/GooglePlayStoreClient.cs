@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Google.Apis.AndroidPublisher.v3;
+﻿using Google.Apis.AndroidPublisher.v3;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Microsoft.Extensions.Logging;
@@ -8,7 +6,8 @@ using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
 using Newtonsoft.Json;
-using SendGrid;
+using System;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.GooglePlayStoreClient.Clients
 {
@@ -48,40 +47,21 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
                     purchaseToken
                 );
 
-                try
+                var response = await request.ExecuteAsync();
+
+                return new PurchaseValidationResult()
                 {
-                    var response = await request.ExecuteAsync();
+                    StartDate = response.StartTimeMillis == null
+                        ? (DateTime?)null
+                        : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).LocalDateTime,
+                    ExpirationDate = response.ExpiryTimeMillis == null
+                        ? (DateTime?)null
+                        : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).LocalDateTime,
+                    AutoRenewing = response.AutoRenewing,
+                    CancelReason = response.CancelReason,
+                    LinkedPurchaseToken = response.LinkedPurchaseToken
+                };
 
-                    return new PurchaseValidationResult()
-                    {
-                        StartDate = response.StartTimeMillis == null
-                            ? (DateTime?)null
-                            : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).LocalDateTime,
-                        ExpirationDate = response.ExpiryTimeMillis == null
-                            ? (DateTime?)null
-                            : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).LocalDateTime,
-                        AutoRenewing = response.AutoRenewing,
-                        CancelReason = response.CancelReason,
-                        LinkedPurchaseToken = response.LinkedPurchaseToken
-                    };
-                }
-                catch (Google.GoogleApiException googleEx)
-                {
-                    _logger.LogError(googleEx, "Error GooglePlayStoreClient > ValidatePurchase > Subscriptions validation");
-
-                    if (googleEx.Error.Code == 410) // The subscription purchase is no longer available for query because it has been expired for too long
-                    {
-                        return new PurchaseValidationResult();
-                    }
-
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Error GooglePlayStoreClient > ValidatePurchase > Subscriptions validation");
-
-                    throw;
-                }
             }
             else
             {
@@ -91,34 +71,15 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
                     purchaseToken
                 );
 
-                try
+                var response = await request.ExecuteAsync();
+
+                return new PurchaseValidationResult()
                 {
-                    var response = await request.ExecuteAsync();
+                    PurchaseDate = response.PurchaseTimeMillis == null
+                                    ? (DateTime?)null
+                                    : DateTimeOffset.FromUnixTimeMilliseconds(response.PurchaseTimeMillis.Value).LocalDateTime
+                };
 
-                    return new PurchaseValidationResult()
-                    {
-                        PurchaseDate = response.PurchaseTimeMillis == null
-                                        ? (DateTime?)null
-                                        : DateTimeOffset.FromUnixTimeMilliseconds(response.PurchaseTimeMillis.Value).LocalDateTime
-                    };
-                }
-                catch (Google.GoogleApiException googleEx)
-                {
-                    _logger.LogError(googleEx, "Error GooglePlayStoreClient > ValidatePurchase > Products validation");
-
-                    if (googleEx.Error.Code == 401) // The subscription purchase is no longer available for query because it has been expired for too long
-                    {
-                        return new PurchaseValidationResult();
-                    }
-
-                    throw;
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, "Error GooglePlayStoreClient > ValidatePurchase > Products validation");
-
-                    throw;
-                }
             }
 
         }
