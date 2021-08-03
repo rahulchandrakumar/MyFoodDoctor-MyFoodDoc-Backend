@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,6 +7,11 @@ using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.FirebaseClient.Abstractions;
 using MyFoodDoc.FirebaseClient.Clients;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace MyFoodDoc.Functions
@@ -44,44 +44,35 @@ namespace MyFoodDoc.Functions
 
             var expiredTimers = await _context.UserTimer
                 .Include(x => x.User)
-                .Where(x => x.ExpirationDate <= onDate)
+                .Where(x => x.ExpirationDate <= onDate
+                && x.User.PushNotificationsEnabled
+                && !string.IsNullOrEmpty(x.User.DeviceToken))
                 .ToListAsync(cancellationToken);
 
-            log.LogInformation($"Expired timers: {expiredTimers.Count()}");
+            log.LogInformation(
+                $"Users with push notifications enabled: {expiredTimers?.Count()}");
 
-            if (expiredTimers.Any())
+            if (expiredTimers?.Any() == true)
             {
-                var userTimersWithPushNotificationsEnabled = expiredTimers
-                    .Where(x => x.User.PushNotificationsEnabled && !string.IsNullOrEmpty(x.User.DeviceToken))
-                    .ToList();
-
-                log.LogInformation(
-                    $"Users with push notifications enabled: {userTimersWithPushNotificationsEnabled.Count()}");
-
                 var result = false;
 
-                if (userTimersWithPushNotificationsEnabled.Any())
+                var notifications = expiredTimers.Select(x => new FirebaseNotification()
                 {
-                    var notifications = userTimersWithPushNotificationsEnabled.Select(x => new FirebaseNotification()
-                    {
-                        Body = "Achtung, die Timer-Zeit ist abgelaufen, schau in die App für den nächsten Schritt!",
-                        DeviceToken = x.User.DeviceToken
-                    }).ToList();
+                    Body = "Achtung, die Timer-Zeit ist abgelaufen, schau in die App für den nächsten Schritt!",
+                    DeviceToken = x.User.DeviceToken
+                });
 
-                    log.LogInformation($"Notifications to send: {notifications.Count()}");
+                log.LogInformation($"Notifications to send: {notifications.Count()}");
 
-                    if (notifications.Any())
-                    {
-                        try
-                        {
-                            result = await _firebaseClient.SendAsync(notifications, cancellationToken);
-                        }
-                        catch (Exception e)
-                        {
-                            log.LogError(e.Message + e.StackTrace);
-                        }
-                    }
+                try
+                {
+                    result = await _firebaseClient.SendAsync(notifications, cancellationToken);
                 }
+                catch (Exception e)
+                {
+                    log.LogError(e.Message + e.StackTrace);
+                }
+
 
                 if (result)
                 {
@@ -115,7 +106,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("DiaryPushNotifications")]
         public async Task RunDiaryPushNotificationsAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
@@ -126,7 +117,7 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"Users with push notifications enabled: {usersWithPushNotificationsEnabled.Count()}");
 
-            if (usersWithPushNotificationsEnabled.Any())
+            if (usersWithPushNotificationsEnabled?.Any() == true)
             {
                 var dateToCheck = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
 
