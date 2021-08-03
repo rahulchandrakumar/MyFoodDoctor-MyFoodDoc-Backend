@@ -15,5 +15,7 @@ namespace MyFoodDoc.Application.Entities.Subscriptions
         public bool IsValid { get; set; }
 
         public User User { get; set; }
+
+        public DateTime? FirstSynchronized { get; set; }
     }
 }
