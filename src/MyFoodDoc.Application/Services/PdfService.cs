@@ -71,7 +71,10 @@ namespace MyFoodDoc.Application.Services
 
             doc.Template.Bottom = footerSpace;
 
+            var font4 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
+
             PdfGrid grid = new PdfGrid();
+            grid.Style.Font = font4;
             grid.Style.CellPadding = new PdfPaddings(4, 4, 4, 4);
             grid.AllowCrossPages = true;
 
@@ -91,11 +94,8 @@ namespace MyFoodDoc.Application.Services
 
             PdfGridRow row0 = grid.Headers.Add(1)[0];
 
-            float height = 20.0f;
+            float height = 25.0f;
             row0.Height = height;
-
-            foreach (PdfGridCell cell in row0.Cells)
-                cell.StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
 
             row0.Cells[0].Value = "Datum";
             row0.Cells[0].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
