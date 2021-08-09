@@ -8,11 +8,35 @@ using System;
 using Spire.Pdf.Grid;
 using MyFoodDoc.Application.Enums;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MyFoodDoc.Application.Services
 {
     public class PdfService : IPdfService
     {
+        private static readonly Regex _precompiledRegex = new Regex(@"^100\s?[gG]", RegexOptions.Compiled);
+
+        private string FormatMeal(DiaryExportMealModel meal)
+        {
+            static string FormatIngredient(DiaryExportMealIngredientModel x)
+            {
+                decimal amount = x.Amount;
+                string servingDescription = x.ServingDescription;
+
+                //var r = new Regex(@"^100\s?[gG]", RegexOptions.Compiled);
+
+                if (_precompiledRegex.IsMatch(servingDescription))
+                {
+                    amount *= 100;
+
+                    return $"{x.FoodName}.\n{amount.ToString("G29")}g x 1";
+                }
+                else return $"{x.FoodName}.\n{amount.ToString("G29")} x {servingDescription}";
+            }
+
+            return string.Join('\n', meal.Ingredients.Select(x => FormatIngredient(x)));
+        }
+
         public byte[] GenerateExport(DiaryExportModel data, Stream logoStream)
         {
             PdfDocument doc = new PdfDocument();
@@ -188,6 +212,7 @@ namespace MyFoodDoc.Application.Services
                 foreach (var mealGroup in day.Meals.GroupBy(g => g.Type))
                 {
                     PdfGrid embedGrid = new PdfGrid();
+                    embedGrid.Style.Font = font4;
 
                     embedGrid.Columns.Add(2);
 
@@ -203,7 +228,7 @@ namespace MyFoodDoc.Application.Services
                         newRow.Cells[0].Style.BackgroundBrush = PdfBrushes.GhostWhite;
                         newRow.Cells[0].Style.Borders.All = new PdfPen(Color.Transparent);
 
-                        newRow.Cells[1].Value = string.Join('\n', meal.Ingredients.Select(x => $"{x.FoodName}.\n{x.Amount.ToString("G29")} x {x.ServingDescription}"));
+                        newRow.Cells[1].Value = FormatMeal(meal);
                         newRow.Cells[1].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
                         newRow.Cells[1].Style.BackgroundBrush = PdfBrushes.GhostWhite;
                         newRow.Cells[1].Style.Borders.All = new PdfPen(Color.Transparent);
