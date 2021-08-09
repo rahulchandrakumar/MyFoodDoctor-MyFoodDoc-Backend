@@ -27,7 +27,7 @@ namespace MyFoodDoc.Application.Services
                 {
                     amount *= 100;
 
-                    return $"{x.FoodName}.\n{amount.ToString("G29")}g x 1";
+                    return $"{x.FoodName}.\n{amount.ToString("G29")}g";
                 }
                 else return $"{x.FoodName}.\n{amount.ToString("G29")} x {servingDescription}";
             }
