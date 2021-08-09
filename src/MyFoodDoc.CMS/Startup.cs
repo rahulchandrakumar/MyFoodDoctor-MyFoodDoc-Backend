@@ -182,7 +182,7 @@ namespace MyFoodDoc.CMS
 
                 if (env.EnvironmentName == "VisualStudio")
                 {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8081");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:8080");
                 }
             });
             #endregion

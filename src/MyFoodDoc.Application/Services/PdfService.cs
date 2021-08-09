@@ -8,11 +8,33 @@ using System;
 using Spire.Pdf.Grid;
 using MyFoodDoc.Application.Enums;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MyFoodDoc.Application.Services
 {
     public class PdfService : IPdfService
     {
+        private static readonly Regex _precompiledRegex = new Regex(@"^100\s?[gG]", RegexOptions.Compiled);
+
+        private string FormatMeal(DiaryExportMealModel meal)
+        {
+            static string FormatIngredient(DiaryExportMealIngredientModel x)
+            {
+                decimal amount = x.Amount;
+                string servingDescription = x.ServingDescription;
+
+                if (_precompiledRegex.IsMatch(servingDescription))
+                {
+                    amount *= 100;
+
+                    return $"{x.FoodName}.\n{amount.ToString("G29")}g x 1";
+                }
+                else return $"{x.FoodName}.\n{amount.ToString("G29")} x {servingDescription}";
+            }
+
+            return string.Join('\n', meal.Ingredients.Select(x => FormatIngredient(x)));
+        }
+
         public byte[] GenerateExport(DiaryExportModel data, Stream logoStream)
         {
             PdfDocument doc = new PdfDocument();
@@ -36,17 +58,18 @@ namespace MyFoodDoc.Application.Services
             page.Canvas.DrawImage(image, 600, 0);
 
             PdfBrush brush1 = PdfBrushes.Black;
-            PdfFont font1 = new PdfFont(PdfFontFamily.Helvetica, 16f, PdfFontStyle.Bold);
+            var font1 = new PdfTrueTypeFont("Helvetica", 16f, PdfFontStyle.Bold, true);
+
             PdfStringFormat format1 = new PdfStringFormat(PdfTextAlignment.Left);
             string title = "Ernährungs - Tagebuch";
             page.Canvas.DrawString(title, font1, brush1, x, y, format1);
             y = y + font1.MeasureString(title, format1).Height;
-            PdfFont font2 = new PdfFont(PdfFontFamily.Helvetica, 10f, PdfFontStyle.Bold);
+            var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold, true);
             page.Canvas.DrawString("erstellt von der myFoodDoctor App", font2, brush1, x, y, format1);
             
             y = y + 35;
             
-            PdfFont font3 = new PdfFont(PdfFontFamily.Helvetica, 9f, PdfFontStyle.Regular);
+            var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
             page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font3, brush1, 600, y, format1);
 
             page.Canvas.DrawRectangle(PdfPens.Black, 600 - 2, y - 2, 160, 14);
@@ -70,7 +93,10 @@ namespace MyFoodDoc.Application.Services
 
             doc.Template.Bottom = footerSpace;
 
+            var font4 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
+
             PdfGrid grid = new PdfGrid();
+            grid.Style.Font = font4;
             grid.Style.CellPadding = new PdfPaddings(4, 4, 4, 4);
             grid.AllowCrossPages = true;
 
@@ -90,11 +116,8 @@ namespace MyFoodDoc.Application.Services
 
             PdfGridRow row0 = grid.Headers.Add(1)[0];
 
-            float height = 20.0f;
+            float height = 25.0f;
             row0.Height = height;
-
-            foreach (PdfGridCell cell in row0.Cells)
-                cell.StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
 
             row0.Cells[0].Value = "Datum";
             row0.Cells[0].StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
@@ -187,6 +210,7 @@ namespace MyFoodDoc.Application.Services
                 foreach (var mealGroup in day.Meals.GroupBy(g => g.Type))
                 {
                     PdfGrid embedGrid = new PdfGrid();
+                    embedGrid.Style.Font = font4;
 
                     embedGrid.Columns.Add(2);
 
@@ -202,7 +226,7 @@ namespace MyFoodDoc.Application.Services
                         newRow.Cells[0].Style.BackgroundBrush = PdfBrushes.GhostWhite;
                         newRow.Cells[0].Style.Borders.All = new PdfPen(Color.Transparent);
 
-                        newRow.Cells[1].Value = string.Join('\n', meal.Ingredients.Select(x => $"{x.FoodName}.\n{x.Amount.ToString("G29")} x {x.ServingDescription}"));
+                        newRow.Cells[1].Value = FormatMeal(meal);
                         newRow.Cells[1].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
                         newRow.Cells[1].Style.BackgroundBrush = PdfBrushes.GhostWhite;
                         newRow.Cells[1].Style.Borders.All = new PdfPen(Color.Transparent);
@@ -269,7 +293,7 @@ namespace MyFoodDoc.Application.Services
                 //Creates a brush
                 PdfBrush brush = new PdfSolidBrush(Color.Black);
                 //Defines a font
-                PdfFont font = new PdfFont(PdfFontFamily.Helvetica, 10f, PdfFontStyle.Regular);
+                var font = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Regular, true);
 
                 RectangleF rec;
                 foreach (PdfTextFind find in collection.Finds)
