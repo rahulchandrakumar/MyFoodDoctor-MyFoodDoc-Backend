@@ -23,8 +23,6 @@ namespace MyFoodDoc.Application.Services
                 decimal amount = x.Amount;
                 string servingDescription = x.ServingDescription;
 
-                //var r = new Regex(@"^100\s?[gG]", RegexOptions.Compiled);
-
                 if (_precompiledRegex.IsMatch(servingDescription))
                 {
                     amount *= 100;
