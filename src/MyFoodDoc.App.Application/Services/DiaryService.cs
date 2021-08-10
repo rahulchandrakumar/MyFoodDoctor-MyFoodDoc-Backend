@@ -718,6 +718,11 @@ namespace MyFoodDoc.App.Application.Services
                     day.Meals.Add(meal);
                 }
 
+                day.Calories = Math.Round(day.Calories, 0);
+                day.Protein = Math.Round(day.Protein, 1);
+                day.Sugar = Math.Round(day.Sugar, 1);
+                day.Vegetables = Math.Round(day.Vegetables, 0);
+
                 data.Days.Add(day);
             }
 
