@@ -38,7 +38,12 @@ namespace MyFoodDoc.Functions
             ILogger log,
             CancellationToken cancellationToken)
         {
-            log.LogInformation("TimerPushNotifications. Start");
+            if (myTimer.IsPastDue)
+            {
+                log.LogInformation("Timer is running late!");
+            }
+
+            log.LogInformation($"TimerPushNotifications executed at: {DateTime.Now}");
 
             var onDate = DateTime.Now;
 
@@ -106,12 +111,17 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("DiaryPushNotifications")]
         public async Task RunDiaryPushNotificationsAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
         {
-            log.LogInformation("DiaryPushNotifications. Start");
+            if (myTimer.IsPastDue)
+            {
+                log.LogInformation("Timer is running late!");
+            }
+
+            log.LogInformation($"DiaryPushNotifications executed at: {DateTime.Now}");
 
             var usersWithPushNotificationsEnabled = await _context.Users.Where(x => x.PushNotificationsEnabled && !string.IsNullOrEmpty(x.DeviceToken)).ToListAsync(cancellationToken);
 

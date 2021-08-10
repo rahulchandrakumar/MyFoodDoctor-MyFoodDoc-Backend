@@ -31,6 +31,13 @@ namespace MyFoodDoc.Functions
             ILogger log, 
             CancellationToken cancellationToken)
         {
+            if (myTimer.IsPastDue)
+            {
+                log.LogInformation("Timer is running late!");
+            }
+
+            log.LogInformation($"FatSecretSynchronization executed at: {DateTime.Now}");
+
             var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync(cancellationToken);
 
             log.LogInformation($"{ingredients.Count} ingredients to update.");

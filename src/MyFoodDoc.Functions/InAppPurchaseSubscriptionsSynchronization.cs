@@ -6,7 +6,6 @@ using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
-using MyFoodDoc.GooglePlayStoreClient.Clients;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -157,7 +156,7 @@ namespace MyFoodDoc.Functions
                     }
                     catch (Google.GoogleApiException googleEx)
                     {
-                        log.LogError(googleEx, "Error GooglePlayStoreSubscriptionsSynchronization > Subscriptions validation");
+                        log.LogError(googleEx, $"Error GooglePlayStoreSubscriptionsSynchronization > Validation > type: {googlePlayStoreSubscription.Type} subs: {googlePlayStoreSubscription.SubscriptionId} token: {googlePlayStoreSubscription.PurchaseToken}.  ErrorMessage = {googleEx.Message}");
 
                         if (googleEx.Error.Code == 410) // The subscription purchase is no longer available for query because it has been expired for too long
                         {
