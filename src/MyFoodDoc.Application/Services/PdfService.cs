@@ -263,7 +263,7 @@ namespace MyFoodDoc.Application.Services
                                 $"Zucker: {day.Sugar.ToString("G29")}\n" +
                                 $"Mahlzeiten: {day.Meals.Count}\n" +
                                 $"Flüssigkeit: {day.LiquidAmount.ToString("G29")} ml\n" +
-                                $"Bewegungsdauer: {day.ExerciseDuration.ToString("G29")} m";
+                                $"Bewegungsdauer: {day.ExerciseDuration.ToString("G29")} min";
 
                 row.Cells[9].Value = total;
                 row.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
