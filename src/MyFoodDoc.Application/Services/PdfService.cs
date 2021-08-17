@@ -27,7 +27,7 @@ namespace MyFoodDoc.Application.Services
                 {
                     amount *= 100;
 
-                    return $"{x.FoodName};\n{amount.ToString("G29")} g";
+                    return $"{x.FoodName}:\n{amount.ToString("G29")} g";
                 }
                 else
                 {
@@ -37,7 +37,7 @@ namespace MyFoodDoc.Application.Services
                     {
                         servingDescription = servingDescription.Substring(0, index).TrimEnd();
                     }
-                    return $"{x.FoodName};\n{amount.ToString("G29")} x {servingDescription} ({x.MetricServingAmount.ToString("G29")} {x.MetricServingUnit})";
+                    return $"{x.FoodName}:\n{amount.ToString("G29")} x {servingDescription} ({x.MetricServingAmount.ToString("G29")} {x.MetricServingUnit})";
                 }
             }
 
@@ -83,6 +83,8 @@ namespace MyFoodDoc.Application.Services
 
             page.Canvas.DrawRectangle(PdfPens.Black, 600 - 2, y - 2, 160, 14);
 
+            page.Canvas.DrawString("Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", font3, brush1, x, y, format1);
+
             y = y + 20;
 
             PdfPageTemplateElement footerSpace = new PdfPageTemplateElement(ps.Size.Width, margin.Bottom);
@@ -95,11 +97,10 @@ namespace MyFoodDoc.Application.Services
             PdfPen pen = new PdfPen(PdfBrushes.Gray, 1);
             footerSpace.Graphics.DrawLine(pen, x1, y1, ps.Size.Width - x1, y1);
 
-            var footer_font = new PdfTrueTypeFont("Helvetica", 8f, PdfFontStyle.Regular, true);
-            y1 = y1 + 2;
+            y1 = y1 + 12;
             PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Center);
-            String footerText = "Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.\nmyFoodDoctor GmbH | Unterglinderweg 47a |D-25482 Appen - www.myfooddoctor.de";
-            footerSpace.Graphics.DrawString(footerText, footer_font, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
+            String footerText = "myFoodDoctor GmbH | Unterglinderweg 47a |D-25482 Appen - www.myfooddoctor.de";
+            footerSpace.Graphics.DrawString(footerText, font3, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
 
             doc.Template.Bottom = footerSpace;
 
