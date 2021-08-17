@@ -46,6 +46,12 @@ namespace MyFoodDoc.Application.Abstractions
 
         public string ServingDescription { get; set; }
 
+        public string MeasurementDescription { get; set; }
+
+        public decimal MetricServingAmount { get; set; }
+
+        public string MetricServingUnit { get; set; }
+
         public decimal Amount { get; set; }
     }
 }

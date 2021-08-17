@@ -29,7 +29,16 @@ namespace MyFoodDoc.Application.Services
 
                     return $"{x.FoodName};\n{amount.ToString("G29")} g";
                 }
-                else return $"{x.FoodName};\n{amount.ToString("G29")} x {servingDescription}";
+                else
+                {
+                    servingDescription = x.MeasurementDescription;
+                    int index = x.MeasurementDescription.IndexOf('(');
+                    if (index != -1)
+                    {
+                        servingDescription = servingDescription.Substring(0, index).TrimEnd();
+                    }
+                    return $"{x.FoodName};\n{amount.ToString("G29")} x {servingDescription} ({x.MetricServingAmount.ToString("G29")} {x.MetricServingUnit})";
+                }
             }
 
             return string.Join('\n', meal.Ingredients.Select(x => FormatIngredient(x)));
