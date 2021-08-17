@@ -27,9 +27,18 @@ namespace MyFoodDoc.Application.Services
                 {
                     amount *= 100;
 
-                    return $"{x.FoodName}.\n{amount.ToString("G29")}g";
+                    return $"{x.FoodName}:\n{amount.ToString("G29")} g";
                 }
-                else return $"{x.FoodName}.\n{amount.ToString("G29")} x {servingDescription}";
+                else
+                {
+                    servingDescription = x.MeasurementDescription;
+                    int index = x.MeasurementDescription.IndexOf('(');
+                    if (index != -1)
+                    {
+                        servingDescription = servingDescription.Substring(0, index).TrimEnd();
+                    }
+                    return $"{x.FoodName}:\n{amount.ToString("G29")} x {servingDescription} ({x.MetricServingAmount.ToString("G29")} {x.MetricServingUnit})";
+                }
             }
 
             return string.Join('\n', meal.Ingredients.Select(x => FormatIngredient(x)));
@@ -74,6 +83,8 @@ namespace MyFoodDoc.Application.Services
 
             page.Canvas.DrawRectangle(PdfPens.Black, 600 - 2, y - 2, 160, 14);
 
+            page.Canvas.DrawString("Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", font3, brush1, x, y, format1);
+
             y = y + 20;
 
             PdfPageTemplateElement footerSpace = new PdfPageTemplateElement(ps.Size.Width, margin.Bottom);
@@ -86,7 +97,7 @@ namespace MyFoodDoc.Application.Services
             PdfPen pen = new PdfPen(PdfBrushes.Gray, 1);
             footerSpace.Graphics.DrawLine(pen, x1, y1, ps.Size.Width - x1, y1);
 
-            y1 = y1 + 13;
+            y1 = y1 + 12;
             PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Center);
             String footerText = "myFoodDoctor GmbH | Unterglinderweg 47a |D-25482 Appen - www.myfooddoctor.de";
             footerSpace.Graphics.DrawString(footerText, font3, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
@@ -257,10 +268,10 @@ namespace MyFoodDoc.Application.Services
                     }
                 }
 
-                string total = $"Kalorien: {day.Calories.ToString("G29")}\n" +
-                                $"Gemüse: {day.Vegetables.ToString("G29")}\n" +
-                                $"Proteine: {day.Protein.ToString("G29")}\n" +
-                                $"Zucker: {day.Sugar.ToString("G29")}\n" +
+                string total = $"Kalorien: {day.Calories.ToString("G29")} kcal\n" +
+                                $"Gemüse: {day.Vegetables.ToString("G29")} g\n" +
+                                $"Proteine: {day.Protein.ToString("G29")} g\n" +
+                                $"Zucker: {day.Sugar.ToString("G29")} g\n" +
                                 $"Mahlzeiten: {day.Meals.Count}\n" +
                                 $"Flüssigkeit: {day.LiquidAmount.ToString("G29")} ml\n" +
                                 $"Bewegungsdauer: {day.ExerciseDuration.ToString("G29")} min";

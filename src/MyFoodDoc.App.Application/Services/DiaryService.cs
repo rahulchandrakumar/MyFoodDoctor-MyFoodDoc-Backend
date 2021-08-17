@@ -712,7 +712,10 @@ namespace MyFoodDoc.App.Application.Services
                         meal.Ingredients.Add(new DiaryExportMealIngredientModel { 
                             FoodName = mealIngredient.Ingredient.FoodName,
                             ServingDescription = mealIngredient.Ingredient.ServingDescription,
-                            Amount = mealIngredient.Amount
+                            MeasurementDescription = mealIngredient.Ingredient.MeasurementDescription,
+                            MetricServingAmount = mealIngredient.Ingredient.MetricServingAmount,
+                            MetricServingUnit = mealIngredient.Ingredient.MetricServingUnit,
+                            Amount = mealIngredient.Amount,
                         });
 
                     day.Meals.Add(meal);
