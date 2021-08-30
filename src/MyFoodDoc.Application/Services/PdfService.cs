@@ -75,15 +75,17 @@ namespace MyFoodDoc.Application.Services
             y = y + font1.MeasureString(title, format1).Height;
             var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold, true);
             page.Canvas.DrawString("erstellt von der myFoodDoctor App", font2, brush1, x, y, format1);
-            
-            y = y + 35;
-            
+
+            y = y + 25;
+
             var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
+            page.Canvas.DrawString("Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", font3, brush1, x, y, format1);
+
+            y = y + 18;
+            
             page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font3, brush1, 600, y, format1);
 
-            page.Canvas.DrawRectangle(PdfPens.Black, 600 - 2, y - 2, 160, 14);
-
-            page.Canvas.DrawString("Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", font3, brush1, x, y, format1);
+            page.Canvas.DrawString("Das Wort Portion steht für verschiedene Masseinheiten(Tasse, Löffel, etc.) und kann aus technischen Gründen nur in der Einzahl stehen.", font3, brush1, x, y, format1);
 
             y = y + 20;
 
@@ -104,7 +106,7 @@ namespace MyFoodDoc.Application.Services
 
             doc.Template.Bottom = footerSpace;
 
-            var font4 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
+            var font4 = new PdfTrueTypeFont("Helvetica", 8f, PdfFontStyle.Regular, true);
 
             PdfGrid grid = new PdfGrid();
             grid.Style.Font = font4;
