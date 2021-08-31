@@ -96,6 +96,8 @@ namespace MyFoodDoc.Application.Services
             float x1 = margin.Left;
             float y1 = 5;
 
+            float pageHeight = page.Canvas.ClientSize.Height - margin.Bottom;
+
             PdfPen pen = new PdfPen(PdfBrushes.Gray, 1);
             footerSpace.Graphics.DrawLine(pen, x1, y1, ps.Size.Width - x1, y1);
 
@@ -183,6 +185,8 @@ namespace MyFoodDoc.Application.Services
 
             grid.RepeatHeader = true;
 
+            float rowY = y + row0.Height;
+            PdfGridRow previousRow = null; 
             foreach (var day in data.Days)
             {
                 PdfGridRow row = grid.Rows.Add();
@@ -281,6 +285,29 @@ namespace MyFoodDoc.Application.Services
                 row.Cells[9].Value = total;
                 row.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
                 row.Cells[9].Style.Borders.All = new PdfPen(Color.White, 5);
+
+                if (row.Height + rowY > pageHeight)
+                {
+                    if (previousRow != null)
+                    {
+                        float diff = pageHeight - rowY;
+                        if (diff > 0)
+                        {
+                            previousRow.Height += diff;
+                            rowY = row.Height + row0.Height;
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    rowY += row.Height;
+                }
+
+                previousRow = row;
             }
 
             grid.Draw(page, new PointF(0, y));
