@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +8,10 @@ using Microsoft.Extensions.Hosting;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Infrastructure;
 using IdentityServer4;
+using IdentityServer4.EntityFramework.DbContexts;
+using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyFoodDoc.App.Auth
 {
@@ -21,11 +26,60 @@ namespace MyFoodDoc.App.Auth
             Environment = environment;
         }
 
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
+
+                var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+                context.Database.Migrate();
+                if (!context.Clients.Any())
+                {
+                    foreach (var client in Config.GetClients())
+                    {
+                        context.Clients.Add(client.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.IdentityResources.Any())
+                {
+                    foreach (var resource in Config.GetIdentityResources())
+                    {
+                        context.IdentityResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiResources.Any())
+                {
+                    foreach (var resource in Config.GetApiResources())
+                    {
+                        context.ApiResources.Add(resource.ToEntity());
+                    }
+                    context.SaveChanges();
+                }
+
+                if (!context.ApiScopes.Any())
+                {
+                    foreach (var scope in Config.GetApiScopes())
+                    {
+                        context.ApiScopes.Add(scope.ToEntity());
+                    }
+                    context.SaveChanges();
+
+                }
+            }
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddInfrastructure(Configuration, Environment);
+
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
 
             var builder = services.AddIdentityServer(options =>
             {
@@ -53,10 +107,20 @@ namespace MyFoodDoc.App.Auth
                 options.Endpoints.EnableUserInfoEndpoint = false;
                 */
             })
-            .AddInMemoryIdentityResources(Config.GetIdentityResources())
-            .AddInMemoryApiScopes(Config.GetApiScopes())
-            .AddInMemoryApiResources(Config.GetApiResources())
-            .AddInMemoryClients(Config.GetClients())
+            .AddConfigurationStore(options =>
+            {
+                options.ConfigureDbContext = builder =>
+                    builder.UseSqlServer(connectionString);
+            })
+            .AddOperationalStore(options =>
+            {
+                options.ConfigureDbContext = builder =>
+                    builder.UseSqlServer(connectionString);
+            })
+            //.AddInMemoryIdentityResources(Config.GetIdentityResources())
+            //.AddInMemoryApiScopes(Config.GetApiScopes())
+            //.AddInMemoryApiResources(Config.GetApiResources())
+            //.AddInMemoryClients(Config.GetClients())
             .AddAspNetIdentity<User>();
 
             //TODO: Use builder.AddSigningCredential for Staging and Production
@@ -79,6 +143,8 @@ namespace MyFoodDoc.App.Auth
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            InitializeDatabase(app);
+
             /*
             var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
             
