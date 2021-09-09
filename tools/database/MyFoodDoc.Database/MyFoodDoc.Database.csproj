@@ -33,16 +33,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="IdentityServer4.EntityFramework" Version="4.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.18" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.18" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.18" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.18" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />

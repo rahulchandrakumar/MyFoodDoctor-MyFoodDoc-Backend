@@ -44,6 +44,15 @@ namespace MyFoodDoc.Application.Services
             return string.Join('\n', meal.Ingredients.Select(x => FormatIngredient(x)));
         }
 
+        private float drawTextAndMoveDown(PdfNewPage page, PdfTrueTypeFont font, PdfBrush brush, string s, float x, float y, PdfStringFormat format)
+        {
+            page.Canvas.DrawString(s, font, brush, x, y, format);
+
+            y += font.MeasureString(s, format).Height;
+
+            return y;
+        }
+
         public byte[] GenerateExport(DiaryExportModel data, Stream logoStream)
         {
             PdfDocument doc = new PdfDocument();
@@ -68,24 +77,25 @@ namespace MyFoodDoc.Application.Services
 
             PdfBrush brush1 = PdfBrushes.Black;
             var font1 = new PdfTrueTypeFont("Helvetica", 16f, PdfFontStyle.Bold, true);
+            var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold, true);
+            var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
+            var font4 = new PdfTrueTypeFont("Helvetica", 8f, PdfFontStyle.Regular, true);
 
             PdfStringFormat format1 = new PdfStringFormat(PdfTextAlignment.Left);
+
             string title = "Ernährungs - Tagebuch";
-            page.Canvas.DrawString(title, font1, brush1, x, y, format1);
-            y = y + font1.MeasureString(title, format1).Height;
-            var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold, true);
-            page.Canvas.DrawString("erstellt von der myFoodDoctor App", font2, brush1, x, y, format1);
+            y = drawTextAndMoveDown(page, font1, brush1, title, x, y, format1);
+
+            y = drawTextAndMoveDown(page, font2, brush1, "erstellt von der myFoodDoctor App", x, y, format1) + 5;
+
+            y = drawTextAndMoveDown(page, font4, brush1, "Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", x, y, format1) + 5;
             
-            y = y + 35;
-            
-            var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
-            page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font3, brush1, 600, y, format1);
+            page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font4, brush1, 600, y, format1);
 
-            page.Canvas.DrawRectangle(PdfPens.Black, 600 - 2, y - 2, 160, 14);
+            y = drawTextAndMoveDown(page, font4, brush1, "Das Wort Portion steht für verschiedene Masseinheiten(Tasse, Löffel, etc.)", x, y, format1);
+            y = drawTextAndMoveDown(page, font4, brush1, "und kann aus technischen Gründen nur in der Einzahl stehen.", x, y, format1);
 
-            page.Canvas.DrawString("Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", font3, brush1, x, y, format1);
-
-            y = y + 20;
+            y = y + 10;
 
             PdfPageTemplateElement footerSpace = new PdfPageTemplateElement(ps.Size.Width, margin.Bottom);
 
@@ -94,17 +104,18 @@ namespace MyFoodDoc.Application.Services
             float x1 = margin.Left;
             float y1 = 5;
 
+            float pageHeight = page.Canvas.ClientSize.Height - margin.Bottom;
+
             PdfPen pen = new PdfPen(PdfBrushes.Gray, 1);
             footerSpace.Graphics.DrawLine(pen, x1, y1, ps.Size.Width - x1, y1);
 
             y1 = y1 + 12;
             PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Center);
-            String footerText = "myFoodDoctor GmbH | Unterglinderweg 47a |D-25482 Appen - www.myfooddoctor.de";
+            String footerText = "myFoodDoctor GmbH - www.myfooddoctor.de";
             footerSpace.Graphics.DrawString(footerText, font3, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
 
             doc.Template.Bottom = footerSpace;
 
-            var font4 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
 
             PdfGrid grid = new PdfGrid();
             grid.Style.Font = font4;
@@ -181,6 +192,8 @@ namespace MyFoodDoc.Application.Services
 
             grid.RepeatHeader = true;
 
+            float rowY = y + row0.Height;
+            PdfGridRow previousRow = null; 
             foreach (var day in data.Days)
             {
                 PdfGridRow row = grid.Rows.Add();
@@ -279,6 +292,29 @@ namespace MyFoodDoc.Application.Services
                 row.Cells[9].Value = total;
                 row.Cells[9].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Top);
                 row.Cells[9].Style.Borders.All = new PdfPen(Color.White, 5);
+
+                if (row.Height + rowY > pageHeight)
+                {
+                    if (previousRow != null)
+                    {
+                        float diff = pageHeight - rowY;
+                        if (diff > 0)
+                        {
+                            previousRow.Height += diff;
+                            rowY = row.Height + row0.Height;
+                        }
+                        else
+                        {
+                            
+                        }
+                    }
+                }
+                else
+                {
+                    rowY += row.Height;
+                }
+
+                previousRow = row;
             }
 
             grid.Draw(page, new PointF(0, y));
