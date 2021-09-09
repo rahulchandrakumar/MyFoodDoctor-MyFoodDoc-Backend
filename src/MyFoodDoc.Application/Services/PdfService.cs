@@ -88,9 +88,9 @@ namespace MyFoodDoc.Application.Services
 
             y = drawTextAndMoveDown(page, font2, brush1, "erstellt von der myFoodDoctor App", x, y, format1) + 5;
 
-            y = drawTextAndMoveDown(page, font3, brush1, "Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", x, y, format1) + 5;
+            y = drawTextAndMoveDown(page, font4, brush1, "Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", x, y, format1) + 5;
             
-            page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font3, brush1, 600, y, format1);
+            page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font4, brush1, 600, y, format1);
 
             y = drawTextAndMoveDown(page, font4, brush1, "Das Wort Portion steht für verschiedene Masseinheiten(Tasse, Löffel, etc.)", x, y, format1);
             y = drawTextAndMoveDown(page, font4, brush1, "und kann aus technischen Gründen nur in der Einzahl stehen.", x, y, format1);
