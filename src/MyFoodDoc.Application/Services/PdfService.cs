@@ -92,7 +92,7 @@ namespace MyFoodDoc.Application.Services
             
             page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font4, brush1, 600, y, format1);
 
-            y = drawTextAndMoveDown(page, font4, brush1, "Das Wort Portion steht für verschiedene Masseinheiten (Tasse, Löffel, etc.)", x, y, format1);
+            y = drawTextAndMoveDown(page, font4, brush1, "Das Wort Portion steht für verschiedene Maßeinheiten (Tasse, Löffel, etc.)", x, y, format1);
             y = drawTextAndMoveDown(page, font4, brush1, "und kann aus technischen Gründen nur in der Einzahl stehen.", x, y, format1);
 
             y = y + 10;
