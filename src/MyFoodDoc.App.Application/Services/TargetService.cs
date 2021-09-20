@@ -25,6 +25,8 @@ namespace MyFoodDoc.App.Application.Services
         private readonly int _statisticsPeriod;
         private readonly int _statisticsMinimumDays;
 
+        public const string VEGAN_DIET = "vegan";
+
         public TargetService(IApplicationContext context, IFoodService foodService, IDiaryService diaryService, IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
@@ -214,6 +216,7 @@ namespace MyFoodDoc.App.Application.Services
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
+            bool isVegan = await _diaryService.CheckDiet(user.Id, VEGAN_DIET, cancellationToken);
             foreach (var userTarget in userTargets)
             {
                 var target = await _context.Targets.Include(x => x.OptimizationArea)
@@ -445,7 +448,8 @@ namespace MyFoodDoc.App.Application.Services
 
                         var totalProtein = dailyUserIngredients.Sum(x => x.Value.Protein);
 
-                        if (totalProtein > 0)
+                        // MFD-1496 : if the user has vegan Diet the array with the optimization MUST NOT have the piechart info 
+                        if (totalProtein > 0 && !isVegan)
                         {
                             analysisDto.PieChart = new AnalysisPieChartDto();
                             
