@@ -719,6 +719,27 @@ namespace MyFoodDoc.App.Application.Services
                             Amount = mealIngredient.Amount,
                         });
 
+                    foreach (var mealFavourite in await _context.MealFavourites
+                                                    .Include(x => x.Favourite)
+                                                    .ThenInclude(x => x.Ingredients)
+                                                    .ThenInclude(x => x.Ingredient)
+                                                    .Where(x => x.MealId == dayMeal.Id)
+                                                    .ToArrayAsync(cancellationToken))
+                    {
+                        foreach (var mealFavouriteIngredient in mealFavourite.Favourite.Ingredients)
+                        {
+                            meal.Ingredients.Add(new DiaryExportMealIngredientModel
+                            {
+                                FoodName = mealFavouriteIngredient.Ingredient.FoodName,
+                                ServingDescription = mealFavouriteIngredient.Ingredient.ServingDescription,
+                                MeasurementDescription = mealFavouriteIngredient.Ingredient.MeasurementDescription,
+                                MetricServingAmount = mealFavouriteIngredient.Ingredient.MetricServingAmount,
+                                MetricServingUnit = mealFavouriteIngredient.Ingredient.MetricServingUnit,
+                                Amount = mealFavouriteIngredient.Amount,
+                            });
+                        }
+                    }
+
                     day.Meals.Add(meal);
                 }
 
