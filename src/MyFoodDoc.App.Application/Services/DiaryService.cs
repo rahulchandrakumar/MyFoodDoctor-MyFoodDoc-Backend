@@ -20,6 +20,7 @@ using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Enums;
 using System.IO;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -718,6 +719,27 @@ namespace MyFoodDoc.App.Application.Services
                             Amount = mealIngredient.Amount,
                         });
 
+                    foreach (var mealFavourite in await _context.MealFavourites
+                                                    .Include(x => x.Favourite)
+                                                    .ThenInclude(x => x.Ingredients)
+                                                    .ThenInclude(x => x.Ingredient)
+                                                    .Where(x => x.MealId == dayMeal.Id)
+                                                    .ToArrayAsync(cancellationToken))
+                    {
+                        foreach (var mealFavouriteIngredient in mealFavourite.Favourite.Ingredients)
+                        {
+                            meal.Ingredients.Add(new DiaryExportMealIngredientModel
+                            {
+                                FoodName = mealFavouriteIngredient.Ingredient.FoodName,
+                                ServingDescription = mealFavouriteIngredient.Ingredient.ServingDescription,
+                                MeasurementDescription = mealFavouriteIngredient.Ingredient.MeasurementDescription,
+                                MetricServingAmount = mealFavouriteIngredient.Ingredient.MetricServingAmount,
+                                MetricServingUnit = mealFavouriteIngredient.Ingredient.MetricServingUnit,
+                                Amount = mealFavouriteIngredient.Amount,
+                            });
+                        }
+                    }
+
                     day.Meals.Add(meal);
                 }
 
@@ -758,6 +780,26 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new Exception($"Unable to send an email to {user.Email}");
             }
+        }
+
+        public async Task<bool> CheckDiet(string userId, string dietKey, CancellationToken cancellationToken)
+        {
+            if (userId == null)
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+            if (dietKey == null)
+            {
+                throw new ArgumentNullException(nameof(dietKey));
+            }
+
+            var query =
+                from userDiet in _context.UserDiets
+                join diet in _context.Diets on userDiet.DietId equals diet.Id
+                where userDiet.UserId == userId && diet.Key == dietKey
+                select diet.Id;
+
+            return await query.AnyAsync(cancellationToken);
         }
     }
 }

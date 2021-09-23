@@ -27,5 +27,6 @@ namespace MyFoodDoc.App.Application.Abstractions
         Task RemoveFavouriteAsync(string userId, int id, CancellationToken cancellationToken);
         decimal GetCorrectedWeight(decimal height, decimal weight);
         Task ExportAsync(string userId, ExportPayload payload, CancellationToken cancellationToken);
-    }
+        Task<bool> CheckDiet(string userId, string dietKey, CancellationToken cancellationToken);
+    }   
 }
