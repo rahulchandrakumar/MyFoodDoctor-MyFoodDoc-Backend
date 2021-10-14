@@ -183,6 +183,7 @@ namespace MyFoodDoc.App.Application.Services
             if (userCourses.All(x => x.CompletedChaptersCount == x.ChaptersCount))
             {
                 bool sendEmail = false;
+                var purchaseDate = DateTime.MinValue;
 
                 var appStoreZPPSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == SubscriptionType.ZPP, cancellationToken);
 
@@ -190,6 +191,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(SubscriptionType.ZPP, appStoreZPPSubscription.ReceiptData);
                     sendEmail = validateReceiptValidationResult.PurchaseDate.Value.AddMonths(6) > DateTime.Now;
+                    purchaseDate = validateReceiptValidationResult.PurchaseDate.Value;
                 }
                 else
                 {
@@ -199,6 +201,7 @@ namespace MyFoodDoc.App.Application.Services
                     {
                         var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(SubscriptionType.ZPP, googlePlayStoreZPPSubscription.SubscriptionId, googlePlayStoreZPPSubscription.PurchaseToken);
                         sendEmail = validateReceiptValidationResult.PurchaseDate.Value.AddMonths(6) > DateTime.Now;
+                        purchaseDate = validateReceiptValidationResult.PurchaseDate.Value;
                     }
                 }
 
@@ -212,7 +215,12 @@ namespace MyFoodDoc.App.Application.Services
                     {
                         var template = client.DownloadData(_templateUrl);
 
-                        bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", DateTime.Now.ToString("dd.MM.yyyy"));
+                        var endDateText = DateTime.Now.ToString("dd.MM.yyyy");
+                        var purchaseDateText = purchaseDate.ToString("dd.MM.yyyy");
+
+                        bytes = _pdfService.ReplaceText(template, "xx.mm.yyyy", endDateText);
+                        bytes = _pdfService.ReplaceText(bytes, "xx-von.mm.yyyy", purchaseDateText);
+                        bytes = _pdfService.ReplaceText(bytes, "xx-bis.mm.yyyy", endDateText);
                     }
 
                     Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.CoursesEmailTemplate.html");
