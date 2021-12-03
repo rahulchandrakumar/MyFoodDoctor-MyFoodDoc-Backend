@@ -33,7 +33,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("TimerPushNotifications")]
         public async Task RunTimerPushNotificationsAsync(
-            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
+            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
