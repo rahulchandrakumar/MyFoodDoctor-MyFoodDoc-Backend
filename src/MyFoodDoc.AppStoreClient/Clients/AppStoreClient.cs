@@ -39,7 +39,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
             var result = JsonConvert.DeserializeObject<Rootobject>(content);
 
             // workAround apple bug 
-            if (result?.status == 21007)
+            if (result?.status == 21007 || result?.status == 21008)
             {
                 content = await ValidateReceiptEnvironment(receiptData, _options.VerifyReceiptSandBoxUrl);
 
