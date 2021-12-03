@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -39,7 +40,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
             var result = JsonConvert.DeserializeObject<Rootobject>(content);
 
             // workAround apple bug 
-            if (result?.status == 21007 || result?.status == 21008)
+            if (result != null && new List<int>{ 21003, 21007, 21008}.Contains(result.status))
             {
                 content = await ValidateReceiptEnvironment(receiptData, _options.VerifyReceiptSandBoxUrl);
 
