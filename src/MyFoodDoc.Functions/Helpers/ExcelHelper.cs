@@ -25,6 +25,7 @@ namespace MyFoodDoc.Core
 
                 var cell0 = row.CreateCell(0);
                 cell0.CellStyle.ShrinkToFit = true;
+                cell0.SetCellValue(caption);
 
                 row.CreateCell(1).SetCellValue(count);
             }
