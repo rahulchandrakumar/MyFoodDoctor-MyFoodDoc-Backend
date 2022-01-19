@@ -8,6 +8,8 @@ namespace MyFoodDoc.Application.Abstractions
     public interface IEmailService
     {
         Task<bool> SendEmailAsync(string email, string subject, string body, Attachment[] attachments = null);
+
+        Task SendEmailToMultipleUsersAsync(string emailList, string subject, string body, Abstractions.Attachment[] attachments = null);
     }
 
     public class Attachment

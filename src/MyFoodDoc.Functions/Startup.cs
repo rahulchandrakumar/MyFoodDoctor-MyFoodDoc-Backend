@@ -12,6 +12,8 @@ using MyFoodDoc.AppStoreClient;
 using MyFoodDoc.GooglePlayStoreClient;
 using MyFoodDoc.FirebaseClient;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using MyFoodDoc.Functions.Abstractions;
+using MyFoodDoc.Functions.Services;
 
 [assembly: FunctionsStartup(typeof(MyFoodDoc.Functions.Startup))]
 namespace MyFoodDoc.Functions
@@ -29,6 +31,7 @@ namespace MyFoodDoc.Functions
                 .Build();
 
             builder.Services.AddSingleton<IConfiguration>(configuration);
+            builder.Services.AddTransient<IUserStatsService, UserStatsService>();
 
             builder.Services.AddSharedInfrastructure(configuration, null);
             builder.Services.AddSharedApplication(configuration);

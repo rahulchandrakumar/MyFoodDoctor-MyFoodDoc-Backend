@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,13 @@ namespace MyFoodDoc.Application.Services
         {
             _options = options.Value;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task SendEmailToMultipleUsersAsync(string emailList, string subject, string body, Abstractions.Attachment[] attachments = null)
+        {
+            var tasks = emailList.Split(',').Select(x => SendEmailAsync(x, subject, body, attachments));
+
+            await Task.WhenAll(tasks);
         }
 
         public async Task<bool> SendEmailAsync(string email, string subject, string body, Abstractions.Attachment[] attachments = null)
