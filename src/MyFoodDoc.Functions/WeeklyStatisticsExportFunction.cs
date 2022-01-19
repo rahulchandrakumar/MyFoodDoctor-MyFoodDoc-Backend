@@ -31,7 +31,7 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("WeeklyStatisticsExport")]
         public async Task RunAsync(
-            [TimerTrigger("0 10 0 * * MON", RunOnStartup = true)]
+            [TimerTrigger("0 10 0 * * MON", RunOnStartup = false)]
             TimerInfo myTimer,
             ILogger log)
         {
