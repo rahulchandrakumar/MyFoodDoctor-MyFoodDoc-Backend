@@ -23,7 +23,9 @@ namespace MyFoodDoc.Core
             {
                 IRow row = excelSheet.CreateRow(index);
 
-                row.CreateCell(0).SetCellValue(caption);
+                var cell0 = row.CreateCell(0);
+                cell0.CellStyle.ShrinkToFit = true;
+
                 row.CreateCell(1).SetCellValue(count);
             }
 
@@ -60,7 +62,7 @@ namespace MyFoodDoc.Core
             AddSubscriptionRow(excelSheet1, 1, "AppStore", data.AppleStats);
             AddSubscriptionRow(excelSheet1, 2, "Google", data.GoogleStats);
 
-            AddCounterRow(excelSheet2, 0, "at least one call per week was done", data.ActiveUsers);
+            AddCounterRow(excelSheet2, 0, "at least one meal was added over the last week", data.ActiveUsers);
 
             workbook.Write(memoryStream);
 
