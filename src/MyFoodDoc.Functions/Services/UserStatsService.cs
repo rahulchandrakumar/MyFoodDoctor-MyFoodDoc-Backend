@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Models;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Functions.Abstractions;
 using System;
 using System.Collections.Generic;
@@ -102,9 +102,9 @@ namespace MyFoodDoc.Functions.Services
 
         internal async Task<int> GetActiveUsersAsync(CancellationToken cancellationToken)
         {
-            var users = await _context.Meals.Where(x => x.Created > DateTime.Now.AddDays(-7)).Select(c => c.UserId).Distinct().ToListAsync(cancellationToken);
+            var counter = await _context.Meals.Where(x => x.Created > DateTime.Now.AddDays(-7)).Select(c => c.UserId).Distinct().CountAsync(cancellationToken);
 
-            return users.Count;
+            return counter;
         }
 
         public async Task<UserStatsDto> GetUserStatsAsync(CancellationToken cancellationToken)

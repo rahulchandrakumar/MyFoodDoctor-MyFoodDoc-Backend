@@ -1,4 +1,4 @@
-﻿using MyFoodDoc.Application.Models;
+﻿using MyFoodDoc.Application.Entities;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;

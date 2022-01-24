@@ -52,29 +52,42 @@ namespace MyFoodDoc.Functions
             var data = await _userStatsService.GetUserStatsAsync();
             var bytes = ExcelHelper.CreateExcelFile(data, true);
 
-            Stream bodyTemplateStream = Assembly.GetExecutingAssembly().
-                GetManifestResourceStream($"{this.GetType().Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html");
-
-            if (bodyTemplateStream == null)
+            using (Stream bodyTemplateStream = Assembly.GetExecutingAssembly().
+                    GetManifestResourceStream($"{this.GetType().Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
             {
-                throw new ArgumentNullException(nameof(bodyTemplateStream));
-            }
+                if (bodyTemplateStream == null)
+                {
+                    throw new ArgumentNullException(nameof(bodyTemplateStream));
+                }
 
-            StreamReader reader = new StreamReader(bodyTemplateStream);
-            string body = String.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
+                StreamReader reader = new StreamReader(bodyTemplateStream);
+                string body = String.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
 
-            await _emailService.SendEmailToMultipleUsersAsync(
-                _settings.EmailList,
-                "Weekly export sheet",
-                body,
-                new[] {
+                string[] list = _settings.EmailList.Split(',');
+
+                string mainEmail = list[0];
+                string[] bccEmailList = null;
+                if (list.Length > 1)
+                {
+                    bccEmailList = new string[list.Length - 1];
+                    Array.Copy(list, 1, bccEmailList, 0, list.Length - 1);
+                }
+
+                await _emailService.SendEmailAsync(
+                    mainEmail,
+                    bccEmailList,
+                    "Weekly export sheet",
+                    body,
+                    new[] {
                             new Attachment()
                             {
                                 Content = bytes,
                                 Filename = $"Statistics {currentDate.ToString("MMMM yyyy", new CultureInfo("de"))}. Stand {currentDate:dd-MM-yyyy HH-mm}.xlsx",
                                 Type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                             }
-                });
+                    });
+            }
+
         }
     }
 }

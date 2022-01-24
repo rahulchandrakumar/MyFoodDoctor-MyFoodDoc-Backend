@@ -10,6 +10,7 @@ using MyFoodDoc.Application.Services;
 using MyFoodDoc.AppStoreClient;
 using MyFoodDoc.FatSecretClient;
 using MyFoodDoc.GooglePlayStoreClient;
+using SendGrid;
 using System.Reflection;
 
 namespace MyFoodDoc.App.Application
@@ -36,6 +37,10 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IMethodService, MethodService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserHistoryService, UserHistoryService>();
+
+            services.AddScoped<ISendGridClient>(client =>
+                new SendGridClient(configuration.GetSection("EmailService").Get<EmailServiceOptions>().SendGridApiKey));
+
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPsychogrammService, PsychogrammService>();
             services.AddScoped<IPdfService, PdfService>();

@@ -765,6 +765,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var result = await _emailService.SendEmailAsync(
                 user.Email,
+                null,
                 "Tagebuchexport",
                 body,
                 new[] {

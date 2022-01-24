@@ -16,25 +16,19 @@ namespace MyFoodDoc.Application.Services
     {
         private readonly EmailServiceOptions _options;
         private readonly ILogger<EmailService> _logger;
+        private readonly ISendGridClient _sendGridClient;
 
         public EmailService(IOptions<EmailServiceOptions> options,
+            ISendGridClient sendGridClient,
             ILogger<EmailService> logger)
         {
             _options = options.Value;
+            _sendGridClient = sendGridClient;
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task SendEmailToMultipleUsersAsync(string emailList, string subject, string body, Abstractions.Attachment[] attachments = null)
+        public async Task<bool> SendEmailAsync(string email, string[] bccEmails, string subject, string body, Abstractions.Attachment[] attachments = null)
         {
-            var tasks = emailList.Split(',').Select(x => SendEmailAsync(x, subject, body, attachments));
-
-            await Task.WhenAll(tasks);
-        }
-
-        public async Task<bool> SendEmailAsync(string email, string subject, string body, Abstractions.Attachment[] attachments = null)
-        {
-            var sendGridClient = new SendGridClient(_options.SendGridApiKey);
-
             // Configure email
             var sendGridMail = new SendGridMessage
             {
@@ -48,6 +42,14 @@ namespace MyFoodDoc.Application.Services
                 PlainTextContent = body,
                 HtmlContent = body
             };
+
+            if (bccEmails != null)
+            {
+                foreach (var bcc in bccEmails)
+                {
+                    sendGridMail.AddBcc(bcc);
+                }
+            }
 
             if (attachments != null)
             {
@@ -67,7 +69,7 @@ namespace MyFoodDoc.Application.Services
             }
 
             // Send email
-            Response response = await sendGridClient.SendEmailAsync(sendGridMail);
+            Response response = await _sendGridClient.SendEmailAsync(sendGridMail);
 
             // Process response
             using (var streamReader = new StreamReader(await response.Body.ReadAsStreamAsync()))

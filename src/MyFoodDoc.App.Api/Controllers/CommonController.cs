@@ -59,7 +59,7 @@ namespace MyFoodDoc.App.Api.Controllers
                             "Für Rückfragen wende dich an support@myfooddoctor.de. Wir helfen dir gerne!<br/><br/>" +
                             "Herzliche Grüße<br/><br/>" + "Dr. Matthias Riedl und das myFoodDoctor-Team";
 
-            var result = await _emailService.SendEmailAsync(payload.Email, "Willkommen bei myFoodDoctor – deiner Ernährungscoaching-App", emailBody);
+            var result = await _emailService.SendEmailAsync(payload.Email, null, "Willkommen bei myFoodDoctor – deiner Ernährungscoaching-App", emailBody);
 
             if (!result)
             {
@@ -85,7 +85,7 @@ namespace MyFoodDoc.App.Api.Controllers
                             "Sollte diese Anfrage nicht von dir kommen, melde uns dies bitte zum Schutz deiner Daten.<br/><br/>" +
                             "Herzliche Grüße,<br/><br/>" + "dein myFoodDoctor-Team";
 
-            var result = await _emailService.SendEmailAsync(tokenPayload.Email, "myFoodDoctor - Passwort zurücksetzen", emailBody);
+            var result = await _emailService.SendEmailAsync(tokenPayload.Email, null, "myFoodDoctor - Passwort zurücksetzen", emailBody);
 
             if (!result)
             {
