@@ -12,6 +12,7 @@ namespace MyFoodDoc.Application
         {
             services.Configure<StatisticsOptions>(configuration.GetSection("Statistics"));
             services.Configure<EmailServiceOptions>(configuration.GetSection("EmailService"));
+            services.Configure<StatisticsExportOptions>(configuration.GetSection("StatisticsExport"));
 
             return services;
         }

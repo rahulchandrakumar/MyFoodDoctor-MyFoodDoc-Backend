@@ -235,6 +235,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     var result = await _emailService.SendEmailAsync(
                         user.Email,
+                        null,
                         "Teilnahmebescheinigung myFoodDoctor Kurs \"Iss dich schlank und gesund\"",
                         body,
                         new[] {

@@ -3,7 +3,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Services;
 using MyFoodDoc.Infrastructure.Persistence.Database;
+using SendGrid;
 
 namespace MyFoodDoc.Infrastructure
 {
@@ -21,6 +23,11 @@ namespace MyFoodDoc.Infrastructure
             );
 
             services.AddTransient<IApplicationContext>(provider => provider.GetService<ApplicationContext>());
+
+            services.AddScoped<ISendGridClient>(client => 
+                new SendGridClient(configuration.GetSection("EmailService").Get<EmailServiceOptions>().SendGridApiKey));
+
+            services.AddScoped<IEmailService, EmailService>();
 
             return services;
         }

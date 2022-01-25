@@ -6,11 +6,14 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="mapping.json" />
+    <None Remove="Templates\SubscriptionWeeklyStatisticsEmailTemplate.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="mapping.json" />
+    <EmbeddedResource Include="Templates\SubscriptionWeeklyStatisticsEmailTemplate.html" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
     <PackageReference Include="FirebaseAdmin" Version="2.2.0" />
     <PackageReference Include="Google.Apis" Version="1.53.0" />
     <PackageReference Include="Google.Apis.AndroidPublisher.v3" Version="1.53.0.2400" />
@@ -35,5 +38,9 @@
     <None Update="local.settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstractions\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 </Project>
