@@ -8,7 +8,7 @@ namespace MyFoodDoc.CMS.Controllers
 {
     [Route("api/v1/[controller]")]
     [Authorize]
-    public class AuthController: Controller
+    public class AuthController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly ICustomAuthenticationService _authService;
 
@@ -24,7 +24,7 @@ namespace MyFoodDoc.CMS.Controllers
         /// <returns>User info (name, roles)</returns>
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult> Login([FromBody]LoginPayload request)
+        public async Task<Microsoft.AspNetCore.Mvc.ActionResult> Login([FromBody] LoginPayload request)
         {
             request.Password = request.Password.Trim();
             request.Username = request.Username.Trim();

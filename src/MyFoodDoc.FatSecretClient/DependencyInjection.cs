@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyFoodDoc.FatSecretClient.Abstractions;
 using MyFoodDoc.FatSecretClient.Clients;
+using System;
 
 namespace MyFoodDoc.FatSecretClient
 {

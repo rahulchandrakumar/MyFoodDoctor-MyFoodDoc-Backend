@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MyFoodDoc.CMS.Payloads.Base;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using MyFoodDoc.CMS.Payloads.Base;
 
 namespace MyFoodDoc.CMS.Payloads
 {

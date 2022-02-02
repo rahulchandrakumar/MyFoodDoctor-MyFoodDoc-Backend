@@ -32,12 +32,12 @@ namespace MyFoodDoc.App.Application.Services
         private readonly string _templateUrl;
 
         public CourseService(
-            IConfiguration configuration, 
-            IApplicationContext context, 
-            IPdfService pdfService, 
-            IEmailService emailService, 
+            IConfiguration configuration,
+            IApplicationContext context,
+            IPdfService pdfService,
+            IEmailService emailService,
             IAppStoreClient appStoreClient,
-            IGooglePlayStoreClient googlePlayStoreClient, 
+            IGooglePlayStoreClient googlePlayStoreClient,
             ILogger<CourseService> logger)
         {
             _context = context;

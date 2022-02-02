@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using MyFoodDoc.Application.Enums;
+﻿using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Clients;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.AppStoreClient.Abstractions
 {

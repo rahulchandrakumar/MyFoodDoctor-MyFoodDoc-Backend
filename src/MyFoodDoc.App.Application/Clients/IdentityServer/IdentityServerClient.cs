@@ -6,7 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Clients.IdentityServer
-{ 
+{
     public class IdentityServerClient : IIdentityServerClient
     {
         private readonly HttpClient _httpClient;

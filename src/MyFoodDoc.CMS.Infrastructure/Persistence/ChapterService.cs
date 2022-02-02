@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -45,7 +42,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entity = await _context.Chapters
                 .Include(x => x.Image)
-                .Include(x=> x.Subchapters)
+                .Include(x => x.Subchapters)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
             foreach (var subchapter in entity.Subchapters.ToList())

@@ -28,5 +28,5 @@ namespace MyFoodDoc.App.Application.Abstractions
         decimal GetCorrectedWeight(decimal height, decimal weight);
         Task ExportAsync(string userId, ExportPayload payload, CancellationToken cancellationToken);
         Task<bool> CheckDiet(string userId, string dietKey, CancellationToken cancellationToken);
-    }   
+    }
 }

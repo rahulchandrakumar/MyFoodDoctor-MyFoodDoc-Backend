@@ -1,6 +1,6 @@
-﻿using System;
-using MyFoodDoc.Application.Abstractions;
+﻿using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Methods;
+using System;
 
 namespace MyFoodDoc.Application.Entities
 {

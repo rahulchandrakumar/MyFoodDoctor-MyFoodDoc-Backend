@@ -1,39 +1,41 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
-using MyFoodDoc.Core;
 using MyFoodDoc.Functions.Abstractions;
+using MyFoodDoc.Functions.Helpers;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace MyFoodDoc.Functions
-{    
+namespace MyFoodDoc.Functions.Functions
+{
     public class WeeklyStatisticsExportFunction
     {
         private readonly IUserStatsService _userStatsService;
         private readonly StatisticsExportOptions _settings;
         private readonly IEmailService _emailService;
+        private readonly ILogger log;
 
         public WeeklyStatisticsExportFunction(
             IUserStatsService userStatsService,
             IOptions<StatisticsExportOptions> options,
-            IEmailService emailService)
+            IEmailService emailService,
+            ILoggerFactory loggerFactory)
         {
             _userStatsService = userStatsService;
             _settings = options.Value;
             _emailService = emailService;
+            log = loggerFactory.CreateLogger<WeeklyStatisticsExportFunction>();
         }
 
-        [FunctionName("WeeklyStatisticsExport")]
+        [Function("WeeklyStatisticsExport")]
         public async Task RunAsync(
             [TimerTrigger("0 10 0 * * MON", RunOnStartup = false)]
-            TimerInfo myTimer,
-            ILogger log)
+            TimerInfo myTimer)
         {
             var currentDate = DateTime.Now;
 
@@ -53,14 +55,14 @@ namespace MyFoodDoc.Functions
             var bytes = ExcelHelper.CreateExcelFile(data, true);
 
             using (Stream bodyTemplateStream = Assembly.GetExecutingAssembly().
-                    GetManifestResourceStream($"{this.GetType().Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
+                    GetManifestResourceStream($"{typeof(Program).Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
             {
                 if (bodyTemplateStream == null)
                 {
                     throw new ArgumentNullException(nameof(bodyTemplateStream));
                 }
 
-                StreamReader reader = new StreamReader(bodyTemplateStream);
+                using StreamReader reader = new StreamReader(bodyTemplateStream);
                 string body = String.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
 
                 string[] list = _settings.EmailList.Split(',');
@@ -87,7 +89,6 @@ namespace MyFoodDoc.Functions
                             }
                     });
             }
-
         }
     }
 }

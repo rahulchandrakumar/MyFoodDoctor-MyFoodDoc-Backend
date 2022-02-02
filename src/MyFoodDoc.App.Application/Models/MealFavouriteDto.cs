@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using MyFoodDoc.App.Application.Mappings;
 using MyFoodDoc.Application.Entities.Diary;
 
 namespace MyFoodDoc.App.Application.Models
 {
-    public class MealFavouriteDto: IMapFrom<MealFavourite>
+    public class MealFavouriteDto : IMapFrom<MealFavourite>
     {
         public FavouriteDto Favourite { get; set; }
 

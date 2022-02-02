@@ -1,15 +1,13 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Courses;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -70,7 +68,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
             return CourseModel.FromEntity(course, GetUsersCount(course.Id), GetCompletedByUsersCount(course.Id));
         }
-        
+
         public IQueryable<Course> GetBaseQuery(string search)
         {
             IQueryable<Course> baseQuery = _context.Courses.Include(x => x.Image);
@@ -100,7 +98,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var oldImageId = entity.ImageId;
 
             _context.Entry(entity).CurrentValues.SetValues(item.ToEntity());
-            
+
             if (item.Image.Id != oldImageId)
             {
                 var oldImage = await _context.Images.SingleAsync(x => x.Id == oldImageId, cancellationToken);

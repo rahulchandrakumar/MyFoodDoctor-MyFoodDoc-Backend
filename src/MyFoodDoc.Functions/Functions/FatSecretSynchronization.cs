@@ -1,9 +1,10 @@
-using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.FatSecretClient.Abstractions;
+using MyFoodDoc.Functions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,25 +12,26 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace MyFoodDoc.Functions
+namespace MyFoodDoc.Functions.Functions
 {
     public class FatSecretSynchronization
     {
         private readonly IApplicationContext _context;
         private readonly IFatSecretClient _fatSecretClient;
+        private readonly ILogger log;
 
-        public FatSecretSynchronization(IApplicationContext context, IFatSecretClient fatSecretClient)
+        public FatSecretSynchronization(
+            IApplicationContext context,
+            IFatSecretClient fatSecretClient,
+            ILoggerFactory loggerFactory)
         {
             _context = context;
             _fatSecretClient = fatSecretClient;
+            log = loggerFactory.CreateLogger<FatSecretSynchronization>();
         }
 
-        [FunctionName("FatSecretSynchronization")]
-        public async Task RunAsync(
-            [TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/)]
-            TimerInfo myTimer, 
-            ILogger log, 
-            CancellationToken cancellationToken)
+        [Function(nameof(FatSecretSynchronization))]
+        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)] MyTimerInfo myTimer)
         {
             if (myTimer.IsPastDue)
             {
@@ -38,7 +40,7 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"FatSecretSynchronization executed at: {DateTime.Now}");
 
-            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync(cancellationToken);
+            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync();
 
             log.LogInformation($"{ingredients.Count} ingredients to update.");
 
@@ -94,7 +96,7 @@ namespace MyFoodDoc.Functions
                     {
                         _context.Ingredients.UpdateRange(ingredientsToUpdate);
 
-                        await _context.SaveChangesAsync(cancellationToken);
+                        await _context.SaveChangesAsync(CancellationToken.None);
 
                         log.LogInformation($"{currentBatchCount} ingredients updated.");
 
@@ -107,7 +109,7 @@ namespace MyFoodDoc.Functions
                 {
                     _context.Ingredients.UpdateRange(ingredientsToUpdate);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(CancellationToken.None);
 
                     log.LogInformation($"{currentBatchCount} ingredients updated.");
                 }

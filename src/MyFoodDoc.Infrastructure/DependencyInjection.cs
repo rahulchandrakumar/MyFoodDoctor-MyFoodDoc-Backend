@@ -24,10 +24,13 @@ namespace MyFoodDoc.Infrastructure
 
             services.AddTransient<IApplicationContext>(provider => provider.GetService<ApplicationContext>());
 
-            services.AddScoped<ISendGridClient>(client => 
+            services.AddScoped<ISendGridClient>(client =>
                 new SendGridClient(configuration.GetSection("EmailService").Get<EmailServiceOptions>().SendGridApiKey));
 
             services.AddScoped<IEmailService, EmailService>();
+
+            // The following line enables Application Insights telemetry collection.
+            services.AddApplicationInsightsTelemetry();
 
             return services;
         }

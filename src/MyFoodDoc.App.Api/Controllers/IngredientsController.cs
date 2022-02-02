@@ -1,13 +1,13 @@
 ﻿
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MyFoodDoc.App.Application.Models;
-using MyFoodDoc.App.Application.Abstractions;
 using Microsoft.Extensions.Logging;
+using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Models;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Api.Controllers
 {

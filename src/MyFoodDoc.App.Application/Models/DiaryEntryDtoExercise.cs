@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Application.Mappings;
-using System;
 using MyFoodDoc.Application.Entities.Diary;
+using System;
 
 namespace MyFoodDoc.App.Application.Models
 {

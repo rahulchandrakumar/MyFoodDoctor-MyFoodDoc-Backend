@@ -1,14 +1,18 @@
 FROM busybox AS base
 WORKDIR /
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["tools/database/MyFoodDoc.Database/MyFoodDoc.Database.csproj", "tools/database/MyFoodDoc.Database/"]
 RUN dotnet restore "tools/database/MyFoodDoc.Database/MyFoodDoc.Database.csproj"
 COPY . .
 WORKDIR "/src/tools/database/MyFoodDoc.Database/"
-RUN dotnet tool install dotnet-ef --tool-path "/tools/dotnet-ef"
+RUN dotnet tool install dotnet-ef --version 6.0.1 --tool-path "/tools/dotnet-ef"
+
+#CMD "/tools/dotnet-ef/dotnet-ef" --version
+
 ENV DEFAULT_DATABASE_CONNECTION="1"
+
 RUN "/tools/dotnet-ef/dotnet-ef" migrations script --idempotent -o "/migrations.sql" --context ApplicationContext ;\
 "/tools/dotnet-ef/dotnet-ef" migrations script --idempotent -o "/migrations_identityserver_configuration.sql" --context ConfigurationDbContext ;\
 "/tools/dotnet-ef/dotnet-ef" migrations script --idempotent -o "/migrations_identityserver_persistedgrant.sql" --context PersistedGrantDbContext
@@ -23,4 +27,4 @@ WORKDIR /
 COPY --from=build "/migrations.sql" "/migrations.sql"
 COPY --from=build "/migrations_identityserver_configuration.sql" "/migrations_identityserver_configuration.sql"
 COPY --from=build "/migrations_identityserver_persistedgrant.sql" "/migrations_identityserver_persistedgrant.sql"
-CMD ["sleep","5000"]
+CMD ["sleep","3000"]

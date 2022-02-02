@@ -1,13 +1,13 @@
-﻿using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Hubs;
 using MyFoodDoc.CMS.Models.VM;
 using MyFoodDoc.CMS.Payloads;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Controllers
 {

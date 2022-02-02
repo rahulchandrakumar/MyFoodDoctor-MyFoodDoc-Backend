@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using MyFoodDoc.Core.Configuration.ConfigurationMapper;
 using System;
 using System.IO;
-using MyFoodDoc.Core.Configuration.ConfigurationMapper;
 using System.Reflection;
 
 namespace MyFoodDoc.Database
@@ -29,7 +28,7 @@ namespace MyFoodDoc.Database
                 //.AddJsonFile("appsettings.json")
                 //.AddJsonFile($"appsettings.Local.json", optional: true)
                 //.AddJsonFile($"appsettings.{environmentName}.json", optional: true)
-                .AddUserSecrets(Assembly.GetExecutingAssembly())
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
                 .AddEnvironmentVariables()
                 .WithJsonMapping("mapping.json")
                 .Build();

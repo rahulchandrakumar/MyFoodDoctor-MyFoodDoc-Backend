@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Application.Persistence
 {
-    public interface IPatientService: IServiceBasePaginatedRead<PatientModel, string>
+    public interface IPatientService : IServiceBasePaginatedRead<PatientModel, string>
     {
         Task<IList<HistoryModel<int>>> FullUserHistory(CancellationToken cancellationToken = default);
     }

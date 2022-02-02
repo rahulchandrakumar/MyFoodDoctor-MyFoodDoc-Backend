@@ -5,12 +5,12 @@ using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -105,10 +105,11 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
                                 .Select(x => new { Date = x.Key, Count = x.Count() })
                                 .ToListAsync(cancellationToken);
             if (totalDays < _maxHistoryAmount)
-            {                
-                return dayresult.Select(x => new HistoryModel<int>() { 
-                    Created = x.Date, 
-                    Value = dayresult.Where(y => y.Date <= x.Date).Sum(y => y.Count) 
+            {
+                return dayresult.Select(x => new HistoryModel<int>()
+                {
+                    Created = x.Date,
+                    Value = dayresult.Where(y => y.Date <= x.Date).Sum(y => y.Count)
                 }).ToList();
             }
 
@@ -124,7 +125,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             {
                 Created = r,
                 Value = dayresult.Where(x => x.Date <= r).Sum(x => x.Count)
-            });            
+            });
 
             var result = totalResult.OrderBy(x => x.Created).ToList();
 

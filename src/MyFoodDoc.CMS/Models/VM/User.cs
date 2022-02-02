@@ -1,6 +1,6 @@
-﻿using MyFoodDoc.CMS.Application.Models;
+﻿using MyFoodDoc.CMS.Application.Common;
+using MyFoodDoc.CMS.Application.Models;
 using System;
-using MyFoodDoc.CMS.Application.Common;
 
 namespace MyFoodDoc.CMS.Models.VM
 {

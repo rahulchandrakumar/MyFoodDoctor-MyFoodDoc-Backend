@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.Application.Configuration
+﻿namespace MyFoodDoc.Application.Configuration
 {
     public class StatisticsExportOptions
     {

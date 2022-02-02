@@ -1,6 +1,6 @@
-﻿using System.Threading.Tasks;
-using MyFoodDoc.Application.Enums;
+﻿using MyFoodDoc.Application.Enums;
 using MyFoodDoc.GooglePlayStoreClient.Clients;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.GooglePlayStoreClient.Abstractions
 {

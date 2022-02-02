@@ -2,7 +2,7 @@
 
 namespace MyFoodDoc.CMS.Payloads
 {
-    public class PatientsGetPayload: BasePaginatedPayload<object>
+    public class PatientsGetPayload : BasePaginatedPayload<object>
     {
     }
 }

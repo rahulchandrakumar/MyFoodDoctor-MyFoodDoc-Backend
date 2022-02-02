@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using MyFoodDoc.App.Application.Mappings;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Models
 {

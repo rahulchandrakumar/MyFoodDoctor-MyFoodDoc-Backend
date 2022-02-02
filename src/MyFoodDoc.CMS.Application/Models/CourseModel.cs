@@ -1,7 +1,4 @@
 ﻿using MyFoodDoc.Application.Entities.Courses;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

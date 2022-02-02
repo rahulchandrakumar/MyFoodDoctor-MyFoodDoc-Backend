@@ -1,6 +1,6 @@
-﻿using System;
-using MyFoodDoc.Application.Entities.Psychogramm;
+﻿using MyFoodDoc.Application.Entities.Psychogramm;
 using MyFoodDoc.Application.Enums;
+using System;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

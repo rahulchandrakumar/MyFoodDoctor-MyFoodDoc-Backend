@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using System.Linq;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Exceptions;
 
 namespace MyFoodDoc.App.Application.Services
 {

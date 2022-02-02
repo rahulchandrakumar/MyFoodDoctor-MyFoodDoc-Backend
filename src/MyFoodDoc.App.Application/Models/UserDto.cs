@@ -2,7 +2,6 @@
 using MyFoodDoc.App.Application.Mappings;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +34,7 @@ namespace MyFoodDoc.App.Application.Models
 
         public ICollection<string> Diets { get; set; }
 
-        public void Mapping(Profile profile) 
+        public void Mapping(Profile profile)
         {
             profile.CreateMap<User, UserDto>()
                 .ForMember(x => x.Created, opt => opt.MapFrom(src => src.Created.ToLocalTime().Date))

@@ -1,5 +1,4 @@
 ﻿using MyFoodDoc.Application.Abstractions;
-using System;
 
 namespace MyFoodDoc.Application.Entities
 {

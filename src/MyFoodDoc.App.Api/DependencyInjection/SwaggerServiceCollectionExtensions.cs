@@ -1,6 +1,4 @@
-﻿using MicroElements.Swashbuckle.FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -41,9 +39,9 @@ namespace MyFoodDoc.App.Api.DependencyInjection
                     });
                 options.OperationFilter<AuthResponsesOperationFilter>();
                 options.CustomSchemaIds(i => i.FullName);
-                //options.AddFluentValidationRules();
-                options.SchemaFilter<FluentValidationRules>();
-                options.OperationFilter<FluentValidationOperationFilter>();
+                // options.AddFluentValidationRules();
+                // options.SchemaFilter<FluentValidationRules>();
+                // options.OperationFilter<FluentValidationOperationFilter>();
                 options.MapType<DateTime>(() => new OpenApiSchema { Type = "string", Format = "date" });
                 options.MapType<TimeSpan>(() => new OpenApiSchema { Type = "string", Format = "time" });
             });
@@ -58,7 +56,7 @@ namespace MyFoodDoc.App.Api.DependencyInjection
                 // Check for authorize attribute
                 var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
                     .Union(context.MethodInfo.GetCustomAttributes(true))
-                    .OfType<AuthorizeAttribute>();
+                    .OfType<Microsoft.AspNetCore.Authorization.AuthorizeAttribute>();
 
                 if (authAttributes.Any())
                     operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });

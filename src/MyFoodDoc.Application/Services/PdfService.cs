@@ -1,12 +1,12 @@
 ﻿using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Enums;
 using Spire.Pdf;
 using Spire.Pdf.General.Find;
-using System.Drawing;
 using Spire.Pdf.Graphics;
-using System.IO;
-using System;
 using Spire.Pdf.Grid;
-using MyFoodDoc.Application.Enums;
+using System;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -76,10 +76,10 @@ namespace MyFoodDoc.Application.Services
             page.Canvas.DrawImage(image, 600, 0);
 
             PdfBrush brush1 = PdfBrushes.Black;
-            var font1 = new PdfTrueTypeFont("Helvetica", 16f, PdfFontStyle.Bold, true);
-            var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold, true);
-            var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular, true);
-            var font4 = new PdfTrueTypeFont("Helvetica", 8f, PdfFontStyle.Regular, true);
+            var font1 = new PdfTrueTypeFont("Helvetica", 16f, PdfFontStyle.Bold);
+            var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold);
+            var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular);
+            var font4 = new PdfTrueTypeFont("Helvetica", 8f, PdfFontStyle.Regular);
 
             PdfStringFormat format1 = new PdfStringFormat(PdfTextAlignment.Left);
 
@@ -89,7 +89,7 @@ namespace MyFoodDoc.Application.Services
             y = drawTextAndMoveDown(page, font2, brush1, "erstellt von der myFoodDoctor App", x, y, format1) + 5;
 
             y = drawTextAndMoveDown(page, font4, brush1, "Die Mengenangaben in den Klammern beziehen sich immer auf eine Portion.", x, y, format1) + 5;
-            
+
             page.Canvas.DrawString($"Zeitraum: {data.DateFrom.ToString("dd.MM.yyyy")} - {data.DateTo.ToString("dd.MM.yyyy")}", font4, brush1, 600, y, format1);
 
             y = drawTextAndMoveDown(page, font4, brush1, "Das Wort Portion steht für verschiedene Maßeinheiten (Tasse, Löffel, etc.)", x, y, format1);
@@ -193,7 +193,7 @@ namespace MyFoodDoc.Application.Services
             grid.RepeatHeader = true;
 
             float rowY = y + row0.Height;
-            PdfGridRow previousRow = null; 
+            PdfGridRow previousRow = null;
             foreach (var day in data.Days)
             {
                 PdfGridRow row = grid.Rows.Add();
@@ -305,7 +305,7 @@ namespace MyFoodDoc.Application.Services
                         }
                         else
                         {
-                            
+
                         }
                     }
                 }
@@ -340,12 +340,12 @@ namespace MyFoodDoc.Application.Services
                 //Creates a brush
                 PdfBrush brush = new PdfSolidBrush(Color.Black);
                 //Defines a font
-                var font = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Regular, true);
+                var font = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Regular);
 
                 RectangleF rec;
                 foreach (PdfTextFind find in collection.Finds)
                 {
-                    rec = find.Bounds;
+                    rec = find.TextBounds.FirstOrDefault();
                     page.Canvas.DrawRectangle(PdfBrushes.White, rec);
                     page.Canvas.DrawString(newValue, font, brush, rec.Location.X, rec.Location.Y);
                 }

@@ -5,7 +5,6 @@ using MyFoodDoc.Functions.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,7 +32,7 @@ namespace MyFoodDoc.Functions.Services
             var list = await _context.GooglePlayStoreSubscriptions
                             .Where(x => x.IsValid)
                             .GroupBy(x => x.SubscriptionId)
-                            .Select(g => new Tuple<int, string>( g.Count(), g.Key )).ToListAsync(cancellationToken);
+                            .Select(g => new Tuple<int, string>(g.Count(), g.Key)).ToListAsync(cancellationToken);
 
             var dto = new SubscriptionStatsDto()
             {
@@ -42,9 +41,9 @@ namespace MyFoodDoc.Functions.Services
                 YearlySubscriptions = 0,
                 TotalSubscriptions = 0
             };
-            foreach(var r in list)
+            foreach (var r in list)
             {
-                if (r.Item2 == GOOGLE_MONTHLY_SUBSCRIPTION) 
+                if (r.Item2 == GOOGLE_MONTHLY_SUBSCRIPTION)
                 {
                     dto.MonthlySubscriptions = r.Item1;
                     dto.TotalSubscriptions += r.Item1;

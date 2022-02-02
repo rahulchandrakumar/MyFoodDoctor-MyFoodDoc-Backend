@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
@@ -17,6 +12,11 @@ using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -98,7 +98,7 @@ namespace MyFoodDoc.App.Application.Services
             List<Method> parentFrequencyMethodsToShow = new List<Method>();
             List<MethodDto> parentMethodsToShow = new List<MethodDto>();
             List<MethodDto> timerMethodsToShow = new List<MethodDto>();
-            
+
             foreach (var method in await _context.Methods
                 .Include(x => x.Targets)
                 .Include(x => x.Diets)
@@ -331,7 +331,7 @@ namespace MyFoodDoc.App.Application.Services
 
             if (result.Any())
             {
-                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId}), cancellationToken);
+                await _context.UserMethodShowHistory.AddRangeAsync(result.Select(x => new UserMethodShowHistoryItem { MethodId = x.Id, UserId = userId }), cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
             }
 
@@ -347,7 +347,7 @@ namespace MyFoodDoc.App.Application.Services
                 return null;
 
             var optimizationArea = (await _context.Targets
-                .Include(x=> x.OptimizationArea)
+                .Include(x => x.OptimizationArea)
                 .SingleAsync(x => x.Id == targetMethod.TargetId, cancellationToken)).OptimizationArea;
 
             return optimizationArea;
@@ -694,7 +694,7 @@ namespace MyFoodDoc.App.Application.Services
                         foreach (var userMethod in (await _context.UserMethods.Where(x =>
                                     x.UserId == userId && x.MethodId == method.Id)
                                 .ToListAsync(cancellationToken))
-                            .Where(x=> x.Created.ToLocalTime().Date == DateTime.Now.Date)
+                            .Where(x => x.Created.ToLocalTime().Date == DateTime.Now.Date)
                             .GroupBy(g => g.MethodMultipleChoiceId)
                             .Select(x => x.OrderBy(y => y.Created).Last()))
                         {
@@ -711,7 +711,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (item.UserAnswerBoolean != null && item.UserAnswerInteger != null)
                         {
                             var userMethod = (await _context.UserMethods.Where(x => x.UserId == userId && x.MethodId == method.Id).ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
-                            
+
                             //Method was answered today or timer is still running since yesterday
                             if (userMethod != null && (userMethod.Created.ToLocalTime().Date == DateTime.Now.Date ||
                                                        (userMethod.Answer != null && userMethod.Answer.Value)))
@@ -724,10 +724,10 @@ namespace MyFoodDoc.App.Application.Services
                             {
                                 await _context.UserMethods.AddAsync(new UserMethod { UserId = userId, MethodId = method.Id, Answer = item.UserAnswerBoolean, IntegerValue = item.UserAnswerInteger }, cancellationToken);
                             }
-                            
+
                             var userTimer = await _context.UserTimer.Where(x => x.UserId == userId)
                                 .SingleOrDefaultAsync(cancellationToken);
-                              
+
                             if (item.UserAnswerBoolean.Value)
                             {
                                 var expirationDate = DateTime.Now.AddMinutes(item.UserAnswerInteger.Value);

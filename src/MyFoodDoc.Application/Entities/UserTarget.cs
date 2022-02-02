@@ -1,8 +1,5 @@
 ﻿using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Targets;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MyFoodDoc.Application.Entities
 {

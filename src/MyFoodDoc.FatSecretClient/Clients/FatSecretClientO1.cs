@@ -3,11 +3,9 @@ using Microsoft.Extensions.Options;
 using MyFoodDoc.FatSecretClient.Abstractions;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace MyFoodDoc.FatSecretClient.Clients
 {

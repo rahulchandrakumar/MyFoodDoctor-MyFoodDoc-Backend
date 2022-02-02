@@ -3,13 +3,12 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.FileProcessors;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -63,13 +62,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         public async Task<PromotionModel> GetItem(int id, CancellationToken cancellationToken = default)
         {
             var promotionQueryResult = (await (from p in _context.Promotions
-                                                where p.Id == id
-                                                select new
-                                                {
-                                                    entity = p,
-                                                    CouponCount = p.Coupons.Count(),
-                                                    UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
-                                                }).FirstOrDefaultAsync());
+                                               where p.Id == id
+                                               select new
+                                               {
+                                                   entity = p,
+                                                   CouponCount = p.Coupons.Count(),
+                                                   UsedCouponCount = p.Coupons.Where(c => c.RedeemedBy != null).Count()
+                                               }).FirstOrDefaultAsync());
 
             var promotion = PromotionModel.FromEntity(promotionQueryResult.entity);
             promotion.CouponCount = promotionQueryResult.CouponCount;
@@ -96,12 +95,12 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             return new PaginatedItems<PromotionModel>()
             {
                 Items = (from p in entities
-                        select new
-                        {
-                            entity = p,
-                            CouponCount = p.Coupons.Count(),
-                            UsedCouponCount = p.Coupons.Count(c => c.RedeemedBy != null)
-                        }).Skip(skip).Take(take)
+                         select new
+                         {
+                             entity = p,
+                             CouponCount = p.Coupons.Count(),
+                             UsedCouponCount = p.Coupons.Count(c => c.RedeemedBy != null)
+                         }).Skip(skip).Take(take)
                     .Select(x =>
                     {
                         var model = PromotionModel.FromEntity(x.entity);

@@ -1,10 +1,19 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/MyFoodDoc.CMS/MyFoodDoc.CMS.csproj", "src/MyFoodDoc.CMS/"]
+COPY ["src/MyFoodDoc.Core/MyFoodDoc.Core.csproj", "src/MyFoodDoc.Core/"]
+COPY ["src/MyFoodDoc.FatSecretClient/MyFoodDoc.FatSecretClient.csproj", "src/MyFoodDoc.FatSecretClient/"]
+COPY ["src/MyFoodDoc.CMS.Application/MyFoodDoc.CMS.Application.csproj", "src/MyFoodDoc.CMS.Application/"]
+COPY ["src/MyFoodDoc.Application/MyFoodDoc.Application.csproj", "src/MyFoodDoc.Application/"]
+COPY ["src/MyFoodDoc.CMS.Infrastructure/MyFoodDoc.CMS.Infrastructure.csproj", "src/MyFoodDoc.CMS.Infrastructure/"]
+COPY ["src/MyFoodDoc.Infrastructure/MyFoodDoc.Infrastructure.csproj", "src/MyFoodDoc.Infrastructure/"]
 RUN dotnet restore "src/MyFoodDoc.CMS/MyFoodDoc.CMS.csproj"
 COPY . .
 WORKDIR "/src/src/MyFoodDoc.CMS"

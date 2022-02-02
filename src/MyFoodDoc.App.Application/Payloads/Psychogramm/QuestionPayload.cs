@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using MyFoodDoc.Application.Entities.Psychogramm;
 
 namespace MyFoodDoc.App.Application.Payloads.Psychogramm
 {

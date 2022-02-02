@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using FluentValidation;
+﻿using FluentValidation;
+using System.Linq;
 
 namespace MyFoodDoc.App.Application.Payloads.User
 {

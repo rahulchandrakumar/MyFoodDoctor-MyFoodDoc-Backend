@@ -1,19 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
-using MyFoodDoc.Application.Configuration;
+using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Target;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Exceptions;
-using MyFoodDoc.Application.Entities.Targets;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -74,7 +74,7 @@ namespace MyFoodDoc.App.Application.Services
                 var targetIds = dietTargets
                     .Union(indicationTargets)
                     .Union(motivationTargets).Distinct().ToList();
-                
+
                 if (!targetIds.Any())
                     return result;
 
@@ -207,7 +207,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     if (frequency > target.Threshold)
                     {
-                        var userTarget = new UserTarget { UserId = userId, TargetId = target.Id, Created = onDate};
+                        var userTarget = new UserTarget { UserId = userId, TargetId = target.Id, Created = onDate };
 
                         userTargets.Add(userTarget);
                     }
@@ -233,7 +233,7 @@ namespace MyFoodDoc.App.Application.Services
                 };
 
                 var dateKey = new DateTime(userTarget.Created.Year, userTarget.Created.Month, userTarget.Created.Day);
-                
+
                 if (!dailyUserIngredientsDictionary.ContainsKey(dateKey))
                     dailyUserIngredientsDictionary[dateKey] = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
 
@@ -452,7 +452,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (totalProtein > 0 && !isVegan)
                         {
                             analysisDto.PieChart = new AnalysisPieChartDto();
-                            
+
                             var plantProteinPercent = (int)Math.Round(dailyUserIngredients.Sum(x => x.Value.PlantProtein) * 100 / totalProtein);
 
                             //TODO: use constants or enums
@@ -473,7 +473,7 @@ namespace MyFoodDoc.App.Application.Services
                             }
 
                             //TODO: use constants or enums
-                            analysisDto.PieChart.Data = new []
+                            analysisDto.PieChart.Data = new[]
                             {
                                 new AnalysisPieChartDataDto { Key = "animal", Value = 100 - plantProteinPercent },
                                 new AnalysisPieChartDataDto { Key = "plant", Value = plantProteinPercent }
@@ -487,7 +487,7 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
 
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                            { Date = x.Key, Value = x.Value.Sugar }).ToList();
+                        { Date = x.Key, Value = x.Value.Sugar }).ToList();
 
                         var average = dailyUserIngredients.Average(x => x.Value.Sugar);
 
@@ -509,7 +509,7 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
 
                         analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                            { Date = x.Key, Value = x.Value.Vegetables }).ToList();
+                        { Date = x.Key, Value = x.Value.Vegetables }).ToList();
 
                         var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
 
@@ -638,7 +638,7 @@ namespace MyFoodDoc.App.Application.Services
         public async Task<bool> NewTriggered(string userId, CancellationToken cancellationToken)
         {
             return !(await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken)) && (await GetAsync(userId, DateTime.Now,  cancellationToken)).Any();
+                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken)) && (await GetAsync(userId, DateTime.Now, cancellationToken)).Any();
         }
         public async Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken)
         {

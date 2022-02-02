@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MyFoodDoc.Application.Entities.Methods;
+﻿using MyFoodDoc.Application.Entities.Methods;
+using System;
 
 namespace MyFoodDoc.Application.Entities
 {

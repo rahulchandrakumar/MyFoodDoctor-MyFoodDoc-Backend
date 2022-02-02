@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.Application.Services
+﻿namespace MyFoodDoc.Application.Services
 {
     public class EmailServiceOptions
     {

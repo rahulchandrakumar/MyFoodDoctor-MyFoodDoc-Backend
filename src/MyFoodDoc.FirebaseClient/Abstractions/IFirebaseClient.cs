@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using MyFoodDoc.FirebaseClient.Clients;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.FirebaseClient.Clients;
 
 namespace MyFoodDoc.FirebaseClient.Abstractions
 {

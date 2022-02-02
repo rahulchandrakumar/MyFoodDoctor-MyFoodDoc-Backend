@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MyFoodDoc.Application.Entities
+﻿namespace MyFoodDoc.Application.Entities
 {
     public class UserStatsDto
     {

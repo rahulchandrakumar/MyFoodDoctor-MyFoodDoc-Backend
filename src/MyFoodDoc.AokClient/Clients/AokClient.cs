@@ -33,14 +33,14 @@ namespace MyFoodDoc.AokClient.Clients
 
             var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
 
-            if(!response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                if(response.StatusCode == HttpStatusCode.NotFound)
+                if (response.StatusCode == HttpStatusCode.NotFound)
                 {
                     return new ValidateResponse();
                 }
 
-                if(response.StatusCode == HttpStatusCode.UnprocessableEntity)
+                if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
                 {
                     var errorResponse = await GetUnprocessableEntityResponse(response);
                     var err = $"The call to AOK validate endpoint failed with errors: {string.Join(';', errorResponse.Errors)}";
@@ -54,7 +54,7 @@ namespace MyFoodDoc.AokClient.Clients
             }
 
             var content = await response.Content.ReadAsStringAsync();
-            
+
             return JsonSerializer.Deserialize<ValidateResponse>(content);
         }
 

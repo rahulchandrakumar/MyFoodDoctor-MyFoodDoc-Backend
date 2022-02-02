@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.WebJobs;
+﻿using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace MyFoodDoc.Functions
+namespace MyFoodDoc.Functions.Functions
 {
     public class PushNotifications
     {
@@ -31,7 +31,7 @@ namespace MyFoodDoc.Functions
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
-        [FunctionName("TimerPushNotifications")]
+        [Function("TimerPushNotifications")]
         public async Task RunTimerPushNotificationsAsync(
             [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/)]
             TimerInfo myTimer,
@@ -109,7 +109,7 @@ namespace MyFoodDoc.Functions
             log.LogInformation("TimerPushNotifications. End");
         }
 
-        [FunctionName("DiaryPushNotifications")]
+        [Function("DiaryPushNotifications")]
         public async Task RunDiaryPushNotificationsAsync(
             [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
             TimerInfo myTimer,

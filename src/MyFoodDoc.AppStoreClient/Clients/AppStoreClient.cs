@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using MyFoodDoc.Application.Enums;
+using MyFoodDoc.AppStoreClient.Abstractions;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using MyFoodDoc.Application.Enums;
-using MyFoodDoc.AppStoreClient.Abstractions;
-using Newtonsoft.Json;
 
 namespace MyFoodDoc.AppStoreClient.Clients
 {
@@ -40,7 +40,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
             var result = JsonConvert.DeserializeObject<Rootobject>(content);
 
             // workAround apple bug 
-            if (result != null && new List<int>{ 21003, 21007, 21008}.Contains(result.status))
+            if (result != null && new List<int> { 21003, 21007, 21008 }.Contains(result.status))
             {
                 content = await ValidateReceiptEnvironment(receiptData, _options.VerifyReceiptSandBoxUrl);
 
@@ -61,7 +61,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
             }
 
             string[] productIds = (subscriptionType == SubscriptionType.MyFoodDoc) ?
-                _options.SubscriptionProducts.Split(',') :  _options.ZppSubscriptionProducts.Split(',');
+                _options.SubscriptionProducts.Split(',') : _options.ZppSubscriptionProducts.Split(',');
 
             if (result.latest_receipt_info == null || !result.latest_receipt_info.Any(x => productIds.Contains(x.product_id)))
             {
@@ -71,7 +71,7 @@ namespace MyFoodDoc.AppStoreClient.Clients
 
             var latestReceiptInfo = result.latest_receipt_info.First(x => productIds.Contains(x.product_id));
 
-            DateTime ? purchaseDateDateTime = null;
+            DateTime? purchaseDateDateTime = null;
 
             if (!string.IsNullOrEmpty(latestReceiptInfo.purchase_date))
                 purchaseDateDateTime = DateTime.ParseExact(

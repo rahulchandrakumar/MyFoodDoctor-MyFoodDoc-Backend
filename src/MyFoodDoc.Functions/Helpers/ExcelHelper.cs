@@ -1,10 +1,9 @@
 ﻿using MyFoodDoc.Application.Entities;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
-using System;
 using System.IO;
 
-namespace MyFoodDoc.Core
+namespace MyFoodDoc.Functions.Helpers
 {
     public static class ExcelHelper
     {

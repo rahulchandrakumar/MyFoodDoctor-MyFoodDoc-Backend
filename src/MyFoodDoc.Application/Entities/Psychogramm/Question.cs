@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MyFoodDoc.Application.Abstractions;
+﻿using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Enums;
+using System.Collections.Generic;
 
 namespace MyFoodDoc.Application.Entities.Psychogramm
 {

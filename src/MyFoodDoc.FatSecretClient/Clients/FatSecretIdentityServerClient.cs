@@ -1,10 +1,10 @@
 ﻿using IdentityModel.Client;
-using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.FatSecretClient.Abstractions;
+using System;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.FatSecretClient.Clients
 {

@@ -1,16 +1,19 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/azure-functions/dotnet:3.0 AS base
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated6.0 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["src/MyFoodDoc.Functions/MyFoodDoc.Functions.csproj", "src/MyFoodDoc.Functions/"]
 COPY ["src/MyFoodDoc.Core/MyFoodDoc.Core.csproj", "src/MyFoodDoc.Core/"]
-COPY ["src/MyFoodDoc.FatSecretClient/MyFoodDoc.FatSecretClient.csproj", "src/MyFoodDoc.FatSecretClient/"]
-COPY ["src/MyFoodDoc.Infrastructure/MyFoodDoc.Infrastructure.csproj", "src/MyFoodDoc.Infrastructure/"]
+COPY ["src/MyFoodDoc.GooglePlayStoreClient/MyFoodDoc.GooglePlayStoreClient.csproj", "src/MyFoodDoc.GooglePlayStoreClient/"]
 COPY ["src/MyFoodDoc.Application/MyFoodDoc.Application.csproj", "src/MyFoodDoc.Application/"]
+COPY ["src/MyFoodDoc.FatSecretClient/MyFoodDoc.FatSecretClient.csproj", "src/MyFoodDoc.FatSecretClient/"]
+COPY ["src/MyFoodDoc.FirebaseClient/MyFoodDoc.FirebaseClient.csproj", "src/MyFoodDoc.FirebaseClient/"]
+COPY ["src/MyFoodDoc.AppStoreClient/MyFoodDoc.AppStoreClient.csproj", "src/MyFoodDoc.AppStoreClient/"]
+COPY ["src/MyFoodDoc.Infrastructure/MyFoodDoc.Infrastructure.csproj", "src/MyFoodDoc.Infrastructure/"]
 RUN dotnet restore "src/MyFoodDoc.Functions/MyFoodDoc.Functions.csproj"
 COPY . .
 WORKDIR "/src/src/MyFoodDoc.Functions"

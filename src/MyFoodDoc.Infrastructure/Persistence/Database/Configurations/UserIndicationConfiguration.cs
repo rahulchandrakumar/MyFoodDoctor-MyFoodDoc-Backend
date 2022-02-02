@@ -10,12 +10,12 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         {
             builder.ToTable("UserIndications", "User");
             builder.HasKey(x => new { x.UserId, x.IndicationId });
-            
+
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Indications)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+
             builder.HasOne(x => x.Indication)
                 .WithMany()
                 .HasForeignKey(x => x.IndicationId)

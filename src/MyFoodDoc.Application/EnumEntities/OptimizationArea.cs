@@ -1,7 +1,7 @@
-﻿using System;
-using MyFoodDoc.Application.Abstractions;
+﻿using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Enums;
+using System;
 
 namespace MyFoodDoc.Application.EnumEntities
 {

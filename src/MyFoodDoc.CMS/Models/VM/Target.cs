@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MyFoodDoc.CMS.Application.Models;
+﻿using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Models.VMBase;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyFoodDoc.CMS.Models.VM
 {

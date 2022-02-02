@@ -2,7 +2,6 @@
 using Microsoft.Azure.Storage.Blob;
 using MyFoodDoc.CMS.Infrastructure.Common;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
