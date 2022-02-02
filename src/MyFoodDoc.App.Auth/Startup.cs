@@ -91,8 +91,9 @@ namespace MyFoodDoc.App.Auth
 
                 options.IssuerUri = identityServerIssuerUri;
 
-                options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 /*
+                options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+                
                 options.Endpoints.EnableAuthorizeEndpoint = false;
                 options.Endpoints.EnableCheckSessionEndpoint = false;
                 options.Endpoints.EnableDeviceAuthorizationEndpoint = false;

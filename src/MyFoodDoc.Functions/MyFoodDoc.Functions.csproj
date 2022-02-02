@@ -14,7 +14,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="mapping.json">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Templates\SubscriptionWeeklyStatisticsEmailTemplate.html" />
 	</ItemGroup>

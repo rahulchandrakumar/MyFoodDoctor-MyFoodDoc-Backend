@@ -19,7 +19,9 @@
     <Content Remove="mapping.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="mapping.json" />
+    <EmbeddedResource Include="mapping.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1" />

@@ -17,8 +17,8 @@ namespace MyFoodDoc.CMS
             Host.CreateDefaultBuilder(args)
             .ConfigureAppConfiguration((builderContext, config) =>
             {
-                config.AddUserSecrets(Assembly.GetExecutingAssembly())
-                //.WithJsonMapping("mapping.json");
+                config.AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
+                .AddEnvironmentVariables()
                 .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json"));
             })
             .ConfigureWebHostDefaults(webBuilder =>

@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Apis.AndroidPublisher.v3" Version="1.55.0.2526" />
+    <PackageReference Include="Google.Apis.AndroidPublisher.v3" Version="1.55.0.2582" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MyFoodDoc.Application\MyFoodDoc.Application.csproj" />

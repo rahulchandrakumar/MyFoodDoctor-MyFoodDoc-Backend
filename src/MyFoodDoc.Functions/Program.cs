@@ -26,9 +26,10 @@ public class Program
             .ConfigureAppConfiguration(config => config
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: false)
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), true)
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
                 .AddEnvironmentVariables()
-                .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json")))
+                .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json"))
+            )
             .ConfigureServices((context, services) =>
             {
                 services.AddLogging();

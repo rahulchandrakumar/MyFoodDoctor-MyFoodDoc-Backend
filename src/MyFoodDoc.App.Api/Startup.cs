@@ -1,5 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using IdentityModel.Client;
+using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -21,6 +23,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 
@@ -58,7 +61,6 @@ namespace MyFoodDoc.App.Api
 
 
             /*
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication("Bearer")
                 .AddJwtBearer(options =>
@@ -88,6 +90,7 @@ namespace MyFoodDoc.App.Api
              */
 
             IdentityModelEventSource.ShowPII = true;
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             //services.AddDistributedMemoryCache();
@@ -96,16 +99,16 @@ namespace MyFoodDoc.App.Api
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = identityServerUrl;
-                    options.ApiName = "myfooddoc_api";
-                    options.RequireHttpsMetadata = false;
-                    options.ApiSecret = "secret";
+            })
+            .AddIdentityServerAuthentication(options => // TODO: caution! must use > IdentityModel up to Version="4.6.0" > https://stackoverflow.com/questions/69978649/migration-to-net6
+            {
+                options.Authority = identityServerUrl;
+                options.ApiName = "myfooddoc_api";
+                options.RequireHttpsMetadata = false;
+                options.ApiSecret = "secret";
+            });
 
-                    //options.EnableCaching = true;
-                    //options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
-                });
+
 
             /*
             services.AddApiVersioning(option =>
