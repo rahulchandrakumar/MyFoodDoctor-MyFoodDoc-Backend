@@ -34,7 +34,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [Function("WeeklyStatisticsExport")]
         public async Task RunAsync(
-            [TimerTrigger("0 10 0 * * MON", RunOnStartup = false)]
+            [TimerTrigger("0 10 0 * * MON", RunOnStartup = true)]
             TimerInfo myTimer)
         {
             var currentDate = DateTime.Now;

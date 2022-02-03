@@ -33,7 +33,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [Function("TimerPushNotifications")]
         public async Task RunTimerPushNotificationsAsync(
-            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/)]
+            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
@@ -111,7 +111,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [Function("DiaryPushNotifications")]
         public async Task RunDiaryPushNotificationsAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)]
             TimerInfo myTimer,
             ILogger log,
             CancellationToken cancellationToken)
