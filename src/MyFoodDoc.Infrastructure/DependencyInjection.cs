@@ -13,7 +13,7 @@ namespace MyFoodDoc.Infrastructure
     {
         private const string ConnectionStringName = "DefaultConnection";
 
-        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
+        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment, bool addTelemetry = true)
         {
             var connectionString = configuration.GetConnectionString(ConnectionStringName);
 
@@ -29,8 +29,11 @@ namespace MyFoodDoc.Infrastructure
 
             services.AddScoped<IEmailService, EmailService>();
 
-            // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry();
+            if (addTelemetry)
+            {
+                // The following line enables Application Insights telemetry collection.
+                services.AddApplicationInsightsTelemetry();
+            }
 
             return services;
         }

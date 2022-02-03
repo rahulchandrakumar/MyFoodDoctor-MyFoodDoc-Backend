@@ -29,12 +29,13 @@ public class Program
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
                 .AddEnvironmentVariables()
                 .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json"))
+
             )
             .ConfigureServices((context, services) =>
             {
                 services.AddLogging();
                 services.AddSharedApplication(context.Configuration);
-                services.AddSharedInfrastructure(context.Configuration, null);
+                services.AddSharedInfrastructure(context.Configuration, null, addTelemetry: false);
                 services.AddSharedAppStoreClient(context.Configuration);
                 services.AddSharedGooglePlayStoreClient(context.Configuration);
                 services.AddSharedFatSecretClient(context.Configuration);
