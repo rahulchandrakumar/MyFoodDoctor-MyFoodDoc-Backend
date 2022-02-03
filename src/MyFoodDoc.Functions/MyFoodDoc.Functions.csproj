@@ -14,7 +14,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="mapping.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Templates\SubscriptionWeeklyStatisticsEmailTemplate.html" />
 	</ItemGroup>
@@ -36,7 +36,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="host.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="local.settings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
