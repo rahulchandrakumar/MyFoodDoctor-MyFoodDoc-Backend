@@ -36,7 +36,7 @@ namespace MyFoodDoc.FatSecretClient.Clients
 
             var sig = oAuth.GenerateSignature(baseUri, _options.ConsumerKey, _options.ConsumerSecret, "GET", null, null, out outUrl, out outParms);
 
-            var requestUrl = String.Format("{0}?{1}&oauth_signature={2}", outUrl, outParms, HttpUtility.UrlEncode(sig));
+            var requestUrl = string.Format("{0}?{1}&oauth_signature={2}", outUrl, outParms, HttpUtility.UrlEncode(sig));
 
             var response = await _httpClient.GetAsync(requestUrl);
             if (!response.IsSuccessStatusCode)

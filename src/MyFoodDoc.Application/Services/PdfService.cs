@@ -111,7 +111,7 @@ namespace MyFoodDoc.Application.Services
 
             y1 = y1 + 12;
             PdfStringFormat format = new PdfStringFormat(PdfTextAlignment.Center);
-            String footerText = "myFoodDoctor GmbH - www.myfooddoctor.de";
+            string footerText = "myFoodDoctor GmbH - www.myfooddoctor.de";
             footerSpace.Graphics.DrawString(footerText, font3, PdfBrushes.Gray, page.Canvas.ClientSize.Width / 2, y1, format);
 
             doc.Template.Bottom = footerSpace;

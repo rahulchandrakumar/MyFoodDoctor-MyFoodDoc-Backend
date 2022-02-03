@@ -33,7 +33,7 @@ namespace MyFoodDoc.Functions.Helpers
             IWorkbook workbook = new XSSFWorkbook();
 
             var font = workbook.CreateFont();
-            font.Boldweight = (short)FontBoldWeight.Bold;
+            font.IsBold = true;
 
             ISheet excelSheet1 = workbook.CreateSheet("Subscriptions");
             ISheet excelSheet2 = workbook.CreateSheet("Number of active users");

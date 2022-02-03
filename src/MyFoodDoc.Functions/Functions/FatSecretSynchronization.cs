@@ -1,10 +1,9 @@
-using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.FatSecretClient.Abstractions;
-using MyFoodDoc.Functions.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,20 +17,18 @@ namespace MyFoodDoc.Functions.Functions
     {
         private readonly IApplicationContext _context;
         private readonly IFatSecretClient _fatSecretClient;
-        private readonly ILogger log;
 
         public FatSecretSynchronization(
             IApplicationContext context,
-            IFatSecretClient fatSecretClient,
-            ILoggerFactory loggerFactory)
+            IFatSecretClient fatSecretClient)
         {
             _context = context;
             _fatSecretClient = fatSecretClient;
-            log = loggerFactory.CreateLogger<FatSecretSynchronization>();
         }
 
-        [Function(nameof(FatSecretSynchronization))]
-        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)] MyTimerInfo myTimer)
+        [FunctionName(nameof(FatSecretSynchronization))]
+        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)] TimerInfo myTimer,
+            ILogger log)
         {
             if (myTimer.IsPastDue)
             {

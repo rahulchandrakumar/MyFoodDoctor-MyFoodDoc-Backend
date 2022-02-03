@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Functions.Worker;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.Application.Abstractions;
@@ -32,12 +32,10 @@ namespace MyFoodDoc.Functions.Functions
             _googlePlayStoreClient = googlePlayStoreClient;
         }
 
-        [Function("InAppPurchaseSubscriptionsSynchronization")]
+        [FunctionName(nameof(InAppPurchaseSubscriptionsSynchronization))]
         public async Task RunAsync(
-            [TimerTrigger("0 */10 * * * *" /*"%TimerInterval%"*/, RunOnStartup =true)]
-            TimerInfo myTimer,
-            ILogger log,
-            CancellationToken cancellationToken)
+            [TimerTrigger("0 */10 * * * *" /*"%TimerInterval%"*/, RunOnStartup =true)] TimerInfo myTimer,
+            ILogger log)
         {
             if (myTimer.IsPastDue)
             {
@@ -46,9 +44,9 @@ namespace MyFoodDoc.Functions.Functions
 
             log.LogInformation($"InAppPurchaseSubscriptionsSynchronization executed at: {DateTime.Now}");
 
-            await AppStoreSubscriptionsSynchronization(log, cancellationToken);
+            await AppStoreSubscriptionsSynchronization(log, CancellationToken.None);
 
-            await GooglePlayStoreSubscriptionsSynchronization(log, cancellationToken);
+            await GooglePlayStoreSubscriptionsSynchronization(log, CancellationToken.None);
         }
 
         private async Task AppStoreSubscriptionsSynchronization(ILogger log,

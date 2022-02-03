@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Functions.Worker;
+﻿using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Abstractions;
@@ -13,29 +13,26 @@ using System.Threading.Tasks;
 
 namespace MyFoodDoc.Functions.Functions
 {
-    public class WeeklyStatisticsExportFunction
+    public class WeeklyStatisticsExport
     {
         private readonly IUserStatsService _userStatsService;
         private readonly StatisticsExportOptions _settings;
         private readonly IEmailService _emailService;
-        private readonly ILogger log;
 
-        public WeeklyStatisticsExportFunction(
+        public WeeklyStatisticsExport(
             IUserStatsService userStatsService,
             IOptions<StatisticsExportOptions> options,
-            IEmailService emailService,
-            ILoggerFactory loggerFactory)
+            IEmailService emailService)
         {
             _userStatsService = userStatsService;
             _settings = options.Value;
             _emailService = emailService;
-            log = loggerFactory.CreateLogger<WeeklyStatisticsExportFunction>();
         }
 
-        [Function("WeeklyStatisticsExport")]
+        [FunctionName(nameof(WeeklyStatisticsExport))]
         public async Task RunAsync(
-            [TimerTrigger("0 10 0 * * MON", RunOnStartup = true)]
-            TimerInfo myTimer)
+            [TimerTrigger("0 10 0 * * MON", RunOnStartup = true)] TimerInfo myTimer,
+            ILogger log)
         {
             var currentDate = DateTime.Now;
 
@@ -44,7 +41,7 @@ namespace MyFoodDoc.Functions.Functions
                 log.LogInformation("Timer is running late!");
             }
 
-            if (String.IsNullOrEmpty(_settings.EmailList))
+            if (string.IsNullOrEmpty(_settings.EmailList))
             {
                 throw new ArgumentNullException(nameof(_settings.EmailList));
             }
@@ -55,7 +52,7 @@ namespace MyFoodDoc.Functions.Functions
             var bytes = ExcelHelper.CreateExcelFile(data, true);
 
             using (Stream bodyTemplateStream = Assembly.GetExecutingAssembly().
-                    GetManifestResourceStream($"{typeof(Program).Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
+                    GetManifestResourceStream($"{typeof(Startup).Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
             {
                 if (bodyTemplateStream == null)
                 {
@@ -63,7 +60,7 @@ namespace MyFoodDoc.Functions.Functions
                 }
 
                 using StreamReader reader = new StreamReader(bodyTemplateStream);
-                string body = String.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
+                string body = string.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
 
                 string[] list = _settings.EmailList.Split(',');
 

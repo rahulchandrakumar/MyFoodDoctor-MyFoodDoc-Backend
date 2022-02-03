@@ -2,7 +2,6 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<AzureFunctionsVersion>v4</AzureFunctionsVersion>
-		<OutputType>Exe</OutputType>
 		<DockerFastModeProjectMountDirectory>/home/site/wwwroot</DockerFastModeProjectMountDirectory>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>..\..</DockerfileContext>
@@ -14,17 +13,17 @@
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="mapping.json">
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="Templates\SubscriptionWeeklyStatisticsEmailTemplate.html" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="DotNetCore.NPOI" Version="1.2.3" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Timer" Version="4.1.0" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.3.0" OutputItemType="Analyzer" />
-		<PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.6.0" />
-		<PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.0" />
+		<PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
+		<PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.0.1" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+		<PackageReference Include="NPOI" Version="2.5.5" />
+
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\MyFoodDoc.AppStoreClient\MyFoodDoc.AppStoreClient.csproj" />

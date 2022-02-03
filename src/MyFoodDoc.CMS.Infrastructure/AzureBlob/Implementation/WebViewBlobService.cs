@@ -43,7 +43,7 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
 
             if (fileType == "text/html") //apply template
             {
-                content = String.Format(htmlTemplate, GetPath(Consts.WebPageCssFilename), content);
+                content = string.Format(htmlTemplate, GetPath(Consts.WebPageCssFilename), content);
             }
             else if (fileType == "text/css") //upload as is
             { }

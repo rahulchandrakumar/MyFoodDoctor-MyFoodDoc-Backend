@@ -1,6 +1,6 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
-FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated6.0-appservice AS base
+FROM mcr.microsoft.com/azure-functions/dotnet:4 AS base
 WORKDIR /home/site/wwwroot
 EXPOSE 80
 
@@ -15,13 +15,13 @@ COPY ["src/MyFoodDoc.FirebaseClient/MyFoodDoc.FirebaseClient.csproj", "src/MyFoo
 COPY ["src/MyFoodDoc.AppStoreClient/MyFoodDoc.AppStoreClient.csproj", "src/MyFoodDoc.AppStoreClient/"]
 COPY ["src/MyFoodDoc.Infrastructure/MyFoodDoc.Infrastructure.csproj", "src/MyFoodDoc.Infrastructure/"]
 
-# https://github.com/Azure/azure-functions-docker/issues/600
-RUN apt-get update -y \
-  && apt-get install -y apt-transport-https wget \
-  && wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
-  && dpkg -i packages-microsoft-prod.deb \
-  && apt-get update -y \
-  && apt-get install -y aspnetcore-runtime-6.0
+## https://github.com/Azure/azure-functions-docker/issues/600
+#RUN apt-get update -y \
+  #&& apt-get install -y apt-transport-https wget \
+  #&& wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+  #&& dpkg -i packages-microsoft-prod.deb \
+  #&& apt-get update -y \
+  #&& apt-get install -y aspnetcore-runtime-6.0
 
 RUN dotnet restore "src/MyFoodDoc.Functions/MyFoodDoc.Functions.csproj"
 COPY . .
