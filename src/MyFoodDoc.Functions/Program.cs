@@ -25,15 +25,16 @@ public class Program
             .ConfigureFunctionsWorkerDefaults()
             .ConfigureAppConfiguration(config => config
                 .SetBasePath(Environment.CurrentDirectory)
+#if DEBUG
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: false)
                 .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
                 .AddEnvironmentVariables()
+#endif
                 .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json"))
 
             )
             .ConfigureServices((context, services) =>
             {
-                services.AddLogging();
                 services.AddSharedApplication(context.Configuration);
                 services.AddSharedInfrastructure(context.Configuration, null, addTelemetry: false);
                 services.AddSharedAppStoreClient(context.Configuration);
