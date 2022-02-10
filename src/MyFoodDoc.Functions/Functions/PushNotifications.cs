@@ -33,7 +33,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [FunctionName("TimerPushNotifications")]
         public async Task RunTimerPushNotificationsAsync(
-            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = true)] TimerInfo myTimer,
+            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             if (myTimer.IsPastDue)
@@ -109,7 +109,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [FunctionName("DiaryPushNotifications")]
         public async Task RunDiaryPushNotificationsAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = true)] TimerInfo myTimer,
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             if (myTimer.IsPastDue)

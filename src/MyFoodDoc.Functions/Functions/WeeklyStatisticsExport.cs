@@ -31,7 +31,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [FunctionName(nameof(WeeklyStatisticsExport))]
         public async Task RunAsync(
-            [TimerTrigger("0 10 0 * * MON", RunOnStartup = true)] TimerInfo myTimer,
+            [TimerTrigger("0 10 0 * * MON", RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             var currentDate = DateTime.Now;

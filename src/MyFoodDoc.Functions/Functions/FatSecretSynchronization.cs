@@ -27,7 +27,7 @@ namespace MyFoodDoc.Functions.Functions
         }
 
         [FunctionName(nameof(FatSecretSynchronization))]
-        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = true)] TimerInfo myTimer,
+        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             if (myTimer.IsPastDue)
