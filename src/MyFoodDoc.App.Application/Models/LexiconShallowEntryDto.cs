@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using MyFoodDoc.Application.Entities;
 using MyFoodDoc.App.Application.Mappings;
+using MyFoodDoc.Application.Entities;
 
 namespace MyFoodDoc.App.Application.Models
 {

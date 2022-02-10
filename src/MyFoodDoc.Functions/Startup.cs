@@ -14,27 +14,41 @@ using MyFoodDoc.FirebaseClient;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using MyFoodDoc.Functions.Abstractions;
 using MyFoodDoc.Functions.Services;
+using MyFoodDoc.Application.Configuration;
+using MyFoodDoc.Application.Services;
 
 [assembly: FunctionsStartup(typeof(MyFoodDoc.Functions.Startup))]
 namespace MyFoodDoc.Functions
 {
     public class Startup : FunctionsStartup
     {
-        public override void Configure(IFunctionsHostBuilder builder)
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
         {
-            var configuration = new ConfigurationBuilder()
+            builder.ConfigurationBuilder
                 .SetBasePath(Environment.CurrentDirectory)
                 .AddJsonFile("local.settings.json", optional: true, reloadOnChange: false)
-                .AddUserSecrets(Assembly.GetExecutingAssembly(), false)
-                .AddEnvironmentVariables()
-                .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.mapping.json"))
-                .Build();
+                .AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
+                .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.mapping.json"));
 
-            builder.Services.AddSingleton<IConfiguration>(configuration);
+        }
+
+        public override void Configure(IFunctionsHostBuilder builder)
+        {
+            builder.Services.AddOptions<StatisticsOptions>()
+                    .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("Statistics").Bind(settings));
+
+            builder.Services.AddOptions<EmailServiceOptions>()
+                    .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("EmailService").Bind(settings));
+
+            builder.Services.AddOptions<StatisticsExportOptions>()
+                    .Configure<IConfiguration>((settings, configuration) => configuration.GetSection("StatisticsExport").Bind(settings));
+
+            var configuration = builder.GetContext().Configuration;
+
             builder.Services.AddTransient<IUserStatsService, UserStatsService>();
 
-            builder.Services.AddSharedInfrastructure(configuration, null);
-            builder.Services.AddSharedApplication(configuration);
+            builder.Services.AddSharedInfrastructure(configuration, null, addTelemetry: false);
+            
             builder.Services.AddSharedAppStoreClient(configuration);
             builder.Services.AddSharedGooglePlayStoreClient(configuration);
             builder.Services.AddSharedFatSecretClient(configuration);

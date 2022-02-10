@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Enums;
 using MyFoodDoc.App.Application.Exceptions;
@@ -12,6 +7,10 @@ using MyFoodDoc.App.Application.Payloads.Psychogramm;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Psychogramm;
 using MyFoodDoc.Application.Enums;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -47,7 +46,7 @@ namespace MyFoodDoc.App.Application.Services
                     Text = scale.Text,
                     Order = scale.Order,
                     ImageUrl = scale.Image.Url,
-                    Questions = scale.Questions.Where(x=> !x.Extra).Select(x => new QuestionDto
+                    Questions = scale.Questions.Where(x => !x.Extra).Select(x => new QuestionDto
                     {
                         Id = x.Id,
                         Type = x.Type.ToString(),
@@ -55,13 +54,13 @@ namespace MyFoodDoc.App.Application.Services
                         Order = x.Order,
                         VerticalAlignment = x.VerticalAlignment,
                         Choices = x.Choices.Select(y => new ChoiceDto
-                            {
-                                Id = y.Id,
-                                Text = y.Text,
-                                Order = y.Order,
-                                Checked = userChoices.Any(z => z.ChoiceId == y.Id)
+                        {
+                            Id = y.Id,
+                            Text = y.Text,
+                            Order = y.Order,
+                            Checked = userChoices.Any(z => z.ChoiceId == y.Id)
                         })
-                            .OrderBy(x => x.Order).ToList()
+                             .OrderBy(x => x.Order).ToList()
                     }).OrderBy(x => x.Order).ToList()
                 };
 
@@ -102,8 +101,8 @@ namespace MyFoodDoc.App.Application.Services
                 .Select(x => x.ChoiceId)
                 .ToList();
 
-            var answeredQuestionsCount = scales.Select(x => new { Scale = x, Count = x.Questions.Count(y => y.Choices.Any(z => scorableUserChoices.Contains(z.Id)))});
-            
+            var answeredQuestionsCount = scales.Select(x => new { Scale = x, Count = x.Questions.Count(y => y.Choices.Any(z => scorableUserChoices.Contains(z.Id))) });
+
             var groupped = answeredQuestionsCount.GroupBy(g => g.Count).OrderBy(g => g.Key).Last();
 
             if (groupped.Count() == 1)

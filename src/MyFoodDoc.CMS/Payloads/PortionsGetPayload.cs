@@ -15,7 +15,7 @@ namespace MyFoodDoc.CMS.Payloads
             };
         }
     }
-    public class PortionsGetPayload: BasePaginatedPayload<PortionsFilter>
+    public class PortionsGetPayload : BasePaginatedPayload<PortionsFilter>
     {
     }
 }

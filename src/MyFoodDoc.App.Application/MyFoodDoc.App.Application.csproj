@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,19 +17,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
-    <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="3.1.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
-    <PackageReference Include="IdentityModel" Version="4.5.0" />
-    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="FlexLabs.EntityFrameworkCore.Upsert" Version="6.0.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.6" />
+    <PackageReference Include="Microsoft.Azure.Storage.Blob" Version="11.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MyFoodDoc.AokClient\MyFoodDoc.AokClient.csproj" />
     <ProjectReference Include="..\MyFoodDoc.Application\MyFoodDoc.Application.csproj" />
     <ProjectReference Include="..\MyFoodDoc.AppStoreClient\MyFoodDoc.AppStoreClient.csproj" />
-    <ProjectReference Include="..\MyFoodDoc.Core\MyFoodDoc.Core.csproj" />
     <ProjectReference Include="..\MyFoodDoc.FatSecretClient\MyFoodDoc.FatSecretClient.csproj" />
     <ProjectReference Include="..\MyFoodDoc.GooglePlayStoreClient\MyFoodDoc.GooglePlayStoreClient.csproj" />
   </ItemGroup>

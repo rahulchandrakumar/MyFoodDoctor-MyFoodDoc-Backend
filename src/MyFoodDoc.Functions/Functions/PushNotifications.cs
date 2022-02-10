@@ -14,7 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace MyFoodDoc.Functions
+namespace MyFoodDoc.Functions.Functions
 {
     public class PushNotifications
     {
@@ -33,10 +33,8 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("TimerPushNotifications")]
         public async Task RunTimerPushNotificationsAsync(
-            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/)]
-            TimerInfo myTimer,
-            ILogger log,
-            CancellationToken cancellationToken)
+            [TimerTrigger("0 */1 * * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+            ILogger log)
         {
             if (myTimer.IsPastDue)
             {
@@ -52,7 +50,7 @@ namespace MyFoodDoc.Functions
                 .Where(x => x.ExpirationDate <= onDate
                 && x.User.PushNotificationsEnabled
                 && !string.IsNullOrEmpty(x.User.DeviceToken))
-                .ToListAsync(cancellationToken);
+                .ToListAsync();
 
             log.LogInformation(
                 $"Users with push notifications enabled: {expiredTimers?.Count()}");
@@ -71,7 +69,7 @@ namespace MyFoodDoc.Functions
 
                 try
                 {
-                    result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                    result = await _firebaseClient.SendAsync(notifications, CancellationToken.None);
                 }
                 catch (Exception e)
                 {
@@ -88,7 +86,7 @@ namespace MyFoodDoc.Functions
                         var userMethod =
                             (await _context.UserMethods
                                 .Where(x => x.UserId == userTimer.UserId && x.MethodId == userTimer.MethodId)
-                                .ToListAsync(cancellationToken)).OrderBy(x => x.Created).LastOrDefault();
+                                .ToListAsync()).OrderBy(x => x.Created).LastOrDefault();
 
                         if (userMethod != null)
                         {
@@ -102,7 +100,7 @@ namespace MyFoodDoc.Functions
 
                     _context.UserMethods.UpdateRange(userMethodsToUpdate);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(CancellationToken.None);
                 }
             }
 
@@ -111,10 +109,8 @@ namespace MyFoodDoc.Functions
 
         [FunctionName("DiaryPushNotifications")]
         public async Task RunDiaryPushNotificationsAsync(
-            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)]
-            TimerInfo myTimer,
-            ILogger log,
-            CancellationToken cancellationToken)
+            [TimerTrigger("0 0 16 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+            ILogger log)
         {
             if (myTimer.IsPastDue)
             {
@@ -123,7 +119,7 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"DiaryPushNotifications executed at: {DateTime.Now}");
 
-            var usersWithPushNotificationsEnabled = await _context.Users.Where(x => x.PushNotificationsEnabled && !string.IsNullOrEmpty(x.DeviceToken)).ToListAsync(cancellationToken);
+            var usersWithPushNotificationsEnabled = await _context.Users.Where(x => x.PushNotificationsEnabled && !string.IsNullOrEmpty(x.DeviceToken)).ToListAsync();
 
             log.LogInformation($"Users with push notifications enabled: {usersWithPushNotificationsEnabled.Count()}");
 
@@ -137,15 +133,15 @@ namespace MyFoodDoc.Functions
                 {
                     var userCreatedDate = new DateTime(user.Created.Year, user.Created.Month, user.Created.Day);
 
-                    var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date >= dateToCheck.AddDays(-7)).ToListAsync(cancellationToken);
+                    var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date >= dateToCheck.AddDays(-7)).ToListAsync();
 
                     var daysRecorded = diaryRecords.Where(x => x.Date > dateToCheck.AddDays(-_statisticsPeriod))
                         .Select(x => x.Date)
                         .Distinct()
                         .Count();
 
-                    var isFirstTargetsEvaluation = !(await _context.UserTargets.AnyAsync(x =>
-                        x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode), cancellationToken));
+                    var isFirstTargetsEvaluation = !await _context.UserTargets.AnyAsync(x =>
+                        x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode));
 
                     if (userCreatedDate <= dateToCheck.AddDays(-7) && !diaryRecords.Any())
                     {
@@ -259,7 +255,9 @@ namespace MyFoodDoc.Functions
                     else
                     {
                         var lastTargetActivated = await _context.UserTargets.Where(x =>
-                            x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+                            x.UserId == user.Id && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod))
+                            .OrderBy(x => x.Created)
+                            .LastOrDefaultAsync();
 
                         if (lastTargetActivated != null)
                         {
@@ -309,7 +307,7 @@ namespace MyFoodDoc.Functions
                 {
                     try
                     {
-                        var result = await _firebaseClient.SendAsync(notifications, cancellationToken);
+                        var result = await _firebaseClient.SendAsync(notifications, CancellationToken.None);
                     }
                     catch (Exception e)
                     {

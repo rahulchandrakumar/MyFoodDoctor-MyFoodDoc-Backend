@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
@@ -7,9 +6,7 @@ using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.TrackedValues;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 

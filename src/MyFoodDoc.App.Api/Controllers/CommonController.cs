@@ -5,13 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Clients;
+using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Payloads.User;
-using System;
+using MyFoodDoc.Application.Abstractions;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Exceptions;
-using MyFoodDoc.Application.Abstractions;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
@@ -23,9 +22,9 @@ namespace MyFoodDoc.App.Api.Controllers
         private readonly IIdentityServerClient _identityServerClient;
         private readonly IEmailService _emailService;
 
-        public CommonController(ICommonService service, 
-            ILogger<CommonController> logger, 
-            IIdentityServerClient identityServerClient, 
+        public CommonController(ICommonService service,
+            ILogger<CommonController> logger,
+            IIdentityServerClient identityServerClient,
             IEmailService emailService)
         {
             _service = service;
@@ -39,7 +38,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Register([FromBody] RegisterPayload payload, CancellationToken cancellationToken = default) 
+        public async Task<IActionResult> Register([FromBody] RegisterPayload payload, CancellationToken cancellationToken = default)
         {
             await _service.RegisterAsync(payload.Email, payload.Password, payload.InsuranceId);
 

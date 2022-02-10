@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace MyFoodDoc.CMS.Models
+﻿namespace MyFoodDoc.CMS.Models
 {
     public class Serving
     {

@@ -1,8 +1,6 @@
-﻿using System;
-using AutoMapper;
-using MyFoodDoc.Application.Entities;
+﻿using AutoMapper;
 using MyFoodDoc.App.Application.Mappings;
-using Newtonsoft.Json;
+using MyFoodDoc.Application.Entities;
 
 namespace MyFoodDoc.App.Application.Models
 {

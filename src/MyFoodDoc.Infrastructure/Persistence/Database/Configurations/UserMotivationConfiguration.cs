@@ -10,7 +10,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         {
             builder.ToTable("UserMotivations", "User");
             builder.HasKey(x => new { x.UserId, x.MotivationId });
-            
+
             builder.HasOne(x => x.User)
                 .WithMany(x => x.Motivations)
                 .HasForeignKey(x => x.UserId)

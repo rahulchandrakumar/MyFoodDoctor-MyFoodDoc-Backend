@@ -28,7 +28,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.BelowOptimalPieChartText).HasMaxLength(1000);
             builder.Property(o => o.AboveOptimalPieChartTitle).HasMaxLength(100);
             builder.Property(o => o.AboveOptimalPieChartText).HasMaxLength(1000);
-            
+
             builder.Property(o => o.LineGraphUpperLimit).HasColumnType("decimal(18,2)");
             builder.Property(o => o.LineGraphLowerLimit).HasColumnType("decimal(18,2)");
             builder.Property(o => o.LineGraphOptimal).HasColumnType("decimal(18,2)");

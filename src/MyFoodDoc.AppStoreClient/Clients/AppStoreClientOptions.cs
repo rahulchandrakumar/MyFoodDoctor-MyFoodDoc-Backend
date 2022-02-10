@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.AppStoreClient.Clients
+﻿namespace MyFoodDoc.AppStoreClient.Clients
 {
     public class AppStoreClientOptions
     {

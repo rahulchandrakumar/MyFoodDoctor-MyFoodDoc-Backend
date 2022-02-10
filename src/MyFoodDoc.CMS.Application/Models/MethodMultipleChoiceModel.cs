@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MyFoodDoc.Application.Entities.Abstractions;
-using MyFoodDoc.Application.Entities.Methods;
-using MyFoodDoc.Application.Enums;
+﻿using MyFoodDoc.Application.Entities.Methods;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

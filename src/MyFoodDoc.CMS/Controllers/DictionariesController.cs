@@ -20,10 +20,10 @@ namespace MyFoodDoc.CMS.Controllers
         private readonly ITargetService _targetService;
 
 
-        public DictionariesController(IDietService dietService, 
-            IIndicationService indicationService, 
-            IInsuranceService insuranceService, 
-            IMotivationService motivationService, 
+        public DictionariesController(IDietService dietService,
+            IIndicationService indicationService,
+            IInsuranceService insuranceService,
+            IMotivationService motivationService,
             ITargetService targetService)
         {
             this._dietService = dietService;

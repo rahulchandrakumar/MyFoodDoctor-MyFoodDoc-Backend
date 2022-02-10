@@ -2,7 +2,6 @@
 using Microsoft.Azure.Storage.Blob;
 using MyFoodDoc.CMS.Infrastructure.Common;
 using System;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,7 +43,7 @@ namespace MyFoodDoc.CMS.Infrastructure.AzureBlob.Implementation
 
             if (fileType == "text/html") //apply template
             {
-                content = String.Format(htmlTemplate, GetPath(Consts.WebPageCssFilename), content);
+                content = string.Format(htmlTemplate, GetPath(Consts.WebPageCssFilename), content);
             }
             else if (fileType == "text/css") //upload as is
             { }

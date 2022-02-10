@@ -1,18 +1,18 @@
 ﻿//using MyFoodDoc.Shared.MailSender;
 
-using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using MyFoodDoc.App.Application.Models;
-using MyFoodDoc.App.Application.Payloads.User;
-using System.Net.Mime;
-using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Abstractions;
-using System.Threading;
+using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
+using MyFoodDoc.App.Application.Payloads.User;
+using System;
 using System.Collections.Generic;
+using System.Net.Mime;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Api.Controllers
 {

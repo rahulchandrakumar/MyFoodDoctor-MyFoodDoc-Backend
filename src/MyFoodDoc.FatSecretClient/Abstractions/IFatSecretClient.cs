@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MyFoodDoc.FatSecretClient.Clients;
 using System.Threading.Tasks;
-using MyFoodDoc.FatSecretClient.Clients;
 
 
 namespace MyFoodDoc.FatSecretClient.Abstractions

@@ -6,7 +6,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
     public class ImageConfiguration : IEntityTypeConfiguration<Image>
     {
-        
+
         public void Configure(EntityTypeBuilder<Image> builder)
         {
             builder.ToTable("Images", "System");

@@ -1,5 +1,4 @@
-﻿using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Enums;
+﻿using MyFoodDoc.Application.Enums;
 using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Payloads.User

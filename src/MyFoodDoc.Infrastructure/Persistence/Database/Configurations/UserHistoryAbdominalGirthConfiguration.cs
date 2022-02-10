@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.TrackedValues;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
@@ -10,7 +9,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
         public void Configure(EntityTypeBuilder<UserAbdominalGirth> builder)
         {
             builder.ToTable("AbdominalGirthHistory", "User");
-            
+
             builder.HasKey(x => new { x.UserId, x.Date });
             builder.Property(x => x.Date).HasColumnType("Date");
             builder.Property(x => x.Value).IsRequired().HasColumnType("decimal(4,1)");

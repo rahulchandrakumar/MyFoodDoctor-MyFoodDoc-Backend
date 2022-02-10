@@ -2,7 +2,7 @@
 
 namespace MyFoodDoc.CMS.Application.Models
 {
-    public class InsuranceModel: BaseModel<int>
+    public class InsuranceModel : BaseModel<int>
     {
         public string Name { get; set; }
 

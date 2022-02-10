@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using IdentityModel.Client;
+﻿using IdentityModel.Client;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.FatSecretClient.Abstractions
 {

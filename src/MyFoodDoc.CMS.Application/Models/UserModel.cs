@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MyFoodDoc.CMS.Application.Models
 {
-    public class UserModel: BaseModel<int>
+    public class UserModel : BaseModel<int>
     {
         public string Displayname { get; set; }
         public string Username { get; set; }

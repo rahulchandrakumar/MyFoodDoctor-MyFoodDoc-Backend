@@ -3,12 +3,11 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {

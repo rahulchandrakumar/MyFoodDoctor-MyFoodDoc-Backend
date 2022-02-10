@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace MyFoodDoc.CMS.Hubs
 {
     [Authorize]
-    public class EditStateHub: Hub
+    public class EditStateHub : Hub
     {
         private static readonly Dictionary<string, Dictionary<int, EditStateHubModel>> _groupedEditList = new Dictionary<string, Dictionary<int, EditStateHubModel>>();
 
@@ -20,9 +20,9 @@ namespace MyFoodDoc.CMS.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-            await Clients.Caller.SendAsync("StateList", 
-                groupName, 
-                (_groupedEditList.ContainsKey(groupName) ? _groupedEditList[groupName].Values as IEnumerable<EditStateHubModel> : new List<EditStateHubModel>()).ToDictionary(k => k.Id, v => v));            
+            await Clients.Caller.SendAsync("StateList",
+                groupName,
+                (_groupedEditList.ContainsKey(groupName) ? _groupedEditList[groupName].Values as IEnumerable<EditStateHubModel> : new List<EditStateHubModel>()).ToDictionary(k => k.Id, v => v));
         }
 
         public async Task Close(string groupName)

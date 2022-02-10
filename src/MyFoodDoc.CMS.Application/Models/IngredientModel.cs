@@ -1,5 +1,5 @@
-﻿using System;
-using MyFoodDoc.Application.Entities;
+﻿using MyFoodDoc.Application.Entities;
+using System;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

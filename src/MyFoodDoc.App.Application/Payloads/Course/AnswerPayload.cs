@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.App.Application.Payloads.Course
+﻿namespace MyFoodDoc.App.Application.Payloads.Course
 {
     public class AnswerPayload
     {

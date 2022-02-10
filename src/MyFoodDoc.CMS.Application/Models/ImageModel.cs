@@ -4,7 +4,7 @@ using System;
 
 namespace MyFoodDoc.CMS.Application.Models
 {
-    public class ImageModel: BaseModel<int>
+    public class ImageModel : BaseModel<int>
     {
         #region CDN
         public static Uri CdnUrl { private get; set; }

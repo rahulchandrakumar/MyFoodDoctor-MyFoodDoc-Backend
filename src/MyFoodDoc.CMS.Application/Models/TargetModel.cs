@@ -1,10 +1,10 @@
-﻿using MyFoodDoc.Application.Entities.Targets;
+﻿using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MyFoodDoc.Application.Entities;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

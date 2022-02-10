@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Methods;
 using MyFoodDoc.Application.Enums;
@@ -11,6 +6,11 @@ using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
 using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -125,7 +125,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
         {
             var entities = await _context.Methods
                 .AsNoTracking()
-                .Where(x=> x.ParentId == parentId)
+                .Where(x => x.ParentId == parentId)
                 .ToListAsync(cancellationToken);
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -198,7 +198,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
 
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            
+
             //DietMethods
             var existingMethodDiets = await _context.DietMethods.Where(x => x.MethodId == item.Id).ToListAsync(cancellationToken);
 

@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MyFoodDoc.Functions
+namespace MyFoodDoc.Functions.Functions
 {
     public class InAppPurchaseSubscriptionsSynchronization
     {
@@ -32,12 +32,10 @@ namespace MyFoodDoc.Functions
             _googlePlayStoreClient = googlePlayStoreClient;
         }
 
-        [FunctionName("InAppPurchaseSubscriptionsSynchronization")]
+        [FunctionName(nameof(InAppPurchaseSubscriptionsSynchronization))]
         public async Task RunAsync(
-            [TimerTrigger("0 */10 * * * *" /*"%TimerInterval%"*/, RunOnStartup =true)]
-            TimerInfo myTimer,
-            ILogger log,
-            CancellationToken cancellationToken)
+            [TimerTrigger("0 */10 * * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+            ILogger log)
         {
             if (myTimer.IsPastDue)
             {
@@ -46,24 +44,24 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"InAppPurchaseSubscriptionsSynchronization executed at: {DateTime.Now}");
 
-            await AppStoreSubscriptionsSynchronization(log, cancellationToken);
+            await AppStoreSubscriptionsSynchronization(log, CancellationToken.None);
 
-            await GooglePlayStoreSubscriptionsSynchronization(log, cancellationToken);
+            await GooglePlayStoreSubscriptionsSynchronization(log, CancellationToken.None);
         }
 
         private async Task AppStoreSubscriptionsSynchronization(ILogger log,
             CancellationToken cancellationToken)
         {
             var appStoreSubscriptions = await _context.AppStoreSubscriptions
-                .AsNoTracking()
-                .Where(
-                x => 
-                x.LastSynchronized < DateTime.Now.AddHours(-10) // HACK: do not take same register at least 10 hours
-                && (
-                x.FirstSynchronized == null || x.FirstSynchronized > DateTime.Now.AddYears(-2))) // HACK: do not consider registers older than 1 year
-                .OrderBy(x => x.LastSynchronized)
-                .Take(BatchSize)
-                .ToListAsync(cancellationToken);
+               .AsNoTracking()
+               .Where(
+               x =>
+               x.LastSynchronized < DateTime.Now.AddHours(-10) // HACK: do not take same register at least 10 hours
+               && (
+               x.FirstSynchronized == null || x.FirstSynchronized > DateTime.Now.AddYears(-2))) // HACK: do not consider registers older than 1 year
+               .OrderBy(x => x.LastSynchronized)
+               .Take(BatchSize)
+               .ToListAsync(cancellationToken);
 
             var receiptsTasks = appStoreSubscriptions.Select(x => CallApple(x));
 
@@ -89,7 +87,7 @@ namespace MyFoodDoc.Functions
 
             _context.AppStoreSubscriptions.UpdateRange(appStoreSubscriptionsUpdate);
             await _context.SaveChangesAsync(cancellationToken);
-           
+
             log.LogInformation($"{appStoreSubscriptionsUpdate.Count()} AppStore subscriptions updated.");
 
             if (receiptIds.Count() < receipts.Count())
@@ -156,7 +154,7 @@ namespace MyFoodDoc.Functions
 
             _context.GooglePlayStoreSubscriptions.UpdateRange(googlePlayStoreSubscriptionsUpdate);
             await _context.SaveChangesAsync(cancellationToken);
-           
+
             log.LogInformation($"{googlePlayStoreSubscriptionsUpdate.Count()} GooglePlayStore subscriptions updated.");
 
             if (receiptIds.Count() < receipts.Count())

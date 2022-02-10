@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyFoodDoc.CMS.Application.FilterModels
+﻿namespace MyFoodDoc.CMS.Application.FilterModels
 {
-    public enum IngredientFilterState: byte
+    public enum IngredientFilterState : byte
     {
         HaveToSpecify = 0,
         NotSpecified,

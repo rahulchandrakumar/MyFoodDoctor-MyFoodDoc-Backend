@@ -1,17 +1,16 @@
-using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using MyFoodDoc.Application.Entities;
-using MyFoodDoc.App.Infrastructure;
 using IdentityServer4;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Extensions;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using MyFoodDoc.App.Infrastructure;
+using MyFoodDoc.Application.Entities;
+using System.Linq;
 
 namespace MyFoodDoc.App.Auth
 {
@@ -92,8 +91,9 @@ namespace MyFoodDoc.App.Auth
 
                 options.IssuerUri = identityServerIssuerUri;
 
-                options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
                 /*
+                options.Authentication.CookieAuthenticationScheme = IdentityServerConstants.DefaultCookieAuthenticationScheme;
+                
                 options.Endpoints.EnableAuthorizeEndpoint = false;
                 options.Endpoints.EnableCheckSessionEndpoint = false;
                 options.Endpoints.EnableDeviceAuthorizationEndpoint = false;

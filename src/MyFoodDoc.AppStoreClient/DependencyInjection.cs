@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.AppStoreClient.Clients;
+using System;
 
 namespace MyFoodDoc.AppStoreClient
 {

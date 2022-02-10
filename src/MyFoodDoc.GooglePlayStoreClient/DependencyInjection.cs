@@ -10,7 +10,7 @@ namespace MyFoodDoc.GooglePlayStoreClient
         public static IServiceCollection AddSharedGooglePlayStoreClient(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<GooglePlayStoreClientOptions>(configuration.GetSection("GooglePlayStore"));
-            
+
             services.AddScoped<IGooglePlayStoreClient, Clients.GooglePlayStoreClient>();
 
             return services;

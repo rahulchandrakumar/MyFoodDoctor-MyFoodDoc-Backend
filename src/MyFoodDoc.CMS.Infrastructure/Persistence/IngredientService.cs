@@ -4,11 +4,10 @@ using MyFoodDoc.Application.Entities;
 using MyFoodDoc.CMS.Application.FilterModels;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using System.Collections.Generic;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -86,7 +85,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var count = await baseQuery.CountAsync(cancellationToken);
 
             var entities = await baseQuery.Skip(skip).Take(take).ToListAsync(cancellationToken);
-            
+
             return new PaginatedItems<IngredientModel>()
             {
                 Items = entities.Select(IngredientModel.FromEntity).ToList(),

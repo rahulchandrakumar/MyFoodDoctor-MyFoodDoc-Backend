@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using MyFoodDoc.Core.Configuration.ConfigurationMapper;
+using System.Reflection;
 
 namespace MyFoodDoc.App.Auth
 {
@@ -15,7 +17,9 @@ namespace MyFoodDoc.App.Auth
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((builderContext, config) =>
                 {
-                    config.WithJsonMapping("mapping.json");
+                    config.AddUserSecrets(Assembly.GetExecutingAssembly(), optional: true)
+                    .AddEnvironmentVariables()
+                    .WithJsonMapping(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(Program).Namespace}.mapping.json"));
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

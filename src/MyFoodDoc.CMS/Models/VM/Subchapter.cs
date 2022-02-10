@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Models;
+﻿using MyFoodDoc.CMS.Application.Models;
 
 namespace MyFoodDoc.CMS.Models.VM
 {

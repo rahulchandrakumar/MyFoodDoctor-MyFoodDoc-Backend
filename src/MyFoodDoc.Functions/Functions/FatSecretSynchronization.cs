@@ -11,25 +11,24 @@ using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace MyFoodDoc.Functions
+namespace MyFoodDoc.Functions.Functions
 {
     public class FatSecretSynchronization
     {
         private readonly IApplicationContext _context;
         private readonly IFatSecretClient _fatSecretClient;
 
-        public FatSecretSynchronization(IApplicationContext context, IFatSecretClient fatSecretClient)
+        public FatSecretSynchronization(
+            IApplicationContext context,
+            IFatSecretClient fatSecretClient)
         {
             _context = context;
             _fatSecretClient = fatSecretClient;
         }
 
-        [FunctionName("FatSecretSynchronization")]
-        public async Task RunAsync(
-            [TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/)]
-            TimerInfo myTimer, 
-            ILogger log, 
-            CancellationToken cancellationToken)
+        [FunctionName(nameof(FatSecretSynchronization))]
+        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+            ILogger log)
         {
             if (myTimer.IsPastDue)
             {
@@ -38,7 +37,7 @@ namespace MyFoodDoc.Functions
 
             log.LogInformation($"FatSecretSynchronization executed at: {DateTime.Now}");
 
-            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync(cancellationToken);
+            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync();
 
             log.LogInformation($"{ingredients.Count} ingredients to update.");
 
@@ -94,7 +93,7 @@ namespace MyFoodDoc.Functions
                     {
                         _context.Ingredients.UpdateRange(ingredientsToUpdate);
 
-                        await _context.SaveChangesAsync(cancellationToken);
+                        await _context.SaveChangesAsync(CancellationToken.None);
 
                         log.LogInformation($"{currentBatchCount} ingredients updated.");
 
@@ -107,7 +106,7 @@ namespace MyFoodDoc.Functions
                 {
                     _context.Ingredients.UpdateRange(ingredientsToUpdate);
 
-                    await _context.SaveChangesAsync(cancellationToken);
+                    await _context.SaveChangesAsync(CancellationToken.None);
 
                     log.LogInformation($"{currentBatchCount} ingredients updated.");
                 }

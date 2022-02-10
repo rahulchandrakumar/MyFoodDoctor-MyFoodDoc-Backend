@@ -3,23 +3,23 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
-using MyFoodDoc.Core;
 using MyFoodDoc.Functions.Abstractions;
+using MyFoodDoc.Functions.Helpers;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace MyFoodDoc.Functions
-{    
-    public class WeeklyStatisticsExportFunction
+namespace MyFoodDoc.Functions.Functions
+{
+    public class WeeklyStatisticsExport
     {
         private readonly IUserStatsService _userStatsService;
         private readonly StatisticsExportOptions _settings;
         private readonly IEmailService _emailService;
 
-        public WeeklyStatisticsExportFunction(
+        public WeeklyStatisticsExport(
             IUserStatsService userStatsService,
             IOptions<StatisticsExportOptions> options,
             IEmailService emailService)
@@ -29,10 +29,9 @@ namespace MyFoodDoc.Functions
             _emailService = emailService;
         }
 
-        [FunctionName("WeeklyStatisticsExport")]
+        [FunctionName(nameof(WeeklyStatisticsExport))]
         public async Task RunAsync(
-            [TimerTrigger("0 10 0 * * MON", RunOnStartup = false)]
-            TimerInfo myTimer,
+            [TimerTrigger("0 10 0 * * MON", RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             var currentDate = DateTime.Now;
@@ -42,7 +41,7 @@ namespace MyFoodDoc.Functions
                 log.LogInformation("Timer is running late!");
             }
 
-            if (String.IsNullOrEmpty(_settings.EmailList))
+            if (string.IsNullOrEmpty(_settings.EmailList))
             {
                 throw new ArgumentNullException(nameof(_settings.EmailList));
             }
@@ -53,15 +52,15 @@ namespace MyFoodDoc.Functions
             var bytes = ExcelHelper.CreateExcelFile(data, true);
 
             using (Stream bodyTemplateStream = Assembly.GetExecutingAssembly().
-                    GetManifestResourceStream($"{this.GetType().Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
+                    GetManifestResourceStream($"{typeof(Startup).Namespace}.Templates.SubscriptionWeeklyStatisticsEmailTemplate.html"))
             {
                 if (bodyTemplateStream == null)
                 {
                     throw new ArgumentNullException(nameof(bodyTemplateStream));
                 }
 
-                StreamReader reader = new StreamReader(bodyTemplateStream);
-                string body = String.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
+                using StreamReader reader = new StreamReader(bodyTemplateStream);
+                string body = string.Format(reader.ReadToEnd(), currentDate.ToString("dd/MM/yyyy", new CultureInfo("de")));
 
                 string[] list = _settings.EmailList.Split(',');
 
@@ -87,7 +86,6 @@ namespace MyFoodDoc.Functions
                             }
                     });
             }
-
         }
     }
 }

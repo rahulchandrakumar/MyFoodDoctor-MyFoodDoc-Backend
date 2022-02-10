@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using MyFoodDoc.App.Application.Mappings;
 using MyFoodDoc.Application.Entities;
+using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Models
 {

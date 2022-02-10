@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MyFoodDoc.Application.Entities.Psychogramm;
+﻿using MyFoodDoc.Application.Entities.Psychogramm;
 
 namespace MyFoodDoc.CMS.Application.Models
 {

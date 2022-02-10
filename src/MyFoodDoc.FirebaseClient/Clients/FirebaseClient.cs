@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FirebaseAdmin;
+﻿using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.FirebaseClient.Abstractions;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.FirebaseClient.Clients
 {
@@ -58,7 +58,7 @@ namespace MyFoodDoc.FirebaseClient.Clients
                 },
                 Token = x.DeviceToken
             });
-            
+
             try
             {
                 var messaging = FirebaseMessagingInstance;
@@ -80,7 +80,7 @@ namespace MyFoodDoc.FirebaseClient.Clients
             {
                 _logger.LogError(e.Message + e.StackTrace);
 
-                throw e;
+                throw;
             }
         }
     }

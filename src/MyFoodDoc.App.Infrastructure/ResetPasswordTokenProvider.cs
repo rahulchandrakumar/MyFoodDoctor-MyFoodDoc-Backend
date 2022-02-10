@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using MyFoodDoc.Application.Entities;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Infrastructure
 {

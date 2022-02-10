@@ -1,7 +1,7 @@
-﻿using System;
-using MyFoodDoc.Application.Abstractions;
-using System.Collections.Generic;
+﻿using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities.Diary;
+using System;
+using System.Collections.Generic;
 
 namespace MyFoodDoc.Application.Entities
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using MyFoodDoc.App.Application.Exceptions;
+using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace MyFoodDoc.App.Api.Middlewares
 {
@@ -69,7 +69,7 @@ namespace MyFoodDoc.App.Api.Middlewares
             }
 
             context.Response.ContentType = JsonContentType;
-            context.Response.StatusCode = (int) code;
+            context.Response.StatusCode = (int)code;
 
             if (result == string.Empty)
             {

@@ -5,19 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Subscriptions;
+using MyFoodDoc.Application.Enums;
+using MyFoodDoc.AppStoreClient.Abstractions;
+using MyFoodDoc.GooglePlayStoreClient.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Payloads.Diary;
-using MyFoodDoc.Application.Enums;
-using MyFoodDoc.AppStoreClient.Abstractions;
-using MyFoodDoc.GooglePlayStoreClient.Abstractions;
-using MyFoodDoc.Application.Entities.Subscriptions;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -31,10 +31,10 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IGooglePlayStoreClient _googlePlayStoreClient;
 
         public UserService(
-            IApplicationContext context, 
-            IMapper mapper, 
-            IUserHistoryService userHistoryService, 
-            UserManager<User> userManager, 
+            IApplicationContext context,
+            IMapper mapper,
+            IUserHistoryService userHistoryService,
+            UserManager<User> userManager,
             IAppStoreClient appStoreClient,
             IGooglePlayStoreClient googlePlayStoreClient)
         {
@@ -103,7 +103,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
             _context.UserMotivations.RemoveRange(oldMotivations);
-            
+
             if (payload.Motivations != null)
             {
                 var motivationIds = await _context.Motivations
@@ -150,18 +150,19 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            if (payload.Age.HasValue) {
+            if (payload.Age.HasValue)
+            {
                 user.Birthday = DateTime.UtcNow.Date.AddYears(-payload.Age.Value);
             }
 
             user.Gender = payload.Gender;
             user.Height = payload.Height;
             user.InsuranceId = payload.InsuranceId;
-            
+
             _context.Users.Update(user);
 
             var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
-            
+
             if (oldIndications.Any())
                 _context.UserIndications.RemoveRange(oldIndications);
 
@@ -178,7 +179,7 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
-            
+
             if (oldMotivations.Any())
                 _context.UserMotivations.RemoveRange(oldMotivations);
 
@@ -195,7 +196,7 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             var oldDiets = _context.UserDiets.Where(x => x.UserId.Equals(userId));
-            
+
             if (oldDiets.Any())
                 _context.UserDiets.RemoveRange(oldDiets);
 
@@ -274,7 +275,7 @@ namespace MyFoodDoc.App.Application.Services
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, newPassword);
         }
-        
+
         public async Task UpdatePushNotifications(string userId, UpdatePushNotificationsPayload payload,
             CancellationToken cancellationToken = default)
         {

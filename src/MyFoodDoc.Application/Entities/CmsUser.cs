@@ -7,6 +7,6 @@ namespace MyFoodDoc.Application.Entities
         public string Displayname { get; set; }
         public string Username { get; set; }
         public string PasswordHash { get; set; }
-        public int Role { get; set; }        
+        public int Role { get; set; }
     }
 }

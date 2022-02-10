@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyFoodDoc.AokClient;
 using MyFoodDoc.App.Application.Abstractions;
@@ -47,5 +46,5 @@ namespace MyFoodDoc.App.Application
 
             return services;
         }
-    }       
+    }
 }

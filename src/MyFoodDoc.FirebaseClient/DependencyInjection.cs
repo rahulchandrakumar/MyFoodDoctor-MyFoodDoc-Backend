@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyFoodDoc.FirebaseClient.Abstractions;
 using MyFoodDoc.FirebaseClient.Clients;
@@ -13,7 +12,7 @@ namespace MyFoodDoc.FirebaseClient
             services.Configure<FirebaseClientOptions>(
                 configuration.GetSection("Firebase"));
 
-            services.AddScoped<IFirebaseClient, Clients.FirebaseClient>();
+            services.AddSingleton<IFirebaseClient, Clients.FirebaseClient>();
 
             return services;
         }

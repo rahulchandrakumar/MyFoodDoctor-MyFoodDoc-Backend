@@ -25,7 +25,7 @@ namespace MyFoodDoc.CMS.Controllers
         }
 
         [HttpPost("uploadTemp")]
-        public async Task<int?> UploadTempFile([FromForm]FileUploadPayload payload, CancellationToken cancellationToken = default)
+        public async Task<int?> UploadTempFile([FromForm] FileUploadPayload payload, CancellationToken cancellationToken = default)
         {
             if (payload?.Files == null)
                 return null;

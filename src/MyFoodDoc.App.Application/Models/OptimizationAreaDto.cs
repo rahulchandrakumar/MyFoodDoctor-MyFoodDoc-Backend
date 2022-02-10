@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Application.Models
 {
@@ -15,7 +13,7 @@ namespace MyFoodDoc.App.Application.Models
         public string ImageUrl { get; set; }
 
         public AnalysisDto Analysis { get; set; }
-        
+
         public ICollection<TargetDto> Targets { get; set; }
     }
 }

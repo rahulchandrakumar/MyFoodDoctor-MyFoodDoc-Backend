@@ -3,11 +3,10 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
-using System.Collections.Generic;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -34,7 +33,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var entity = await _context.CmsUsers.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
             if (entity == null)
                 return false;
-            
+
             _context.CmsUsers.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
 

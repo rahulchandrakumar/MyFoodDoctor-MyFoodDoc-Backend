@@ -1,6 +1,5 @@
 ﻿using IdentityServer4;
 using IdentityServer4.Models;
-using IdentityServer4.Test;
 using System.Collections.Generic;
 
 namespace MyFoodDoc.App.Auth
@@ -30,7 +29,7 @@ namespace MyFoodDoc.App.Auth
             return new List<ApiResource>
             {
                 new ApiResource("myfooddoc_api", "MyFoodDoc.Api")
-                {              
+                {
                     ApiSecrets = {
                         new Secret("secret".Sha256())
                     },

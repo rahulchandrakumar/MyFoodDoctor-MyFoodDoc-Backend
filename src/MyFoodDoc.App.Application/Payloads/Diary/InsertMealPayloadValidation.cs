@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace MyFoodDoc.App.Application.Payloads.Diary
 {
@@ -28,7 +27,7 @@ namespace MyFoodDoc.App.Application.Payloads.Diary
                 });
             });
 
-            RuleFor(m => m.Mood).InclusiveBetween(1,5);
+            RuleFor(m => m.Mood).InclusiveBetween(1, 5);
         }
     }
 }

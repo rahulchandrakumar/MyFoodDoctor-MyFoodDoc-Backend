@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.CMS.Models;
 using MyFoodDoc.CMS.Payloads;
 using MyFoodDoc.FatSecretClient.Abstractions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

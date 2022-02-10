@@ -1,28 +1,31 @@
+using FluentValidation;
 using FluentValidation.AspNetCore;
+using IdentityModel.Client;
+using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using MyFoodDoc.App.Api.DependencyInjection;
+using MyFoodDoc.App.Api.Middlewares;
 using MyFoodDoc.App.Api.RouteConstraints;
+using MyFoodDoc.App.Application;
 using MyFoodDoc.App.Application.Clients;
+using MyFoodDoc.App.Application.Clients.IdentityServer;
+using MyFoodDoc.App.Application.Serialization;
+using MyFoodDoc.App.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Linq;
-using MyFoodDoc.App.Application;
-using MyFoodDoc.App.Infrastructure;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Logging;
-using MyFoodDoc.App.Application.Serialization;
-using MyFoodDoc.App.Api.Middlewares;
-using MyFoodDoc.App.Application.Clients.IdentityServer;
+using System.Linq;
 
 namespace MyFoodDoc.App.Api
 {
@@ -55,10 +58,9 @@ namespace MyFoodDoc.App.Api
                 client.BaseAddress = new Uri(identityServerUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
-            
+
 
             /*
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication("Bearer")
                 .AddJwtBearer(options =>
@@ -88,6 +90,7 @@ namespace MyFoodDoc.App.Api
              */
 
             IdentityModelEventSource.ShowPII = true;
+
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             //services.AddDistributedMemoryCache();
@@ -96,16 +99,16 @@ namespace MyFoodDoc.App.Api
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddIdentityServerAuthentication(options =>
-                {
-                    options.Authority = identityServerUrl;
-                    options.ApiName = "myfooddoc_api";
-                    options.RequireHttpsMetadata = false;
-                    options.ApiSecret = "secret";
-                    
-                    //options.EnableCaching = true;
-                    //options.CacheDuration = TimeSpan.FromMinutes(10);// that's the default
-                });
+            })
+            .AddIdentityServerAuthentication(options => // TODO: caution! must use > IdentityModel up to Version="4.6.0" > https://stackoverflow.com/questions/69978649/migration-to-net6
+            {
+                options.Authority = identityServerUrl;
+                options.ApiName = "myfooddoc_api";
+                options.RequireHttpsMetadata = false;
+                options.ApiSecret = "secret";
+            });
+
+
 
             /*
             services.AddApiVersioning(option =>
@@ -116,7 +119,8 @@ namespace MyFoodDoc.App.Api
             */
             services.AddSwaggerDocumentation(Configuration);
 
-            services.AddRouting(options => {
+            services.AddRouting(options =>
+            {
                 options.LowercaseUrls = true;
                 options.AppendTrailingSlash = false;
                 options.ConstraintMap.Add(DateRouteConstraint.Name, typeof(DateRouteConstraint));
@@ -142,8 +146,9 @@ namespace MyFoodDoc.App.Api
                 .AddFluentValidation(options =>
                 {
                     options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies().Where(x => x.FullName.StartsWith("MyFoodDoc.App.Application")));
-                    options.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
+
+            // services.AddTransient<IValidatorFactory, ServiceProviderValidatorFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

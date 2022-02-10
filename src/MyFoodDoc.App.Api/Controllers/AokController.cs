@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.AokClient.Abstractions;
 using MyFoodDoc.AokClient.Clients;
-using Microsoft.AspNetCore.Mvc;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Payloads.Aok;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
@@ -26,13 +26,13 @@ namespace MyFoodDoc.App.Api.Controllers
         {
             var userId = GetUserId();
 
-            if(await _aokService.ExistsAsync(userId))
+            if (await _aokService.ExistsAsync(userId))
             {
                 return Ok();
             }
 
             var response = await _aokClient.ValidateAsync(authenticatePayload.InsuranceNumber, authenticatePayload.Birthday);
-            if(string.IsNullOrEmpty(response.RegistrationToken))
+            if (string.IsNullOrEmpty(response.RegistrationToken))
             {
                 var regResponse = await _aokClient.Register(new RegisterRequest
                 {

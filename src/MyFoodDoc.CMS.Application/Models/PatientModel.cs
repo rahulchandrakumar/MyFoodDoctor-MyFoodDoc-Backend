@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MyFoodDoc.CMS.Application.Models
 {
-    public class PatientModel: BaseModel<string>
+    public class PatientModel : BaseModel<string>
     {
         public string FullName { get; set; }
         public string Email { get; set; }

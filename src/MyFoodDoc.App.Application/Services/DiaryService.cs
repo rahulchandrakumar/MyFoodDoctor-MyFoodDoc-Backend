@@ -1,26 +1,25 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.Application.Abstractions;
-using MyFoodDoc.Application.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using MyFoodDoc.FatSecretClient.Abstractions;
-using MyFoodDoc.FatSecretClient.Clients;
 using MyFoodDoc.Application.Configuration;
-using Microsoft.Extensions.Options;
+using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Enums;
+using MyFoodDoc.FatSecretClient.Abstractions;
+using MyFoodDoc.FatSecretClient.Clients;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -41,12 +40,12 @@ namespace MyFoodDoc.App.Application.Services
         private readonly int _statisticsMinimumDays;
 
         public DiaryService(
-            IApplicationContext context, 
-            IMapper mapper, 
+            IApplicationContext context,
+            IMapper mapper,
             IFatSecretClient fatSecretClient,
             IFoodService foodService,
             IPdfService pdfService,
-            IEmailService emailService, 
+            IEmailService emailService,
             IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
@@ -62,12 +61,12 @@ namespace MyFoodDoc.App.Application.Services
         public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-            
+
             if (user == null)
             {
                 throw new NotFoundException(nameof(User), userId);
             }
-                        
+
             var liquid = await _context.Liquids.AsNoTracking()
                     .Where(x => x.UserId == userId && x.Date == start)
                     .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
@@ -102,7 +101,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var optimizationAreas = await _context.OptimizationAreas.ToArrayAsync(cancellationToken);
 
-            var sugarOptimizationArea = optimizationAreas.Single(x=> x.Type == OptimizationAreaType.Sugar);
+            var sugarOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Sugar);
 
             aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = sugarOptimizationArea.Key, Optimal = sugarOptimizationArea.LineGraphOptimal.Value });
 
@@ -154,7 +153,7 @@ namespace MyFoodDoc.App.Application.Services
             };
 
             await _context.Meals.AddAsync(meal, cancellationToken);
-            
+
             await _context.SaveChangesAsync(cancellationToken);
 
             await UpsertMealIngredients(meal.Id, payload.Ingredients, cancellationToken);
@@ -204,7 +203,7 @@ namespace MyFoodDoc.App.Application.Services
             {
                 var favouritesToRemove = oldMealFavourites.
                     Where(x => !payload.Favourites.Any(y => y.Id == x.FavouriteId))
-                    .Select(x=> x.Favourite).ToList();
+                    .Select(x => x.Favourite).ToList();
 
                 _context.MealFavourites.RemoveRange(oldMealFavourites);
 
@@ -386,7 +385,7 @@ namespace MyFoodDoc.App.Application.Services
 
         private decimal GetCaloriesOptimalValue(string userId, int age, decimal height, decimal weight, Gender gender)
         {
-            var optimalValue =((decimal)0.047 * weight + (gender == Gender.Female ? 0 : (decimal)1.009) - (decimal)0.01452 * age + (decimal)3.21) * 239 * (decimal)1.4;
+            var optimalValue = ((decimal)0.047 * weight + (gender == Gender.Female ? 0 : (decimal)1.009) - (decimal)0.01452 * age + (decimal)3.21) * 239 * (decimal)1.4;
 
             if (BMI((double)height, (double)weight) < 30)
             {
@@ -477,7 +476,7 @@ namespace MyFoodDoc.App.Application.Services
                 {
                     mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken), Amount = ingredient.Amount });
                 }
-                
+
                 await _context.MealIngredients.AddRangeAsync(mealIngredients, cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
@@ -610,7 +609,7 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new NotFoundException(nameof(Favourite), id);
             }
-            
+
             favourite.Title = payload.Title;
 
             _context.Favourites.Update(favourite);
@@ -710,7 +709,8 @@ namespace MyFoodDoc.App.Application.Services
                                                     .Include(x => x.Ingredient)
                                                     .Where(x => x.MealId == dayMeal.Id)
                                                     .ToListAsync(cancellationToken))
-                        meal.Ingredients.Add(new DiaryExportMealIngredientModel { 
+                        meal.Ingredients.Add(new DiaryExportMealIngredientModel
+                        {
                             FoodName = mealIngredient.Ingredient.FoodName,
                             ServingDescription = mealIngredient.Ingredient.ServingDescription,
                             MeasurementDescription = mealIngredient.Ingredient.MeasurementDescription,

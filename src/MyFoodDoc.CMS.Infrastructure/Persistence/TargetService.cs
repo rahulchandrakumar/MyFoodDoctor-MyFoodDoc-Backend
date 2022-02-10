@@ -4,13 +4,12 @@ using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.CMS.Application.Models;
 using MyFoodDoc.CMS.Application.Persistence;
+using MyFoodDoc.CMS.Application.Persistence.Base;
 using MyFoodDoc.CMS.Infrastructure.AzureBlob;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.CMS.Application.Persistence.Base;
 
 namespace MyFoodDoc.CMS.Infrastructure.Persistence
 {
@@ -93,13 +92,13 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             var targetEntity = await _context.Targets
                                                 .Include(x => x.Image)
                                                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
-            
+
             _context.Targets.Remove(targetEntity);
-            
+
             _context.Images.Remove(targetEntity.Image);
 
             await _imageService.DeleteImage(targetEntity.Image.Url, cancellationToken);
-            
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
@@ -256,7 +255,7 @@ namespace MyFoodDoc.CMS.Infrastructure.Persistence
             _context.MotivationTargets.RemoveRange(existingTargetMotivations);
 
             await _context.SaveChangesAsync(cancellationToken);
-            
+
             var targetMotivations = item.ToMotivationTargetEntities();
 
             if (targetMotivations != null)

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Method;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
@@ -29,7 +28,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(ICollection<MethodDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<MethodDto>>> Get(CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAsync(GetUserId(), DateTime.Now,  cancellationToken);
+            var result = await _service.GetAsync(GetUserId(), DateTime.Now, cancellationToken);
 
             return Ok(result);
         }

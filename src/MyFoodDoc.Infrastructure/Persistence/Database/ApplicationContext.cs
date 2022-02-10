@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Aok;
 using MyFoodDoc.Application.Entities.Courses;
+using MyFoodDoc.Application.Entities.Diary;
+using MyFoodDoc.Application.Entities.Methods;
+using MyFoodDoc.Application.Entities.Psychogramm;
+using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.EnumEntities;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using MyFoodDoc.Application.Entities.Diary;
-using MyFoodDoc.Application.Entities.Methods;
-using MyFoodDoc.Application.Entities.Psychogramm;
-using MyFoodDoc.Application.Entities.Aok;
-using MyFoodDoc.Application.Entities.Subscriptions;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database
 {
@@ -156,7 +156,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
             base.OnModelCreating(builder);
 
             builder.ApplyConfigurationsFromAssembly(typeof(ApplicationContext).Assembly);
-            
+
             //builder.Entity<ReportMethod>().ToQuery(() => ReportValueMethods.Cast<ReportMethod>().AsQueryable().Union(ReportChoiceMethods));
 
             builder.Entity<IdentityRole<string>>(entity => entity.ToTable("Role", "User"));

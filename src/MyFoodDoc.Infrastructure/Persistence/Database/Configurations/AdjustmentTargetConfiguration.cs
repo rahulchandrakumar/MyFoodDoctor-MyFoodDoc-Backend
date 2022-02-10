@@ -1,11 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Targets;
-using MyFoodDoc.Application.EnumEntities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 {
