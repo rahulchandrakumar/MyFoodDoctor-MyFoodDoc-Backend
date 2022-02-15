@@ -76,10 +76,10 @@ namespace MyFoodDoc.Application.Services
             page.Canvas.DrawImage(image, 600, 0);
 
             PdfBrush brush1 = PdfBrushes.Black;
-            var font1 = new PdfTrueTypeFont("Helvetica", 16f, PdfFontStyle.Bold);
-            var font2 = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Bold);
-            var font3 = new PdfTrueTypeFont("Helvetica", 9f, PdfFontStyle.Regular);
-            var font4 = new PdfTrueTypeFont("Helvetica", 8f, PdfFontStyle.Regular);
+            var font1 = new PdfTrueTypeFont(new Font("Helvetica", 16f, FontStyle.Bold));
+            var font2 = new PdfTrueTypeFont(new Font("Helvetica", 10f, FontStyle.Bold));
+            var font3 = new PdfTrueTypeFont(new Font("Helvetica", 9f, FontStyle.Regular));
+            var font4 = new PdfTrueTypeFont(new Font("Helvetica", 8f, FontStyle.Regular));
 
             PdfStringFormat format1 = new PdfStringFormat(PdfTextAlignment.Left);
 
@@ -340,7 +340,7 @@ namespace MyFoodDoc.Application.Services
                 //Creates a brush
                 PdfBrush brush = new PdfSolidBrush(Color.Black);
                 //Defines a font
-                var font = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Regular);
+                var font = new PdfTrueTypeFont(new Font("Helvetica", 10f, FontStyle.Regular));
 
                 RectangleF rec;
                 foreach (PdfTextFind find in collection.Finds)

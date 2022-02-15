@@ -31,6 +31,8 @@ namespace MyFoodDoc.App.Api.Middlewares
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
+
                 if (context.Response.HasStarted)
                 {
                     _logger.LogWarning("The response has already started, the http status code middleware will not be executed.");
