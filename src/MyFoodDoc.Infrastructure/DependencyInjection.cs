@@ -30,8 +30,7 @@ namespace MyFoodDoc.Infrastructure
             services.AddScoped<IEmailService, EmailService>();
 
             if (addTelemetry)
-            {
-                // The following line enables Application Insights telemetry collection.
+            {   // The following line enables Application Insights telemetry collection.
                 services.AddApplicationInsightsTelemetry();
             }
 

@@ -2,12 +2,16 @@ using IdentityServer4;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using IdentityServer4.Extensions;
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using MyFoodDoc.App.Application.Middlewares;
 using MyFoodDoc.App.Infrastructure;
 using MyFoodDoc.Application.Entities;
 using System.Linq;
@@ -86,7 +90,7 @@ namespace MyFoodDoc.App.Auth
                 options.Events.RaiseInformationEvents = true;
                 options.Events.RaiseFailureEvents = true;
                 options.Events.RaiseSuccessEvents = true;
-
+             
                 var identityServerIssuerUri = Configuration.GetValue<string>("IdentityServer:IssuerUri");
 
                 options.IssuerUri = identityServerIssuerUri;
@@ -123,6 +127,8 @@ namespace MyFoodDoc.App.Auth
             //.AddInMemoryClients(Config.GetClients())
             .AddAspNetIdentity<User>();
 
+            services.AddTransient<IEventSink, EventSink>();
+
             //TODO: Use builder.AddSigningCredential for Staging and Production
             if (Environment.IsDevelopment() || Environment.IsStaging() || Environment.IsProduction())
             {
@@ -138,11 +144,28 @@ namespace MyFoodDoc.App.Auth
                 });
             });
             */
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                var builtInFactory = options.InvalidModelStateResponseFactory;
+
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var loggerFactory = context.HttpContext.RequestServices.GetRequiredService<ILoggerFactory>();
+                    var logger = loggerFactory.CreateLogger(context.ActionDescriptor.DisplayName);
+                    
+                    logger.LogError(context.HttpContext.Response.Body.ToString());
+
+                    return builtInFactory(context);
+                };
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseApplicationExceptionHandler();
+
             InitializeDatabase(app);
 
             /*
@@ -171,6 +194,7 @@ namespace MyFoodDoc.App.Auth
             });
 
             app.UseIdentityServer();
+
 
             //app.UseRouting();
         }

@@ -7,7 +7,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace MyFoodDoc.App.Api.Middlewares
+namespace MyFoodDoc.App.Application.Middlewares
 {
     public class ApplicationExceptionHandlerMiddleware
     {
@@ -86,6 +86,7 @@ namespace MyFoodDoc.App.Api.Middlewares
     {
         public static IApplicationBuilder UseApplicationExceptionHandler(this IApplicationBuilder builder)
         {
+
             return builder.UseMiddleware<ApplicationExceptionHandlerMiddleware>();
         }
     }

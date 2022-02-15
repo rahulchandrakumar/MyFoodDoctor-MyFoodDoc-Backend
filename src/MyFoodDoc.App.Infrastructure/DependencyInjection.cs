@@ -12,6 +12,8 @@ namespace MyFoodDoc.App.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
         {
+            services.AddLogging();
+
             services.AddSharedInfrastructure(configuration, environment);
 
             services.AddIdentity<User, IdentityRole<string>>(options =>
@@ -31,9 +33,6 @@ namespace MyFoodDoc.App.Infrastructure
             .AddSignInManager<SignInManager<User>>()
             .AddDefaultTokenProviders()
             .AddTokenProvider<ResetPasswordTokenProvider>(ResetPasswordTokenProvider.ProviderKey);
-
-            // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry();
 
             return services;
         }
