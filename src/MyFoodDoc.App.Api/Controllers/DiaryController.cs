@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
+using MyFoodDoc.App.Infrastructure.Azure.Queue.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -17,11 +18,15 @@ namespace MyFoodDoc.App.Api.Controllers
     {
         private readonly IDiaryService _service;
         private readonly ILogger _logger;
+        private readonly IQueueService _queueService;
 
-        public DiaryController(IDiaryService service, ILogger<DiaryController> logger)
+        public DiaryController(IDiaryService service, 
+            ILogger<DiaryController> logger,
+            IQueueService queueService)
         {
             _service = service;
             _logger = logger;
+            _queueService = queueService;
         }
 
         [HttpGet("overview/{date:Date}")]
@@ -164,7 +169,15 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Export([FromBody] ExportPayload payload, CancellationToken cancellationToken = default)
         {
-            await _service.ExportAsync(GetUserId(), payload, cancellationToken);
+            await _queueService.AddMessage(
+                Application.Constants.Export.PdfQueue,
+                new DiaryQueueItem
+                {
+                    DateFrom = payload.DateFrom,
+                    DateTo = payload.DateTo,
+                    UserId = GetUserId()
+                }, cancellationToken);
+            // await _service.ExportAsync(GetUserId(), payload, cancellationToken);
 
             return Ok();
         }

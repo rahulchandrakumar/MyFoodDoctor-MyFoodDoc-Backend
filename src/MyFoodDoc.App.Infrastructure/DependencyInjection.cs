@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyFoodDoc.App.Infrastructure.Azure.Queue.Abstractions;
+using MyFoodDoc.App.Infrastructure.Azure.Queue;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Infrastructure;
 using MyFoodDoc.Infrastructure.Persistence.Database;
@@ -33,6 +35,8 @@ namespace MyFoodDoc.App.Infrastructure
             .AddSignInManager<SignInManager<User>>()
             .AddDefaultTokenProviders()
             .AddTokenProvider<ResetPasswordTokenProvider>(ResetPasswordTokenProvider.ProviderKey);
+
+            services.AddScoped<IQueueService, QueueService>();
 
             return services;
         }

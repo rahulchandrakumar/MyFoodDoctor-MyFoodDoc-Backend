@@ -79,7 +79,7 @@ namespace MyFoodDoc.Application.Services
             var font1 = new PdfTrueTypeFont(new Font("Helvetica", 16f, FontStyle.Bold), true);
             var font2 = new PdfTrueTypeFont(new Font("Helvetica", 10f, FontStyle.Bold), true);
             var font3 = new PdfTrueTypeFont(new Font("Helvetica", 9f, FontStyle.Regular), true);
-            var font4 = new PdfTrueTypeFont(new Font(FontFamily.GenericSerif, 8f, FontStyle.Regular), true);
+            var font4 = new PdfTrueTypeFont(new Font("Helvetica", 8f, FontStyle.Regular), true);
 
             PdfStringFormat format1 = new PdfStringFormat(PdfTextAlignment.Left);
 
@@ -340,7 +340,6 @@ namespace MyFoodDoc.Application.Services
                 //Creates a brush
                 PdfBrush brush = new PdfSolidBrush(Color.Black);
                 //Defines a font
-                //var font = new PdfTrueTypeFont("Helvetica", 10f, PdfFontStyle.Regular);
                 var font = new PdfTrueTypeFont(new Font("Helvetica", 10f, FontStyle.Regular), true);
 
                 RectangleF rec;
