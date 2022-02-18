@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MyFoodDoc.App.Infrastructure.Azure.Queue.Abstractions;
+using MyFoodDoc.App.Infrastructure.Azure.Queue;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Infrastructure;
 using MyFoodDoc.Infrastructure.Persistence.Database;
@@ -12,6 +14,8 @@ namespace MyFoodDoc.App.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
         {
+            services.AddLogging();
+
             services.AddSharedInfrastructure(configuration, environment);
 
             services.AddIdentity<User, IdentityRole<string>>(options =>
@@ -32,8 +36,7 @@ namespace MyFoodDoc.App.Infrastructure
             .AddDefaultTokenProviders()
             .AddTokenProvider<ResetPasswordTokenProvider>(ResetPasswordTokenProvider.ProviderKey);
 
-            // The following line enables Application Insights telemetry collection.
-            services.AddApplicationInsightsTelemetry();
+            services.AddScoped<IQueueService, QueueService>();
 
             return services;
         }

@@ -1,7 +1,5 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using IdentityModel.Client;
-using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -12,18 +10,17 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using MyFoodDoc.App.Api.DependencyInjection;
-using MyFoodDoc.App.Api.Middlewares;
 using MyFoodDoc.App.Api.RouteConstraints;
 using MyFoodDoc.App.Application;
 using MyFoodDoc.App.Application.Clients;
 using MyFoodDoc.App.Application.Clients.IdentityServer;
+using MyFoodDoc.App.Application.Middlewares;
 using MyFoodDoc.App.Application.Serialization;
 using MyFoodDoc.App.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 
