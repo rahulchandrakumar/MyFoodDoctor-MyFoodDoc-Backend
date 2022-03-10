@@ -161,6 +161,8 @@ namespace MyFoodDoc.App.Auth
                     return builtInFactory(context);
                 };
             });
+
+            services.AddTransient<IRefreshTokenService, RevokingDefaultRefreshTokenService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
