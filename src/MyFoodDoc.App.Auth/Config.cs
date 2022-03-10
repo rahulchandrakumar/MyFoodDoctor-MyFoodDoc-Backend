@@ -55,7 +55,7 @@ namespace MyFoodDoc.App.Auth
                     AccessTokenLifetime = 3600 * 7,
                     AllowOfflineAccess = true,
                     RefreshTokenExpiration = TokenExpiration.Absolute,
-                    RefreshTokenUsage = TokenUsage.OneTimeOnly
+                    RefreshTokenUsage = TokenUsage.ReUse
                 }
             };
         }

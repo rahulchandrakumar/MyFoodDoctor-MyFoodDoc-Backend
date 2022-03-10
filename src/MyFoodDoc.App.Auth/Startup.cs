@@ -37,6 +37,7 @@ namespace MyFoodDoc.App.Auth
 
                 var context = serviceScope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
                 context.Database.Migrate();
+                
                 if (!context.Clients.Any())
                 {
                     foreach (var client in Config.GetClients())
@@ -145,6 +146,7 @@ namespace MyFoodDoc.App.Auth
             });
             */
 
+            // Log for Model validations > https://github.com/dotnet/AspNetCore.Docs/issues/12157
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 var builtInFactory = options.InvalidModelStateResponseFactory;
