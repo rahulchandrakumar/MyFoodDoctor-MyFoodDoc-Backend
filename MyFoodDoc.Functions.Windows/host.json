@@ -1,11 +1,19 @@
 {
-    "version": "2.0",
-    "logging": {
-        "applicationInsights": {
-            "samplingSettings": {
-                "isEnabled": true,
-                "excludedTypes": "Request"
-            }
-        }
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      },
+      "LogLevel": {
+        "Default": "Error"
+      }
+    },
+    "LogLevel": {
+      "Default": "Error",
+      "Microsoft": "Error",
+      "Microsoft.Hosting.Lifetime": "Error"
     }
+  }
 }

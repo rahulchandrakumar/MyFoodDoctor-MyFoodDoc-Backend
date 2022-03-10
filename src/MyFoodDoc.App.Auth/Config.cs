@@ -49,13 +49,14 @@ namespace MyFoodDoc.App.Auth
                     ClientId = "myfooddoc_app",
                     ClientName = "MyFoodDoc.App",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
-                    AccessTokenType = AccessTokenType.Reference,
+                    AccessTokenType = AccessTokenType.Jwt,
                     RequireClientSecret = false,
                     AllowedScopes = {"myfooddoc_api", IdentityServerConstants.StandardScopes.OfflineAccess},
-                    AccessTokenLifetime = 3600 * 7,
+                    AccessTokenLifetime = 3600 * 24 * 7,
                     AllowOfflineAccess = true,
-                    RefreshTokenExpiration = TokenExpiration.Absolute,
-                    RefreshTokenUsage = TokenUsage.ReUse
+                    RefreshTokenExpiration = TokenExpiration.Sliding,
+                    RefreshTokenUsage = TokenUsage.ReUse,
+                    UpdateAccessTokenClaimsOnRefresh = true,
                 }
             };
         }

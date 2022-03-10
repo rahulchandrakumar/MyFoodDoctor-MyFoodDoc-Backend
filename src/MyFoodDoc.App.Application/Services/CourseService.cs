@@ -172,7 +172,7 @@ namespace MyFoodDoc.App.Application.Services
                     _logger.LogError(e.InnerException.Message + e.InnerException.StackTrace);
                 }
 
-                throw e;
+                throw;
             }
         }
 
