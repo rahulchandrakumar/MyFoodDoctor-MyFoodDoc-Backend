@@ -406,7 +406,7 @@ namespace MyFoodDoc.App.Application.Services
 
         private double BMI(double height, double weight)
         {
-            return (double)weight / Math.Pow((double)height / 100, 2);
+            return height == 0 ? 0 : (double)weight / Math.Pow((double)height / 100, 2);
         }
 
         private async Task<int> UpsertIngredient(long foodId, long servingId, CancellationToken cancellationToken)
