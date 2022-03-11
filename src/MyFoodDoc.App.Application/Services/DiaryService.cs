@@ -95,6 +95,11 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.UserId == userId && x.Date <= start)
                 .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
 
+            if (userWeight is null)
+            {
+                return new DiaryEntryDto();
+            }
+
             aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 
             aggregation.OptimizationAreas = new List<DiaryEntryDtoOptimizationArea>();
