@@ -95,6 +95,11 @@ namespace MyFoodDoc.App.Application.Services
                 .Where(x => x.UserId == userId && x.Date <= start)
                 .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
 
+            if (userWeight is null)
+            {
+                return new DiaryEntryDto();
+            }
+
             aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 
             aggregation.OptimizationAreas = new List<DiaryEntryDtoOptimizationArea>();
@@ -406,7 +411,7 @@ namespace MyFoodDoc.App.Application.Services
 
         private double BMI(double height, double weight)
         {
-            return (double)weight / Math.Pow((double)height / 100, 2);
+            return height == 0 ? 0 : (double)weight / Math.Pow((double)height / 100, 2);
         }
 
         private async Task<int> UpsertIngredient(long foodId, long servingId, CancellationToken cancellationToken)

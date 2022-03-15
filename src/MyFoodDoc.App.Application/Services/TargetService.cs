@@ -143,6 +143,10 @@ namespace MyFoodDoc.App.Application.Services
                         }
 
                         var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
+                        if (correctedWeight <= 0)
+                        {
+                            continue;
+                        }
 
                         if (target.TriggerOperator == TriggerOperator.GreaterThan)
                         {
