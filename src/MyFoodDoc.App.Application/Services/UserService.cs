@@ -304,12 +304,12 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
         {
-            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
+            var appStoreSubscription = await _context.AppStoreSubscriptions.FirstOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
 
             if (appStoreSubscription != null && appStoreSubscription.IsValid)
                 return true;
 
-            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
+            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.FirstOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
 
             if (googlePlayStoreSubscription != null && googlePlayStoreSubscription.IsValid)
                 return true;
