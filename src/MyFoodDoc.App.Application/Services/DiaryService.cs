@@ -349,26 +349,29 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<bool> IsZPPForbidden(string userId, DateTime onDate, CancellationToken cancellationToken)
         {
-            var user = await _context.Users
-                .Where(x => x.Id == userId)
-                .SingleOrDefaultAsync(cancellationToken);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
             if (user == null)
             {
                 throw new NotFoundException(nameof(User), userId);
             }
+            else if(! user.Height.HasValue) 
+            {
+                return true;
+            }
 
-            var eatingDisorder = _context.UserIndications
-                .Where(x => x.UserId == userId)
-                .Any(x => x.IndicationId == 5);
+            var eatingDisorder = await _context.UserIndications
+                .AnyAsync(x => x.UserId == userId && x.IndicationId == 5);
 
             if (eatingDisorder)
                 return true;
 
             var weight = await _context.UserWeights
-                .Where(x => x.UserId == userId && x.Date <= onDate)
                 .OrderBy(x => x.Date)
-                .LastOrDefaultAsync(cancellationToken);
+                .LastOrDefaultAsync(x => x.UserId == userId && x.Date <= onDate, cancellationToken);
+
+            if (weight is null)
+                return true;
 
             var BMIValue = BMI((double)user.Height.Value, (double)weight.Value);
 
