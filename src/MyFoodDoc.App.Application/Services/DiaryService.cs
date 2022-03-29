@@ -11,6 +11,7 @@ using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Enums;
+using MyFoodDoc.Application.Services;
 using MyFoodDoc.FatSecretClient.Abstractions;
 using MyFoodDoc.FatSecretClient.Clients;
 using System;
@@ -34,7 +35,7 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
         private readonly IFoodService _foodService;
-        private readonly IPdfService _pdfService;
+        private readonly IHtmlPdfService _htmlPdfService;
         private readonly IEmailService _emailService;
         private readonly int _statisticsPeriod;
         private readonly int _statisticsMinimumDays;
@@ -44,7 +45,7 @@ namespace MyFoodDoc.App.Application.Services
             IMapper mapper,
             IFatSecretClient fatSecretClient,
             IFoodService foodService,
-            IPdfService pdfService,
+            IHtmlPdfService htmlPdfService,
             IEmailService emailService,
             IOptions<StatisticsOptions> statisticsOptions)
         {
@@ -52,7 +53,7 @@ namespace MyFoodDoc.App.Application.Services
             _mapper = mapper;
             _fatSecretClient = fatSecretClient;
             _foodService = foodService;
-            _pdfService = pdfService;
+            _htmlPdfService = htmlPdfService;
             _emailService = emailService;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
@@ -660,13 +661,6 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            Stream logoStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.Logo.png");
-
-            if (logoStream == null)
-            {
-                throw new ArgumentNullException(nameof(logoStream));
-            }
-
             var data = new DiaryExportModel() { DateFrom = payload.DateFrom, DateTo = payload.DateTo };
 
             var meals = await _context.Meals
@@ -759,7 +753,7 @@ namespace MyFoodDoc.App.Application.Services
                 data.Days.Add(day);
             }
 
-            var bytes = _pdfService.GenerateExport(data, logoStream);
+            var bytes = await _htmlPdfService.GenerateExport(data, payload.HtmlStruct);
 
             Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.DiaryExportEmailTemplate.html");
 

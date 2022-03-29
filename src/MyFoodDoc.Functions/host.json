@@ -4,16 +4,9 @@
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
-        "excludedTypes": "Request"
-      },
-      "LogLevel": {
-        "Default": "Error"
+        "excludedTypes": "Request",
+        "enablePerformanceCountersCollection": false
       }
-    },
-    "LogLevel": {
-      "Default": "Error",
-      "Microsoft": "Error",
-      "Microsoft.Hosting.Lifetime": "Error"
     }
   }
   //,

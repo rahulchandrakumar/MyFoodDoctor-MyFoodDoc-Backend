@@ -16,6 +16,7 @@ using MyFoodDoc.Functions.Abstractions;
 using MyFoodDoc.Functions.Services;
 using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Services;
+using MyFoodDoc.App.Application;
 
 [assembly: FunctionsStartup(typeof(MyFoodDoc.Functions.Startup))]
 namespace MyFoodDoc.Functions
@@ -49,6 +50,7 @@ namespace MyFoodDoc.Functions
 
             builder.Services.AddSharedInfrastructure(configuration, null, addTelemetry: false);
             
+            builder.Services.AddApplication(configuration);
             builder.Services.AddSharedAppStoreClient(configuration);
             builder.Services.AddSharedGooglePlayStoreClient(configuration);
             builder.Services.AddSharedFatSecretClient(configuration);
