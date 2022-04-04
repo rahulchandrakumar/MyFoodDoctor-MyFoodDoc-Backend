@@ -6,6 +6,6 @@ namespace MyFoodDoc.Application.Abstractions
     {
         byte[] ReplaceText(byte[] bytes, string oldValue, string newValue);
 
-        byte[] GenerateExport(DiaryExportModel data, Stream logoStream);
+        // byte[] GenerateExport(DiaryExportModel data, Stream logoStream);
     }
 }
