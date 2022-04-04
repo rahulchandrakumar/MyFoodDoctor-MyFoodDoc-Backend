@@ -536,3 +536,4 @@ MigrationBackup/
 
 # End of https://www.gitignore.io/api/vuejs,terraform,dotnetcore,aspnetcore,visualstudio,visualstudiocode
 src/MyFoodDoc.App.Auth/tempkey.rsa
+/MyFoodDoc.Functions.Windows/local.settings.json

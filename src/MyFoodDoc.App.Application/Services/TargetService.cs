@@ -85,7 +85,7 @@ namespace MyFoodDoc.App.Application.Services
                 dailyUserIngredientsDictionary[dateKey] = dailyUserIngredients;
 
                 foreach (var dailyMeals in _context.Meals
-                    .Where(x => x.UserId == userId && x.Date >= dateKey.AddDays(-_statisticsPeriod) && x.Date < dateKey).ToList().GroupBy(g => g.Date))
+                    .Where(x => x.UserId == userId && x.Date > dateKey.AddDays(-_statisticsPeriod) && x.Date <= dateKey).ToList().GroupBy(g => g.Date))
                 {
                     var dailyNutritions = new MealNutritionsDto
                     {
@@ -119,7 +119,7 @@ namespace MyFoodDoc.App.Application.Services
                     if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
                         var weightHistory = await _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date < onDate).ToListAsync(cancellationToken);
+                            .Where(x => x.UserId == userId && x.Date > dateKey.AddDays(-_statisticsPeriod) && x.Date <= dateKey).ToListAsync(cancellationToken);
 
                         decimal weight = 0;
 
@@ -129,7 +129,7 @@ namespace MyFoodDoc.App.Application.Services
                         }
                         else
                         {
-                            var userWeight = _context.UserWeights.Where(x => x.UserId == userId && x.Date < onDate.AddDays(-_statisticsPeriod))
+                            var userWeight = _context.UserWeights.Where(x => x.UserId == userId && x.Date <= dateKey.AddDays(-_statisticsPeriod))
                                 .OrderBy(x => x.Date).LastOrDefault();
 
                             if (userWeight == null)
@@ -251,8 +251,10 @@ namespace MyFoodDoc.App.Application.Services
 
                     if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
+                        var userTargetDate = userTarget.Created.Date;
+
                         var weightHistory = await _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToListAsync(cancellationToken);
+                            .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToListAsync(cancellationToken);
 
                         decimal weight = 0;
 
@@ -262,7 +264,7 @@ namespace MyFoodDoc.App.Application.Services
                         }
                         else
                         {
-                            var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date < userTarget.Created.AddDays(-_statisticsPeriod))
+                            var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
                                 .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
 
                             if (userWeight == null)
@@ -352,8 +354,10 @@ namespace MyFoodDoc.App.Application.Services
 
                     if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
+                        var userTargetDate = userTarget.Created.Date;
+
                         var weightHistory = await _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToListAsync(cancellationToken);
+                            .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToListAsync(cancellationToken);
 
                         decimal weight = 0;
 
@@ -363,7 +367,7 @@ namespace MyFoodDoc.App.Application.Services
                         }
                         else
                         {
-                            weight = (await _context.UserWeights.Where(x => x.UserId == userId && x.Date < userTarget.Created.AddDays(-_statisticsPeriod))
+                            weight = (await _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
                                 .OrderBy(x => x.Date).LastAsync(cancellationToken)).Value;
                         }
 
@@ -408,8 +412,10 @@ namespace MyFoodDoc.App.Application.Services
 
                     if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
                     {
+                        var userTargetDate = userTarget.Created.Date;
+
                         var weightHistory = _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > userTarget.Created.AddDays(-_statisticsPeriod) && x.Date < userTarget.Created).ToList();
+                            .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToList();
 
                         decimal weight = 0;
 
@@ -419,7 +425,7 @@ namespace MyFoodDoc.App.Application.Services
                         }
                         else
                         {
-                            weight = _context.UserWeights.Where(x => x.UserId == userId && x.Date < userTarget.Created.AddDays(-_statisticsPeriod))
+                            weight = _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
                                 .OrderBy(x => x.Date).Last().Value;
                         }
 
@@ -580,7 +586,7 @@ namespace MyFoodDoc.App.Application.Services
             var onDate = new DateTime(onDateTime.Year, onDateTime.Month, onDateTime.Day);
 
             foreach (var dailyMeals in (await _context.Meals
-                .Where(x => x.UserId == userId && x.Date >= onDate.AddDays(-_statisticsPeriod) && x.Date < onDate).ToListAsync(cancellationToken)).GroupBy(g => g.Date))
+                .Where(x => x.UserId == userId && x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date <= onDate).ToListAsync(cancellationToken)).GroupBy(g => g.Date))
             {
                 var dailyNutritions = new MealNutritionsDto
                 {
@@ -676,7 +682,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var daysSinceCreation = (dateToCheck - userCreatedDate).Days;
 
-            var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date >= dateToCheck.AddDays(-_statisticsPeriod) && x.Date < dateToCheck).ToListAsync(cancellationToken);
+            var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date > dateToCheck.AddDays(-_statisticsPeriod) && x.Date <= dateToCheck).ToListAsync(cancellationToken);
 
             var daysRecorded = diaryRecords.Select(x => x.Date)
                 .Distinct()

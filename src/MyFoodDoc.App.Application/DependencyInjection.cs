@@ -43,6 +43,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPsychogrammService, PsychogrammService>();
             services.AddScoped<IPdfService, PdfService>();
+            services.AddScoped<IHtmlPdfService, HtmlPdfService>();
 
             return services;
         }
