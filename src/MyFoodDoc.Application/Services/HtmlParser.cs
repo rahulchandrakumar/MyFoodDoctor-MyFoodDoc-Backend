@@ -4,11 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MyFoodDoc.Application.Entities.Html;
+using System.Text.RegularExpressions;
 
 namespace MyFoodDoc.Application.Services
 {
     public static class HtmlParser
     {
+        private static readonly Regex _precompiledRegex = new Regex(@"^100\s?[gG]", RegexOptions.Compiled);
+
         public static string ParseHtml(DiaryExportModel data, HtmlStructure htmlStruct)
         {
             var sp = new StringBuilder(1204);
@@ -49,6 +52,30 @@ namespace MyFoodDoc.Application.Services
                 .Replace(HtmlToken.Total, total);
         }
 
+
+            private static string FormatIngredient(DiaryExportMealIngredientModel ingredienModel)
+            {
+                decimal amount = ingredienModel.Amount;
+                string servingDescription = ingredienModel.ServingDescription;
+
+                if (_precompiledRegex.IsMatch(servingDescription))
+                {
+                    amount *= 100;
+
+                    return $"{amount:G29} g";
+                }
+                else
+                {
+                    servingDescription = ingredienModel.MeasurementDescription;
+                    int index = ingredienModel.MeasurementDescription.IndexOf('(');
+                    if (index != -1)
+                    {
+                        servingDescription = servingDescription[..index].TrimEnd();
+                    }
+                    return $"{amount:G29} x {servingDescription} ({ingredienModel.MetricServingAmount:G29} {ingredienModel.MetricServingUnit})";
+                }
+            }
+
         private static string GetMeals(ICollection<DiaryExportMealModel> meals, HtmlStructure htmlStruct)
         {
             var breakfastStringBuilder = new StringBuilder(1024);
@@ -60,7 +87,7 @@ namespace MyFoodDoc.Application.Services
             {
                 var time = htmlStruct.MealStructure.Time.Replace(HtmlToken.Time, meal.Time.ToString(@"hh\:mm"));
                 var ingredients = meal.Ingredients.Select(i => htmlStruct.MealStructure.Ingredient.Replace(HtmlToken.IngredientName, i.FoodName)
-                                                                                                         .Replace(HtmlToken.ServingDescription, i.ServingDescription));
+                                                              .Replace(HtmlToken.ServingDescription, FormatIngredient(i)));
                 var stringIngrediens = htmlStruct.MealStructure.Ingredients.Replace(HtmlToken.Ingredients, String.Join("", ingredients));
                 var mealContent = htmlStruct.MealStructure.Content.Replace(HtmlToken.Time, time).Replace(HtmlToken.Content, stringIngrediens);
                 switch (meal.Type)
