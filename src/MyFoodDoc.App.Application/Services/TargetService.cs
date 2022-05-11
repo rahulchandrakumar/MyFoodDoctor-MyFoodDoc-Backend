@@ -36,6 +36,368 @@ namespace MyFoodDoc.App.Application.Services
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
+        private async Task Calculate(
+            User user,
+            UserTarget userTarget,
+            UserTarget userAnswer,
+            bool isVegan,
+            Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>> dailyUserIngredientsDictionary,
+            List<OptimizationAreaDto> result, 
+            CancellationToken cancellationToken)
+        {
+            var userId = userTarget.UserId;
+
+            var target = await _context.Targets.Include(x => x.OptimizationArea)
+                                                .Include(x => x.Image)
+                                                .SingleAsync(x => x.Id == userTarget.TargetId, cancellationToken);
+
+            var targetDto = new TargetDto
+            {
+                Id = target.Id,
+                Type = target.Type.ToString(),
+                Title = target.Title,
+                Text = target.Text,
+                ImageUrl = target.Image.Url
+            };
+
+            var dateKey = new DateTime(userTarget.Created.Year, userTarget.Created.Month, userTarget.Created.Day);
+
+            if (!dailyUserIngredientsDictionary.ContainsKey(dateKey))
+                dailyUserIngredientsDictionary[dateKey] = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
+
+            var dailyUserIngredients = dailyUserIngredientsDictionary[dateKey];
+
+            if (target.Type == TargetType.Adjustment)
+            {
+                var adjustmentTarget = await _context.AdjustmentTargets.SingleAsync(x => x.TargetId == target.Id, cancellationToken);
+
+                decimal bestValue = 0;
+
+                if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
+                {
+                    var userTargetDate = userTarget.Created.Date;
+
+                    var weightHistory = await _context.UserWeights
+                        .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToListAsync(cancellationToken);
+
+                    decimal weight = 0;
+
+                    if (weightHistory.Any())
+                    {
+                        weight = weightHistory.Average(x => x.Value);
+                    }
+                    else
+                    {
+                        var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
+                            .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+                        if (userWeight == null)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            weight = userWeight.Value;
+                        }
+                    }
+
+                    var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
+
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight > target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Protein);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight < target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Protein);
+                    }
+                }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar > target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Sugar);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Sugar);
+                    }
+                }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables > target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Vegetables);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Vegetables);
+                    }
+                }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Snacking)
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Meals > target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Meals);
+                    }
+                    else
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Meals < target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Meals);
+                    }
+                }
+
+                decimal recommendedValue = (adjustmentTarget.StepDirection == AdjustmentTargetStepDirection.Ascending)
+                    ? bestValue - bestValue % adjustmentTarget.Step + adjustmentTarget.Step
+                    : bestValue - bestValue % adjustmentTarget.Step;
+
+                targetDto.Answers = new List<TargetAnswerDto>();
+
+                if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
+                {
+                    var userTargetDate = userTarget.Created.Date;
+
+                    var weightHistory = await _context.UserWeights
+                        .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToListAsync(cancellationToken);
+
+                    decimal weight = 0;
+
+                    if (weightHistory.Any())
+                    {
+                        weight = weightHistory.Average(x => x.Value);
+                    }
+                    else
+                    {
+                        weight = (await _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
+                            .OrderBy(x => x.Date).LastAsync(cancellationToken)).Value;
+                    }
+
+                    decimal targetValue = _diaryService.GetCorrectedWeight(user.Height.Value, weight) * adjustmentTarget.TargetValue;
+
+                    //TODO: use constants or enums
+                    if (recommendedValue < targetValue)
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                    targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
+                }
+                else
+                {
+                    if (recommendedValue != adjustmentTarget.TargetValue)
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+
+                    targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
+                }
+
+                targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
+            }
+            else
+            {
+                //TODO: use constants or enums
+                targetDto.Answers = new[] {
+                                new TargetAnswerDto { Code = "yes", Value ="Ja"},
+                                new TargetAnswerDto { Code = "no", Value = "Nein" }
+                            };
+            }
+
+            targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
+
+            if (!result.Any(x => x.Key == target.OptimizationArea.Key))
+            {
+                var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
+
+                var analysisDto = new AnalysisDto();
+
+                analysisDto.LineGraph = new AnalysisLineGraphDto();
+
+                if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
+                {
+                    var userTargetDate = userTarget.Created.Date;
+
+                    var weightHistory = _context.UserWeights
+                        .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToList();
+
+                    decimal weight = 0;
+
+                    if (weightHistory.Any())
+                    {
+                        weight = weightHistory.Average(x => x.Value);
+                    }
+                    else
+                    {
+                        weight = _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
+                            .OrderBy(x => x.Date).Last().Value;
+                    }
+
+                    var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
+
+                    analysisDto.LineGraph.UpperLimit = correctedWeight * target.OptimizationArea.LineGraphUpperLimit.Value;
+                    analysisDto.LineGraph.LowerLimit = correctedWeight * target.OptimizationArea.LineGraphLowerLimit.Value;
+                    analysisDto.LineGraph.Optimal = correctedWeight * target.OptimizationArea.LineGraphOptimal.Value;
+
+                    analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
+                    { Date = x.Key, Value = x.Value.Protein }).ToList();
+
+                    var average = dailyUserIngredients.Average(x => x.Value.Protein);
+
+                    if (average >= analysisDto.LineGraph.UpperLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                    }
+                    else if (average <= analysisDto.LineGraph.LowerLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                    }
+                    else
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                    }
+
+                    var totalProtein = dailyUserIngredients.Sum(x => x.Value.Protein);
+
+                    // MFD-1496 : if the user has vegan Diet the array with the optimization MUST NOT have the piechart info 
+                    if (totalProtein > 0 && !isVegan)
+                    {
+                        analysisDto.PieChart = new AnalysisPieChartDto();
+
+                        var plantProteinPercent = (int)Math.Round(dailyUserIngredients.Sum(x => x.Value.PlantProtein) * 100 / totalProtein);
+
+                        //TODO: use constants or enums
+                        if (plantProteinPercent > 65)
+                        {
+                            analysisDto.PieChart.Title = target.OptimizationArea.AboveOptimalPieChartTitle;
+                            analysisDto.PieChart.Text = target.OptimizationArea.AboveOptimalPieChartText;
+                        }
+                        else if (plantProteinPercent < 45)
+                        {
+                            analysisDto.PieChart.Title = target.OptimizationArea.BelowOptimalPieChartTitle;
+                            analysisDto.PieChart.Text = target.OptimizationArea.BelowOptimalPieChartText;
+                        }
+                        else
+                        {
+                            analysisDto.PieChart.Title = target.OptimizationArea.OptimalPieChartTitle;
+                            analysisDto.PieChart.Text = target.OptimizationArea.OptimalPieChartText;
+                        }
+
+                        //TODO: use constants or enums
+                        analysisDto.PieChart.Data = new[]
+                        {
+                                new AnalysisPieChartDataDto { Key = "animal", Value = 100 - plantProteinPercent },
+                                new AnalysisPieChartDataDto { Key = "plant", Value = plantProteinPercent }
+                            };
+                    }
+                }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
+                {
+                    analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
+                    analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
+                    analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
+
+                    analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
+                    { Date = x.Key, Value = x.Value.Sugar }).ToList();
+
+                    var average = dailyUserIngredients.Average(x => x.Value.Sugar);
+
+                    if (average >= target.OptimizationArea.LineGraphUpperLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                    }
+                    else
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                    }
+                }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
+                {
+                    analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
+                    analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
+                    analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
+
+                    analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
+                    { Date = x.Key, Value = x.Value.Vegetables }).ToList();
+
+                    var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
+
+                    if (average <= target.OptimizationArea.LineGraphLowerLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                    }
+                    else
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                    }
+                }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Snacking)
+                {
+                    analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
+                    analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
+                    analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
+
+                    analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
+                    { Date = x.Key, Value = x.Value.Meals }).ToList();
+
+                    var average = (decimal)dailyUserIngredients.Average(x => x.Value.Meals);
+
+                    if (average <= target.OptimizationArea.LineGraphLowerLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                    }
+                    else if (average >= target.OptimizationArea.LineGraphUpperLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
+                    }
+                    else
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                    }
+                }
+
+                result.Add(new OptimizationAreaDto
+                {
+                    Key = target.OptimizationArea.Key,
+                    Name = target.OptimizationArea.Name,
+                    Text = target.OptimizationArea.Text,
+                    ImageUrl = optimizationAreaImage?.Url,
+                    Analysis = analysisDto,
+                    Targets = new List<TargetDto>()
+                });
+            }
+
+            result.Single(x => x.Key == target.OptimizationArea.Key).Targets.Add(targetDto);
+        }
+
         public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, DateTime onDate, CancellationToken cancellationToken)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
@@ -112,7 +474,9 @@ namespace MyFoodDoc.App.Application.Services
                 if (!dailyUserIngredients.Any())
                     return result;
 
-                foreach (var target in _context.Targets.Include(x => x.OptimizationArea).Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority))
+                var targetList = await _context.Targets.Include(x => x.OptimizationArea)
+                    .Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority).ToListAsync(cancellationToken);
+                foreach (var target in targetList)
                 {
                     int triggeredDaysCount = 0;
 
@@ -223,359 +587,36 @@ namespace MyFoodDoc.App.Application.Services
             bool isVegan = await _diaryService.CheckDiet(user.Id, VEGAN_DIET, cancellationToken);
             foreach (var userTarget in userTargets)
             {
-                var target = await _context.Targets.Include(x => x.OptimizationArea)
-                                                    .Include(x => x.Image)
-                                                    .SingleAsync(x => x.Id == userTarget.TargetId, cancellationToken);
+                var userAnswer = await _context.UserTargets
+                    .Where(x => x.UserId == userId && x.TargetId == userTarget.TargetId && x.Created > onDate.AddDays(-_statisticsPeriod) && x.Created < onDate)
+                    .OrderBy(x => x.Created)
+                    .LastOrDefaultAsync(cancellationToken);
 
-                var targetDto = new TargetDto
-                {
-                    Id = target.Id,
-                    Type = target.Type.ToString(),
-                    Title = target.Title,
-                    Text = target.Text,
-                    ImageUrl = target.Image.Url
-                };
-
-                var dateKey = new DateTime(userTarget.Created.Year, userTarget.Created.Month, userTarget.Created.Day);
-
-                if (!dailyUserIngredientsDictionary.ContainsKey(dateKey))
-                    dailyUserIngredientsDictionary[dateKey] = await GetDailyUserIngredients(userId, userTarget.Created, cancellationToken);
-
-                var dailyUserIngredients = dailyUserIngredientsDictionary[dateKey];
-
-                if (target.Type == TargetType.Adjustment)
-                {
-                    var adjustmentTarget = await _context.AdjustmentTargets.SingleAsync(x => x.TargetId == target.Id, cancellationToken);
-
-                    decimal bestValue = 0;
-
-                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
-                    {
-                        var userTargetDate = userTarget.Created.Date;
-
-                        var weightHistory = await _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToListAsync(cancellationToken);
-
-                        decimal weight = 0;
-
-                        if (weightHistory.Any())
-                        {
-                            weight = weightHistory.Average(x => x.Value);
-                        }
-                        else
-                        {
-                            var userWeight = await _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
-                                .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
-
-                            if (userWeight == null)
-                            {
-                                continue;
-                            }
-                            else
-                            {
-                                weight = userWeight.Value;
-                            }
-                        }
-
-                        var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
-
-                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight > target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Min(x => x.Protein);
-                        }
-                        else
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight < target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Max(x => x.Protein);
-                        }
-                    }
-                    else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
-                    {
-                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar > target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Min(x => x.Sugar);
-                        }
-                        else
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Max(x => x.Sugar);
-                        }
-                    }
-                    else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
-                    {
-                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables > target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Min(x => x.Vegetables);
-                        }
-                        else
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Max(x => x.Vegetables);
-                        }
-                    }
-                    else if (target.OptimizationArea.Type == OptimizationAreaType.Snacking)
-                    {
-                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Meals > target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Min(x => x.Meals);
-                        }
-                        else
-                        {
-                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Meals < target.TriggerValue);
-
-                            if (triggeredDays.Any())
-                                bestValue = triggeredDays.Max(x => x.Meals);
-                        }
-                    }
-
-                    decimal recommendedValue = (adjustmentTarget.StepDirection == AdjustmentTargetStepDirection.Ascending)
-                        ? bestValue - bestValue % adjustmentTarget.Step + adjustmentTarget.Step
-                        : bestValue - bestValue % adjustmentTarget.Step;
-
-                    targetDto.Answers = new List<TargetAnswerDto>();
-
-                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
-                    {
-                        var userTargetDate = userTarget.Created.Date;
-
-                        var weightHistory = await _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToListAsync(cancellationToken);
-
-                        decimal weight = 0;
-
-                        if (weightHistory.Any())
-                        {
-                            weight = weightHistory.Average(x => x.Value);
-                        }
-                        else
-                        {
-                            weight = (await _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
-                                .OrderBy(x => x.Date).LastAsync(cancellationToken)).Value;
-                        }
-
-                        decimal targetValue = _diaryService.GetCorrectedWeight(user.Height.Value, weight) * adjustmentTarget.TargetValue;
-
-                        //TODO: use constants or enums
-                        if (recommendedValue < targetValue)
-                            targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
-
-                        targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
-                    }
-                    else
-                    {
-                        if (recommendedValue != adjustmentTarget.TargetValue)
-                            targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
-
-                        targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
-                    }
-
-                    targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
-                }
-                else
-                {
-                    //TODO: use constants or enums
-                    targetDto.Answers = new[] {
-                                new TargetAnswerDto { Code = "yes", Value ="Ja"},
-                                new TargetAnswerDto { Code = "no", Value = "Nein" }
-                            };
-                }
-
-                var userAnswer = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == target.Id && x.Created > onDate.AddDays(-_statisticsPeriod) && x.Created < onDate).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
-
-                targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
-
-                if (!result.Any(x => x.Key == target.OptimizationArea.Key))
-                {
-                    var optimizationAreaImage = _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
-
-                    var analysisDto = new AnalysisDto();
-
-                    analysisDto.LineGraph = new AnalysisLineGraphDto();
-
-                    if (target.OptimizationArea.Type == OptimizationAreaType.Protein)
-                    {
-                        var userTargetDate = userTarget.Created.Date;
-
-                        var weightHistory = _context.UserWeights
-                            .Where(x => x.UserId == userId && x.Date > userTargetDate.AddDays(-_statisticsPeriod) && x.Date <= userTargetDate).ToList();
-
-                        decimal weight = 0;
-
-                        if (weightHistory.Any())
-                        {
-                            weight = weightHistory.Average(x => x.Value);
-                        }
-                        else
-                        {
-                            weight = _context.UserWeights.Where(x => x.UserId == userId && x.Date <= userTargetDate.AddDays(-_statisticsPeriod))
-                                .OrderBy(x => x.Date).Last().Value;
-                        }
-
-                        var correctedWeight = _diaryService.GetCorrectedWeight(user.Height.Value, weight);
-
-                        analysisDto.LineGraph.UpperLimit = correctedWeight * target.OptimizationArea.LineGraphUpperLimit.Value;
-                        analysisDto.LineGraph.LowerLimit = correctedWeight * target.OptimizationArea.LineGraphLowerLimit.Value;
-                        analysisDto.LineGraph.Optimal = correctedWeight * target.OptimizationArea.LineGraphOptimal.Value;
-
-                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                        { Date = x.Key, Value = x.Value.Protein }).ToList();
-
-                        var average = dailyUserIngredients.Average(x => x.Value.Protein);
-
-                        if (average >= analysisDto.LineGraph.UpperLimit)
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
-                        }
-                        else if (average <= analysisDto.LineGraph.LowerLimit)
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
-                        }
-                        else
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                        }
-
-                        var totalProtein = dailyUserIngredients.Sum(x => x.Value.Protein);
-
-                        // MFD-1496 : if the user has vegan Diet the array with the optimization MUST NOT have the piechart info 
-                        if (totalProtein > 0 && !isVegan)
-                        {
-                            analysisDto.PieChart = new AnalysisPieChartDto();
-
-                            var plantProteinPercent = (int)Math.Round(dailyUserIngredients.Sum(x => x.Value.PlantProtein) * 100 / totalProtein);
-
-                            //TODO: use constants or enums
-                            if (plantProteinPercent > 65)
-                            {
-                                analysisDto.PieChart.Title = target.OptimizationArea.AboveOptimalPieChartTitle;
-                                analysisDto.PieChart.Text = target.OptimizationArea.AboveOptimalPieChartText;
-                            }
-                            else if (plantProteinPercent < 45)
-                            {
-                                analysisDto.PieChart.Title = target.OptimizationArea.BelowOptimalPieChartTitle;
-                                analysisDto.PieChart.Text = target.OptimizationArea.BelowOptimalPieChartText;
-                            }
-                            else
-                            {
-                                analysisDto.PieChart.Title = target.OptimizationArea.OptimalPieChartTitle;
-                                analysisDto.PieChart.Text = target.OptimizationArea.OptimalPieChartText;
-                            }
-
-                            //TODO: use constants or enums
-                            analysisDto.PieChart.Data = new[]
-                            {
-                                new AnalysisPieChartDataDto { Key = "animal", Value = 100 - plantProteinPercent },
-                                new AnalysisPieChartDataDto { Key = "plant", Value = plantProteinPercent }
-                            };
-                        }
-                    }
-                    else if (target.OptimizationArea.Type == OptimizationAreaType.Sugar)
-                    {
-                        analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
-                        analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
-                        analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
-
-                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                        { Date = x.Key, Value = x.Value.Sugar }).ToList();
-
-                        var average = dailyUserIngredients.Average(x => x.Value.Sugar);
-
-                        if (average >= target.OptimizationArea.LineGraphUpperLimit)
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
-                        }
-                        else
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                        }
-                    }
-                    else if (target.OptimizationArea.Type == OptimizationAreaType.Vegetables)
-                    {
-                        analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
-                        analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
-                        analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
-
-                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                        { Date = x.Key, Value = x.Value.Vegetables }).ToList();
-
-                        var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
-
-                        if (average <= target.OptimizationArea.LineGraphLowerLimit)
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
-                        }
-                        else
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                        }
-                    }
-                    else if (target.OptimizationArea.Type == OptimizationAreaType.Snacking)
-                    {
-                        analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
-                        analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
-                        analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
-
-                        analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
-                        { Date = x.Key, Value = x.Value.Meals }).ToList();
-
-                        var average = (decimal)dailyUserIngredients.Average(x => x.Value.Meals);
-
-                        if (average <= target.OptimizationArea.LineGraphLowerLimit)
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
-                        }
-                        else if (average >= target.OptimizationArea.LineGraphUpperLimit)
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.AboveOptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.AboveOptimalLineGraphText;
-                        }
-                        else
-                        {
-                            analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
-                            analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
-                        }
-                    }
-
-                    result.Add(new OptimizationAreaDto
-                    {
-                        Key = target.OptimizationArea.Key,
-                        Name = target.OptimizationArea.Name,
-                        Text = target.OptimizationArea.Text,
-                        ImageUrl = optimizationAreaImage?.Url,
-                        Analysis = analysisDto,
-                        Targets = new List<TargetDto>()
-                    });
-                }
-
-                result.Single(x => x.Key == target.OptimizationArea.Key).Targets.Add(targetDto);
+                await Calculate(user, userTarget, userAnswer, isVegan, 
+                    dailyUserIngredientsDictionary, result, cancellationToken);
             }
 
+            return result;
+        }
+
+        public async Task<ICollection<OptimizationAreaDto>> GetLastAsync(string userId, CancellationToken cancellationToken)
+        {
+            var result = new List<OptimizationAreaDto>();
+            var dailyUserIngredientsDictionary = new Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>>();
+            var userAnswer = await _context.UserTargets
+                .Where(x => x.UserId == userId)
+                .OrderByDescending(x => x.Created)
+                .Take(1)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (userAnswer != null)
+            {
+                bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+
+                await Calculate(user, userAnswer, userAnswer, isVegan, dailyUserIngredientsDictionary, result, cancellationToken);
+
+            }
             return result;
         }
 
