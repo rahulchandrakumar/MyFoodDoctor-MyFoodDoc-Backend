@@ -260,7 +260,7 @@ namespace MyFoodDoc.App.Application.Services
                     analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                     { Date = x.Key, Value = x.Value.Protein }).ToList();
 
-                    var average = dailyUserIngredients.Average(x => x.Value.Protein);
+                    var average = dailyUserIngredients.Count > 0 ? dailyUserIngredients.Average(x => x.Value.Protein) : 0;
 
                     if (average >= analysisDto.LineGraph.UpperLimit)
                     {
@@ -321,7 +321,7 @@ namespace MyFoodDoc.App.Application.Services
                     analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                     { Date = x.Key, Value = x.Value.Sugar }).ToList();
 
-                    var average = dailyUserIngredients.Average(x => x.Value.Sugar);
+                    var average = dailyUserIngredients.Count > 0 ? dailyUserIngredients.Average(x => x.Value.Sugar) : 0;
 
                     if (average >= target.OptimizationArea.LineGraphUpperLimit)
                     {
@@ -343,7 +343,7 @@ namespace MyFoodDoc.App.Application.Services
                     analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                     { Date = x.Key, Value = x.Value.Vegetables }).ToList();
 
-                    var average = dailyUserIngredients.Average(x => x.Value.Vegetables);
+                    var average = dailyUserIngredients.Count > 0 ? dailyUserIngredients.Average(x => x.Value.Vegetables) : 0;
 
                     if (average <= target.OptimizationArea.LineGraphLowerLimit)
                     {
@@ -365,7 +365,7 @@ namespace MyFoodDoc.App.Application.Services
                     analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
                     { Date = x.Key, Value = x.Value.Meals }).ToList();
 
-                    var average = (decimal)dailyUserIngredients.Average(x => x.Value.Meals);
+                    var average = dailyUserIngredients.Count > 0 ? (decimal)dailyUserIngredients.Average(x => x.Value.Meals) : 0;
 
                     if (average <= target.OptimizationArea.LineGraphLowerLimit)
                     {
@@ -603,20 +603,23 @@ namespace MyFoodDoc.App.Application.Services
         {
             var result = new List<OptimizationAreaDto>();
             var dailyUserIngredientsDictionary = new Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>>();
-            var userAnswer = await _context.UserTargets
+
+            var group = await _context.UserTargets
                 .Where(x => x.UserId == userId)
-                .OrderByDescending(x => x.Created)
+                .GroupBy(g => g.Created)
+                .OrderByDescending(x => x.Key)
                 .Take(1)
+                .Select(x => new { Targets = x.ToList() })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (userAnswer != null)
+            bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
+            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            foreach (var userAnswer in group.Targets)
             {
-                bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-
                 await Calculate(user, userAnswer, userAnswer, isVegan, dailyUserIngredientsDictionary, result, cancellationToken);
 
             }
+
             return result;
         }
 
