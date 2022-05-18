@@ -34,6 +34,15 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("last")]
+        [ProducesResponseType(typeof(ICollection<OptimizationAreaDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<ICollection<OptimizationAreaDto>>> GetLast(CancellationToken cancellationToken = default)
+        {
+            var result = await _service.GetLastAsync(GetUserId(), cancellationToken);
+
+            return Ok(result);
+        }
+
         [HttpPost("target")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]

@@ -159,6 +159,9 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database
 
             //builder.Entity<ReportMethod>().ToQuery(() => ReportValueMethods.Cast<ReportMethod>().AsQueryable().Union(ReportChoiceMethods));
 
+            builder.Entity<MealIngredient>().Property(x => x.Amount).HasPrecision(18, 4);
+            builder.Entity<FavouriteIngredient>().Property(x => x.Amount).HasPrecision(18, 4);
+
             builder.Entity<IdentityRole<string>>(entity => entity.ToTable("Role", "User"));
             builder.Entity<IdentityUserRole<string>>(entity => entity.ToTable("UserRole", "User"));
             builder.Entity<IdentityUserClaim<string>>(entity => entity.ToTable("UserClaim", "User"));
