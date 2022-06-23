@@ -42,7 +42,7 @@ namespace MyFoodDoc.App.Application.Services
             UserTarget userAnswer,
             bool isVegan,
             Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>> dailyUserIngredientsDictionary,
-            List<OptimizationAreaDto> result, 
+            List<OptimizationAreaDto> result,
             CancellationToken cancellationToken)
         {
             var userId = userTarget.UserId;
@@ -592,7 +592,7 @@ namespace MyFoodDoc.App.Application.Services
                     .OrderBy(x => x.Created)
                     .LastOrDefaultAsync(cancellationToken);
 
-                await Calculate(user, userTarget, userAnswer, isVegan, 
+                await Calculate(user, userTarget, userAnswer, isVegan,
                     dailyUserIngredientsDictionary, result, cancellationToken);
             }
 
