@@ -50,7 +50,7 @@ namespace MyFoodDoc.CMS
             #endregion
 
             #region DI
-            services.AddSharedInfrastructure(Configuration, Environment);
+            services.AddSharedInfrastructure(Configuration, Environment, addTelemetry: false);
 
             services.AddSingleton<IHashingManager, HashingManager>();
             services.AddTransient<ICustomAuthenticationService, CustomAuthenticationService>();

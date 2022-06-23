@@ -42,7 +42,7 @@ namespace MyFoodDoc.App.Application.Services
             UserTarget userAnswer,
             bool isVegan,
             Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>> dailyUserIngredientsDictionary,
-            List<OptimizationAreaDto> result, 
+            List<OptimizationAreaDto> result,
             CancellationToken cancellationToken)
         {
             var userId = userTarget.UserId;
@@ -592,7 +592,7 @@ namespace MyFoodDoc.App.Application.Services
                     .OrderBy(x => x.Created)
                     .LastOrDefaultAsync(cancellationToken);
 
-                await Calculate(user, userTarget, userAnswer, isVegan, 
+                await Calculate(user, userTarget, userAnswer, isVegan,
                     dailyUserIngredientsDictionary, result, cancellationToken);
             }
 
@@ -604,20 +604,28 @@ namespace MyFoodDoc.App.Application.Services
             var result = new List<OptimizationAreaDto>();
             var dailyUserIngredientsDictionary = new Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>>();
 
-            var group = await _context.UserTargets
+            var lastDate = await _context.UserTargets
                 .Where(x => x.UserId == userId)
-                .GroupBy(g => g.Created)
-                .OrderByDescending(x => x.Key)
+                .Select(x => x.Created)
+                .OrderByDescending(x => x)
                 .Take(1)
-                .Select(x => new { Targets = x.ToList() })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
-            foreach (var userAnswer in group.Targets)
+            if (lastDate != DateTime.MinValue)
             {
-                await Calculate(user, userAnswer, userAnswer, isVegan, dailyUserIngredientsDictionary, result, cancellationToken);
+                lastDate = lastDate.Date;
 
+                var targets = await _context.UserTargets
+                    .Where(x => x.UserId == userId && x.Created >= lastDate)
+                    .ToListAsync(cancellationToken);
+
+                bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+                foreach (var userAnswer in targets)
+                {
+                    await Calculate(user, userAnswer, userAnswer, isVegan, dailyUserIngredientsDictionary, result, cancellationToken);
+
+                }
             }
 
             return result;

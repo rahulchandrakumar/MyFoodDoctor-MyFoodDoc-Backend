@@ -1,11 +1,20 @@
 {
   "version": "2.0",
   "logging": {
+    "LogLevel": {
+      "default": "Information",
+      "Host.Results": "Error",
+      "Function": "Error",
+      "Host.Aggregator": "Error",
+      "Microsoft": "Error"
+    },
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
+        "maxTelemetryItemsPerSecond": 10,
         "excludedTypes": "Request",
-        "enablePerformanceCountersCollection": false
+        "enablePerformanceCountersCollection": false,
+        "enableDependencyTracking": false
       }
     }
   }
