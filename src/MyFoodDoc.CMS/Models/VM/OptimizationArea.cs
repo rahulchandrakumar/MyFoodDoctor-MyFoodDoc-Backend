@@ -43,6 +43,8 @@ namespace MyFoodDoc.CMS.Models.VM
 
         public string AboveOptimalPieChartText { get; set; }
 
+        public bool IsCustom { get; set; }
+
         public static OptimizationArea FromModel(OptimizationAreaModel model)
         {
             return model == null ? null : new OptimizationArea()
@@ -66,7 +68,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 BelowOptimalPieChartTitle = model.BelowOptimalPieChartTitle,
                 BelowOptimalPieChartText = model.BelowOptimalPieChartText,
                 AboveOptimalPieChartTitle = model.AboveOptimalPieChartTitle,
-                AboveOptimalPieChartText = model.AboveOptimalPieChartText
+                AboveOptimalPieChartText = model.AboveOptimalPieChartText,
+                IsCustom = model.IsCustom
             };
         }
 
@@ -93,7 +96,8 @@ namespace MyFoodDoc.CMS.Models.VM
                 BelowOptimalPieChartTitle = this.BelowOptimalPieChartTitle,
                 BelowOptimalPieChartText = this.BelowOptimalPieChartText,
                 AboveOptimalPieChartTitle = this.AboveOptimalPieChartTitle,
-                AboveOptimalPieChartText = this.AboveOptimalPieChartText
+                AboveOptimalPieChartText = this.AboveOptimalPieChartText,
+                IsCustom = this.IsCustom
             };
         }
     }

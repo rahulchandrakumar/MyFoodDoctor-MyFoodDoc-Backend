@@ -43,6 +43,6 @@ namespace MyFoodDoc.Application.EnumEntities
 
         public string AboveOptimalPieChartText { get; set; }
 
-        public OptimizationAreaType Type => Enum.Parse<OptimizationAreaType>(Key, true);
+        public OptimizationAreaType Type => Enum.TryParse< OptimizationAreaType>(Key, true, out OptimizationAreaType retVal) ? retVal : OptimizationAreaType.Сustom;
     }
 }

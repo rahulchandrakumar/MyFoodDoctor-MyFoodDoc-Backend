@@ -44,6 +44,8 @@ namespace MyFoodDoc.CMS.Application.Models
 
         public string AboveOptimalPieChartText { get; set; }
 
+        public bool IsCustom { get; set; }
+
         public static OptimizationAreaModel FromEntity(OptimizationArea entity)
         {
             return entity == null
@@ -69,7 +71,8 @@ namespace MyFoodDoc.CMS.Application.Models
                     BelowOptimalPieChartTitle = entity.BelowOptimalPieChartTitle,
                     BelowOptimalPieChartText = entity.BelowOptimalPieChartText,
                     AboveOptimalPieChartTitle = entity.AboveOptimalPieChartTitle,
-                    AboveOptimalPieChartText = entity.AboveOptimalPieChartText
+                    AboveOptimalPieChartText = entity.AboveOptimalPieChartText,
+                    IsCustom = entity.Type == MyFoodDoc.Application.Enums.OptimizationAreaType.Сustom
                 };
         }
 

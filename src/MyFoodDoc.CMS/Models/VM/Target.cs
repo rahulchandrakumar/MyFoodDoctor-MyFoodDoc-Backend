@@ -10,6 +10,7 @@ namespace MyFoodDoc.CMS.Models.VM
         public int OptimizationAreaId { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
+        public bool IsMandatory { get; set; }
         public string TriggerOperator { get; set; }
         public decimal TriggerValue { get; set; }
         public int Threshold { get; set; }
@@ -40,6 +41,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 OptimizationAreaId = model.OptimizationAreaId,
                 Title = model.Title,
                 Text = model.Text,
+                IsMandatory = model.IsMandatory,
                 TriggerOperator = model.TriggerOperator,
                 TriggerValue = model.TriggerValue,
                 Threshold = model.Threshold,
@@ -67,6 +69,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 OptimizationAreaId = this.OptimizationAreaId,
                 Title = this.Title,
                 Text = this.Text,
+                IsMandatory = this.IsMandatory,
                 TriggerOperator = this.TriggerOperator,
                 TriggerValue = this.TriggerValue,
                 Threshold = this.Threshold,

@@ -3,6 +3,7 @@
     public enum TriggerOperator
     {
         LessThan,
-        GreaterThan
+        GreaterThan,
+        Always 
     }
 }

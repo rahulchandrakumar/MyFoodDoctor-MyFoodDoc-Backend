@@ -50,6 +50,8 @@ namespace MyFoodDoc.CMS.Controllers
         [HttpPost]
         public async Task Post([FromBody] Target item, CancellationToken cancellationToken = default)
         {
+            var m = item.ToModel();
+
             var model = await _targetService.AddItem(item.ToModel(), cancellationToken);
             await _hubContext.Clients.Group(_groupName).SendAsync(EditStateHub.ItemAddedMsg, _groupName, model.Id, cancellationToken);
         }

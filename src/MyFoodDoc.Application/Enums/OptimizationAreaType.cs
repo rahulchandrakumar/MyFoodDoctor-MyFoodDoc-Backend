@@ -6,6 +6,7 @@
         Protein,
         Snacking,
         Sugar,
-        Vegetables
+        Vegetables,
+        Сustom
     }
 }

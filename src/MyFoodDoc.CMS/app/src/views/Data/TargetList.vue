@@ -20,6 +20,11 @@
 
         <template v-slot:editor="{ item }">
             <v-row>
+                <v-switch v-model="item.isMandatory"
+                          label="Mandatory target" />
+
+            </v-row>
+            <v-row>
                 <VeeImage v-if="item.type == 'Adjustment'"
                           v-model="item.image"
                           :label="mainHeaders.filter(h => h.value == 'image')[0].text"
@@ -53,31 +58,31 @@
                              :label="mainHeaders.filter(h => h.value == 'text')[0].text"
                              rules="required|min:1|max:1000" />
             </v-row>
-            <v-row>
+            <v-row v-if="!item.isMandatory">
                 <VeeSelect v-model="item.type"
                            :items="types"
                            label="Type"
                            rules="required" />
             </v-row>
-            <v-row>
+            <v-row v-if="!item.isMandatory">
                 <VeeSelect v-model="item.priority"
                            :items="priorities"
                            label="Priority"
                            rules="required" />
             </v-row>
-            <v-row>
+            <v-row v-if="!item.isMandatory">
                 <VeeSelect v-model="item.triggerOperator"
                            :items="operators"
                            label="Trigger operator"
                            rules="required" />
             </v-row>
-            <v-row>
+            <v-row v-if="!item.isMandatory">
                 <VeeTextField v-model="item.triggerValue"
                               label="Trigger value"
                               rules="required|decimal"
                               number />
             </v-row>
-            <v-row>
+            <v-row v-if="!item.isMandatory">
                 <VeeTextField v-model="item.threshold"
                               label="Cases, %"
                               rules="required|decimal"
@@ -199,6 +204,10 @@
         },
         methods: {
             async init(item) {
+                if (item.isMandatory == null) {
+                    item.isMandatory = true;
+                }
+
                 if (!item.diets) item.diets = [];
                 if (!item.indications) item.indications = [];
                 if (!item.motivations) item.motivations = [];
