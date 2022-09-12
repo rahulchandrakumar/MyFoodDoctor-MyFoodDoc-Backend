@@ -23,6 +23,7 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using MyFoodDoc.Infrastructure.Persistence.Database;
 
 namespace MyFoodDoc.App.Api
 {
@@ -49,6 +50,8 @@ namespace MyFoodDoc.App.Api
             services.Configure<IdentityServerClientOptions>(Configuration.GetSection("IdentityServer"));
 
             var identityServerUrl = Configuration.GetValue<string>("IdentityServer:Address");
+
+            var blogConnectionString = Configuration.GetConnectionString("BlobStorageConnection");
 
             services.AddHttpClient<IIdentityServerClient, IdentityServerClient>(client =>
             {
@@ -105,8 +108,6 @@ namespace MyFoodDoc.App.Api
                 options.ApiSecret = "secret";
             });
 
-
-
             /*
             services.AddApiVersioning(option =>
             {
@@ -146,6 +147,13 @@ namespace MyFoodDoc.App.Api
                 });
 
             // services.AddTransient<IValidatorFactory, ServiceProviderValidatorFactory>();
+
+            #region HealthChecks
+            services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationContext>()
+                .AddAzureBlobStorage(blogConnectionString);
+            #endregion
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -164,6 +172,8 @@ namespace MyFoodDoc.App.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHealthChecks("/api/healthz");
             });
         }
     }
