@@ -146,6 +146,8 @@ namespace MyFoodDoc.Functions.Functions
                                       validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
                                      || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
                                          validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+
+                    googlePlayStoreSubscription.IsExpired = googlePlayStoreSubscription.IsValid == false;
                 }
 
                 if (googlePlayStoreSubscription.FirstSynchronized is null)
