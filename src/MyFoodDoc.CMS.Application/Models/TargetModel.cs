@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Enums = MyFoodDoc.Application.Enums;
+
 namespace MyFoodDoc.CMS.Application.Models
 {
     public class TargetModel : BaseModel<int>
@@ -13,6 +15,7 @@ namespace MyFoodDoc.CMS.Application.Models
         public int OptimizationAreaId { get; set; }
         public string Title { get; set; }
         public string Text { get; set; }
+        public bool IsMandatory { get; set; }
         public string TriggerOperator { get; set; }
         public decimal TriggerValue { get; set; }
         public int Threshold { get; set; }
@@ -47,7 +50,8 @@ namespace MyFoodDoc.CMS.Application.Models
                 OptimizationAreaId = target.OptimizationAreaId,
                 Title = target.Title,
                 Text = target.Text,
-                TriggerOperator = target.TriggerOperator.ToString(),
+                TriggerOperator = target.TriggerOperator != Enums.TriggerOperator.Always ? target.TriggerOperator.ToString() : null,
+                IsMandatory = target.TriggerOperator == Enums.TriggerOperator.Always,
                 TriggerValue = target.TriggerValue,
                 Threshold = target.Threshold,
                 Priority = target.Priority.ToString(),
@@ -85,11 +89,11 @@ namespace MyFoodDoc.CMS.Application.Models
                 OptimizationAreaId = this.OptimizationAreaId,
                 Title = this.Title,
                 Text = this.Text,
-                TriggerOperator = Enum.Parse<TriggerOperator>(this.TriggerOperator),
+                TriggerOperator = this.IsMandatory ? Enums.TriggerOperator.Always : Enum.Parse<TriggerOperator>(this.TriggerOperator),
                 TriggerValue = this.TriggerValue,
                 Threshold = this.Threshold,
-                Priority = Enum.Parse<TargetPriority>(this.Priority),
-                Type = Enum.Parse<TargetType>(this.Type),
+                Priority = String.IsNullOrEmpty(this.Priority) ? TargetPriority.High : Enum.Parse<TargetPriority>(this.Priority),
+                Type = this.IsMandatory ? Enums.TargetType.Custom : Enum.Parse<TargetType>(this.Type),
                 ImageId = this.Image.Id,
             };
         }

@@ -110,7 +110,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (triggeredDays.Any())
                             bestValue = triggeredDays.Min(x => x.Protein);
                     }
-                    else
+                    else if (target.TriggerOperator == TriggerOperator.LessThan)
                     {
                         var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight < target.TriggerValue);
 
@@ -127,7 +127,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (triggeredDays.Any())
                             bestValue = triggeredDays.Min(x => x.Sugar);
                     }
-                    else
+                    else if (target.TriggerOperator == TriggerOperator.LessThan)
                     {
                         var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
 
@@ -144,7 +144,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (triggeredDays.Any())
                             bestValue = triggeredDays.Min(x => x.Vegetables);
                     }
-                    else
+                    else if (target.TriggerOperator == TriggerOperator.LessThan)
                     {
                         var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
 
@@ -161,7 +161,7 @@ namespace MyFoodDoc.App.Application.Services
                         if (triggeredDays.Any())
                             bestValue = triggeredDays.Min(x => x.Meals);
                     }
-                    else
+                    else if (target.TriggerOperator == TriggerOperator.LessThan)
                     {
                         var triggeredDays = dailyUserIngredients.Values.Where(x => x.Meals < target.TriggerValue);
 
@@ -518,7 +518,7 @@ namespace MyFoodDoc.App.Application.Services
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
-                        else
+                        else if (target.TriggerOperator == TriggerOperator.LessThan)
                         {
                             var triggeredDays = dailyUserIngredients.Values.Where(x => x.Protein / correctedWeight < target.TriggerValue);
 
@@ -533,7 +533,7 @@ namespace MyFoodDoc.App.Application.Services
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
-                        else
+                        else if (target.TriggerOperator == TriggerOperator.LessThan)
                         {
                             var triggeredDays = dailyUserIngredients.Values.Where(x => x.Sugar < target.TriggerValue);
 
@@ -548,7 +548,7 @@ namespace MyFoodDoc.App.Application.Services
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
-                        else
+                        else if (target.TriggerOperator == TriggerOperator.LessThan)
                         {
                             var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
 
@@ -563,7 +563,7 @@ namespace MyFoodDoc.App.Application.Services
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
-                        else
+                        else if (target.TriggerOperator == TriggerOperator.LessThan)
                         {
                             var triggeredDays = dailyUserIngredients.Values.Where(x => x.Meals < target.TriggerValue);
 
@@ -573,7 +573,7 @@ namespace MyFoodDoc.App.Application.Services
 
                     var frequency = (decimal)triggeredDaysCount * 100 / _statisticsPeriod;
 
-                    if (frequency > target.Threshold)
+                    if (target.TriggerOperator == TriggerOperator.Always || frequency > target.Threshold)
                     {
                         var userTarget = new UserTarget { UserId = userId, TargetId = target.Id, Created = onDate };
 

@@ -4,5 +4,6 @@
     {
         Adjustment,
         Suggestion,
+        Custom
     }
 }

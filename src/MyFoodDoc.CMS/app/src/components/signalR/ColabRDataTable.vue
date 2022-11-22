@@ -91,12 +91,29 @@
                                 </v-icon>
                             </v-btn>
                         </template>
+
+                        <template v-slot:footer="{ props }">
+                            <v-container>
+                                <v-row justify="end">
+                                    <v-col cols="12" sm="1">
+                                        <v-text-field
+                                            v-model="pageValue"
+                                            type="number"
+                                            label="page">
+                                        </v-text-field>                                        
+                                    </v-col>
+                                    <v-col cols="12" sm="4" style="margin-top:5px">
+                                        <v-pagination v-model="page"
+                                            :length="pageCount"
+                                            :total-visible="7">
+                                            </v-pagination>
+                                    </v-col>
+                                </v-row>
+                            </v-container>
+                        </template>    
+
                     </v-data-table>
                     <div>
-                        <v-pagination v-model="page"
-                                      :length="pageCount"
-                                      :total-visible="7">
-                        </v-pagination>
                     </div>
                 </material-card>
             </v-flex>
@@ -223,6 +240,7 @@
             };
         },
         computed: {
+            pageValue : { get() { return this.page }, set(val) { if(val) { this.page = parseInt(val) } }  },
             tableItems() {
                 return this.$store.getters[this.storeName + "/items"]
             },

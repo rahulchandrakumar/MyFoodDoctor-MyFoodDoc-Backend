@@ -15,6 +15,7 @@ using MyFoodDoc.CMS.Infrastructure;
 using MyFoodDoc.CMS.Infrastructure.Common;
 using MyFoodDoc.CMS.Infrastructure.Persistence;
 using MyFoodDoc.Infrastructure;
+using MyFoodDoc.Infrastructure.Persistence.Database;
 using System;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +50,8 @@ namespace MyFoodDoc.CMS
             services.AddMvc(o => o.EnableEndpointRouting = false);
             #endregion
 
+            var blogConnectionString = Configuration.GetConnectionString("BlobStorageConnection");
+
             #region DI
             services.AddSharedInfrastructure(Configuration, Environment, addTelemetry: false);
 
@@ -79,7 +82,7 @@ namespace MyFoodDoc.CMS
             services.AddTransient<IQuestionService, QuestionService>();
             services.AddTransient<IChoiceService, ChoiceService>();
             services.AddApplicationDI(Configuration);
-            services.AddAzureStorage(Configuration.GetConnectionString("BlobStorageConnection"), Configuration.GetValue<Uri>("CDN"));
+            services.AddAzureStorage(blogConnectionString, Configuration.GetValue<Uri>("CDN"));
             services.AddSeeds(Environment);
             #endregion
 
@@ -130,6 +133,12 @@ namespace MyFoodDoc.CMS
                 };
             });
             #endregion
+
+            #region HealthChecks
+            services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationContext>()
+                .AddAzureBlobStorage(blogConnectionString);
+            #endregion
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -168,6 +177,8 @@ namespace MyFoodDoc.CMS
             app.UseWebSockets();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/api/healthz");
+
                 endpoints.MapHub<EditStateHub>("/edit-states");
             });
             #endregion
