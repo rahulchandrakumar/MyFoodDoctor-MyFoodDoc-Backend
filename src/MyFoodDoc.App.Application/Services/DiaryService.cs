@@ -30,6 +30,8 @@ namespace MyFoodDoc.App.Application.Services
         private static readonly DiaryEntryDtoExercise _exerciseDefault = new DiaryEntryDtoExercise { Duration = 0 };
 
         private const int SuggestedLiquidAmountPerKilo = 30;
+        private const int SuggestedVegetables = 500; // in gram
+        private const decimal SuggestedFiber = 30; // in gram
 
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
@@ -126,6 +128,10 @@ namespace MyFoodDoc.App.Application.Services
                 user.Height.Value, userWeight.Value, user.Gender.Value);
 
             aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Calories.ToString().ToLower(), Optimal = optimalCalories });
+
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Vegetables.ToString().ToLower(), Optimal = SuggestedVegetables });
+
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Fiber.ToString().ToLower(), Optimal = SuggestedFiber });
 
             return aggregation;
         }
