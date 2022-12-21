@@ -7,6 +7,7 @@
         Snacking,
         Sugar,
         Vegetables,
+        Fiber,
         Сustom
     }
 }
