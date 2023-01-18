@@ -581,7 +581,7 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
-                await _context.SaveChangesAsync(cancellationToken);
+                _ = await _context.SaveChangesAsync(cancellationToken);
             }
 
             bool isVegan = await _diaryService.CheckDiet(user.Id, VEGAN_DIET, cancellationToken);
