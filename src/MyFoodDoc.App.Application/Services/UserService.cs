@@ -212,7 +212,7 @@ namespace MyFoodDoc.App.Application.Services
                 await _context.UserDiets.AddRangeAsync(userDiets, cancellationToken);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
+            _ = await _context.SaveChangesAsync(cancellationToken);
 
             return await GetUserAsync(userId, cancellationToken);
         }
@@ -336,41 +336,49 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
+            // NOTE : make sure to save the record, so even if the operation fails, the function can validate it later
+            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
+            bool clearIfDoublicate = false;
+            if (appStoreSubscription == null)
+            {
+                clearIfDoublicate = true;
+                appStoreSubscription = new AppStoreSubscription
+                {
+                    UserId = userId,
+                    Type = subscriptionType,
+                    LastSynchronized = DateTime.Now,
+                    ReceiptData = payload.ReceiptData,
+                    IsValid = false
+                };
+
+                _ = await _context.AppStoreSubscriptions.AddAsync(appStoreSubscription, cancellationToken);
+                _ = await _context.SaveChangesAsync(cancellationToken);
+            }
+
             var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(subscriptionType, payload.ReceiptData);
             var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
 
             var existingSubscriptions = await _context.AppStoreSubscriptions.Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId == validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
 
             if (existingSubscriptions.Any(x => x.UserId != userId))
-                throw new ConflictException("Receipt is already used by another user");
-
-            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
-
-            if (appStoreSubscription == null)
             {
-                appStoreSubscription = new AppStoreSubscription
+                if (clearIfDoublicate)
                 {
-                    UserId = userId,
-                    Type = subscriptionType,
-                    LastSynchronized = DateTime.Now,
-                    IsValid = isValid,
-                    ReceiptData = payload.ReceiptData,
-                    ProductId = validateReceiptValidationResult.ProductId,
-                    OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId
-                };
+                    appStoreSubscription.ReceiptData = null;
 
-                await _context.AppStoreSubscriptions.AddAsync(appStoreSubscription, cancellationToken);
-            }
-            else
-            {
-                appStoreSubscription.LastSynchronized = DateTime.Now;
-                appStoreSubscription.IsValid = isValid;
-                appStoreSubscription.ReceiptData = payload.ReceiptData;
-                appStoreSubscription.ProductId = validateReceiptValidationResult.ProductId;
-                appStoreSubscription.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
+                    await _context.SaveChangesAsync(cancellationToken);
+                }
 
-                _context.AppStoreSubscriptions.Update(appStoreSubscription);
+                throw new ConflictException("Receipt is already used by another user");
             }
+
+            appStoreSubscription.LastSynchronized = DateTime.Now;
+            appStoreSubscription.IsValid = isValid;
+            appStoreSubscription.ReceiptData = payload.ReceiptData;
+            appStoreSubscription.ProductId = validateReceiptValidationResult.ProductId;
+            appStoreSubscription.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
+
+            //_ = _context.AppStoreSubscriptions.Update(appStoreSubscription);
 
             var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions.Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
 
@@ -408,14 +416,9 @@ namespace MyFoodDoc.App.Application.Services
             if (existingSubscriptions.Any(x => x.UserId != userId))
                 throw new ConflictException("PurchaseToken is already used by another user");
 
-            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(subscriptionType, payload.SubscriptionId, payload.PurchaseToken);
-            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
-                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
-                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
-                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
-
             var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
 
+            // NOTE : make sure to save the record, so even if the operation fails, the function can validate it later
             if (googlePlayStoreSubscription == null)
             {
                 googlePlayStoreSubscription = new GooglePlayStoreSubscription
@@ -423,22 +426,27 @@ namespace MyFoodDoc.App.Application.Services
                     UserId = userId,
                     Type = subscriptionType,
                     LastSynchronized = DateTime.Now,
-                    IsValid = isValid,
+                    IsValid = false,
                     SubscriptionId = payload.SubscriptionId,
                     PurchaseToken = payload.PurchaseToken
                 };
 
-                await _context.GooglePlayStoreSubscriptions.AddAsync(googlePlayStoreSubscription, cancellationToken);
+                _ = await _context.GooglePlayStoreSubscriptions.AddAsync(googlePlayStoreSubscription, cancellationToken);
+                _ = await _context.SaveChangesAsync(cancellationToken);
             }
-            else
-            {
-                googlePlayStoreSubscription.LastSynchronized = DateTime.Now;
-                googlePlayStoreSubscription.IsValid = isValid;
-                googlePlayStoreSubscription.SubscriptionId = payload.SubscriptionId;
-                googlePlayStoreSubscription.PurchaseToken = payload.PurchaseToken;
 
-                _context.GooglePlayStoreSubscriptions.Update(googlePlayStoreSubscription);
-            }
+            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(subscriptionType, payload.SubscriptionId, payload.PurchaseToken);
+            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
+                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
+                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+
+            googlePlayStoreSubscription.LastSynchronized = DateTime.Now;
+            googlePlayStoreSubscription.IsValid = isValid;
+            googlePlayStoreSubscription.SubscriptionId = payload.SubscriptionId;
+            googlePlayStoreSubscription.PurchaseToken = payload.PurchaseToken;
+
+            //_context.GooglePlayStoreSubscriptions.Update(googlePlayStoreSubscription);
 
             if (!string.IsNullOrEmpty(validateReceiptValidationResult.LinkedPurchaseToken))
             {

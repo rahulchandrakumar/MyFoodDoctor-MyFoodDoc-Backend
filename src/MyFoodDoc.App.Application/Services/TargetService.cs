@@ -581,7 +581,7 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
-                await _context.SaveChangesAsync(cancellationToken);
+                _ = await _context.SaveChangesAsync(cancellationToken);
             }
 
             bool isVegan = await _diaryService.CheckDiet(user.Id, VEGAN_DIET, cancellationToken);
@@ -734,7 +734,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var daysSinceCreation = (dateToCheck - userCreatedDate).Days;
 
-            var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date > dateToCheck.AddDays(-_statisticsPeriod) && x.Date <= dateToCheck).ToListAsync(cancellationToken);
+            var diaryRecords = await _context.Meals.Where(x => x.UserId == user.Id && x.Date >= dateToCheck.AddDays(-_statisticsPeriod) && x.Date <= dateToCheck).ToListAsync(cancellationToken);
 
             var daysRecorded = diaryRecords.Select(x => x.Date)
                 .Distinct()
@@ -758,7 +758,7 @@ namespace MyFoodDoc.App.Application.Services
                     for (int i = 1; i < _statisticsMinimumDays; i++)
                     {
                         daysRecorded = diaryRecords.Where(x =>
-                                x.Date >= dateToCheck.AddDays(-_statisticsPeriod + i))
+                                x.Date >= dateToCheck.AddDays(-_statisticsPeriod + i - 1))
                             .Select(x => x.Date)
                             .Distinct()
                             .Count();
