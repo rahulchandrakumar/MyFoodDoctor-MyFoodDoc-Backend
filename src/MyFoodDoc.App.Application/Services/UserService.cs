@@ -348,6 +348,8 @@ namespace MyFoodDoc.App.Application.Services
                     Type = subscriptionType,
                     LastSynchronized = DateTime.Now,
                     ReceiptData = payload.ReceiptData,
+                    OriginalTransactionId = "initial",
+                    ProductId = "initial",
                     IsValid = false
                 };
 
