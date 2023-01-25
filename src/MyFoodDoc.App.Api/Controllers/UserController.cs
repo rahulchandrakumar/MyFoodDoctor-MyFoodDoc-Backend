@@ -133,7 +133,7 @@ namespace MyFoodDoc.App.Api.Controllers
                 IsZPPForbidden = await _diaryService.IsZPPForbidden(userId, DateTime.Now, cancellationToken),
                 HasSubscription = user.HasSubscription,
                 HasZPPSubscription = user.HasZPPSubscription,
-                IsDiaryFull = await _diaryService.IsDiaryFull(userId, DateTime.Today, cancellationToken),
+                IsDiaryFull = await _diaryService.IsDiaryFull(userId, DateTime.Today.AddMinutes(-1), cancellationToken),
                 HasNewTargetsTriggered = await _targetService.NewTriggered(userId, cancellationToken),
                 IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(userId, cancellationToken)),
                 HasTargetsActivated = await _targetService.AnyActivated(userId, cancellationToken),
