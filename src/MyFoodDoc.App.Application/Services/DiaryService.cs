@@ -348,7 +348,7 @@ namespace MyFoodDoc.App.Application.Services
                 return false;
 
             return await _context.Meals
-                    .Where(x => x.UserId == userId && x.Date >= dateToCheck.AddDays(-_statisticsPeriod) && x.Date < dateToCheck)
+                    .Where(x => x.UserId == userId && x.Date > dateToCheck.AddDays(-_statisticsPeriod) && x.Date <= dateToCheck)
                     .Select(x => x.Date)
                     .Distinct()
                     .CountAsync(cancellationToken) >= _statisticsMinimumDays;

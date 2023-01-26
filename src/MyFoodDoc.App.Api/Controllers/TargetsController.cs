@@ -29,7 +29,7 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(ICollection<OptimizationAreaDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<ICollection<OptimizationAreaDto>>> Get(CancellationToken cancellationToken = default)
         {
-            var result = await _service.GetAsync(GetUserId(), DateTime.Today.AddMinutes(-1), cancellationToken);
+            var result = await _service.GetAsync(GetUserId(), null, cancellationToken);
 
             return Ok(result);
         }

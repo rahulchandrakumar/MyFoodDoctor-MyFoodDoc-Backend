@@ -398,8 +398,10 @@ namespace MyFoodDoc.App.Application.Services
             result.Single(x => x.Key == target.OptimizationArea.Key).Targets.Add(targetDto);
         }
 
-        public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, DateTime onDate, CancellationToken cancellationToken)
+        public async Task<ICollection<OptimizationAreaDto>> GetAsync(string userId, DateTime? date, CancellationToken cancellationToken)
         {
+            DateTime onDate = date ?? DateTime.Today.AddMinutes(-1);
+
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
             if (user == null)
             {
@@ -581,7 +583,8 @@ namespace MyFoodDoc.App.Application.Services
                     }
                 }
 
-                _ = await _context.SaveChangesAsync(cancellationToken);
+                // NOTE : it looks like the code should not change the code, so we do not need to save the context
+                //_ = await _context.SaveChangesAsync(cancellationToken);
             }
 
             bool isVegan = await _diaryService.CheckDiet(user.Id, VEGAN_DIET, cancellationToken);
@@ -699,8 +702,17 @@ namespace MyFoodDoc.App.Application.Services
 
         public async Task<bool> NewTriggered(string userId, CancellationToken cancellationToken)
         {
-            return !(await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken)) && (await GetAsync(userId, DateTime.Now, cancellationToken)).Any();
+            bool activeTargets = await _context.UserTargets.AnyAsync(x =>
+                x.UserId == userId && x.Created > DateTime.Today.AddDays(-_statisticsPeriod), cancellationToken);
+
+            if (!activeTargets)
+            {
+                return (await GetAsync(userId, null, cancellationToken)).Any();
+            }
+            else
+            {
+                return false;
+            }
         }
         public async Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken)
         {
