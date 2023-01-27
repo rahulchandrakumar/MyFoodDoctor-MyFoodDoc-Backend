@@ -4,6 +4,7 @@ using MyFoodDoc.Application.Entities.TrackedValues;
 using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
+using MyFoodDoc.Application.Entities.Diary;
 
 namespace MyFoodDoc.Application.Entities
 {
@@ -36,5 +37,7 @@ namespace MyFoodDoc.Application.Entities
         public ICollection<UserWeight> WeightHistory { get; set; } = new List<UserWeight>();
 
         public ICollection<UserAbdominalGirth> AbdominalGirthHistory { get; set; } = new List<UserAbdominalGirth>();
-    }
+
+        public ICollection<Meal> Meals { get; set; } = new List<Meal>();
+   }
 }

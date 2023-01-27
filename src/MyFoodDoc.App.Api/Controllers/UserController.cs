@@ -124,20 +124,27 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
         {
-            var userId = GetUserId();
+            var userId = "0bd3f169-0794-414c-8c62-ab2353fd6fe7";// GetUserId();
 
-            var user = await _service.GetUserAsync(userId, cancellationToken);
+           var user = await _service.GetUserWithWeightAsync(userId, cancellationToken);
 
+            var isZppForbidden = _diaryService.IsZPPForbidden( (double?)user.Height ?? 0, user.Weight.Value , user.EatingDisorder);
+            var isDiaryFull =  _diaryService.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1));
+            var hasNewTargetsTriggered = await _targetService.NewTriggered(userId, cancellationToken);
+            var isFirstTargetsEvaluation = !(await _targetService.AnyAnswered(userId, cancellationToken));
+            var hasTargetsActivated = await _targetService.AnyActivated(userId, cancellationToken);
+            var daysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(userId, cancellationToken);
+            
             var result = new UserStatisticsDto
             {
-                IsZPPForbidden = await _diaryService.IsZPPForbidden(userId, DateTime.Now, cancellationToken),
-                HasSubscription = user.HasSubscription,
-                HasZPPSubscription = user.HasZPPSubscription,
-                IsDiaryFull = await _diaryService.IsDiaryFull(userId, DateTime.Today.AddMinutes(-1), cancellationToken),
-                HasNewTargetsTriggered = await _targetService.NewTriggered(userId, cancellationToken),
-                IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(userId, cancellationToken)),
-                HasTargetsActivated = await _targetService.AnyActivated(userId, cancellationToken),
-                DaysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(userId, cancellationToken)
+                IsZPPForbidden =isZppForbidden,
+                HasSubscription =user.HasSubscription,
+                HasZPPSubscription =user.HasZPPSubscription,
+                IsDiaryFull =isDiaryFull,
+                HasNewTargetsTriggered = hasNewTargetsTriggered,
+                IsFirstTargetsEvaluation = isFirstTargetsEvaluation,
+                HasTargetsActivated =hasTargetsActivated,
+                DaysTillFirstEvaluation =daysTillFirstEvaluation
             };
 
             return Ok(result);

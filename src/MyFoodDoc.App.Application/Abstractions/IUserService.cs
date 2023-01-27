@@ -9,6 +9,7 @@ namespace MyFoodDoc.App.Application.Abstractions
     public interface IUserService
     {
         Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default);
+        Task<StatisticsUserDto> GetUserWithWeightAsync(string userId, CancellationToken cancellationToken = default);
 
         Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload, CancellationToken cancellationToken = default);
 

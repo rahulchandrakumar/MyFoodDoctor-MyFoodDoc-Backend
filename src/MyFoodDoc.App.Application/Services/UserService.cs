@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.Application.Entities.Diary;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -49,9 +50,32 @@ namespace MyFoodDoc.App.Application.Services
         public async Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default)
         {
             var result = await _context.Users
-                .Where(x => x.Id == userId)
+                .Include(x => x.Indications)
+                .Include(x => x.WeightHistory)
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
+
+            if (result == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
+            result.HasSubscription = result.HasZPPSubscription ? true : await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+            
+            return result;
+        }
+
+        
+        public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var result = await _context.Users
+                .Include(x => x.Indications)
+                .Include(x => x.WeightHistory)
+                .Include(x => x.Meals)
+                .Where(x => x.Id == userId)
+                .ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (result == null)
             {
@@ -63,7 +87,6 @@ namespace MyFoodDoc.App.Application.Services
 
             return result;
         }
-
         public async Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
