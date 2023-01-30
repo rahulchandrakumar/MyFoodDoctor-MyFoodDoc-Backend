@@ -10,6 +10,7 @@ using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.User;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -145,7 +146,7 @@ namespace MyFoodDoc.App.Api.Controllers
         public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReadyOld(
             CancellationToken cancellationToken = default)
         {
-            var userId = "0bd3f169-0794-414c-8c62-ab2353fd6fe7"; // GetUserId();
+            var userId =  GetUserId();
 
             var user = await _service.GetUserAsync(userId, cancellationToken);
 
@@ -171,29 +172,25 @@ namespace MyFoodDoc.App.Api.Controllers
         public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(
             CancellationToken cancellationToken = default)
         {
-            var userId = "0bd3f169-0794-414c-8c62-ab2353fd6fe7"; // GetUserId();
+            var userId = GetUserId();
 
             var user = await _userServiceV2.GetUserWithWeightAsync(userId, cancellationToken);
 
-            var isZppForbidden =
-                _diaryServiceV2.IsZPPForbidden((double?) user.Height ?? 0, user.Weight.Value, user.EatingDisorder);
-            var isDiaryFull = _diaryServiceV2.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1));
-            var hasNewTargetsTriggered = await _targetServiceV2.NewTriggered(userId, cancellationToken);
-            var isFirstTargetsEvaluation = !(await _targetServiceV2.AnyAnswered(userId, cancellationToken));
-            var hasTargetsActivated = await _targetServiceV2.AnyActivated(userId, cancellationToken);
-            var daysTillFirstEvaluation =
-                await _targetServiceV2.GetDaysTillFirstEvaluationAsync(userId, cancellationToken);
-
+            var lastWeightValue = user.Weights?
+            .OrderBy(x => x.Date)
+            .LastOrDefault(x => x.Date <= DateTime.Now)?
+            .Value;
+            
             var result = new UserStatisticsDto
             {
-                IsZPPForbidden = isZppForbidden,
+                IsZPPForbidden = _diaryServiceV2.IsZPPForbidden((double?) user.Height ?? 0, lastWeightValue, user.EatingDisorder),
                 HasSubscription = user.HasSubscription,
                 HasZPPSubscription = user.HasZPPSubscription,
-                IsDiaryFull = isDiaryFull,
-                HasNewTargetsTriggered = hasNewTargetsTriggered,
-                IsFirstTargetsEvaluation = isFirstTargetsEvaluation,
-                HasTargetsActivated = hasTargetsActivated,
-                DaysTillFirstEvaluation = daysTillFirstEvaluation
+                IsDiaryFull =_diaryServiceV2.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1)),
+                HasNewTargetsTriggered = _targetServiceV2.NewTriggered(user, userId),
+                IsFirstTargetsEvaluation = !(_targetServiceV2.AnyAnswered(user.UserTargets)),
+                HasTargetsActivated =_targetServiceV2.AnyActivated(user.UserTargets),
+                DaysTillFirstEvaluation = _targetServiceV2.GetDaysTillFirstEvaluationAsync(user, cancellationToken)
             };
 
             return Ok(result);

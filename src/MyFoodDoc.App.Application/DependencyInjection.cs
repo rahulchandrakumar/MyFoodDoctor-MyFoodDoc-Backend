@@ -41,6 +41,7 @@ namespace MyFoodDoc.App.Application
             services.AddScoped<IUserServiceV2, UserServiceV2>();
             services.AddScoped<IDiaryServiceV2, DiaryServiceV2>();
             services.AddScoped<ITargetServiceV2, TargetServiceV2>();
+            services.AddScoped<IFoodServiceV2, FoodServiceV2>();
 
             services.AddScoped<ISendGridClient>(client =>
                 new SendGridClient(configuration.GetSection("EmailService").Get<EmailServiceOptions>().SendGridApiKey));

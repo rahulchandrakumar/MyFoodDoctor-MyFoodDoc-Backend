@@ -19,7 +19,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.Property(o => o.TargetText).IsRequired().HasMaxLength(1000);
             builder.Property(o => o.RemainText).IsRequired().HasMaxLength(1000);
 
-            builder.HasOne(x => x.Target).WithMany().HasForeignKey(x => x.TargetId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.Target)
+            .WithMany(x => x.AdjustmentTargets)
+            .HasForeignKey(x => x.TargetId)
+            .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

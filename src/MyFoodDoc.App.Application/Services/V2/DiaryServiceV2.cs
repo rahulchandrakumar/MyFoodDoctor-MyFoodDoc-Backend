@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Abstractions.V2;
+using MyFoodDoc.App.Application.Models.StatisticsDto;
 
 namespace MyFoodDoc.App.Application.Services
 {

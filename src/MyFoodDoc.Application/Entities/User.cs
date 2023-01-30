@@ -39,5 +39,9 @@ namespace MyFoodDoc.Application.Entities
         public ICollection<UserAbdominalGirth> AbdominalGirthHistory { get; set; } = new List<UserAbdominalGirth>();
 
         public ICollection<Meal> Meals { get; set; } = new List<Meal>();
-   }
+
+        public ICollection<UserTarget> UserTargets { get; set; } = new List<UserTarget>();
+
+        public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+    }
 }

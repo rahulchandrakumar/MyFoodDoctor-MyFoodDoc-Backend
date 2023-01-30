@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Models.StatisticsDto;
 using MyFoodDoc.App.Application.Payloads.Diary;
 
 namespace MyFoodDoc.App.Application.Abstractions.V2

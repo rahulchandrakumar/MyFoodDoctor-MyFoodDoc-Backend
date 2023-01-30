@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,10 +12,12 @@ using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Abstractions.V2;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Models.StatisticsDto;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
@@ -61,33 +64,201 @@ namespace MyFoodDoc.App.Application.Services.V2
             }
 
             result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
-            result.HasSubscription = result.HasZPPSubscription ? true : await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
-            
+            result.HasSubscription = result.HasZPPSubscription ||
+                                     await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+
             return result;
         }
 
-        
-        public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            var result = await _context.Users
-                .Include(x => x.Indications)
-                .Include(x => x.WeightHistory)
-                .Include(x => x.Meals)
-                .Where(x => x.Id == userId)
-                .ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider)
-                .FirstOrDefaultAsync(cancellationToken);
 
-            if (result == null)
+        public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId,
+            CancellationToken cancellationToken = default)
+        {
+            // var x = await _context.Users.FirstOrDefaultAsync(x => x.Id == "c1281fee-1828-4873-a0a4-e7bd222f3393");
+            // var result = await _context.Users
+            //     .Where(x => x.Id == "c1281fee-1828-4873-a0a4-e7bd222f3393")
+            //     .Include(x => x.Motivations)
+            //     .ThenInclude(m => m.Motivation.Targets)
+            //     .Include(x => x.Indications)
+            //     .ThenInclude(i => i.Indication.Targets)
+            //     .Include(x => x.WeightHistory)
+            //     .Include(x => x.Meals)
+            //     .ThenInclude(m => m.Ingredients)
+            //     .Include(x => x.Meals)
+            //     .ThenInclude(m => m.Favourites)
+            //     .Include(x => x.Favourites)
+            //     .ThenInclude(f => f.Ingredients)
+            //     // .Include(x => x.UserTargets)
+            //     // .ThenInclude(x => x.Target)
+            //     // .ThenInclude(x => x.AdjustmentTargets)
+            //     .Include(x => x.Diets)
+            //     .ThenInclude(d => d.Diet.Targets)
+            //     .ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider)
+            //     // .Select(Selector())
+            //     .FirstOrDefaultAsync(cancellationToken);
+
+
+            var user = await _context
+                .Users
+                .Where(x => x.Id == userId)
+                .Select(x => new StatisticsUserDto()
+                {
+                    Created = x.Created,
+                    Email = x.Email,
+                    Gender = x.Gender,
+                    Height = x.Height,
+                    InsuranceId = x.InsuranceId
+                }).FirstOrDefaultAsync(cancellationToken);
+
+            if (user == null)
             {
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
-            result.HasSubscription = result.HasZPPSubscription ? true : await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+            var motivation = await _context
+                .UserMotivations
+                .Where(m => m.UserId == userId)
+                .Include(x => x.Motivation)
+                .Select(x => new MotivationDto(
+                    x.Motivation.Id,
+   
+                    x.Motivation.Targets.Select(mt => mt.TargetId)
+                )).ToListAsync(cancellationToken);
 
-            return result;
+            var indications = await _context
+                .UserIndications
+                .Where(x => x.UserId == userId)
+                .Include(x => x.Indication)
+                .Select(x => new IndicationDto(
+                    x.Indication.Id,
+                    x.Indication.Targets.Select(mt => mt.TargetId)
+                )).ToListAsync(cancellationToken);
+
+            var weightHistory = await _context
+                .UserWeights
+                .Where(x => x.UserId == userId)
+                .OrderBy(w => w.Date)
+                .Select(x => new UserWeightDto(x.Date, x.Value))
+                .ToListAsync(cancellationToken);
+
+            var meal = await _context
+                .Meals
+                .Where(x => x.UserId == userId)
+                .Include(x => x.Ingredients)
+                .Select(m => new MealDto(
+                    m.Date,
+                    m.Type,
+                    m.Ingredients
+                        .Select(i =>
+                            new MealIngredientDto(i.Ingredient.Protein,
+                                i.Ingredient.ProteinExternal,
+                                i.Ingredient.ContainsPlantProtein,
+                                i.Ingredient.Calories,
+                                i.Ingredient.CaloriesExternal,
+                                i.Ingredient.Sugar,
+                                i.Ingredient.SugarExternal,
+                                i.Ingredient.Vegetables,
+                                i.Amount)),
+                    m.Favourites
+                        .Select(f => f.FavouriteId)))
+                .ToListAsync(cancellationToken);
+
+            var favourites = await _context
+                .Favourites
+                .Where(x => x.UserId == userId)
+                .Include(x => x.Ingredients)
+                .Select(f => new UserFavouriteDto(f.Id,
+                    f.Ingredients.Select(i => new FavouriteMealIngredientDto(
+                        i.Ingredient.Protein,
+                        i.Ingredient.ProteinExternal,
+                        i.Ingredient.ContainsPlantProtein,
+                        i.Ingredient.Calories,
+                        i.Ingredient.CaloriesExternal,
+                        i.Ingredient.Sugar,
+                        i.Ingredient.SugarExternal,
+                        i.Ingredient.Vegetables,
+                        i.Amount)
+                    ))).ToListAsync(cancellationToken);
+
+            var userTarget = await _context
+                .UserTargets
+                .Where(x => x.UserId == userId)
+                .Include(x => x.Target)
+                .ThenInclude(x => x.AdjustmentTargets)
+                .Select(u =>
+                    new UserTargetDto(u.TargetId, u.TargetAnswerCode, u.Created, new FullUserTargetDto(
+                        u.Target.Id,
+                        new OptimizationAreaTargetDto(
+                            u.Target.OptimizationArea.Type,
+                            u.Target.OptimizationArea.ImageId,
+                            u.Target.OptimizationArea.Key,
+                            u.Target.OptimizationArea.Name,
+                            u.Target.OptimizationArea.Text,
+                            u.Target.OptimizationArea.LineGraphUpperLimit,
+                            u.Target.OptimizationArea.LineGraphLowerLimit,
+                            u.Target.OptimizationArea.LineGraphOptimal,
+                            u.Target.OptimizationArea.AboveOptimalLineGraphTitle,
+                            u.Target.OptimizationArea.AboveOptimalLineGraphText,
+                            u.Target.OptimizationArea.BelowOptimalLineGraphTitle,
+                            u.Target.OptimizationArea.BelowOptimalLineGraphText,
+                            u.Target.OptimizationArea.OptimalLineGraphTitle,
+                            u.Target.OptimizationArea.OptimalLineGraphText,
+                            u.Target.OptimizationArea.AboveOptimalPieChartTitle,
+                            u.Target.OptimizationArea.AboveOptimalPieChartText,
+                            u.Target.OptimizationArea.BelowOptimalPieChartTitle,
+                            u.Target.OptimizationArea.BelowOptimalPieChartText,
+                            u.Target.OptimizationArea.OptimalPieChartTitle,
+                            u.Target.OptimizationArea.OptimalPieChartText),
+                        u.Target.TriggerOperator,
+                        u.Target.TriggerValue,
+                        u.Target.Threshold,
+                        u.Target.Priority,
+                        u.Target.Title,
+                        u.Target.Text,
+                        u.Target.Type,
+                        u.Target.Image.Url,
+                        u.Target.AdjustmentTargets
+                            .Select(a => new AdjustmentTargetDto(
+                                a.TargetId,
+                                a.StepDirection,
+                                a.Step,
+                                a.TargetValue,
+                                a.RecommendedText,
+                                a.TargetText,
+                                a.RemainText)
+                            )
+                    )))
+                .ToListAsync(cancellationToken);
+
+
+            var diet = await _context
+                .UserDiets
+                .Where(x => x.UserId == userId)
+                .Include(x => x.Diet.Targets)
+                .Select(x => new DietDto(x.Diet.Id,
+                    x.Diet.Key,
+                    x.Diet.Targets.Select(dt => dt.TargetId)))
+                .ToListAsync(cancellationToken);
+
+
+            user.UserTargets = userTarget;
+            user.Motivations = motivation;
+            user.Indications = indications;
+            user.EatingDisorder = indications.Any(x => x.Id == 5);
+            user.Diets = diet;
+            user.Weights = weightHistory;
+            user.Meals = meal;
+            user.FavouriteIngredientDtos = favourites;
+            user.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
+            user.HasSubscription = user.HasZPPSubscription ||
+                                   await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+
+            return user;
         }
-        public async Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload, CancellationToken cancellationToken = default)
+
+
+        public async Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload,
+            CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
             if (user == null)
@@ -103,38 +274,42 @@ namespace MyFoodDoc.App.Application.Services.V2
             user.Gender = payload.Gender;
             user.Height = payload.Height;
 
-            var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
+            var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId))
+                .ToListAsync(cancellationToken);
             _context.UserIndications.RemoveRange(oldIndications);
 
             if (payload.Weight > 0)
             {
                 await _userHistoryService.UpsertWeightHistoryAsync(userId,
-                    new WeightHistoryPayload { Date = DateTime.UtcNow, Value = payload.Weight }, cancellationToken);
+                    new WeightHistoryPayload {Date = DateTime.UtcNow, Value = payload.Weight}, cancellationToken);
             }
 
             if (payload.Indications != null)
             {
                 var indicationsIds = await _context.Indications
-                    .Where(x => payload.Indications.ToArray().Contains(x.Key))
+                    .Where(x => payload.Indications.Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userIndications = indicationsIds.Select(indicationId => new UserIndication { UserId = userId, IndicationId = indicationId });
+                var userIndications = indicationsIds.Select(indicationId =>
+                    new UserIndication {UserId = userId, IndicationId = indicationId});
 
                 await _context.UserIndications.AddRangeAsync(userIndications, cancellationToken);
             }
 
-            var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
+            var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId))
+                .ToListAsync(cancellationToken);
             _context.UserMotivations.RemoveRange(oldMotivations);
 
             if (payload.Motivations != null)
             {
                 var motivationIds = await _context.Motivations
-                    .Where(x => payload.Motivations.ToArray().Contains(x.Key))
+                    .Where(x => payload.Motivations.Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userMotivations = motivationIds.Select(motivationId => new UserMotivation { UserId = userId, MotivationId = motivationId });
+                var userMotivations = motivationIds.Select(motivationId =>
+                    new UserMotivation {UserId = userId, MotivationId = motivationId});
 
                 await _context.UserMotivations.AddRangeAsync(userMotivations, cancellationToken);
             }
@@ -145,11 +320,11 @@ namespace MyFoodDoc.App.Application.Services.V2
             if (payload.Diets != null)
             {
                 var dietIds = await _context.Diets
-                    .Where(x => payload.Diets.ToArray().Contains(x.Key))
+                    .Where(x => payload.Diets.Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userDiets = dietIds.Select(motivationId => new UserDiet { UserId = userId, DietId = motivationId });
+                var userDiets = dietIds.Select(motivationId => new UserDiet {UserId = userId, DietId = motivationId});
 
                 await _context.UserDiets.AddRangeAsync(userDiets, cancellationToken);
             }
@@ -158,14 +333,11 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            //var indications = await GetIndicationsAsync(userId, cancellationToken);
-            //var motivations = await GetMotivationsAsync(userId, cancellationToken);
-            //var diets = await GetDietsAsync(userId, cancellationToken);
-
             return await GetUserAsync(userId, cancellationToken);
         }
 
-        public async Task<UserDto> UpdateUserAsync(string userId, UpdateUserPayload payload, CancellationToken cancellationToken = default)
+        public async Task<UserDto> UpdateUserAsync(string userId, UpdateUserPayload payload,
+            CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
             if (user == null)
@@ -184,7 +356,8 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             _context.Users.Update(user);
 
-            var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
+            var oldIndications = await _context.UserIndications.Where(x => x.UserId.Equals(userId))
+                .ToListAsync(cancellationToken);
 
             if (oldIndications.Any())
                 _context.UserIndications.RemoveRange(oldIndications);
@@ -192,16 +365,18 @@ namespace MyFoodDoc.App.Application.Services.V2
             if (payload.Indications != null && payload.Indications.Any())
             {
                 var indicationsIds = await _context.Indications
-                    .Where(x => payload.Indications.ToArray().Contains(x.Key))
+                    .Where(x => payload.Indications.Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userIndications = indicationsIds.Select(indicationId => new UserIndication { UserId = userId, IndicationId = indicationId });
+                var userIndications = indicationsIds.Select(indicationId =>
+                    new UserIndication {UserId = userId, IndicationId = indicationId});
 
                 await _context.UserIndications.AddRangeAsync(userIndications, cancellationToken);
             }
 
-            var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId)).ToListAsync(cancellationToken);
+            var oldMotivations = await _context.UserMotivations.Where(x => x.UserId.Equals(userId))
+                .ToListAsync(cancellationToken);
 
             if (oldMotivations.Any())
                 _context.UserMotivations.RemoveRange(oldMotivations);
@@ -209,11 +384,12 @@ namespace MyFoodDoc.App.Application.Services.V2
             if (payload.Motivations != null && payload.Motivations.Any())
             {
                 var motivationIds = await _context.Motivations
-                    .Where(x => payload.Motivations.ToArray().Contains(x.Key))
+                    .Where(x => payload.Motivations.Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userMotivations = motivationIds.Select(motivationId => new UserMotivation { UserId = userId, MotivationId = motivationId });
+                var userMotivations = motivationIds.Select(motivationId =>
+                    new UserMotivation {UserId = userId, MotivationId = motivationId});
 
                 await _context.UserMotivations.AddRangeAsync(userMotivations, cancellationToken);
             }
@@ -226,11 +402,11 @@ namespace MyFoodDoc.App.Application.Services.V2
             if (payload.Diets != null && payload.Diets.Any())
             {
                 var dietIds = await _context.Diets
-                    .Where(x => payload.Diets.ToArray().Contains(x.Key))
+                    .Where(x => payload.Diets.Contains(x.Key))
                     .Select(x => x.Id)
                     .ToListAsync(cancellationToken);
 
-                var userDiets = dietIds.Select(dietId => new UserDiet { UserId = userId, DietId = dietId });
+                var userDiets = dietIds.Select(dietId => new UserDiet {UserId = userId, DietId = dietId});
 
                 await _context.UserDiets.AddRangeAsync(userDiets, cancellationToken);
             }
@@ -240,54 +416,6 @@ namespace MyFoodDoc.App.Application.Services.V2
             return await GetUserAsync(userId, cancellationToken);
         }
 
-        private async Task<IList<string>> GetIndicationsAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            if (userId == null)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
-            var query =
-                from userIndication in _context.UserIndications
-                join indication in _context.Indications on userIndication.IndicationId equals indication.Id
-                where userIndication.UserId == userId
-                select indication.Key;
-
-            return await query.ToListAsync(cancellationToken);
-        }
-
-        private async Task<IList<string>> GetMotivationsAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            if (userId == null)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
-            var query =
-                from userMotivation in _context.UserMotivations
-                join motivation in _context.Motivations on userMotivation.MotivationId equals motivation.Id
-                where userMotivation.UserId == userId
-                select motivation.Key;
-
-            return await query.ToListAsync(cancellationToken);
-        }
-
-        private async Task<IList<string>> GetDietsAsync(string userId, CancellationToken cancellationToken = default)
-        {
-            if (userId == null)
-            {
-                throw new ArgumentNullException(nameof(userId));
-            }
-
-            var query =
-                from userDiet in _context.UserDiets
-                join diet in _context.Diets on userDiet.DietId equals diet.Id
-                where userDiet.UserId == userId
-                select diet.Key;
-
-            return await query.ToListAsync(cancellationToken);
-        }
-
         public async Task ChangePasswordAsync(string userId, string oldPassword, string newPassword)
         {
             var user = await _userManager.FindByIdAsync(userId);
@@ -295,6 +423,7 @@ namespace MyFoodDoc.App.Application.Services.V2
             {
                 throw new BadRequestException("Old password is wrong");
             }
+
             await _userManager.RemovePasswordAsync(user);
             await _userManager.AddPasswordAsync(user, newPassword);
         }
@@ -309,7 +438,8 @@ namespace MyFoodDoc.App.Application.Services.V2
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var otherUsersWithDeviceToken = await _context.Users.Where(x => x.Id != userId && x.DeviceToken == payload.DeviceToken).ToListAsync(cancellationToken);
+            var otherUsersWithDeviceToken = await _context.Users
+                .Where(x => x.Id != userId && x.DeviceToken == payload.DeviceToken).ToListAsync(cancellationToken);
 
             foreach (var userToDisablePushNotifications in otherUsersWithDeviceToken)
             {
@@ -325,14 +455,19 @@ namespace MyFoodDoc.App.Application.Services.V2
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
+        public async Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType,
+            CancellationToken cancellationToken = default)
         {
-            var appStoreSubscription = await _context.AppStoreSubscriptions.FirstOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
+            var appStoreSubscription =
+                await _context.AppStoreSubscriptions.FirstOrDefaultAsync(
+                    x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
 
             if (appStoreSubscription != null && appStoreSubscription.IsValid)
                 return true;
 
-            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.FirstOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
+            var googlePlayStoreSubscription =
+                await _context.GooglePlayStoreSubscriptions.FirstOrDefaultAsync(
+                    x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);
 
             if (googlePlayStoreSubscription != null && googlePlayStoreSubscription.IsValid)
                 return true;
@@ -340,17 +475,21 @@ namespace MyFoodDoc.App.Application.Services.V2
             return false;
         }
 
-        public async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<bool> ValidateAppStoreInAppPurchase(string userId,
+            ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
             return await ValidateAppStoreInAppPurchase(userId, payload, SubscriptionType.MyFoodDoc, cancellationToken);
         }
 
-        public async Task<bool> ValidateAppStoreZPPSubscription(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<bool> ValidateAppStoreZPPSubscription(string userId,
+            ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
             return await ValidateAppStoreInAppPurchase(userId, payload, SubscriptionType.ZPP, cancellationToken);
         }
 
-        private async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
+        private async Task<bool> ValidateAppStoreInAppPurchase(string userId,
+            ValidateAppStoreInAppPurchasePayload payload, SubscriptionType subscriptionType,
+            CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
@@ -360,7 +499,9 @@ namespace MyFoodDoc.App.Application.Services.V2
             }
 
             // NOTE : make sure to save the record, so even if the operation fails, the function can validate it later
-            var appStoreSubscription = await _context.AppStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
+            var appStoreSubscription =
+                await _context.AppStoreSubscriptions.SingleOrDefaultAsync(
+                    x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
             bool clearIfDoublicate = false;
             if (appStoreSubscription == null)
             {
@@ -380,10 +521,15 @@ namespace MyFoodDoc.App.Application.Services.V2
                 _ = await _context.SaveChangesAsync(cancellationToken);
             }
 
-            var validateReceiptValidationResult = await _appStoreClient.ValidateReceipt(subscriptionType, payload.ReceiptData);
-            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+            var validateReceiptValidationResult =
+                await _appStoreClient.ValidateReceipt(subscriptionType, payload.ReceiptData);
+            var isValid = subscriptionType == SubscriptionType.MyFoodDoc
+                ? validateReceiptValidationResult.SubscriptionExpirationDate > DateTime.Now
+                : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
 
-            var existingSubscriptions = await _context.AppStoreSubscriptions.Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId == validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
+            var existingSubscriptions = await _context.AppStoreSubscriptions
+                .Where(x => x.ProductId == validateReceiptValidationResult.ProductId && x.OriginalTransactionId ==
+                    validateReceiptValidationResult.OriginalTransactionId).ToListAsync(cancellationToken);
 
             if (existingSubscriptions.Any(x => x.UserId != userId))
             {
@@ -403,9 +549,9 @@ namespace MyFoodDoc.App.Application.Services.V2
             appStoreSubscription.ProductId = validateReceiptValidationResult.ProductId;
             appStoreSubscription.OriginalTransactionId = validateReceiptValidationResult.OriginalTransactionId;
 
-            //_ = _context.AppStoreSubscriptions.Update(appStoreSubscription);
 
-            var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions.Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
+            var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions
+                .Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
 
             if (googlePlayStoreSubscriptions.Any())
             {
@@ -417,17 +563,22 @@ namespace MyFoodDoc.App.Application.Services.V2
             return appStoreSubscription.IsValid;
         }
 
-        public async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId,
+            ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
-            return await ValidateGooglePlayStoreInAppPurchase(userId, payload, SubscriptionType.MyFoodDoc, cancellationToken);
+            return await ValidateGooglePlayStoreInAppPurchase(userId, payload, SubscriptionType.MyFoodDoc,
+                cancellationToken);
         }
 
-        public async Task<bool> ValidateGooglePlayStoreZPPSubscription(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<bool> ValidateGooglePlayStoreZPPSubscription(string userId,
+            ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
             return await ValidateGooglePlayStoreInAppPurchase(userId, payload, SubscriptionType.ZPP, cancellationToken);
         }
 
-        private async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId, ValidateGooglePlayStoreInAppPurchasePayload payload, SubscriptionType subscriptionType, CancellationToken cancellationToken = default)
+        private async Task<bool> ValidateGooglePlayStoreInAppPurchase(string userId,
+            ValidateGooglePlayStoreInAppPurchasePayload payload, SubscriptionType subscriptionType,
+            CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
@@ -436,12 +587,15 @@ namespace MyFoodDoc.App.Application.Services.V2
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var existingSubscriptions = await _context.GooglePlayStoreSubscriptions.Where(x => x.PurchaseToken == payload.PurchaseToken).ToListAsync(cancellationToken);
+            var existingSubscriptions = await _context.GooglePlayStoreSubscriptions
+                .Where(x => x.PurchaseToken == payload.PurchaseToken).ToListAsync(cancellationToken);
 
             if (existingSubscriptions.Any(x => x.UserId != userId))
                 throw new ConflictException("PurchaseToken is already used by another user");
 
-            var googlePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
+            var googlePlayStoreSubscription =
+                await _context.GooglePlayStoreSubscriptions.SingleOrDefaultAsync(
+                    x => x.UserId == userId && x.Type == subscriptionType, cancellationToken);
 
             // NOTE : make sure to save the record, so even if the operation fails, the function can validate it later
             if (googlePlayStoreSubscription == null)
@@ -456,28 +610,38 @@ namespace MyFoodDoc.App.Application.Services.V2
                     PurchaseToken = payload.PurchaseToken
                 };
 
-                _ = await _context.GooglePlayStoreSubscriptions.AddAsync(googlePlayStoreSubscription, cancellationToken);
+                _ = await _context.GooglePlayStoreSubscriptions.AddAsync(googlePlayStoreSubscription,
+                    cancellationToken);
                 _ = await _context.SaveChangesAsync(cancellationToken);
             }
 
-            var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(subscriptionType, payload.SubscriptionId, payload.PurchaseToken);
-            var isValid = subscriptionType == SubscriptionType.MyFoodDoc ? ((validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
-                                          validateReceiptValidationResult.StartDate != null && validateReceiptValidationResult.StartDate.Value < DateTime.Now)
-                                         || (validateReceiptValidationResult.AutoRenewing != null && validateReceiptValidationResult.AutoRenewing.Value &&
-                                             validateReceiptValidationResult.ExpirationDate != null && validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now)) : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
+            var validateReceiptValidationResult =
+                await _googlePlayStoreClient.ValidatePurchase(subscriptionType, payload.SubscriptionId,
+                    payload.PurchaseToken);
+            var isValid = subscriptionType == SubscriptionType.MyFoodDoc
+                ? ((validateReceiptValidationResult.ExpirationDate != null &&
+                    validateReceiptValidationResult.ExpirationDate.Value > DateTime.Now &&
+                    validateReceiptValidationResult.StartDate != null &&
+                    validateReceiptValidationResult.StartDate.Value < DateTime.Now)
+                   || (validateReceiptValidationResult.AutoRenewing != null &&
+                       validateReceiptValidationResult.AutoRenewing.Value &&
+                       validateReceiptValidationResult.ExpirationDate != null &&
+                       validateReceiptValidationResult.ExpirationDate.Value < DateTime.Now))
+                : validateReceiptValidationResult.PurchaseDate.Value.AddYears(1) > DateTime.Now;
 
             googlePlayStoreSubscription.LastSynchronized = DateTime.Now;
             googlePlayStoreSubscription.IsValid = isValid;
             googlePlayStoreSubscription.SubscriptionId = payload.SubscriptionId;
             googlePlayStoreSubscription.PurchaseToken = payload.PurchaseToken;
 
-            //_context.GooglePlayStoreSubscriptions.Update(googlePlayStoreSubscription);
-
             if (!string.IsNullOrEmpty(validateReceiptValidationResult.LinkedPurchaseToken))
             {
-                var linkedGooglePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.Include(x => x.User).SingleOrDefaultAsync(x => x.PurchaseToken == validateReceiptValidationResult.LinkedPurchaseToken, cancellationToken);
+                var linkedGooglePlayStoreSubscription = await _context.GooglePlayStoreSubscriptions.Include(x => x.User)
+                    .SingleOrDefaultAsync(x => x.PurchaseToken == validateReceiptValidationResult.LinkedPurchaseToken,
+                        cancellationToken);
 
-                if (linkedGooglePlayStoreSubscription != null && linkedGooglePlayStoreSubscription.User.UserName != user.UserName)
+                if (linkedGooglePlayStoreSubscription != null &&
+                    linkedGooglePlayStoreSubscription.User.UserName != user.UserName)
                 {
                     linkedGooglePlayStoreSubscription.IsValid = false;
 
@@ -485,7 +649,8 @@ namespace MyFoodDoc.App.Application.Services.V2
                 }
             }
 
-            var appStoreSubscriptions = await _context.AppStoreSubscriptions.Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
+            var appStoreSubscriptions = await _context.AppStoreSubscriptions
+                .Where(x => x.UserId == userId && x.Type == subscriptionType).ToListAsync(cancellationToken);
 
             if (appStoreSubscriptions.Any())
             {

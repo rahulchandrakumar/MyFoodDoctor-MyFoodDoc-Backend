@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Models.StatisticsDto;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Enums;
 
