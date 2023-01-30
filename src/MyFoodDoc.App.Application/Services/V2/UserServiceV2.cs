@@ -1,8 +1,14 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Abstractions.V2;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Diary;
@@ -13,15 +19,10 @@ using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MyFoodDoc.App.Application.Services
+namespace MyFoodDoc.App.Application.Services.V2
 {
-    public class UserService : IUserService
+    public class UserServiceV2 : IUserServiceV2
     {
         private readonly IApplicationContext _context;
         private readonly IMapper _mapper;
@@ -30,7 +31,7 @@ namespace MyFoodDoc.App.Application.Services
         private readonly IAppStoreClient _appStoreClient;
         private readonly IGooglePlayStoreClient _googlePlayStoreClient;
 
-        public UserService(
+        public UserServiceV2(
             IApplicationContext context,
             IMapper mapper,
             IUserHistoryService userHistoryService,
@@ -49,9 +50,32 @@ namespace MyFoodDoc.App.Application.Services
         public async Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default)
         {
             var result = await _context.Users
-                .Where(x => x.Id == userId)
+                .Include(x => x.Indications)
+                .Include(x => x.WeightHistory)
                 .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(cancellationToken);
+
+            if (result == null)
+            {
+                throw new NotFoundException(nameof(User), userId);
+            }
+
+            result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
+            result.HasSubscription = result.HasZPPSubscription ? true : await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+            
+            return result;
+        }
+
+        
+        public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId, CancellationToken cancellationToken = default)
+        {
+            var result = await _context.Users
+                .Include(x => x.Indications)
+                .Include(x => x.WeightHistory)
+                .Include(x => x.Meals)
+                .Where(x => x.Id == userId)
+                .ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (result == null)
             {
@@ -63,7 +87,6 @@ namespace MyFoodDoc.App.Application.Services
 
             return result;
         }
-
         public async Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload, CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);

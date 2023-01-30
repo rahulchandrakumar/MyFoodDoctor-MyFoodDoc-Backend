@@ -1,13 +1,13 @@
-﻿using MyFoodDoc.App.Application.Models;
-using MyFoodDoc.App.Application.Payloads.Target;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Models;
+using MyFoodDoc.App.Application.Payloads.Target;
 
-namespace MyFoodDoc.App.Application.Abstractions
+namespace MyFoodDoc.App.Application.Abstractions.V2
 {
-    public interface ITargetService
+    public interface ITargetServiceV2
     {
         Task<bool> NewTriggered(string userId, CancellationToken cancellationToken);
         Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken);

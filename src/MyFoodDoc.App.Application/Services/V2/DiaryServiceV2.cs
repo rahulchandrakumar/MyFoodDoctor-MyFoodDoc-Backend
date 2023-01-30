@@ -21,13 +21,16 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Abstractions.V2;
 
 namespace MyFoodDoc.App.Application.Services
 {
-    public class DiaryService : IDiaryService
+    public class DiaryServiceV2 : IDiaryServiceV2
     {
-        private static readonly DiaryEntryDtoLiquid _liquidDefault = new DiaryEntryDtoLiquid { Amount = 0, PredefinedAmount = 0 };
-        private static readonly DiaryEntryDtoExercise _exerciseDefault = new DiaryEntryDtoExercise { Duration = 0 };
+        private static readonly DiaryEntryDtoLiquid _liquidDefault = new DiaryEntryDtoLiquid
+            {Amount = 0, PredefinedAmount = 0};
+
+        private static readonly DiaryEntryDtoExercise _exerciseDefault = new DiaryEntryDtoExercise {Duration = 0};
 
         private const int SuggestedLiquidAmountPerKilo = 30;
         private const int SuggestedVegetables = 500; // in gram
@@ -42,7 +45,7 @@ namespace MyFoodDoc.App.Application.Services
         private readonly int _statisticsPeriod;
         private readonly int _statisticsMinimumDays;
 
-        public DiaryService(
+        public DiaryServiceV2(
             IApplicationContext context,
             IMapper mapper,
             IFatSecretClient fatSecretClient,
@@ -61,7 +64,8 @@ namespace MyFoodDoc.App.Application.Services
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
-        public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default)
+        public async Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start,
+            CancellationToken cancellationToken = default)
         {
             var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
 
@@ -71,18 +75,19 @@ namespace MyFoodDoc.App.Application.Services
             }
 
             var liquid = await _context.Liquids.AsNoTracking()
-                    .Where(x => x.UserId == userId && x.Date == start)
-                    .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
-                    .SingleOrDefaultAsync(cancellationToken);
+                .Where(x => x.UserId == userId && x.Date == start)
+                .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(cancellationToken);
 
             var exercise = await _context.Exercises.AsNoTracking()
-                    .Where(x => x.UserId == userId && x.Date == start)
-                    .ProjectTo<DiaryEntryDtoExercise>(_mapper.ConfigurationProvider)
-                    .SingleOrDefaultAsync(cancellationToken);
+                .Where(x => x.UserId == userId && x.Date == start)
+                .ProjectTo<DiaryEntryDtoExercise>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(cancellationToken);
 
             List<DiaryEntryDtoMeal> meals = new List<DiaryEntryDtoMeal>();
 
-            foreach (var meal in await _context.Meals.AsNoTracking().Where(x => x.UserId == userId && x.Date == start).ToListAsync(cancellationToken))
+            foreach (var meal in await _context.Meals.AsNoTracking().Where(x => x.UserId == userId && x.Date == start)
+                         .ToListAsync(cancellationToken))
             {
                 meals.Add(await GetMealAsync(userId, meal.Id, cancellationToken));
             }
@@ -103,7 +108,7 @@ namespace MyFoodDoc.App.Application.Services
                 return new DiaryEntryDto();
             }
 
-            aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
+            aggregation.Liquid.PredefinedAmount = (int) Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 
             aggregation.OptimizationAreas = new List<DiaryEntryDtoOptimizationArea>();
 
@@ -111,32 +116,41 @@ namespace MyFoodDoc.App.Application.Services
 
             var sugarOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Sugar);
 
-            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = sugarOptimizationArea.Key, Optimal = sugarOptimizationArea.LineGraphOptimal.Value });
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea()
+                {Key = sugarOptimizationArea.Key, Optimal = sugarOptimizationArea.LineGraphOptimal.Value});
 
             var proteinOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Protein);
 
-            var optimalProtein = GetCorrectedWeight(user.Height.Value, userWeight.Value) * proteinOptimizationArea.LineGraphOptimal.Value;
+            var optimalProtein = GetCorrectedWeight(user.Height.Value, userWeight.Value) *
+                                 proteinOptimizationArea.LineGraphOptimal.Value;
 
-            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = proteinOptimizationArea.Key, Optimal = optimalProtein });
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea()
+                {Key = proteinOptimizationArea.Key, Optimal = optimalProtein});
 
             var snackingOptimizationArea = optimizationAreas.Single(x => x.Type == OptimizationAreaType.Snacking);
 
-            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = snackingOptimizationArea.Key, Optimal = snackingOptimizationArea.LineGraphOptimal.Value });
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea()
+                {Key = snackingOptimizationArea.Key, Optimal = snackingOptimizationArea.LineGraphOptimal.Value});
 
             //TODO: check default age
-            var optimalCalories = GetCaloriesOptimalValue(userId, user.Birthday == null ? 40 : DateTime.UtcNow.Year - user.Birthday.Value.Year,
+            var optimalCalories = GetCaloriesOptimalValue(userId,
+                user.Birthday == null ? 40 : DateTime.UtcNow.Year - user.Birthday.Value.Year,
                 user.Height.Value, userWeight.Value, user.Gender.Value);
 
-            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Calories.ToString().ToLower(), Optimal = optimalCalories });
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea()
+                {Key = OptimizationAreaType.Calories.ToString().ToLower(), Optimal = optimalCalories});
 
-            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Vegetables.ToString().ToLower(), Optimal = SuggestedVegetables });
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea()
+                {Key = OptimizationAreaType.Vegetables.ToString().ToLower(), Optimal = SuggestedVegetables});
 
-            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea() { Key = OptimizationAreaType.Fiber.ToString().ToLower(), Optimal = SuggestedFiber });
+            aggregation.OptimizationAreas.Add(new DiaryEntryDtoOptimizationArea()
+                {Key = OptimizationAreaType.Fiber.ToString().ToLower(), Optimal = SuggestedFiber});
 
             return aggregation;
         }
 
-        public async Task<DiaryEntryDtoMeal> GetMealAsync(string userId, int mealId, CancellationToken cancellationToken)
+        public async Task<DiaryEntryDtoMeal> GetMealAsync(string userId, int mealId,
+            CancellationToken cancellationToken)
         {
             var meal = await _context.Meals
                 .Where(x => x.UserId == userId && x.Id == mealId)
@@ -151,7 +165,8 @@ namespace MyFoodDoc.App.Application.Services
             return meal;
         }
 
-        public async Task<int> InsertMealAsync(string userId, InsertMealPayload payload, CancellationToken cancellationToken)
+        public async Task<int> InsertMealAsync(string userId, InsertMealPayload payload,
+            CancellationToken cancellationToken)
         {
             await CheckIngredients(payload.Ingredients, cancellationToken);
 
@@ -175,7 +190,8 @@ namespace MyFoodDoc.App.Application.Services
             return meal.Id;
         }
 
-        public async Task<int> UpdateMealAsync(string userId, int mealId, UpdateMealPayload payload, CancellationToken cancellationToken)
+        public async Task<int> UpdateMealAsync(string userId, int mealId, UpdateMealPayload payload,
+            CancellationToken cancellationToken)
         {
             await CheckIngredients(payload.Ingredients, cancellationToken);
 
@@ -196,7 +212,8 @@ namespace MyFoodDoc.App.Application.Services
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            var oldMealIngredients = await _context.MealIngredients.Where(x => x.MealId == mealId).ToListAsync(cancellationToken);
+            var oldMealIngredients =
+                await _context.MealIngredients.Where(x => x.MealId == mealId).ToListAsync(cancellationToken);
 
             if (oldMealIngredients.Any())
             {
@@ -213,8 +230,8 @@ namespace MyFoodDoc.App.Application.Services
 
             if (oldMealFavourites.Any())
             {
-                var favouritesToRemove = oldMealFavourites.
-                    Where(x => !payload.Favourites.Any(y => y.Id == x.FavouriteId))
+                var favouritesToRemove = oldMealFavourites
+                    .Where(x => !payload.Favourites.Any(y => y.Id == x.FavouriteId))
                     .Select(x => x.Favourite).ToList();
 
                 _context.MealFavourites.RemoveRange(oldMealFavourites);
@@ -261,7 +278,8 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
-        public async Task<DiaryEntryDtoLiquid> GetLiquidAsync(string userId, DateTime date, CancellationToken cancellationToken)
+        public async Task<DiaryEntryDtoLiquid> GetLiquidAsync(string userId, DateTime date,
+            CancellationToken cancellationToken)
         {
             var entity = await _context.Liquids
                 .Where(x => x.UserId == userId && x.Date == date)
@@ -286,7 +304,7 @@ namespace MyFoodDoc.App.Application.Services
                     LastAdded = payload.Time,
                     Amount = payload.Amount
                 })
-                .On(x => new { x.UserId, x.Date })
+                .On(x => new {x.UserId, x.Date})
                 .WhenMatched(x => new Liquid
                 {
                     LastAdded = x.Amount < payload.Amount ? payload.Time : x.LastAdded,
@@ -295,7 +313,8 @@ namespace MyFoodDoc.App.Application.Services
                 .RunAsync(cancellationToken);
         }
 
-        public async Task<DiaryEntryDtoExercise> GetExerciseAsync(string userId, DateTime date, CancellationToken cancellationToken)
+        public async Task<DiaryEntryDtoExercise> GetExerciseAsync(string userId, DateTime date,
+            CancellationToken cancellationToken)
         {
             var entity = await _context.Exercises
                 .Where(x => x.UserId == userId && x.Date == date)
@@ -310,7 +329,8 @@ namespace MyFoodDoc.App.Application.Services
             return entity;
         }
 
-        public async Task UpsertExerciseAsync(string userId, ExercisePayload payload, CancellationToken cancellationToken)
+        public async Task UpsertExerciseAsync(string userId, ExercisePayload payload,
+            CancellationToken cancellationToken)
         {
             await _context.Exercises
                 .Upsert(new Exercise
@@ -320,7 +340,7 @@ namespace MyFoodDoc.App.Application.Services
                     LastAdded = payload.Time,
                     Duration = payload.Duration,
                 })
-                .On(x => new { x.UserId, x.Date })
+                .On(x => new {x.UserId, x.Date})
                 .WhenMatched(x => new Exercise
                 {
                     LastAdded = x.Duration < payload.Duration ? payload.Time : x.LastAdded,
@@ -329,68 +349,39 @@ namespace MyFoodDoc.App.Application.Services
                 .RunAsync(cancellationToken);
         }
 
-        public async Task<bool> IsDiaryFull(string userId, DateTime onDate, CancellationToken cancellationToken)
+        public bool IsDiaryFull(IEnumerable<MealDto> meals, DateTime userCreatedAt, DateTime onDate)
         {
-            var user = await _context.Users
-                .Where(x => x.Id == userId)
-                .SingleOrDefaultAsync(cancellationToken);
-
-            if (user == null)
-            {
-                throw new NotFoundException(nameof(User), userId);
-            }
-
-            var dateToCheck = new DateTime(onDate.Year, onDate.Month, onDate.Day);
-
-            var userCreatedDate = new DateTime(user.Created.Year, user.Created.Month, user.Created.Day);
-
-            if (userCreatedDate > dateToCheck.AddDays(-_statisticsPeriod))
+            if (userCreatedAt > onDate.AddDays(-_statisticsPeriod))
                 return false;
 
-            return await _context.Meals
-                    .Where(x => x.UserId == userId && x.Date > dateToCheck.AddDays(-_statisticsPeriod) && x.Date <= dateToCheck)
-                    .Select(x => x.Date)
-                    .Distinct()
-                    .CountAsync(cancellationToken) >= _statisticsMinimumDays;
+            return meals
+                .Where(x => x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date <= onDate)
+                .Select(x => x.Date)
+                .Distinct()
+                .Count() >= _statisticsMinimumDays;
         }
 
-        public async Task<bool> IsZPPForbidden(string userId, DateTime onDate, CancellationToken cancellationToken)
+        public bool IsZPPForbidden(double? userHeight, decimal? weight, bool eatingDisorder)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
-
-            if (user == null)
-            {
-                throw new NotFoundException(nameof(User), userId);
-            }
-            else if(! user.Height.HasValue) 
+            if (!userHeight.HasValue)
             {
                 return true;
             }
-
-            var eatingDisorder = await _context.UserIndications
-                .AnyAsync(x => x.UserId == userId && x.IndicationId == 5);
 
             if (eatingDisorder)
                 return true;
 
-            var weight = await _context.UserWeights
-                .OrderBy(x => x.Date)
-                .LastOrDefaultAsync(x => x.UserId == userId && x.Date <= onDate, cancellationToken);
-
             if (weight is null)
                 return true;
 
-            var BMIValue = BMI((double)user.Height.Value, (double)weight.Value);
+            var bmiValue = BMI(userHeight.Value, (double) weight.Value);
 
-            if (BMIValue < 18.5 || BMIValue > 35)
-                return true;
-
-            return false;
+            return (bmiValue is < 18.5 or > 35);
         }
 
         public decimal GetCorrectedWeight(decimal height, decimal weight)
         {
-            if (BMI((double)height, (double)weight) < 25)
+            if (BMI((double) height, (double) weight) < 25)
             {
                 return weight;
             }
@@ -400,13 +391,16 @@ namespace MyFoodDoc.App.Application.Services
 
         private decimal GetCaloriesOptimalValue(string userId, int age, decimal height, decimal weight, Gender gender)
         {
-            var optimalValue = ((decimal)0.047 * weight + (gender == Gender.Female ? 0 : (decimal)1.009) - (decimal)0.01452 * age + (decimal)3.21) * 239 * (decimal)1.4;
+            var optimalValue =
+                ((decimal) 0.047 * weight + (gender == Gender.Female ? 0 : (decimal) 1.009) - (decimal) 0.01452 * age +
+                 (decimal) 3.21) * 239 * (decimal) 1.4;
 
-            if (BMI((double)height, (double)weight) < 30)
+            if (BMI((double) height, (double) weight) < 30)
             {
                 //TODO: create enums for Diets, Indications and Motivations
                 var adipositas = _context.UserIndications.Where(x => x.UserId == userId).Any(x => x.IndicationId == 2);
-                var reduceWeight = _context.UserMotivations.Where(x => x.UserId == userId).Any(x => x.MotivationId == 3);
+                var reduceWeight = _context.UserMotivations.Where(x => x.UserId == userId)
+                    .Any(x => x.MotivationId == 3);
 
                 if (adipositas || reduceWeight)
                     optimalValue -= 300;
@@ -421,7 +415,7 @@ namespace MyFoodDoc.App.Application.Services
 
         private double BMI(double height, double weight)
         {
-            return height == 0 ? 0 : (double)weight / Math.Pow((double)height / 100, 2);
+            return height == 0 ? 0 : weight / Math.Pow(height / 100, 2);
         }
 
         private async Task<int> UpsertIngredient(long foodId, long servingId, CancellationToken cancellationToken)
@@ -481,7 +475,8 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
-        private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
+        private async Task UpsertMealIngredients(int mealId, IEnumerable<IngredientPayload> ingredients,
+            CancellationToken cancellationToken)
         {
             if (ingredients != null)
             {
@@ -489,7 +484,13 @@ namespace MyFoodDoc.App.Application.Services
 
                 foreach (var ingredient in ingredients)
                 {
-                    mealIngredients.Add(new MealIngredient { MealId = mealId, IngredientId = await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken), Amount = ingredient.Amount });
+                    mealIngredients.Add(new MealIngredient
+                    {
+                        MealId = mealId,
+                        IngredientId =
+                            await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken),
+                        Amount = ingredient.Amount
+                    });
                 }
 
                 await _context.MealIngredients.AddRangeAsync(mealIngredients, cancellationToken);
@@ -498,7 +499,8 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
-        private async Task UpsertFavouriteIngredients(int favouriteId, IEnumerable<IngredientPayload> ingredients, CancellationToken cancellationToken)
+        private async Task UpsertFavouriteIngredients(int favouriteId, IEnumerable<IngredientPayload> ingredients,
+            CancellationToken cancellationToken)
         {
             if (ingredients != null)
             {
@@ -506,7 +508,13 @@ namespace MyFoodDoc.App.Application.Services
 
                 foreach (var ingredient in ingredients)
                 {
-                    favouriteIngredients.Add(new FavouriteIngredient { FavouriteId = favouriteId, IngredientId = await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken), Amount = ingredient.Amount });
+                    favouriteIngredients.Add(new FavouriteIngredient
+                    {
+                        FavouriteId = favouriteId,
+                        IngredientId =
+                            await UpsertIngredient(ingredient.FoodId, ingredient.ServingId, cancellationToken),
+                        Amount = ingredient.Amount
+                    });
                 }
 
                 await _context.FavouriteIngredients.AddRangeAsync(favouriteIngredients, cancellationToken);
@@ -515,44 +523,48 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
-        private async Task UpsertMealFavourites(string userId, int mealId, IEnumerable<MealFavouritePayload> favourites, CancellationToken cancellationToken)
+        private async Task UpsertMealFavourites(string userId, int mealId, IEnumerable<MealFavouritePayload> favourites,
+            CancellationToken cancellationToken)
         {
-            if (favourites != null)
+            if (favourites == null)
             {
-                var mealFavourites = new List<MealFavourite>();
+                return;
+            }
 
-                foreach (var favourite in favourites)
+            var mealFavourites = new List<MealFavourite>();
+
+            foreach (var favourite in favourites)
+            {
+                if (favourite.Id == null)
                 {
-                    if (favourite.Id == null)
+                    favourite.Id = await InsertFavouriteAsync(userId, favourite, false, cancellationToken);
+                }
+                else
+                {
+                    Favourite favouriteToUpdate = await _context.Favourites
+                        .Where(x => x.UserId == userId && x.Id == favourite.Id.Value)
+                        .SingleOrDefaultAsync(cancellationToken);
+
+                    if (favouriteToUpdate == null)
                     {
-                        favourite.Id = await InsertFavouriteAsync(userId, favourite, false, cancellationToken);
-                    }
-                    else
-                    {
-                        Favourite favouriteToUpdate = await _context.Favourites
-                            .Where(x => x.UserId == userId && x.Id == favourite.Id.Value)
-                            .SingleOrDefaultAsync(cancellationToken);
-
-                        if (favouriteToUpdate == null)
-                        {
-                            throw new NotFoundException(nameof(Favourite), favourite.Id);
-                        }
-
-                        if (favouriteToUpdate.IsGeneric)
-                        {
-                            throw new Exception($"A generic favourite with id={favouriteToUpdate.Id} cannot be used in meal");
-                        }
-
-                        await UpdateFavouriteAsync(userId, favourite.Id.Value, favourite, cancellationToken);
+                        throw new NotFoundException(nameof(Favourite), favourite.Id);
                     }
 
-                    mealFavourites.Add(new MealFavourite { MealId = mealId, FavouriteId = favourite.Id.Value });
+                    if (favouriteToUpdate.IsGeneric)
+                    {
+                        throw new Exception(
+                            $"A generic favourite with id={favouriteToUpdate.Id} cannot be used in meal");
+                    }
+
+                    await UpdateFavouriteAsync(userId, favourite.Id.Value, favourite, cancellationToken);
                 }
 
-                await _context.MealFavourites.AddRangeAsync(mealFavourites, cancellationToken);
-
-                await _context.SaveChangesAsync(cancellationToken);
+                mealFavourites.Add(new MealFavourite {MealId = mealId, FavouriteId = favourite.Id.Value});
             }
+
+            await _context.MealFavourites.AddRangeAsync(mealFavourites, cancellationToken);
+
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
         private async Task CheckIngredients(IEnumerable<IngredientPayload> ingredients,
@@ -567,7 +579,8 @@ namespace MyFoodDoc.App.Application.Services
             }
         }
 
-        public async Task<ICollection<FavouriteDto>> GetFavouritesAsync(string userId, CancellationToken cancellationToken)
+        public async Task<ICollection<FavouriteDto>> GetFavouritesAsync(string userId,
+            CancellationToken cancellationToken)
         {
             var favourites = await _context.Favourites
                 .Where(x => x.UserId == userId && x.IsGeneric)
@@ -592,7 +605,8 @@ namespace MyFoodDoc.App.Application.Services
             return favourite;
         }
 
-        public async Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, bool isGeneric, CancellationToken cancellationToken)
+        public async Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, bool isGeneric,
+            CancellationToken cancellationToken)
         {
             await CheckIngredients(payload.Ingredients, cancellationToken);
 
@@ -612,7 +626,8 @@ namespace MyFoodDoc.App.Application.Services
             return favourite.Id;
         }
 
-        public async Task<int> UpdateFavouriteAsync(string userId, int id, FavouritePayload payload, CancellationToken cancellationToken)
+        public async Task<int> UpdateFavouriteAsync(string userId, int id, FavouritePayload payload,
+            CancellationToken cancellationToken)
         {
             await CheckIngredients(payload.Ingredients, cancellationToken);
 
@@ -667,18 +682,22 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var data = new DiaryExportModel() { DateFrom = payload.DateFrom, DateTo = payload.DateTo };
+            var data = new DiaryExportModel() {DateFrom = payload.DateFrom, DateTo = payload.DateTo};
 
             var meals = await _context.Meals
-                    .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
+                .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date)
+                .ToListAsync(cancellationToken);
 
             var liquids = await _context.Liquids
-                    .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
+                .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date)
+                .ToListAsync(cancellationToken);
 
             var exercises = await _context.Exercises
-                   .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date).ToListAsync(cancellationToken);
+                .Where(x => x.UserId == userId && x.Date >= payload.DateFrom.Date && x.Date <= payload.DateTo.Date)
+                .ToListAsync(cancellationToken);
 
-            var dates = meals.Select(x => x.Date).Union(liquids.Select(x => x.Date)).Union(exercises.Select(x => x.Date)).OrderBy(x => x);
+            var dates = meals.Select(x => x.Date).Union(liquids.Select(x => x.Date))
+                .Union(exercises.Select(x => x.Date)).OrderBy(x => x);
 
             data.Days = new List<DiaryExportDayModel>();
 
@@ -709,14 +728,14 @@ namespace MyFoodDoc.App.Application.Services
                     day.Sugar += mealNutritions.Sugar;
                     day.Vegetables += mealNutritions.Vegetables;
 
-                    var meal = new DiaryExportMealModel { Time = dayMeal.Time, Type = dayMeal.Type };
+                    var meal = new DiaryExportMealModel {Time = dayMeal.Time, Type = dayMeal.Type};
 
                     meal.Ingredients = new List<DiaryExportMealIngredientModel>();
 
                     foreach (var mealIngredient in await _context.MealIngredients
-                                                    .Include(x => x.Ingredient)
-                                                    .Where(x => x.MealId == dayMeal.Id)
-                                                    .ToListAsync(cancellationToken))
+                                 .Include(x => x.Ingredient)
+                                 .Where(x => x.MealId == dayMeal.Id)
+                                 .ToListAsync(cancellationToken))
                         meal.Ingredients.Add(new DiaryExportMealIngredientModel
                         {
                             FoodName = mealIngredient.Ingredient.FoodName,
@@ -728,11 +747,11 @@ namespace MyFoodDoc.App.Application.Services
                         });
 
                     foreach (var mealFavourite in await _context.MealFavourites
-                                                    .Include(x => x.Favourite)
-                                                    .ThenInclude(x => x.Ingredients)
-                                                    .ThenInclude(x => x.Ingredient)
-                                                    .Where(x => x.MealId == dayMeal.Id)
-                                                    .ToArrayAsync(cancellationToken))
+                                 .Include(x => x.Favourite)
+                                 .ThenInclude(x => x.Ingredients)
+                                 .ThenInclude(x => x.Ingredient)
+                                 .Where(x => x.MealId == dayMeal.Id)
+                                 .ToArrayAsync(cancellationToken))
                     {
                         foreach (var mealFavouriteIngredient in mealFavourite.Favourite.Ingredients)
                         {
@@ -761,7 +780,8 @@ namespace MyFoodDoc.App.Application.Services
 
             var bytes = await _htmlPdfService.GenerateExport(data, payload.HtmlStruct);
 
-            Stream bodyTemplateStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"{this.GetType().Namespace}.DiaryExportEmailTemplate.html");
+            Stream bodyTemplateStream = Assembly.GetExecutingAssembly()
+                .GetManifestResourceStream($"{this.GetType().Namespace}.DiaryExportEmailTemplate.html");
 
             if (bodyTemplateStream == null)
             {
@@ -776,13 +796,14 @@ namespace MyFoodDoc.App.Application.Services
                 null,
                 "Tagebuchexport",
                 body,
-                new[] {
-                            new Attachment()
-                            {
-                                Content = bytes,
-                                Filename = "Tagebuch.pdf",
-                                Type = "application/pdf"
-                            }
+                new[]
+                {
+                    new Attachment()
+                    {
+                        Content = bytes,
+                        Filename = "Tagebuch.pdf",
+                        Type = "application/pdf"
+                    }
                 });
 
             if (!result)
@@ -797,6 +818,7 @@ namespace MyFoodDoc.App.Application.Services
             {
                 throw new ArgumentNullException(nameof(userId));
             }
+
             if (dietKey == null)
             {
                 throw new ArgumentNullException(nameof(dietKey));

@@ -1,6 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
+using MyFoodDoc.App.Application.Abstractions.V2;
 using MyFoodDoc.App.Application.Exceptions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Payloads.Target;
@@ -9,35 +17,32 @@ using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Targets;
 using MyFoodDoc.Application.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace MyFoodDoc.App.Application.Services
+namespace MyFoodDoc.App.Application.Services.V2
 {
-    public class TargetService : ITargetService
+    public class TargetServiceV2 : ITargetServiceV2
     {
         private readonly IApplicationContext _context;
         private readonly IFoodService _foodService;
-        private readonly IDiaryService _diaryService;
+        private readonly IDiaryServiceV2 _diaryService;
         private readonly int _statisticsPeriod;
         private readonly int _statisticsMinimumDays;
+        private readonly IMapper _mapper;
 
         public const string VEGAN_DIET = "vegan";
 
-        public TargetService(IApplicationContext context, IFoodService foodService, IDiaryService diaryService, IOptions<StatisticsOptions> statisticsOptions)
+        public TargetServiceV2(IApplicationContext context, IFoodService foodService, IDiaryServiceV2 diaryService, IOptions<StatisticsOptions> statisticsOptions, IMapper mapper)
         {
             _context = context;
             _foodService = foodService;
             _diaryService = diaryService;
+            _mapper = mapper;
             _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
             _statisticsMinimumDays = statisticsOptions.Value.MinimumDays > 0 ? statisticsOptions.Value.MinimumDays : 3;
         }
 
         private async Task Calculate(
-            User user,
+            StatisticsUserDto user,
             UserTarget userTarget,
             UserTarget userAnswer,
             bool isVegan,
@@ -402,7 +407,10 @@ namespace MyFoodDoc.App.Application.Services
         {
             DateTime onDate = date ?? DateTime.Today.AddMinutes(-1);
 
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            var user = await _context.Users.
+                Where(x => x.Id == userId)
+                .ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(cancellationToken);
             if (user == null)
             {
                 throw new NotFoundException(nameof(User), userId);
@@ -424,7 +432,7 @@ namespace MyFoodDoc.App.Application.Services
             }
             else
             {
-                if (!await _diaryService.IsDiaryFull(userId, onDate, cancellationToken))
+                if (!_diaryService.IsDiaryFull(user.Meals, user.Created, onDate))
                     return result;
 
                 var userDiets = await _context.UserDiets.Where(x => x.UserId == userId).Select(x => x.DietId).ToListAsync(cancellationToken);
@@ -587,14 +595,14 @@ namespace MyFoodDoc.App.Application.Services
                 //_ = await _context.SaveChangesAsync(cancellationToken);
             }
 
-            bool isVegan = await _diaryService.CheckDiet(user.Id, VEGAN_DIET, cancellationToken);
+            bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
             foreach (var userTarget in userTargets)
             {
                 var userAnswer = await _context.UserTargets
                     .Where(x => x.UserId == userId && x.TargetId == userTarget.TargetId && x.Created > onDate.AddDays(-_statisticsPeriod) && x.Created < onDate)
                     .OrderBy(x => x.Created)
                     .LastOrDefaultAsync(cancellationToken);
-
+                
                 await Calculate(user, userTarget, userAnswer, isVegan,
                     dailyUserIngredientsDictionary, result, cancellationToken);
             }
@@ -623,7 +631,7 @@ namespace MyFoodDoc.App.Application.Services
                     .ToListAsync(cancellationToken);
 
                 bool isVegan = await _diaryService.CheckDiet(userId, VEGAN_DIET, cancellationToken);
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+                var user = await _context.Users.Where(x => x.Id == userId).ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider).SingleOrDefaultAsync( cancellationToken);
                 foreach (var userAnswer in targets)
                 {
                     await Calculate(user, userAnswer, userAnswer, isVegan, dailyUserIngredientsDictionary, result, cancellationToken);
