@@ -134,9 +134,9 @@ namespace MyFoodDoc.App.Api.Controllers
                 HasSubscription = user.HasSubscription,
                 HasZPPSubscription = user.HasZPPSubscription,
                 IsDiaryFull = await _diaryService.IsDiaryFull(userId, DateTime.Today.AddMinutes(-1), cancellationToken),
-                HasNewTargetsTriggered = await _targetService.NewTriggered(userId, cancellationToken),
+                HasNewTargetsTriggered = await _targetService.NewTriggered(userId, DateTime.Today.AddMinutes(-1), cancellationToken),
                 IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(userId, cancellationToken)),
-                HasTargetsActivated = await _targetService.AnyActivated(userId, cancellationToken),
+                HasTargetsActivated = await _targetService.AnyActivated(userId, DateTime.Today.AddMinutes(-1), cancellationToken),
                 DaysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(userId, cancellationToken)
             };
 
