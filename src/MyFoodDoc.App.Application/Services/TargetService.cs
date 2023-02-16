@@ -12,6 +12,7 @@ using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -679,7 +680,7 @@ namespace MyFoodDoc.App.Application.Services
                     throw new NotFoundException(nameof(Target), answer.TargetId);
                 }
 
-                var userTarget = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == answer.TargetId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+                var userTarget = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == answer.TargetId && x.Created > DateTime.Today.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                 if (userTarget == null)
                 {
@@ -700,10 +701,10 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> NewTriggered(string userId, CancellationToken cancellationToken)
+        public async Task<bool> NewTriggered(string userId, DateTime date, CancellationToken cancellationToken)
         {
             bool activeTargets = await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && x.Created > DateTime.Today.AddDays(-_statisticsPeriod), cancellationToken);
+                x.UserId == userId && x.Created > date.Date.AddDays(-_statisticsPeriod), cancellationToken);
 
             if (!activeTargets)
             {
@@ -720,10 +721,10 @@ namespace MyFoodDoc.App.Application.Services
                 x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode), cancellationToken);
         }
 
-        public async Task<bool> AnyActivated(string userId, CancellationToken cancellationToken)
+        public async Task<bool> AnyActivated(string userId, DateTime date, CancellationToken cancellationToken)
         {
             return await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
+                x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > date.Date.AddDays(-_statisticsPeriod), cancellationToken);
         }
 
         public async Task<int> GetDaysTillFirstEvaluationAsync(string userId, CancellationToken cancellationToken)

@@ -9,9 +9,9 @@ namespace MyFoodDoc.App.Application.Abstractions
 {
     public interface ITargetService
     {
-        Task<bool> NewTriggered(string userId, CancellationToken cancellationToken);
+        Task<bool> NewTriggered(string userId, DateTime date, CancellationToken cancellationToken);
         Task<bool> AnyAnswered(string userId, CancellationToken cancellationToken);
-        Task<bool> AnyActivated(string userId, CancellationToken cancellationToken);
+        Task<bool> AnyActivated(string userId, DateTime date, CancellationToken cancellationToken);
         Task<int> GetDaysTillFirstEvaluationAsync(string userId, CancellationToken cancellationToken);
         /// <summary>
         /// 
