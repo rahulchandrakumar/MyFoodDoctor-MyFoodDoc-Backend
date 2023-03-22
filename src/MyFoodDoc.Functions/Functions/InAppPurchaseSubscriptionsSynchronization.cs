@@ -20,7 +20,7 @@ namespace MyFoodDoc.Functions.Functions
         private readonly IApplicationContext _context;
         private readonly IAppStoreClient _appStoreClient;
         private readonly IGooglePlayStoreClient _googlePlayStoreClient;
-        private const int BatchSize = 200;
+        private const int BatchSize = 300;
 
         public InAppPurchaseSubscriptionsSynchronization(
             IApplicationContext context,
@@ -34,7 +34,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [FunctionName(nameof(InAppPurchaseSubscriptionsSynchronization))]
         public async Task RunAsync(
-            [TimerTrigger("0 */10 * * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+            [TimerTrigger("0 2 * * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             if (myTimer.IsPastDue)
