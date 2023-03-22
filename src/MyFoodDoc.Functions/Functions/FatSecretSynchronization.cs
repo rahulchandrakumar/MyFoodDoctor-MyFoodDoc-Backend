@@ -17,6 +17,7 @@ namespace MyFoodDoc.Functions.Functions
     {
         private readonly IApplicationContext _context;
         private readonly IFatSecretClient _fatSecretClient;
+        private const int BatchSize = 300;
 
         public FatSecretSynchronization(
             IApplicationContext context,
@@ -27,7 +28,7 @@ namespace MyFoodDoc.Functions.Functions
         }
 
         [FunctionName(nameof(FatSecretSynchronization))]
-        public async Task RunAsync([TimerTrigger("0 */5 * * * *"/*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+        public async Task RunAsync([TimerTrigger("0 3-4 * * * *"/*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             if (myTimer.IsPastDue)
@@ -37,7 +38,7 @@ namespace MyFoodDoc.Functions.Functions
 
             log.LogInformation($"FatSecretSynchronization executed at: {DateTime.Now}");
 
-            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(200).ToListAsync();
+            var ingredients = await _context.Ingredients.Where(x => x.LastSynchronized < DateTime.Now.AddHours(-22)).OrderBy(x => x.LastSynchronized).Take(BatchSize).ToListAsync();
 
             log.LogInformation($"{ingredients.Count} ingredients to update.");
 
