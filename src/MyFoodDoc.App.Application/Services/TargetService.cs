@@ -219,17 +219,27 @@ namespace MyFoodDoc.App.Application.Services
                     if (recommendedValue < targetValue)
                         targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
 
-                    targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
+                    targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = SafeFormat(adjustmentTarget.TargetText, Math.Round(targetValue)) });
                 }
                 else
                 {
                     if (recommendedValue != adjustmentTarget.TargetValue)
-                        targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = SafeFormat(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
 
                     targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
                 }
 
                 targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
+
+                string SafeFormat(string text, decimal value)
+                {
+                    if (text.Contains("{0}"))
+                    {
+                        return String.Format(text, value);
+                    }
+
+                    return text;
+                }
             }
             else
             {
