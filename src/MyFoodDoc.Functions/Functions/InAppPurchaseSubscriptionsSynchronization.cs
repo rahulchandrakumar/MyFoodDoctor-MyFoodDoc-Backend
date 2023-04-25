@@ -34,7 +34,7 @@ namespace MyFoodDoc.Functions.Functions
 
         [FunctionName(nameof(InAppPurchaseSubscriptionsSynchronization))]
         public async Task RunAsync(
-            [TimerTrigger("0 2 * * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
+            [TimerTrigger("0 0 2 * * *" /*"%TimerInterval%"*/, RunOnStartup = false)] TimerInfo myTimer,
             ILogger log)
         {
             if (myTimer.IsPastDue)
