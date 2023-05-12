@@ -507,6 +507,7 @@ namespace MyFoodDoc.App.Application.Services
                         PlantProtein = 0,
                         Sugar = 0,
                         Vegetables = 0,
+                        Fiber = 0,
                         Meals = dailyMeals.Count()
                     };
 
@@ -517,6 +518,7 @@ namespace MyFoodDoc.App.Application.Services
                         dailyNutritions.AnimalProtein += mealNutritions.AnimalProtein;
                         dailyNutritions.PlantProtein += mealNutritions.PlantProtein;
                         dailyNutritions.Sugar += mealNutritions.Sugar;
+                        dailyNutritions.Fiber += mealNutritions.Fiber;
                         dailyNutritions.Vegetables += mealNutritions.Vegetables;
                     }
 
