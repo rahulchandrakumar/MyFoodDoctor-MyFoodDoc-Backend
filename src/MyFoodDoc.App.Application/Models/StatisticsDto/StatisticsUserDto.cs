@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MyFoodDoc.Application.Enums;
 
@@ -27,14 +28,15 @@ public class StatisticsUserDto
 
     public bool EatingDisorder { get; set; }
 
-    public ICollection<MotivationDto> Motivations { get; set; }
+    public IEnumerable<int> Motivations { get; set; } = new List<int>();
 
-    public ICollection<IndicationDto> Indications { get; set; }
+    public IEnumerable<int> Indications { get; set; } = new List<int>();
 
-    public ICollection<DietDto> Diets { get; set; }
+    public ICollection<DietDto> Diets { get; set; } = new List<DietDto>();
 
-    public ICollection<UserWeightDto> Weights { get; set; }
-    public ICollection<MealDto> Meals { get; set; }
-    public ICollection<UserTargetDto> UserTargets { get; set; }
-    public ICollection<UserFavouriteDto> FavouriteIngredientDtos { get; set; }
+    public ICollection<UserWeightDto> Weights { get; set; } = new List<UserWeightDto>();
+    
+    public ICollection<MealDto> Meals { get; set; } = new List<MealDto>();
+    public ICollection<UserTargetDto> UserTargets { get; set; } = new List<UserTargetDto>();
+     public UserFavouriteDto FavouriteIngredientDtos { get; set; } 
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Abstractions.V2;
 using MyFoodDoc.App.Application.Exceptions;
@@ -16,8 +16,8 @@ using MyFoodDoc.App.Application.Models.StatisticsDto;
 using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.Diary;
 using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
@@ -33,6 +33,7 @@ namespace MyFoodDoc.App.Application.Services.V2
         private readonly UserManager<User> _userManager;
         private readonly IAppStoreClient _appStoreClient;
         private readonly IGooglePlayStoreClient _googlePlayStoreClient;
+        private readonly int _statisticsPeriod;
 
         public UserServiceV2(
             IApplicationContext context,
@@ -40,7 +41,8 @@ namespace MyFoodDoc.App.Application.Services.V2
             IUserHistoryService userHistoryService,
             UserManager<User> userManager,
             IAppStoreClient appStoreClient,
-            IGooglePlayStoreClient googlePlayStoreClient)
+            IGooglePlayStoreClient googlePlayStoreClient,
+            IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
             _mapper = mapper;
@@ -48,6 +50,7 @@ namespace MyFoodDoc.App.Application.Services.V2
             _userHistoryService = userHistoryService;
             _appStoreClient = appStoreClient;
             _googlePlayStoreClient = googlePlayStoreClient;
+            _statisticsPeriod = statisticsOptions.Value.Period > 0 ? statisticsOptions.Value.Period : 7;
         }
 
         public async Task<UserDto> GetUserAsync(string userId, CancellationToken cancellationToken = default)
@@ -74,7 +77,8 @@ namespace MyFoodDoc.App.Application.Services.V2
         public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId,
             CancellationToken cancellationToken = default)
         {
-            // var x = await _context.Users.FirstOrDefaultAsync(x => x.Id == "c1281fee-1828-4873-a0a4-e7bd222f3393");
+            var targetDate = DateTime.Today.AddDays(-_statisticsPeriod);
+            var now = DateTime.Today.AddMinutes(-1);
             // var result = await _context.Users
             //     .Where(x => x.Id == "c1281fee-1828-4873-a0a4-e7bd222f3393")
             //     .Include(x => x.Motivations)
@@ -82,180 +86,275 @@ namespace MyFoodDoc.App.Application.Services.V2
             //     .Include(x => x.Indications)
             //     .ThenInclude(i => i.Indication.Targets)
             //     .Include(x => x.WeightHistory)
-            //     .Include(x => x.Meals)
+            //     .Include(x => x.Meals.Where(m => m.Date >= x.Created.AddDays(- _statisticsPeriod) && m.Date <= x.Created))
             //     .ThenInclude(m => m.Ingredients)
-            //     .Include(x => x.Meals)
+            //     .Include(x => x.Meals.Where( m => m.Date >= x.Created.AddDays(- _statisticsPeriod) && m.Date <= x.Created))
             //     .ThenInclude(m => m.Favourites)
             //     .Include(x => x.Favourites)
             //     .ThenInclude(f => f.Ingredients)
-            //     // .Include(x => x.UserTargets)
-            //     // .ThenInclude(x => x.Target)
-            //     // .ThenInclude(x => x.AdjustmentTargets)
+            //     .Include(x => x.UserTargets.Where(t => t.Created > targetDate))
+            //     .ThenInclude(x => x.Target)
+            //     .ThenInclude(x => x.AdjustmentTargets)
             //     .Include(x => x.Diets)
             //     .ThenInclude(d => d.Diet.Targets)
-            //     .ProjectTo<StatisticsUserDto>(_mapper.ConfigurationProvider)
-            //     // .Select(Selector())
+            //    .Select(Expressions.Selector())
+            //    // .AsSplitQuery()
+            //     .AsNoTracking()
             //     .FirstOrDefaultAsync(cancellationToken);
 
-
-            var user = await _context
-                .Users
-                .Where(x => x.Id == userId)
-                .Select(x => new StatisticsUserDto()
-                {
-                    Created = x.Created,
-                    Email = x.Email,
-                    Gender = x.Gender,
-                    Height = x.Height,
-                    InsuranceId = x.InsuranceId
-                }).FirstOrDefaultAsync(cancellationToken);
-
-            if (user == null)
-            {
-                throw new NotFoundException(nameof(User), userId);
-            }
-
-            var motivation = await _context
-                .UserMotivations
-                .Where(m => m.UserId == userId)
-                .Include(x => x.Motivation)
-                .Select(x => new MotivationDto(
-                    x.Motivation.Id,
-   
-                    x.Motivation.Targets.Select(mt => mt.TargetId)
-                )).ToListAsync(cancellationToken);
-
-            var indications = await _context
-                .UserIndications
-                .Where(x => x.UserId == userId)
-                .Include(x => x.Indication)
-                .Select(x => new IndicationDto(
-                    x.Indication.Id,
-                    x.Indication.Targets.Select(mt => mt.TargetId)
-                )).ToListAsync(cancellationToken);
-
-            var weightHistory = await _context
-                .UserWeights
-                .Where(x => x.UserId == userId)
-                .OrderBy(w => w.Date)
-                .Select(x => new UserWeightDto(x.Date, x.Value))
-                .ToListAsync(cancellationToken);
-
-            var meal = await _context
-                .Meals
-                .Where(x => x.UserId == userId)
-                .Include(x => x.Ingredients)
-                .Select(m => new MealDto(
-                    m.Date,
-                    m.Type,
-                    m.Ingredients
-                        .Select(i =>
-                            new MealIngredientDto(i.Ingredient.Protein,
-                                i.Ingredient.ProteinExternal,
-                                i.Ingredient.ContainsPlantProtein,
-                                i.Ingredient.Calories,
-                                i.Ingredient.CaloriesExternal,
-                                i.Ingredient.Sugar,
-                                i.Ingredient.SugarExternal,
-                                i.Ingredient.Vegetables,
-                                i.Amount)),
-                    m.Favourites
-                        .Select(f => f.FavouriteId)))
-                .ToListAsync(cancellationToken);
-
-            var favourites = await _context
-                .Favourites
-                .Where(x => x.UserId == userId)
-                .Include(x => x.Ingredients)
-                .Select(f => new UserFavouriteDto(f.Id,
-                    f.Ingredients.Select(i => new FavouriteMealIngredientDto(
-                        i.Ingredient.Protein,
-                        i.Ingredient.ProteinExternal,
-                        i.Ingredient.ContainsPlantProtein,
-                        i.Ingredient.Calories,
-                        i.Ingredient.CaloriesExternal,
-                        i.Ingredient.Sugar,
-                        i.Ingredient.SugarExternal,
-                        i.Ingredient.Vegetables,
-                        i.Amount)
-                    ))).ToListAsync(cancellationToken);
-
-            var userTarget = await _context
-                .UserTargets
-                .Where(x => x.UserId == userId)
-                .Include(x => x.Target)
-                .ThenInclude(x => x.AdjustmentTargets)
-                .Select(u =>
-                    new UserTargetDto(u.TargetId, u.TargetAnswerCode, u.Created, new FullUserTargetDto(
-                        u.Target.Id,
-                        new OptimizationAreaTargetDto(
-                            u.Target.OptimizationArea.Type,
-                            u.Target.OptimizationArea.ImageId,
-                            u.Target.OptimizationArea.Key,
-                            u.Target.OptimizationArea.Name,
-                            u.Target.OptimizationArea.Text,
-                            u.Target.OptimizationArea.LineGraphUpperLimit,
-                            u.Target.OptimizationArea.LineGraphLowerLimit,
-                            u.Target.OptimizationArea.LineGraphOptimal,
-                            u.Target.OptimizationArea.AboveOptimalLineGraphTitle,
-                            u.Target.OptimizationArea.AboveOptimalLineGraphText,
-                            u.Target.OptimizationArea.BelowOptimalLineGraphTitle,
-                            u.Target.OptimizationArea.BelowOptimalLineGraphText,
-                            u.Target.OptimizationArea.OptimalLineGraphTitle,
-                            u.Target.OptimizationArea.OptimalLineGraphText,
-                            u.Target.OptimizationArea.AboveOptimalPieChartTitle,
-                            u.Target.OptimizationArea.AboveOptimalPieChartText,
-                            u.Target.OptimizationArea.BelowOptimalPieChartTitle,
-                            u.Target.OptimizationArea.BelowOptimalPieChartText,
-                            u.Target.OptimizationArea.OptimalPieChartTitle,
-                            u.Target.OptimizationArea.OptimalPieChartText),
-                        u.Target.TriggerOperator,
-                        u.Target.TriggerValue,
-                        u.Target.Threshold,
-                        u.Target.Priority,
-                        u.Target.Title,
-                        u.Target.Text,
-                        u.Target.Type,
-                        u.Target.Image.Url,
-                        u.Target.AdjustmentTargets
-                            .Select(a => new AdjustmentTargetDto(
-                                a.TargetId,
-                                a.StepDirection,
-                                a.Step,
-                                a.TargetValue,
-                                a.RecommendedText,
-                                a.TargetText,
-                                a.RemainText)
-                            )
-                    )))
-                .ToListAsync(cancellationToken);
+            var result = _context.Users
+                .Where(x => x.Id == "c1281fee-1828-4873-a0a4-e7bd222f3393")
+                .Include(x => x.Motivations)
+                    .ThenInclude(m => m.Motivation.Targets)
+                .Include(x => x.Indications)
+                    .ThenInclude(i => i.Indication.Targets)
+                .Include(x => x.WeightHistory)
+                .Include(x => x.Meals)
+                    .ThenInclude(m => m.Ingredients)
+                .Include(x => x.Meals)
+                    .ThenInclude(m => m.Favourites)
+                .Include(x => x.Favourites)
+                    .ThenInclude(f => f.Ingredients)
+                .Include(x => x.UserTargets)
+                    .ThenInclude(x => x.Target)
+                    .ThenInclude(x => x.AdjustmentTargets)
+                .Include(x => x.Diets)
+                    .ThenInclude(d => d.Diet.Targets)
+                .Where(x => x.Meals.Any(m => m.Date >= x.Created.AddDays(-_statisticsPeriod) && m.Date <= x.Created))
+                .Where(x => x.Created.AddDays(-_statisticsPeriod) <= x.Created)
+                .Where(x => x.UserTargets.Any(t => t.Created > targetDate))
+                .AsSplitQuery()
+                .AsNoTracking()
+                .Select(Expressions.Selector())
+                .SingleOrDefaultAsync(cancellationToken);
 
 
-            var diet = await _context
-                .UserDiets
-                .Where(x => x.UserId == userId)
-                .Include(x => x.Diet.Targets)
-                .Select(x => new DietDto(x.Diet.Id,
-                    x.Diet.Key,
-                    x.Diet.Targets.Select(dt => dt.TargetId)))
-                .ToListAsync(cancellationToken);
-
-
-            user.UserTargets = userTarget;
-            user.Motivations = motivation;
-            user.Indications = indications;
-            user.EatingDisorder = indications.Any(x => x.Id == 5);
-            user.Diets = diet;
-            user.Weights = weightHistory;
-            user.Meals = meal;
-            user.FavouriteIngredientDtos = favourites;
-            user.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
-            user.HasSubscription = user.HasZPPSubscription ||
-                                   await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
-
-            return user;
+            // result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
+            // result.HasSubscription = result.HasZPPSubscription ||
+            //                          await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+            //
+            // return result;
+            return null;
         }
+        
+ #region MyRegion
+        // private async Task<List<UserTargetDto>> GetUserTargets(string userId,
+        //     CancellationToken cancellationToken)
+        // {
+        //     var d = DateTime.Today.AddDays(-_statisticsPeriod);
+        //     return await _context
+        //         .UserTargets
+        //         .Where(x => x.UserId == userId && x.Created > d)
+        //         .Include(x => x.Target)
+        //         .ThenInclude(x => x.AdjustmentTargets)
+        //         .Select(u =>
+        //             new UserTargetDto(
+        //                 u.TargetId,
+        //                 u.TargetAnswerCode,
+        //                 u.Created,
+        //                 new FullUserTargetDto(
+        //                     u.Target.Id,
+        //                     new OptimizationAreaTargetDto(
+        //                         u.Target.OptimizationArea.Type,
+        //                         u.Target.OptimizationArea.ImageId,
+        //                         u.Target.OptimizationArea.Key,
+        //                         u.Target.OptimizationArea.Name,
+        //                         u.Target.OptimizationArea.Text,
+        //                         u.Target.OptimizationArea.LineGraphUpperLimit,
+        //                         u.Target.OptimizationArea.LineGraphLowerLimit,
+        //                         u.Target.OptimizationArea.LineGraphOptimal,
+        //                         u.Target.OptimizationArea.AboveOptimalLineGraphTitle,
+        //                         u.Target.OptimizationArea.AboveOptimalLineGraphText,
+        //                         u.Target.OptimizationArea.BelowOptimalLineGraphTitle,
+        //                         u.Target.OptimizationArea.BelowOptimalLineGraphText,
+        //                         u.Target.OptimizationArea.OptimalLineGraphTitle,
+        //                         u.Target.OptimizationArea.OptimalLineGraphText,
+        //                         u.Target.OptimizationArea.AboveOptimalPieChartTitle,
+        //                         u.Target.OptimizationArea.AboveOptimalPieChartText,
+        //                         u.Target.OptimizationArea.BelowOptimalPieChartTitle,
+        //                         u.Target.OptimizationArea.BelowOptimalPieChartText,
+        //                         u.Target.OptimizationArea.OptimalPieChartTitle,
+        //                         u.Target.OptimizationArea.OptimalPieChartText),
+        //                     u.Target.TriggerOperator,
+        //                     u.Target.TriggerValue,
+        //                     u.Target.Threshold,
+        //                     u.Target.Priority,
+        //                     u.Target.Title,
+        //                     u.Target.Text,
+        //                     u.Target.Type,
+        //                     u.Target.Image.Url,
+        //                     ( new AdjustmentTargetDto(
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().TargetId,
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().StepDirection,
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().Step,
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().TargetValue,
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().RecommendedText,
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().TargetText,
+        //                         u.Target.AdjustmentTargets.FirstOrDefault().RemainText)
+        //                     )
+        //                 )))
+        //         .ToListAsync(cancellationToken);
+        // }
+        //
 
+       
+
+        // private async Task<StatisticsUserDto> GetStatisticsUserDto(string userId, CancellationToken cancellationToken)
+        // {
+        //     var user = await _context
+        //         .Users
+        //         .Where(x => x.Id == userId)
+        //         .Select(x => new StatisticsUserDto()
+        //         {
+        //             Created = x.Created,
+        //             Email = x.Email,
+        //             Gender = x.Gender,
+        //             Height = x.Height,
+        //             InsuranceId = x.InsuranceId
+        //         }).FirstOrDefaultAsync(cancellationToken);
+        //
+        //     if (user == null)
+        //     {
+        //         throw new NotFoundException(nameof(User), userId);
+        //     }
+        //
+        //     var motivation = await _context
+        //         .UserMotivations
+        //         .Where(m => m.UserId == userId)
+        //         .Include(x => x.Motivation)
+        //         .Select(x => new MotivationDto(
+        //             x.Motivation.Id,
+        //             x.Motivation.Targets.Select(mt => mt.TargetId)
+        //         )).ToListAsync(cancellationToken);
+        //
+        //     var indications = await _context
+        //         .UserIndications
+        //         .Where(x => x.UserId == userId)
+        //         .Include(x => x.Indication)
+        //         .Select(x => new IndicationDto(
+        //             x.Indication.Id,
+        //             x.Indication.Targets.Select(mt => mt.TargetId)
+        //         )).ToListAsync(cancellationToken);
+        //
+        //     var weightHistory = await _context
+        //         .UserWeights
+        //         .Where(x => x.UserId == userId)
+        //         .OrderBy(w => w.Date)
+        //         .Select(x => new UserWeightDto(x.Date, x.Value))
+        //         .ToListAsync(cancellationToken);
+        //
+        //     var meal = await _context
+        //         .Meals
+        //         .Where(x => x.UserId == userId)
+        //         .Include(x => x.Ingredients)
+        //         .Select(m => new MealDto(
+        //             m.Date,
+        //             m.Type,
+        //             m.Ingredients
+        //                 .Select(i =>
+        //                     new MealIngredientDto(i.Ingredient.Protein,
+        //                         i.Ingredient.ProteinExternal,
+        //                         i.Ingredient.ContainsPlantProtein,
+        //                         i.Ingredient.Calories,
+        //                         i.Ingredient.CaloriesExternal,
+        //                         i.Ingredient.Sugar,
+        //                         i.Ingredient.SugarExternal,
+        //                         i.Ingredient.Vegetables,
+        //                         i.Amount)),
+        //             m.Favourites
+        //                 .Select(f => f.FavouriteId)))
+        //         .ToListAsync(cancellationToken);
+        //
+        //     var favourites = await _context
+        //         .Favourites
+        //         .Where(x => x.UserId == userId)
+        //         .Include(x => x.Ingredients)
+        //         .Select(f => new UserFavouriteDto(f.Id,
+        //             f.Ingredients.Select(i => new FavouriteMealIngredientDto(
+        //                 i.Ingredient.Protein,
+        //                 i.Ingredient.ProteinExternal,
+        //                 i.Ingredient.ContainsPlantProtein,
+        //                 i.Ingredient.Calories,
+        //                 i.Ingredient.CaloriesExternal,
+        //                 i.Ingredient.Sugar,
+        //                 i.Ingredient.SugarExternal,
+        //                 i.Ingredient.Vegetables,
+        //                 i.Amount)
+        //             ))).ToListAsync(cancellationToken);
+        //
+        //     var userTarget = await _context
+        //         .UserTargets
+        //         .Where(x => x.UserId == userId)
+        //         .Include(x => x.Target)
+        //         .ThenInclude(x => x.AdjustmentTargets)
+        //         .Select(u =>
+        //             new UserTargetDto(u.TargetId, u.TargetAnswerCode, u.Created, new FullUserTargetDto(
+        //                 u.Target.Id,
+        //                 new OptimizationAreaTargetDto(
+        //                     u.Target.OptimizationArea.Type,
+        //                     u.Target.OptimizationArea.ImageId,
+        //                     u.Target.OptimizationArea.Key,
+        //                     u.Target.OptimizationArea.Name,
+        //                     u.Target.OptimizationArea.Text,
+        //                     u.Target.OptimizationArea.LineGraphUpperLimit,
+        //                     u.Target.OptimizationArea.LineGraphLowerLimit,
+        //                     u.Target.OptimizationArea.LineGraphOptimal,
+        //                     u.Target.OptimizationArea.AboveOptimalLineGraphTitle,
+        //                     u.Target.OptimizationArea.AboveOptimalLineGraphText,
+        //                     u.Target.OptimizationArea.BelowOptimalLineGraphTitle,
+        //                     u.Target.OptimizationArea.BelowOptimalLineGraphText,
+        //                     u.Target.OptimizationArea.OptimalLineGraphTitle,
+        //                     u.Target.OptimizationArea.OptimalLineGraphText,
+        //                     u.Target.OptimizationArea.AboveOptimalPieChartTitle,
+        //                     u.Target.OptimizationArea.AboveOptimalPieChartText,
+        //                     u.Target.OptimizationArea.BelowOptimalPieChartTitle,
+        //                     u.Target.OptimizationArea.BelowOptimalPieChartText,
+        //                     u.Target.OptimizationArea.OptimalPieChartTitle,
+        //                     u.Target.OptimizationArea.OptimalPieChartText),
+        //                 u.Target.TriggerOperator,
+        //                 u.Target.TriggerValue,
+        //                 u.Target.Threshold,
+        //                 u.Target.Priority,
+        //                 u.Target.Title,
+        //                 u.Target.Text,
+        //                 u.Target.Type,
+        //                 u.Target.Image.Url,
+        //                 u.Target.AdjustmentTargets
+        //                     .Select(a => new AdjustmentTargetDto(
+        //                         a.TargetId,
+        //                         a.StepDirection,
+        //                         a.Step,
+        //                         a.TargetValue,
+        //                         a.RecommendedText,
+        //                         a.TargetText,
+        //                         a.RemainText)
+        //                     ).FirstOrDefault()
+        //             )))
+        //         .ToListAsync(cancellationToken);
+        //
+        //
+        //     var diet = await _context
+        //         .UserDiets
+        //         .Where(x => x.UserId == userId)
+        //         .Include(x => x.Diet.Targets)
+        //         .Select(x => new DietDto(x.Diet.Id,
+        //             x.Diet.Key,
+        //             x.Diet.Targets.Select(dt => dt.TargetId)))
+        //         .ToListAsync(cancellationToken);
+        //
+        //
+        //     user.UserTargets = userTarget;
+        //     user.Motivations = motivation;
+        //     user.Indications = indications;
+        //     user.EatingDisorder = indications.Any(x => x.Id == 5);
+        //     user.Diets = diet;
+        //     user.Weights = weightHistory;
+        //     user.Meals = meal;
+        //     user.FavouriteIngredientDtos = favourites;
+        //     return user;
+        // }
+
+        #endregion
 
         public async Task<UserDto> StoreAnamnesisAsync(string userId, AnamnesisPayload payload,
             CancellationToken cancellationToken = default)

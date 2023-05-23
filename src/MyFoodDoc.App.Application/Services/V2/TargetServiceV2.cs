@@ -73,7 +73,7 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             if (target.Type == TargetType.Adjustment)
             {
-                var adjustmentTarget = target.AdjustmentTargetDtos.SingleOrDefault(x => x.TargetId == target.Id);
+                AdjustmentTargetDto adjustmentTarget = target.AdjustmentTargetDto;
 
                 decimal bestValue = GetBestValueOfTriggeredDays(user, target, userTarget.Created, dailyUserIngredients);
 
@@ -486,7 +486,7 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             var userNutritionsForSpecificDate = GetUserNutritions(
                 user.Meals,
-                user.FavouriteIngredientDtos.ToArray(),
+                user.FavouriteIngredientDtos,
                 date);
 
             var dailyUserIngredients = dailyUserNutritions
@@ -515,8 +515,7 @@ namespace MyFoodDoc.App.Application.Services.V2
             Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>> dailyUserIngredientsDictionary)
         {
             var targetList = 
-            user.UserTargets.Select(x => x.Target)
-                .Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority);
+            user.UserTargets.Select(x => x.Target).OrderBy(x => x.Priority);
 
             var userTargets = UserTargets(
                 targetList,
@@ -528,7 +527,8 @@ namespace MyFoodDoc.App.Application.Services.V2
             var result = new List<OptimizationAreaDto>();
             foreach (var userTarget in userTargets)
             {
-                var userAnswer = user.UserTargets
+                var userAnswer = 
+                user.UserTargets
                     .Where(x => x.TargetId == userTarget.TargetId &&
                                 x.Created > date.AddDays(-_statisticsPeriod) && x.Created < date)
                     .MaxBy(x => x.Created);
@@ -684,7 +684,7 @@ namespace MyFoodDoc.App.Application.Services.V2
         }
 
         private Dictionary<DateTime, MealNutritionsDto> GetUserNutritions(IEnumerable<MealDto> meals,
-            IReadOnlyList<UserFavouriteDto> userFavouriteDtos,
+            UserFavouriteDto userFavouriteDtos,
             DateTime dateKey)
         {
             var dailyUserNutritions = new Dictionary<DateTime, MealNutritionsDto>();
@@ -720,18 +720,12 @@ namespace MyFoodDoc.App.Application.Services.V2
 
         private IEnumerable<int> GetTargetIds(StatisticsUserDto user)
         {
-            var userDiets = user.Diets.Select(x => x.Id).ToList();
-            var userIndications = user.Indications.Select(x => x.Id).ToList();
-            var userMotivations = user.Motivations.Select(x => x.Id).ToList();
 
-            var dietTargets = user.Diets.SelectMany(x => x.TargetIds)
-                .Where(x => userDiets.Contains(x));
+            var dietTargets = user.Diets.SelectMany(x => x.TargetIds);
 
-            var indicationTargets = user.Indications.SelectMany(x => x.TargetIds)
-                .Where(x => userIndications.Contains(x));
-            
-            var motivationTargets = user.Motivations.SelectMany(m => m.TargetIds)
-                .Where(x => userMotivations.Contains(x));
+            var indicationTargets = user.Indications; 
+
+            var motivationTargets = user.Motivations; 
 
             var targetIds = dietTargets
                 .Union(indicationTargets)
@@ -767,7 +761,7 @@ namespace MyFoodDoc.App.Application.Services.V2
 
         private Dictionary<DateTime, MealNutritionsDto> GetDailyUserIngredients(
             IEnumerable<MealDto> meals,
-            IEnumerable<UserFavouriteDto> userFavouriteDtos,
+            UserFavouriteDto userFavouriteDtos,
             DateTime? onDateTime)
         {
             var result = new Dictionary<DateTime, MealNutritionsDto>();

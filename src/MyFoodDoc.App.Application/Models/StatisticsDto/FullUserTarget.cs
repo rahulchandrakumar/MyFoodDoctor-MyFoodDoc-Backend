@@ -4,8 +4,7 @@ using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Models.StatisticsDto;
 
-public record FullUserTargetDto(
-    int Id,
+public record FullUserTargetDto(int Id,
     OptimizationAreaTargetDto OptimizationArea,
     TriggerOperator TriggerOperator,
     decimal TriggerValue,
@@ -15,5 +14,5 @@ public record FullUserTargetDto(
     string Text,
     TargetType Type,
     string ImageUrl,
-    IEnumerable<AdjustmentTargetDto> AdjustmentTargetDtos
+    AdjustmentTargetDto AdjustmentTargetDto
 );

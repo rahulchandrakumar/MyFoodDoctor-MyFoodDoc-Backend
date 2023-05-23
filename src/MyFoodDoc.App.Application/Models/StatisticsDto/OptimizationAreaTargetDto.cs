@@ -2,7 +2,8 @@
 
 namespace MyFoodDoc.App.Application.Models.StatisticsDto;
 
-public record OptimizationAreaTargetDto(OptimizationAreaType Type,
+public record OptimizationAreaTargetDto(
+    OptimizationAreaType Type,
     int? ImageId,
     string Key,
     string Name,

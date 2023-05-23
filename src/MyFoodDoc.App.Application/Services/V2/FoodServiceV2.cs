@@ -34,7 +34,7 @@ namespace MyFoodDoc.App.Application.Services.V2
 
         public MealNutritionsDto GetMealNutritionsAsync(
         MealDto meal,
-         IEnumerable<UserFavouriteDto> userFavouriteDto)
+         UserFavouriteDto userFavouriteDto)
         {
             var result = new MealNutritionsDto
             {
@@ -64,8 +64,7 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             foreach (var mealFavouriteId in meal.MealFavouriteIds)
             {
-                var ingredients = userFavouriteDto
-                    .FirstOrDefault(x => x.FavouriteId == mealFavouriteId).Ingredient;
+                var ingredients = userFavouriteDto.Ingredient;
                 
                 foreach (var favouriteIngredient in ingredients)
                 {

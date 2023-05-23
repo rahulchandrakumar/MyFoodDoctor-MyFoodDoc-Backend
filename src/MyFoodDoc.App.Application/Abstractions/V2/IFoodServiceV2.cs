@@ -11,6 +11,6 @@ namespace MyFoodDoc.App.Application.Abstractions.V2
         Task<ICollection<IngredientDto>> GetFoodAsync(long foodId, CancellationToken cancellationToken);
 
         MealNutritionsDto GetMealNutritionsAsync(MealDto meal, 
-        IEnumerable<UserFavouriteDto> userFavouriteDto);
+        UserFavouriteDto userFavouriteDto);
     }
 }
