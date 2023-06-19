@@ -12,6 +12,7 @@ using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -152,6 +153,23 @@ namespace MyFoodDoc.App.Application.Services
                             bestValue = triggeredDays.Max(x => x.Vegetables);
                     }
                 }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Fiber)
+                {
+                    if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Fiber > target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Min(x => x.Fiber);
+                    }
+                    else if (target.TriggerOperator == TriggerOperator.LessThan)
+                    {
+                        var triggeredDays = dailyUserIngredients.Values.Where(x => x.Fiber < target.TriggerValue);
+
+                        if (triggeredDays.Any())
+                            bestValue = triggeredDays.Max(x => x.Fiber);
+                    }
+                }
                 else if (target.OptimizationArea.Type == OptimizationAreaType.Snacking)
                 {
                     if (target.TriggerOperator == TriggerOperator.GreaterThan)
@@ -201,17 +219,27 @@ namespace MyFoodDoc.App.Application.Services
                     if (recommendedValue < targetValue)
                         targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
 
-                    targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = string.Format(adjustmentTarget.TargetText, Math.Round(targetValue)) });
+                    targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = SafeFormat(adjustmentTarget.TargetText, Math.Round(targetValue)) });
                 }
                 else
                 {
                     if (recommendedValue != adjustmentTarget.TargetValue)
-                        targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = string.Format(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
+                        targetDto.Answers.Add(new TargetAnswerDto { Code = "recommended", Value = SafeFormat(adjustmentTarget.RecommendedText, Math.Round(recommendedValue)) });
 
                     targetDto.Answers.Add(new TargetAnswerDto { Code = "target", Value = adjustmentTarget.TargetText });
                 }
 
                 targetDto.Answers.Add(new TargetAnswerDto { Code = "remain", Value = adjustmentTarget.RemainText });
+
+                string SafeFormat(string text, decimal value)
+                {
+                    if (text.Contains("{0}"))
+                    {
+                        return String.Format(text, value);
+                    }
+
+                    return text;
+                }
             }
             else
             {
@@ -356,6 +384,28 @@ namespace MyFoodDoc.App.Application.Services
                         analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
                     }
                 }
+                else if (target.OptimizationArea.Type == OptimizationAreaType.Fiber)
+                {
+                    analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
+                    analysisDto.LineGraph.LowerLimit = target.OptimizationArea.LineGraphLowerLimit;
+                    analysisDto.LineGraph.Optimal = target.OptimizationArea.LineGraphOptimal;
+
+                    analysisDto.LineGraph.Data = dailyUserIngredients.Select(x => new AnalysisLineGraphDataDto
+                        { Date = x.Key, Value = x.Value.Fiber }).ToList();
+
+                    var average = dailyUserIngredients.Count > 0 ? dailyUserIngredients.Average(x => x.Value.Fiber) : 0;
+
+                    if (average <= target.OptimizationArea.LineGraphLowerLimit)
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.BelowOptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.BelowOptimalLineGraphText;
+                    }
+                    else
+                    {
+                        analysisDto.LineGraph.Title = target.OptimizationArea.OptimalLineGraphTitle;
+                        analysisDto.LineGraph.Text = target.OptimizationArea.OptimalLineGraphText;
+                    }
+                }
                 else if (target.OptimizationArea.Type == OptimizationAreaType.Snacking)
                 {
                     analysisDto.LineGraph.UpperLimit = target.OptimizationArea.LineGraphUpperLimit;
@@ -457,6 +507,7 @@ namespace MyFoodDoc.App.Application.Services
                         PlantProtein = 0,
                         Sugar = 0,
                         Vegetables = 0,
+                        Fiber = 0,
                         Meals = dailyMeals.Count()
                     };
 
@@ -467,6 +518,7 @@ namespace MyFoodDoc.App.Application.Services
                         dailyNutritions.AnimalProtein += mealNutritions.AnimalProtein;
                         dailyNutritions.PlantProtein += mealNutritions.PlantProtein;
                         dailyNutritions.Sugar += mealNutritions.Sugar;
+                        dailyNutritions.Fiber += mealNutritions.Fiber;
                         dailyNutritions.Vegetables += mealNutritions.Vegetables;
                     }
 
@@ -553,6 +605,21 @@ namespace MyFoodDoc.App.Application.Services
                         else if (target.TriggerOperator == TriggerOperator.LessThan)
                         {
                             var triggeredDays = dailyUserIngredients.Values.Where(x => x.Vegetables < target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                    }
+                    else if (target.OptimizationArea.Type == OptimizationAreaType.Fiber)
+                    {
+                        if (target.TriggerOperator == TriggerOperator.GreaterThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Fiber > target.TriggerValue);
+
+                            triggeredDaysCount = triggeredDays.Count();
+                        }
+                        else if (target.TriggerOperator == TriggerOperator.LessThan)
+                        {
+                            var triggeredDays = dailyUserIngredients.Values.Where(x => x.Fiber < target.TriggerValue);
 
                             triggeredDaysCount = triggeredDays.Count();
                         }
@@ -649,6 +716,7 @@ namespace MyFoodDoc.App.Application.Services
                     PlantProtein = 0,
                     Sugar = 0,
                     Vegetables = 0,
+                    Fiber = 0,
                     Meals = dailyMeals.Count()
                 };
 
@@ -660,6 +728,7 @@ namespace MyFoodDoc.App.Application.Services
                     dailyNutritions.PlantProtein += mealNutritions.PlantProtein;
                     dailyNutritions.Sugar += mealNutritions.Sugar;
                     dailyNutritions.Vegetables += mealNutritions.Vegetables;
+                    dailyNutritions.Fiber += mealNutritions.Fiber;
                 }
 
                 result[dailyMeals.Key] = dailyNutritions;
@@ -679,7 +748,7 @@ namespace MyFoodDoc.App.Application.Services
                     throw new NotFoundException(nameof(Target), answer.TargetId);
                 }
 
-                var userTarget = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == answer.TargetId && x.Created > DateTime.Now.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
+                var userTarget = await _context.UserTargets.Where(x => x.UserId == userId && x.TargetId == answer.TargetId && x.Created > DateTime.Today.AddDays(-_statisticsPeriod)).OrderBy(x => x.Created).LastOrDefaultAsync(cancellationToken);
 
                 if (userTarget == null)
                 {
@@ -700,10 +769,10 @@ namespace MyFoodDoc.App.Application.Services
             await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<bool> NewTriggered(string userId, CancellationToken cancellationToken)
+        public async Task<bool> NewTriggered(string userId, DateTime date, CancellationToken cancellationToken)
         {
             bool activeTargets = await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && x.Created > DateTime.Today.AddDays(-_statisticsPeriod), cancellationToken);
+                x.UserId == userId && x.Created > date.Date.AddDays(-_statisticsPeriod), cancellationToken);
 
             if (!activeTargets)
             {
@@ -720,10 +789,10 @@ namespace MyFoodDoc.App.Application.Services
                 x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode), cancellationToken);
         }
 
-        public async Task<bool> AnyActivated(string userId, CancellationToken cancellationToken)
+        public async Task<bool> AnyActivated(string userId, DateTime date, CancellationToken cancellationToken)
         {
             return await _context.UserTargets.AnyAsync(x =>
-                x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > DateTime.Now.AddDays(-_statisticsPeriod), cancellationToken);
+                x.UserId == userId && !string.IsNullOrEmpty(x.TargetAnswerCode) && x.Created > date.Date.AddDays(-_statisticsPeriod), cancellationToken);
         }
 
         public async Task<int> GetDaysTillFirstEvaluationAsync(string userId, CancellationToken cancellationToken)

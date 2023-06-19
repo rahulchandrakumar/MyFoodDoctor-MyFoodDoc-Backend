@@ -159,14 +159,12 @@ namespace MyFoodDoc.App.Api.Controllers
                 HasNewTargetsTriggered = await _targetService.NewTriggered(userId, cancellationToken),
                 IsFirstTargetsEvaluation = !(await _targetService.AnyAnswered(userId, cancellationToken)),
                 HasTargetsActivated = await _targetService.AnyActivated(userId, cancellationToken),
-                DaysTillFirstEvaluation =
-                    await _targetService.GetDaysTillFirstEvaluationAsync(userId, cancellationToken)
+                DaysTillFirstEvaluation = await _targetService.GetDaysTillFirstEvaluationAsync(userId, cancellationToken)
             };
 
             return Ok(result);
         }
-
-
+        
         [HttpGet("statistics")]
         [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(
@@ -201,7 +199,6 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok(result);
         }
-
         [HttpPost("notifications")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

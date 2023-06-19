@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.Application.Abstractions;
+using MyFoodDoc.Application.Entities.Diary;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -40,6 +41,7 @@ namespace MyFoodDoc.App.Application.Services
                 Calories = 0,
                 Sugar = 0,
                 Vegetables = 0,
+                Fiber = 0,
                 Meals = 1
             };
 
@@ -58,6 +60,7 @@ namespace MyFoodDoc.App.Application.Services
                 result.Calories += (mealIngredient.Ingredient.Calories ?? mealIngredient.Ingredient.CaloriesExternal) * mealIngredient.Amount;
                 result.Sugar += (mealIngredient.Ingredient.Sugar ?? mealIngredient.Ingredient.SugarExternal) * mealIngredient.Amount;
                 result.Vegetables += (mealIngredient.Ingredient.Vegetables ?? 0) * mealIngredient.Amount;
+                result.Fiber += (mealIngredient.Ingredient.Fiber ?? mealIngredient.Ingredient.FiberExternal) * mealIngredient.Amount;
             }
 
             foreach (var mealFavourite in await _context.MealFavourites
@@ -79,6 +82,7 @@ namespace MyFoodDoc.App.Application.Services
                     result.Calories += (favouriteIngredient.Ingredient.Calories ?? favouriteIngredient.Ingredient.CaloriesExternal) * favouriteIngredient.Amount;
                     result.Sugar += (favouriteIngredient.Ingredient.Sugar ?? favouriteIngredient.Ingredient.SugarExternal) * favouriteIngredient.Amount;
                     result.Vegetables += (favouriteIngredient.Ingredient.Vegetables ?? 0) * favouriteIngredient.Amount;
+                    result.Fiber += (favouriteIngredient.Ingredient.Fiber ?? favouriteIngredient.Ingredient.FiberExternal) * favouriteIngredient.Amount;
                 }
             }
 

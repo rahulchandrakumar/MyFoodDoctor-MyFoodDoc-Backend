@@ -14,6 +14,8 @@
 
         public decimal Vegetables { get; set; }
 
+        public decimal Fiber { get; set; }
+
         public int Meals { get; set; }
     }
 }

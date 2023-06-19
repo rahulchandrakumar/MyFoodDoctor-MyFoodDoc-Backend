@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <UserSecretsId>0707a534-12ef-437e-b6d8-cdfb635b03a4</UserSecretsId>
+    <UserSecretsId>8f0bdf57-a680-426f-bd36-2423729d9d5f</UserSecretsId>
   </PropertyGroup>
   
   <!--

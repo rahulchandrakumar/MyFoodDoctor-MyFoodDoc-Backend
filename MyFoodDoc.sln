@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.AokClient", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyFoodDoc.Functions", "src\MyFoodDoc.Functions\MyFoodDoc.Functions.csproj", "{2F65C1B7-751A-456E-9D76-98A0B27AF8D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyFoodDoc.App.Api.Tests", "src\MyFoodDoc.App.Api.Tests\MyFoodDoc.App.Api.Tests.csproj", "{449EB019-C669-40FE-9AAD-6A2BD72B527E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{2F65C1B7-751A-456E-9D76-98A0B27AF8D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F65C1B7-751A-456E-9D76-98A0B27AF8D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F65C1B7-751A-456E-9D76-98A0B27AF8D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{449EB019-C669-40FE-9AAD-6A2BD72B527E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{449EB019-C669-40FE-9AAD-6A2BD72B527E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{449EB019-C669-40FE-9AAD-6A2BD72B527E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{449EB019-C669-40FE-9AAD-6A2BD72B527E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -151,6 +157,7 @@ Global
 		{44569A8F-4A36-4F4F-A685-9679FC2A47A7} = {CF039FC0-983B-4984-B713-C5932C91D92A}
 		{951651B7-1AD2-4327-A721-2F5B543911DC} = {CF039FC0-983B-4984-B713-C5932C91D92A}
 		{2F65C1B7-751A-456E-9D76-98A0B27AF8D9} = {E385B8AF-BAD6-4995-ADE1-70C387983FCB}
+		{449EB019-C669-40FE-9AAD-6A2BD72B527E} = {C9FE4AB3-AD5A-405B-B36F-8B244EA90242}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156771D1-5C1C-4E9F-B531-A625B6AFF31F}

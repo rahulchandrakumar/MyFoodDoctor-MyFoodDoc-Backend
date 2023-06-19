@@ -56,9 +56,7 @@ namespace MyFoodDoc.Functions.Functions
                .AsNoTracking()
                .Where(
                x =>
-               x.LastSynchronized < DateTime.Now.AddHours(-10) // HACK: do not take same register at least 10 hours
-               && (
-               x.FirstSynchronized == null || x.FirstSynchronized > DateTime.Now.AddYears(-2))) // HACK: do not consider registers older than 1 year
+               x.LastSynchronized < DateTime.Now.AddHours(-12)) // HACK: do not take same register at least 12 hours
                .OrderBy(x => x.LastSynchronized)
                .Take(BatchSize)
                .ToListAsync(cancellationToken);
@@ -112,9 +110,7 @@ namespace MyFoodDoc.Functions.Functions
         {
             var googlePlayStoreSubscriptions = await _context.GooglePlayStoreSubscriptions
                 .AsNoTracking()
-                .Where(x => x.IsExpired == false
-                && x.LastSynchronized < DateTime.Now.AddHours(-10) // HACK: do not take same register at least 10 hours
-                && (x.FirstSynchronized == null || x.FirstSynchronized > DateTime.Now.AddYears(-2))) // HACK: do not consider registers older than 1 year
+                .Where(x => x.LastSynchronized < DateTime.Now.AddHours(-12)) // HACK: do not take same register for at least 12 hours
                 .OrderBy(x => x.LastSynchronized)
                 .Take(BatchSize)
                 .ToListAsync(cancellationToken);
