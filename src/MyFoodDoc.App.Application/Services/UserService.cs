@@ -158,6 +158,7 @@ namespace MyFoodDoc.App.Application.Services
             user.Gender = payload.Gender;
             user.Height = payload.Height;
             user.InsuranceId = payload.InsuranceId;
+            user.HasZPPVersion = payload.HasZPPVersion;
 
             _context.Users.Update(user);
 

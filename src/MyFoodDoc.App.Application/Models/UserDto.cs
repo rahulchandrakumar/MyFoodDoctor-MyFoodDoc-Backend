@@ -28,6 +28,8 @@ namespace MyFoodDoc.App.Application.Models
 
         public bool HasZPPSubscription { get; set; }
 
+        public bool HasZPPVersion { get; set; }
+        
         public ICollection<string> Motivations { get; set; }
 
         public ICollection<string> Indications { get; set; }

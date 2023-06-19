@@ -20,6 +20,7 @@ namespace MyFoodDoc.Application.Entities
         public bool PushNotificationsEnabled { get; set; }
 
         public string DeviceToken { get; set; }
+        public bool HasZPPVersion { get; set; } = false;
 
         public Insurance Insurance { get; set; }
 
