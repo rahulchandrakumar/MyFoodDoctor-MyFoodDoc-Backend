@@ -102,7 +102,7 @@ namespace MyFoodDoc.App.Application.Services.V2
             //     .AsNoTracking()
             //     .FirstOrDefaultAsync(cancellationToken);
 
-            var result = _context.Users
+            var result = await _context.Users
                 .Where(x => x.Id == "c1281fee-1828-4873-a0a4-e7bd222f3393")
                 .Include(x => x.Motivations)
                     .ThenInclude(m => m.Motivation.Targets)
