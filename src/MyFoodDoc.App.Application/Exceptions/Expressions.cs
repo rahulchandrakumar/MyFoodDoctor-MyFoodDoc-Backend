@@ -30,21 +30,21 @@ public static class Expressions
                 w.Date,
                 w.Value
             )).ToList(),
-            // Meals = x.Meals.Select(m => new MealDto(
-            //     m.Date,
-            //     m.Type,
-            //     m.Ingredients.Select(mi => new MealIngredientDto(mi.Ingredient.Protein,
-            //         mi.Ingredient.ProteinExternal,
-            //         mi.Ingredient.ContainsPlantProtein,
-            //         mi.Ingredient.Calories,
-            //         mi.Ingredient.CaloriesExternal,
-            //         mi.Ingredient.Sugar,
-            //         mi.Ingredient.SugarExternal,
-            //         mi.Ingredient.Vegetables,
-            //         mi.Amount)),
-            //     m.Favourites.Select(mf => mf.FavouriteId)
-            // )).ToList(),
-
+            Meals = x.Meals.Select(m => new MealDto(
+                m.Date,
+                m.Type,
+                m.Ingredients.Select(mi => new MealIngredientDto(mi.Ingredient.Protein,
+                    mi.Ingredient.ProteinExternal,
+                    mi.Ingredient.ContainsPlantProtein,
+                    mi.Ingredient.Calories,
+                    mi.Ingredient.CaloriesExternal,
+                    mi.Ingredient.Sugar,
+                    mi.Ingredient.SugarExternal,
+                    mi.Ingredient.Vegetables,
+                    mi.Amount)),
+                m.Favourites.Select(mf => mf.FavouriteId)
+            )).ToList(),
+            
             UserTargets = x.UserTargets.Select(u =>
                 new UserTargetDto(u.TargetId, u.TargetAnswerCode, u.Created, new FullUserTargetDto(
                     u.Target.Id,
