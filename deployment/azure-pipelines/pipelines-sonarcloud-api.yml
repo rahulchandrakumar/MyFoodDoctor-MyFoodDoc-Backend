@@ -1,0 +1,69 @@
+schedules:
+- cron: '0 0 * * *'
+  displayName: Daily - Sonar Cloud Scanner
+  branches:
+    include:
+    - develop
+
+trigger:
+- develop
+
+variables:
+  - name: SonarOrganization
+    value: appsfactory
+  - name: SonarProjectKey
+    value: '74412045-2993-4d97-9d5a-f230b9114da6'
+  - name: SonarProjectName
+    value: 'Medicum-MyFoodDoc-Backend'
+  - name: SonarServiceConnection
+    value: 'SonarCloud_Medicum_MyFoodDoc_Backend'
+
+pool:
+  vmImage: windows-latest
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '6.x'
+    includePreviewVersions: true
+
+- task: NuGetToolInstaller@1
+  inputs:
+    versionSpec: '5.10.0'
+  displayName: 'Install NuGet'
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '*.sln'
+  displayName: 'Restore NuGet packages'
+  env:
+    NUGET_PLUGIN_HANDSHAKE_TIMEOUT_IN_SECONDS: 60
+    NUGET_PLUGIN_REQUEST_TIMEOUT_IN_SECONDS: 60
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: $(SonarServiceConnection)
+    organization: $(SonarOrganization)
+    scannerMode: 'MSBuild'
+    projectKey: $(SonarProjectKey)
+    projectName: $(SonarProjectName)
+  env:
+    SONAR_TOKEN: $(SonarCloudToken)
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '*.sln'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: test
+    projects: '**/*.Tests.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: SonarCloudAnalyze@1
+
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '300'

@@ -14,6 +14,8 @@ namespace MyFoodDoc.App.Application.Payloads.User
 
         public int InsuranceId { get; set; }
 
+        public bool HasZPPVersion { get; set; }
+
         public ICollection<string> Indications { get; set; }
 
         public ICollection<string> Motivations { get; set; }
