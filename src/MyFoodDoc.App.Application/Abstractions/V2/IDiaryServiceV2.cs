@@ -1,33 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Models.StatisticsDto;
-using MyFoodDoc.App.Application.Payloads.Diary;
 
-namespace MyFoodDoc.App.Application.Abstractions.V2
+namespace MyFoodDoc.App.Application.Abstractions.V2;
+
+public interface IDiaryServiceV2
 {
-    public interface IDiaryServiceV2
-    {
-        Task<DiaryEntryDto> GetAggregationByDateAsync(string userId, DateTime start, CancellationToken cancellationToken = default);
-        Task<DiaryEntryDtoMeal> GetMealAsync(string userId, int id, CancellationToken cancellationToken);
-        Task<int> InsertMealAsync(string userId, InsertMealPayload payload, CancellationToken cancellationToken);
-        Task<int> UpdateMealAsync(string userId, int id, UpdateMealPayload payload, CancellationToken cancellationToken);
-        Task RemoveMealAsync(string userId, int id, CancellationToken cancellationToken);
-        Task<DiaryEntryDtoLiquid> GetLiquidAsync(string userId, DateTime date, CancellationToken cancellationToken);
-        Task UpsertLiquidAsync(string userId, LiquidPayload payload, CancellationToken cancellationToken);
-        Task<DiaryEntryDtoExercise> GetExerciseAsync(string userId, DateTime date, CancellationToken cancellationToken);
-        Task UpsertExerciseAsync(string userId, ExercisePayload payload, CancellationToken cancellationToken);
-        bool IsDiaryFull(IEnumerable<MealDto> meals, DateTime userCreatedAt,  DateTime onDate);
-        bool IsZPPForbidden( double? userHeight, decimal? weight, bool eatingDisorder);
-        Task<ICollection<FavouriteDto>> GetFavouritesAsync(string userId, CancellationToken cancellationToken);
-        Task<FavouriteDto> GetFavouriteAsync(string userId, int id, CancellationToken cancellationToken);
-        Task<int> InsertFavouriteAsync(string userId, FavouritePayload payload, bool isGeneric, CancellationToken cancellationToken);
-        Task<int> UpdateFavouriteAsync(string userId, int id, FavouritePayload payload, CancellationToken cancellationToken);
-        Task RemoveFavouriteAsync(string userId, int id, CancellationToken cancellationToken);
-        decimal GetCorrectedWeight(decimal height, decimal weight);
-        Task ExportAsync(string userId, ExportPayload payload, CancellationToken cancellationToken);
-        Task<bool> CheckDiet(string userId, string dietKey, CancellationToken cancellationToken);
-    }
+    bool IsDiaryFull(IEnumerable<MealDto> meals, DateTime userCreatedAt, DateTime onDate);
+    bool IsZPPForbidden(double? userHeight, decimal? weight, bool eatingDisorder);
+    decimal GetCorrectedWeight(decimal height, decimal weight);
 }

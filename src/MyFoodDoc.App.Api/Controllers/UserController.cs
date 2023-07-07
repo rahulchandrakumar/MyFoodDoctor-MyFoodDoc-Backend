@@ -176,29 +176,23 @@ namespace MyFoodDoc.App.Api.Controllers
 
             var lastWeightValue = user.Weights?
             .OrderBy(x => x.Date)
-            .LastOrDefault(x => x.Date <= DateTime.Now)?
-            .Value;
+            .LastOrDefault(x => x.Date <= DateTime.Now)?.Value;
 
-            var isZppForbidden = _diaryServiceV2.IsZPPForbidden((double?) user.Height ?? 0, lastWeightValue, user.EatingDisorder);
-            var isDiaryFull = _diaryServiceV2.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1));
-            var hasNewTargetsTriggered = _targetServiceV2.NewTriggered(user, userId);
-            var anyAnswered = _targetServiceV2.AnyAnswered(user.UserTargets);
-            var hasTargetsActivated = _targetServiceV2.AnyActivated(user.UserTargets);
-            var daysTillFirstEvaluationAsync = _targetServiceV2.GetDaysTillFirstEvaluationAsync(user, cancellationToken);
             var result = new UserStatisticsDto
             {
-                IsZPPForbidden = isZppForbidden,
+                IsZPPForbidden = _diaryServiceV2.IsZPPForbidden((double?)user.Height ?? 0, lastWeightValue, user.EatingDisorder),
                 HasSubscription = user.HasSubscription,
                 HasZPPSubscription = user.HasZPPSubscription,
-                IsDiaryFull =isDiaryFull,
-                HasNewTargetsTriggered = hasNewTargetsTriggered,
-                IsFirstTargetsEvaluation = !anyAnswered,
-                HasTargetsActivated =hasTargetsActivated,
-                DaysTillFirstEvaluation = daysTillFirstEvaluationAsync
+                IsDiaryFull = _diaryServiceV2.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1)),
+                HasNewTargetsTriggered = _targetServiceV2.NewTriggered(user, userId),
+                IsFirstTargetsEvaluation = !_targetServiceV2.AnyAnswered(user.UserTargets),
+                HasTargetsActivated = _targetServiceV2.AnyActivated(user.UserTargets),
+                DaysTillFirstEvaluation = _targetServiceV2.GetDaysTillFirstEvaluationAsync(user, cancellationToken)
             };
 
             return Ok(result);
         }
+        
         [HttpPost("notifications")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
