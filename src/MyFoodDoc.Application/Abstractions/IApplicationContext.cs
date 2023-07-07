@@ -16,10 +16,11 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace MyFoodDoc.Application.Abstractions
 {
-    public interface IApplicationContext
+    public interface IApplicationContext 
     {
         DatabaseFacade Database { get; }
 

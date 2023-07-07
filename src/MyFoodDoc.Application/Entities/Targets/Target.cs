@@ -1,4 +1,5 @@
-﻿using MyFoodDoc.Application.Abstractions;
+﻿using System.Collections;
+using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace MyFoodDoc.Application.Entities.Targets
 
         public ICollection<DietTarget> Diets { get; set; }
 
+        public ICollection<AdjustmentTarget> AdjustmentTargets { get; set; }
         public Image Image { get; set; }
     }
 }

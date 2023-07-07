@@ -21,7 +21,10 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.HasIndex(x => new { x.ProductId, x.OriginalTransactionId });
             builder.HasIndex(x => x.LastSynchronized);
 
-            builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.User)
+                .WithMany(x => x.AppStoreSubscriptions)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
