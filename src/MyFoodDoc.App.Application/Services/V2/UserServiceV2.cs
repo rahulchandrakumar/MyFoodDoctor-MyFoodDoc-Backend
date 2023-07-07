@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
+using MyFoodDoc.Application.Entities.Html;
 using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
@@ -80,31 +82,106 @@ namespace MyFoodDoc.App.Application.Services.V2
         public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId,
             CancellationToken cancellationToken = default)
         {
-            // var query = EF.CompileAsyncQuery((IApplicationContext context) =>
-            //     context.Users
-            //         .Where(x => x.Id == userId)
-            //         .AsNoTracking()
-            //         .Select(Expressions.Selector())
-            //         .SingleOrDefaultAsync(cancellationToken)
-            // );
-            //
-            //
-            
-            // var xx =  _context.Users
-            //     .Where(x => x.Id == userId)
-            //     .AsNoTracking()
-            //     .Select(Expressions.Selector())
-            //     .ToQueryString();
             var result = await _context.Users
                 .Where(x => x.Id == userId)
                 .AsNoTracking()
-                .Select(Expressions.Selector())
-                .FirstOrDefaultAsync(cancellationToken);
+                .Select(Expressions.Selector(userId))
+                .SingleOrDefaultAsync(cancellationToken);
             
-            result.HasZPPSubscription = await HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
-            result.HasSubscription = result.HasZPPSubscription ||
-                                     await HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
+            if (result is not null)
+            {
+                result.Meals = _context.Meals.Where(meal => meal.UserId == userId).Select(m => new MealDto(
+                    m.Date,
+                    m.Type,
+                    m.Ingredients.Where(ingredient => ingredient.MealId == m.Id).Select(mi =>
+                        new MealIngredientDto(mi.Ingredient.Protein,
+                            mi.Ingredient.ProteinExternal,
+                            mi.Ingredient.ContainsPlantProtein,
+                            mi.Ingredient.Calories,
+                            mi.Ingredient.CaloriesExternal,
+                            mi.Ingredient.Sugar,
+                            mi.Ingredient.SugarExternal,
+                            mi.Ingredient.Vegetables,
+                            mi.Amount)),
+                    m.Favourites.Where(fav => fav.MealId == m.Id).Select(mf => mf.FavouriteId)
+                )).ToList();
 
+                result.UserTargets = _context.UserTargets
+                    .Where(targets => targets.UserId == userId)
+                    .Select(u =>
+                        new UserTargetDto(u.TargetId, u.TargetAnswerCode, u.Created, new FullUserTargetDto(
+                            u.TargetId,
+                            new OptimizationAreaTargetDto(
+                                u.Target.OptimizationArea.Type,
+                                u.Target.OptimizationArea.ImageId,
+                                u.Target.OptimizationArea.Key,
+                                u.Target.OptimizationArea.Name,
+                                u.Target.OptimizationArea.Text,
+                                u.Target.OptimizationArea.LineGraphUpperLimit,
+                                u.Target.OptimizationArea.LineGraphLowerLimit,
+                                u.Target.OptimizationArea.LineGraphOptimal,
+                                u.Target.OptimizationArea.AboveOptimalLineGraphTitle,
+                                u.Target.OptimizationArea.AboveOptimalLineGraphText,
+                                u.Target.OptimizationArea.BelowOptimalLineGraphTitle,
+                                u.Target.OptimizationArea.BelowOptimalLineGraphText,
+                                u.Target.OptimizationArea.OptimalLineGraphTitle,
+                                u.Target.OptimizationArea.OptimalLineGraphText,
+                                u.Target.OptimizationArea.AboveOptimalPieChartTitle,
+                                u.Target.OptimizationArea.AboveOptimalPieChartText,
+                                u.Target.OptimizationArea.BelowOptimalPieChartTitle,
+                                u.Target.OptimizationArea.BelowOptimalPieChartText,
+                                u.Target.OptimizationArea.OptimalPieChartTitle,
+                                u.Target.OptimizationArea.OptimalPieChartText),
+                            u.Target.TriggerOperator,
+                            u.Target.TriggerValue,
+                            u.Target.Threshold,
+                            u.Target.Priority,
+                            u.Target.Title,
+                            u.Target.Text,
+                            u.Target.Type,
+                            u.Target.Image.Url,
+                            u.Target.AdjustmentTargets.Select(at => new AdjustmentTargetDto(
+                                at.TargetId,
+                                at.StepDirection,
+                                at.Step,
+                                at.TargetValue,
+                                at.RecommendedText,
+                                at.TargetText,
+                                at.RemainText)
+                            ).FirstOrDefault()
+                        ))).ToList();
+
+                var favouriteMealIngredientDtos = await _context.FavouriteIngredients
+                    .Where(ind => ind.Favourite.UserId == userId).Select(i =>
+                        new
+                        {
+                            i.FavouriteId,
+                            i.Ingredient.Protein,
+                            i.Ingredient.ProteinExternal,
+                            i.Ingredient.ContainsPlantProtein,
+                            i.Ingredient.Calories,
+                            i.Ingredient.CaloriesExternal,
+                            i.Ingredient.Sugar,
+                            i.Ingredient.SugarExternal,
+                            i.Ingredient.Vegetables,
+                            i.Amount
+                        }).ToListAsync(cancellationToken);
+
+                result.FavouriteIngredientDtos = new UserFavouriteDto(
+                    favouriteMealIngredientDtos.FirstOrDefault()?.FavouriteId ?? 0,
+                    favouriteMealIngredientDtos.Select(i => new FavouriteMealIngredientDto(
+                        i.Protein,
+                        i.ProteinExternal,
+                        i.ContainsPlantProtein,
+                        i.Calories,
+                        i.CaloriesExternal,
+                        i.Sugar,
+                        i.SugarExternal,
+                        i.Vegetables,
+                        i.Amount
+                    )).ToList());
+            }
+            
             return result;
         }
 
@@ -306,9 +383,18 @@ namespace MyFoodDoc.App.Application.Services.V2
             await _context.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        ///     This logic is also used in the <see cref="Expressions" /> class for performance issue
+        ///     Any changes to this method should apply into the "Selector" method for user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="subscriptionType"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
         public async Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType,
             CancellationToken cancellationToken = default)
         {
+            
             var appStoreSubscription =
                 await _context.AppStoreSubscriptions.FirstOrDefaultAsync(
                     x => x.UserId == userId && x.Type == subscriptionType && x.IsValid, cancellationToken);

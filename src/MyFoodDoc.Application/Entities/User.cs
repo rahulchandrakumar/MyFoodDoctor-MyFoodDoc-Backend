@@ -5,6 +5,7 @@ using MyFoodDoc.Application.Enums;
 using System;
 using System.Collections.Generic;
 using MyFoodDoc.Application.Entities.Diary;
+using MyFoodDoc.Application.Entities.Subscriptions;
 
 namespace MyFoodDoc.Application.Entities
 {
@@ -44,5 +45,8 @@ namespace MyFoodDoc.Application.Entities
         public ICollection<UserTarget> UserTargets { get; set; } = new List<UserTarget>();
 
         public ICollection<Favourite> Favourites { get; set; } = new List<Favourite>();
+        
+        public ICollection<AppStoreSubscription> AppStoreSubscriptions { get; set; } = new List<AppStoreSubscription>();
+        public ICollection<GooglePlayStoreSubscription> GooglePlayStoreSubscriptions { get; set; } = new List<GooglePlayStoreSubscription>();
     }
 }
