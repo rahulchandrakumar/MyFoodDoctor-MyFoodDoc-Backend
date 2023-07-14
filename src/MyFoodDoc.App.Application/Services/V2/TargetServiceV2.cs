@@ -452,10 +452,7 @@ namespace MyFoodDoc.App.Application.Services.V2
 
         }
 
-        public IEnumerable<OptimizationAreaDto> Get(
-            StatisticsUserDto user,
-            string userId,
-            DateTime? onDate)
+        public IEnumerable<OptimizationAreaDto> Get(StatisticsUserDto user, string userId, DateTime? onDate)
         {
             var date = onDate ?? DateTime.Today.AddMinutes(-1);
 
@@ -476,26 +473,25 @@ namespace MyFoodDoc.App.Application.Services.V2
             {
                 return Array.Empty<OptimizationAreaDto>();
             }
-
-            var dailyUserNutritions = GetDailyUserIngredients(
-                user.Meals,
-                user.FavouriteIngredientDtos,
-                onDate);
-
-            var dateKey = new DateTime(onDate.Value.Year, onDate.Value.Month, onDate.Value.Day);
+            var dailyUserNutritions = GetDailyUserIngredients(user.Meals, user.FavouriteIngredientDtos, date);
+            var dateKey = date.Date;
 
             var userNutritionsForSpecificDate = GetUserNutritions(
                 user.Meals,
                 user.FavouriteIngredientDtos,
                 date);
 
-            var dailyUserIngredients = dailyUserNutritions
-                .Concat(userNutritionsForSpecificDate)
-                .ToDictionary(k => k.Key, v => v.Value);
+            var dailyUserIngredients = new Dictionary<DateTime, MealNutritionsDto>();
 
-            var dailyUserIngredientsDictionary = new Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>>()
+            foreach (var item in dailyUserNutritions) dailyUserIngredients[item.Key] = item.Value;
+            foreach (var item in userNutritionsForSpecificDate)
             {
-                {dateKey, dailyUserIngredients}
+                dailyUserIngredients.TryAdd(item.Key, item.Value);
+            }
+
+            var dailyUserIngredientsDictionary = new Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>>
+            {
+                { dateKey, dailyUserIngredients }
             };
 
             if (!dailyUserIngredients.Any())
@@ -759,18 +755,15 @@ namespace MyFoodDoc.App.Application.Services.V2
         }
 
 
-        private Dictionary<DateTime, MealNutritionsDto> GetDailyUserIngredients(
-            IEnumerable<MealDto> meals,
-            UserFavouriteDto userFavouriteDtos,
-            DateTime? onDateTime)
+        private Dictionary<DateTime, MealNutritionsDto> GetDailyUserIngredients(IEnumerable<MealDto> meals, UserFavouriteDto userFavouriteDtos, DateTime onDate)
         {
             var result = new Dictionary<DateTime, MealNutritionsDto>();
 
-
-            var onDate = onDateTime ?? DateTime.Now;
-            foreach (var dailyMeals in (meals
-                         .Where(x => x.Date > onDate.AddDays(-_statisticsPeriod) &&
-                                     x.Date <= onDate)).GroupBy(g => g.Date))
+            var dailyMeals = meals
+                .Where(x => x.Date > onDate.AddDays(-_statisticsPeriod) && x.Date <= onDate.Date)
+                .GroupBy(g => g.Date);
+            
+            foreach (var dailyMeal in dailyMeals)
             {
                 var dailyNutritions = new MealNutritionsDto
                 {
@@ -778,10 +771,10 @@ namespace MyFoodDoc.App.Application.Services.V2
                     PlantProtein = 0,
                     Sugar = 0,
                     Vegetables = 0,
-                    Meals = dailyMeals.Count()
+                    Meals = dailyMeal.Count()
                 };
 
-                foreach (var meal in dailyMeals)
+                foreach (var meal in dailyMeal)
                 {
                     var mealNutritions = _foodService.GetMealNutritionsAsync(meal, userFavouriteDtos);
 
@@ -791,7 +784,7 @@ namespace MyFoodDoc.App.Application.Services.V2
                     dailyNutritions.Vegetables += mealNutritions.Vegetables;
                 }
 
-                result[dailyMeals.Key] = dailyNutritions;
+                result[dailyMeal.Key] = dailyNutritions;
             }
 
             return result;
