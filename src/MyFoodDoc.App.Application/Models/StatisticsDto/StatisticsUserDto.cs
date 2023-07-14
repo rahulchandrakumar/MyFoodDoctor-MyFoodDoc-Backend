@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Models.StatisticsDto;
 
-public class StatisticsUserDto 
+public class StatisticsUserDto
 {
     public DateTime Created { get; set; }
 
@@ -35,8 +34,8 @@ public class StatisticsUserDto
     public ICollection<DietDto> Diets { get; set; } = new List<DietDto>();
 
     public ICollection<UserWeightDto> Weights { get; set; } = new List<UserWeightDto>();
-    
+
     public ICollection<MealDto> Meals { get; set; } = new List<MealDto>();
     public ICollection<UserTargetDto> UserTargets { get; set; } = new List<UserTargetDto>();
-     public UserFavouriteDto FavouriteIngredientDtos { get; set; } 
+    public UserFavouriteDto FavouriteIngredientDtos { get; set; }
 }
