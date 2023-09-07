@@ -467,9 +467,9 @@ namespace MyFoodDoc.App.Application.Services.V2
                 return Array.Empty<OptimizationAreaDto>();
             }
 
-            var targetIds = GetTargetIds(user).ToList();
+            var targets = GetTargetIds(user).ToList();
 
-            if (!targetIds.Any())
+            if (!targets.Any())
             {
                 return Array.Empty<OptimizationAreaDto>();
             }
@@ -499,22 +499,19 @@ namespace MyFoodDoc.App.Application.Services.V2
                 return Array.Empty<OptimizationAreaDto>();
             }
 
-            return GetOptimizationArea(user, targetIds, date, dailyUserIngredients,
+            return GetOptimizationArea(user, targets, date, dailyUserIngredients,
                 dailyUserIngredientsDictionary);
         }
 
         private ICollection<OptimizationAreaDto> GetOptimizationArea(
             StatisticsUserDto user,
-            ICollection<int> targetIds,
+            ICollection<TargetDetailsDto> targets,
             DateTime date,
             Dictionary<DateTime, MealNutritionsDto> dailyUserIngredients,
             Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>> dailyUserIngredientsDictionary)
         {
-            var targetList = 
-            user.UserTargets.Select(x => x.Target).OrderBy(x => x.Priority);
-
             var userTargets = UserTargets(
-                targetList,
+                targets,
                 date,
                 user,
                 dailyUserIngredients);
@@ -538,7 +535,7 @@ namespace MyFoodDoc.App.Application.Services.V2
         }
 
         private IEnumerable<UserTargetDto> UserTargets(
-            IEnumerable<FullUserTargetDto> targetList,
+            IEnumerable<TargetDetailsDto> targetList,
             DateTime dateKey,
             StatisticsUserDto user,
             Dictionary<DateTime, MealNutritionsDto> dailyUserIngredients)
@@ -561,14 +558,18 @@ namespace MyFoodDoc.App.Application.Services.V2
             }
         }
 
-        private bool TryGetTriggeredDaysCount(FullUserTargetDto target, DateTime dateKey, StatisticsUserDto user,
+        private bool TryGetTriggeredDaysCount(TargetDetailsDto target, DateTime dateKey, StatisticsUserDto user,
             Dictionary<DateTime, MealNutritionsDto> dailyUserIngredients, out int count)
         {
             switch (target.OptimizationArea.Type)
             {
-                case OptimizationAreaType.Protein when TryCountTriggeredDaysProtein(dateKey, user, dailyUserIngredients,
-                    target,
-                    out var triggeredDaysCount):
+                case OptimizationAreaType.Protein 
+                    when TryCountTriggeredDaysProtein(
+                        dateKey, 
+                        user, 
+                        dailyUserIngredients,
+                        target,
+                        out var triggeredDaysCount):
                 {
                     count = triggeredDaysCount;
                     return true;
@@ -627,7 +628,7 @@ namespace MyFoodDoc.App.Application.Services.V2
             DateTime dateKey,
             StatisticsUserDto user,
             Dictionary<DateTime, MealNutritionsDto> dailyUserIngredients,
-            FullUserTargetDto target,
+            TargetDetailsDto target,
             out int triggeredDaysCount)
         {
             triggeredDaysCount = 0;
@@ -714,14 +715,14 @@ namespace MyFoodDoc.App.Application.Services.V2
             return dailyUserNutritions;
         }
 
-        private IEnumerable<int> GetTargetIds(StatisticsUserDto user)
+        private IEnumerable<TargetDetailsDto> GetTargetIds(StatisticsUserDto user)
         {
 
-            var dietTargets = user.Diets.SelectMany(x => x.TargetIds);
+            var dietTargets = user.Diets.SelectMany(x => x.Targets);
 
-            var indicationTargets = user.Indications; 
+            var indicationTargets = user.IndicationTargets; 
 
-            var motivationTargets = user.Motivations; 
+            var motivationTargets = user.MotivationTargets; 
 
             var targetIds = dietTargets
                 .Union(indicationTargets)

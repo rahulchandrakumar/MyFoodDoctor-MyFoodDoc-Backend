@@ -11,7 +11,7 @@ public class StatisticsUserDto
     public string Email { get; set; }
 
     public virtual bool IsAnamnesisCompleted =>
-        Gender != null && Height != null && (Indications != null || Motivations != null);
+        Gender != null && Height != null && (MotivationTargets != null || IndicationTargets != null);
 
     public int? Age { get; set; }
 
@@ -27,10 +27,10 @@ public class StatisticsUserDto
 
     public bool EatingDisorder { get; set; }
 
-    public IEnumerable<int> Motivations { get; set; } = new List<int>();
+    public IEnumerable<TargetDetailsDto> MotivationTargets { get; set; } = new List<TargetDetailsDto>();
 
-    public IEnumerable<int> Indications { get; set; } = new List<int>();
-
+    public IEnumerable<TargetDetailsDto> IndicationTargets { get; set; } = new List<TargetDetailsDto>();
+    
     public ICollection<DietDto> Diets { get; set; } = new List<DietDto>();
 
     public ICollection<UserWeightDto> Weights { get; set; } = new List<UserWeightDto>();

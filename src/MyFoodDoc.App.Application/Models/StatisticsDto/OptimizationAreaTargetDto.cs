@@ -1,9 +1,9 @@
-﻿using MyFoodDoc.Application.Enums;
+﻿using System;
+using MyFoodDoc.Application.Enums;
 
 namespace MyFoodDoc.App.Application.Models.StatisticsDto;
 
 public record OptimizationAreaTargetDto(
-    OptimizationAreaType Type,
     int? ImageId,
     string Key,
     string Name,
@@ -23,4 +23,7 @@ public record OptimizationAreaTargetDto(
     string BelowOptimalPieChartText,
     string OptimalPieChartTitle,
     string OptimalPieChartText
-);
+)
+{
+    public OptimizationAreaType Type => Enum.TryParse(Key, true, out OptimizationAreaType retVal) ? retVal : OptimizationAreaType.Сustom;
+}

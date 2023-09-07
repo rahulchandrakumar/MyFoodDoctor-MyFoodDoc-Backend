@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Google;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.Options;
 using MyFoodDoc.App.Application.Abstractions;
 using MyFoodDoc.App.Application.Abstractions.V2;
 using MyFoodDoc.App.Application.Exceptions;
+using MyFoodDoc.App.Application.Extensions;
 using MyFoodDoc.App.Application.Models;
 using MyFoodDoc.App.Application.Models.StatisticsDto;
 using MyFoodDoc.App.Application.Payloads.Diary;
@@ -21,7 +18,6 @@ using MyFoodDoc.App.Application.Payloads.User;
 using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
-using MyFoodDoc.Application.Entities.Html;
 using MyFoodDoc.Application.Entities.Subscriptions;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
@@ -85,7 +81,7 @@ namespace MyFoodDoc.App.Application.Services.V2
             var result = await _context.Users
                 .Where(x => x.Id == userId)
                 .AsNoTracking()
-                .Select(Expressions.Selector(userId))
+                .Select(UserExpressions.Selector(userId))
                 .SingleOrDefaultAsync(cancellationToken);
             
             if (result is not null)
@@ -112,7 +108,6 @@ namespace MyFoodDoc.App.Application.Services.V2
                         new UserTargetDto(u.TargetId, u.TargetAnswerCode, u.Created, new FullUserTargetDto(
                             u.TargetId,
                             new OptimizationAreaTargetDto(
-                                u.Target.OptimizationArea.Type,
                                 u.Target.OptimizationArea.ImageId,
                                 u.Target.OptimizationArea.Key,
                                 u.Target.OptimizationArea.Name,
@@ -384,7 +379,7 @@ namespace MyFoodDoc.App.Application.Services.V2
         }
 
         /// <summary>
-        ///     This logic is also used in the <see cref="Expressions" /> class for performance issue
+        ///     This logic is also used in the <see cref="UserExpressions" /> class for performance issue
         ///     Any changes to this method should apply into the "Selector" method for user
         /// </summary>
         /// <param name="userId"></param>
