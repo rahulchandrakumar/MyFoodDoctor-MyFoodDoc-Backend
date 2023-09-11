@@ -1,4 +1,5 @@
-﻿using MyFoodDoc.App.Application.Models.StatisticsDto;
+﻿using System.Collections.Generic;
+using MyFoodDoc.App.Application.Models.StatisticsDto;
 using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 
@@ -17,5 +18,6 @@ namespace MyFoodDoc.App.Application.Models
         public TargetType Type { get; set; }
         public int ImageId { get; set; }
         public OptimizationAreaTargetDto OptimizationArea { get; set; }
+        public List<AdjustmentTargetDto> AdjustmentTarget { get; set; }
     }
 }

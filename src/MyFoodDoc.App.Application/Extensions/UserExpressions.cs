@@ -46,7 +46,8 @@ public static class UserExpressions
                         Text = mt.Target.Text,
                         Type = mt.Target.Type,
                         ImageId = mt.Target.ImageId,
-                        OptimizationArea = mt.Target.OptimizationArea.ToOptimizationAreaTargetDto()
+                        OptimizationArea = mt.Target.OptimizationArea.ToOptimizationAreaTargetDto(),
+                        AdjustmentTarget = mt.Target.AdjustmentTargets.Select(at => at.ToAdjustmentTargetDto()).ToList()
                     })),
             IndicationTargets = x.Indications
                 .SelectMany(i => i.Indication.Targets.Where(t => t.IndicationId == i.IndicationId)
@@ -62,7 +63,8 @@ public static class UserExpressions
                         Text = it.Target.Text,
                         Type = it.Target.Type,
                         ImageId = it.Target.ImageId,
-                        OptimizationArea = it.Target.OptimizationArea.ToOptimizationAreaTargetDto()
+                        OptimizationArea = it.Target.OptimizationArea.ToOptimizationAreaTargetDto(),
+                        AdjustmentTarget = it.Target.AdjustmentTargets.Select(at => at.ToAdjustmentTargetDto()).ToList()
                     })),
             Diets = x.Diets.Where(userDiet => userDiet.UserId == userId).Select(d => new DietDto(
                 d.DietId,
@@ -80,7 +82,8 @@ public static class UserExpressions
                         Text = dt.Target.Text,
                         Type = dt.Target.Type,
                         ImageId = dt.Target.ImageId,
-                        OptimizationArea = dt.Target.OptimizationArea.ToOptimizationAreaTargetDto()
+                        OptimizationArea = dt.Target.OptimizationArea.ToOptimizationAreaTargetDto(),
+                        AdjustmentTarget = dt.Target.AdjustmentTargets.Select(at => at.ToAdjustmentTargetDto()).ToList()
                     })
             )).ToList(),
             Weights = x.WeightHistory.Where(weight => weight.UserId == userId).Select(w => new UserWeightDto(

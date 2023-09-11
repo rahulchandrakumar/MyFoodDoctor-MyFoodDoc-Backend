@@ -44,11 +44,12 @@ namespace MyFoodDoc.App.Application.Services.V2
         private OptimizationAreaDto Calculate(
             StatisticsUserDto user,
             UserTargetDto userTarget,
+            UserTargetDto userAnswer,
             bool isVegan,
             Dictionary<DateTime, Dictionary<DateTime, MealNutritionsDto>> dailyUserIngredientsDictionary)
         {
-            var target = user.UserTargets?
-                .FirstOrDefault(x => x.TargetId == userTarget.TargetId)?.Target;
+            var target = userTarget.Target;
+            
             if (target is null)
             {
                 return null;
@@ -66,8 +67,9 @@ namespace MyFoodDoc.App.Application.Services.V2
             var dateKey = new DateTime(userTarget.Created.Year, userTarget.Created.Month, userTarget.Created.Day);
 
             if (!dailyUserIngredientsDictionary.ContainsKey(dateKey))
-                dailyUserIngredientsDictionary[dateKey] =
-                    GetDailyUserIngredients(user.Meals, user.FavouriteIngredientDtos, userTarget.Created);
+            {
+                dailyUserIngredientsDictionary[dateKey] = GetDailyUserIngredients(user.Meals, user.FavouriteIngredientDtos, userTarget.Created);
+            }
 
             var dailyUserIngredients = dailyUserIngredientsDictionary[dateKey];
 
@@ -94,9 +96,8 @@ namespace MyFoodDoc.App.Application.Services.V2
                 };
             }
 
-            targetDto.UserAnswerCode = userTarget?.TargetAnswerCode;
-
-
+            targetDto.UserAnswerCode = userAnswer?.TargetAnswerCode;
+            
             var optimizationAreaImage =
                 _context.Images.SingleOrDefault(x => x.Id == target.OptimizationArea.ImageId);
 
@@ -518,17 +519,19 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             var isVegan = user.Diets.Any(x => x.Key == VEGAN_DIET);
             var result = new List<OptimizationAreaDto>();
+            
             foreach (var userTarget in userTargets)
             {
-                var userAnswer = 
-                user.UserTargets
-                    .Where(x => x.TargetId == userTarget.TargetId &&
-                                x.Created > date.AddDays(-_statisticsPeriod) && x.Created < date)
+                var userAnswer = user.UserTargets
+                    .Where(x =>
+                        x.TargetId == userTarget.TargetId &&
+                        x.Created > date.AddDays(-_statisticsPeriod) &&
+                        x.Created < date
+                    )
                     .MaxBy(x => x.Created);
 
-                var r = Calculate(user, userAnswer, isVegan,
-                    dailyUserIngredientsDictionary);
-                result.Add(r);
+                var optimizationAreaDto = Calculate(user, userTarget, userAnswer, isVegan, dailyUserIngredientsDictionary);
+                result.Add(optimizationAreaDto);
             }
 
             return result;
@@ -551,10 +554,25 @@ namespace MyFoodDoc.App.Application.Services.V2
                 var frequency = (decimal) triggeredDaysCount * 100 / _statisticsPeriod;
 
                 if (target.TriggerOperator != TriggerOperator.Always && frequency <= target.Threshold) continue;
-
-                var userTarget = user.UserTargets.FirstOrDefault(x => x.TargetId == target.Id);
-
-                yield return userTarget;
+                
+                yield return new UserTargetDto(
+                    target.Id,
+                    string.Empty,
+                    dateKey,
+                    new FullUserTargetDto(
+                        target.Id,
+                        target.OptimizationArea,
+                        target.TriggerOperator,
+                        target.TriggerValue,
+                        target.Threshold,
+                        target.Priority,
+                        target.Title,
+                        target.Text,
+                        target.Type,
+                        string.Empty,
+                        target.AdjustmentTarget.FirstOrDefault()
+                    )
+                );
             }
         }
 
@@ -752,7 +770,8 @@ namespace MyFoodDoc.App.Application.Services.V2
 
             var isVegan = user.Diets.Any(x => x.Key == VEGAN_DIET);
 
-            return targets.Select(x => Calculate(user, x, isVegan, dailyUserIngredientsDictionary)).ToList();
+            return targets.Select(x => 
+                Calculate(user, x, x, isVegan, dailyUserIngredientsDictionary)).ToList();
         }
 
 
