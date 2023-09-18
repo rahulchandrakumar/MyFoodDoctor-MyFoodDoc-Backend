@@ -54,7 +54,8 @@ namespace MyFoodDoc.App.Application.Models
                 .ForMember(x => x.Sodium, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Sodium ?? x.Ingredient.SodiumExternal) * x.Amount)))
                 .ForMember(x => x.Potassium, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Potassium ?? x.Ingredient.PotassiumExternal) * x.Amount)))
                 .ForMember(x => x.Fiber, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Fiber ?? x.Ingredient.FiberExternal) * x.Amount)))
-                .ForMember(x => x.Sugar, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Sugar ?? x.Ingredient.SugarExternal) * x.Amount)));
+                .ForMember(x => x.Sugar, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Sugar ?? x.Ingredient.SugarExternal) * x.Amount)))
+                .ForMember(x => x.Vegetables, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Vegetables ?? 0) * x.Amount)));
         }
     }
 }

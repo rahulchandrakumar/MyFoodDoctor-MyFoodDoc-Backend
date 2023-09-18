@@ -27,6 +27,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 
             builder.HasMany(x => x.WeightHistory).WithOne(x => x.User).HasForeignKey(x => x.UserId);
             builder.HasMany(x => x.AbdominalGirthHistory).WithOne(x => x.User).HasForeignKey(x => x.UserId);
+            builder.HasMany(x => x.UserTargets).WithOne(x => x.User).HasForeignKey(x => x.UserId);
         }
     }
 }

@@ -10,9 +10,11 @@ using MyFoodDoc.App.Application.Payloads.Diary;
 using MyFoodDoc.App.Application.Payloads.User;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.App.Application.Abstractions.V2;
 
 namespace MyFoodDoc.App.Api.Controllers
 {
@@ -23,15 +25,28 @@ namespace MyFoodDoc.App.Api.Controllers
         private readonly IUserHistoryService _historyService;
         private readonly IDiaryService _diaryService;
         private readonly ITargetService _targetService;
+        private readonly IUserServiceV2 _userServiceV2;
+        private readonly IDiaryServiceV2 _diaryServiceV2;
+        private readonly ITargetServiceV2 _targetServiceV2;
         private readonly ILogger _logger;
 
-        public UserController(IUserService service, IUserHistoryService historyService, IDiaryService diaryService, ITargetService targetService, ILogger<UserController> logger)
+        public UserController(IUserService service,
+            IUserHistoryService historyService,
+            IDiaryService diaryService,
+            ITargetService targetService,
+            ILogger<UserController> logger,
+            IUserServiceV2 userServiceV2,
+            IDiaryServiceV2 diaryServiceV2,
+            ITargetServiceV2 targetServiceV2)
         {
             _service = service;
             _historyService = historyService;
             _diaryService = diaryService;
             _targetService = targetService;
             _logger = logger;
+            _userServiceV2 = userServiceV2;
+            _diaryServiceV2 = diaryServiceV2;
+            _targetServiceV2 = targetServiceV2;
         }
 
         [HttpGet]
@@ -46,7 +61,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPut]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Update([FromBody] UpdateUserPayload payload, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Update([FromBody] UpdateUserPayload payload,
+            CancellationToken cancellationToken = default)
         {
             await _service.UpdateUserAsync(GetUserId(), payload, cancellationToken);
 
@@ -67,7 +83,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPost("anamnesis")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
-        public async Task<IActionResult> CompleteAnamnesis([FromBody] AnamnesisPayload payload, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> CompleteAnamnesis([FromBody] AnamnesisPayload payload,
+            CancellationToken cancellationToken = default)
         {
             await _service.StoreAnamnesisAsync(GetUserId(), payload, cancellationToken);
 
@@ -79,7 +96,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPut("password")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPayload payload, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordPayload payload,
+            CancellationToken cancellationToken = default)
         {
             await _service.ChangePasswordAsync(GetUserId(), payload.OldPassword, payload.NewPassword);
 
@@ -99,7 +117,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPut("history/weight")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<UserHistoryDtoWeight>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<UserHistoryDtoWeight>>> UpdateUserHistoryWeight([FromBody] WeightHistoryPayload payload, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IEnumerable<UserHistoryDtoWeight>>> UpdateUserHistoryWeight(
+            [FromBody] WeightHistoryPayload payload, CancellationToken cancellationToken = default)
         {
             await _historyService.UpsertWeightHistoryAsync(GetUserId(), payload, cancellationToken);
 
@@ -111,7 +130,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [HttpPut("history/abdominal-girth")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(typeof(IEnumerable<UserHistoryDtoAbdominalGirth>), StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<UserHistoryDtoAbdominalGirth>>> UpdateUserHistoryAbdominalGirth([FromBody] AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<IEnumerable<UserHistoryDtoAbdominalGirth>>> UpdateUserHistoryAbdominalGirth(
+            [FromBody] AbdominalGirthHistoryPayload payload, CancellationToken cancellationToken = default)
         {
             await _historyService.UpsertAbdominalGirthHistoryAsync(GetUserId(), payload, cancellationToken);
 
@@ -120,11 +140,13 @@ namespace MyFoodDoc.App.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet("statistics")]
+
+        [HttpGet("statisticsOld")]
         [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(CancellationToken cancellationToken = default)
+        public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReadyOld(
+            CancellationToken cancellationToken = default)
         {
-            var userId = GetUserId();
+            var userId =  GetUserId();
 
             var user = await _service.GetUserAsync(userId, cancellationToken);
 
@@ -142,12 +164,41 @@ namespace MyFoodDoc.App.Api.Controllers
 
             return Ok(result);
         }
+        
+        [HttpGet("statistics")]
+        [ProducesResponseType(typeof(UserStatisticsDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserStatisticsDto>> UserStatisticsReady(
+            CancellationToken cancellationToken = default)
+        {
+            var userId = GetUserId();
 
+            var user = await _userServiceV2.GetUserWithWeightAsync(userId, cancellationToken);
+
+            var lastWeightValue = user.Weights?
+            .OrderBy(x => x.Date)
+            .LastOrDefault(x => x.Date <= DateTime.Now)?.Value;
+
+            var result = new UserStatisticsDto
+            {
+                IsZPPForbidden = _diaryServiceV2.IsZPPForbidden((double?)user.Height ?? 0, lastWeightValue, user.EatingDisorder),
+                HasSubscription = user.HasSubscription,
+                HasZPPSubscription = user.HasZPPSubscription,
+                IsDiaryFull = _diaryServiceV2.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1)),
+                HasNewTargetsTriggered = _targetServiceV2.NewTriggered(user, userId),
+                IsFirstTargetsEvaluation = !_targetServiceV2.AnyAnswered(user.UserTargets),
+                HasTargetsActivated = _targetServiceV2.AnyActivated(user.UserTargets),
+                DaysTillFirstEvaluation = _targetServiceV2.GetDaysTillFirstEvaluationAsync(user, cancellationToken)
+            };
+
+            return Ok(result);
+        }
+        
         [HttpPost("notifications")]
         [Consumes(MediaTypeNames.Application.Json)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdatePushNotifications([FromBody] UpdatePushNotificationsPayload payload, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> UpdatePushNotifications([FromBody] UpdatePushNotificationsPayload payload,
+            CancellationToken cancellationToken = default)
         {
             await _service.UpdatePushNotifications(GetUserId(), payload, cancellationToken);
 
@@ -160,7 +211,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateAppStoreInAppPurchase([FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateAppStoreInAppPurchase(
+            [FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
             var result = new InAppPurchaseReceiptValidationResultDto
             {
@@ -176,7 +228,9 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateGooglePlayStoreInAppPurchase([FromBody] ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateGooglePlayStoreInAppPurchase(
+            [FromBody] ValidateGooglePlayStoreInAppPurchasePayload payload,
+            CancellationToken cancellationToken = default)
         {
             var result = new InAppPurchaseReceiptValidationResultDto
             {
@@ -192,7 +246,8 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateAppStoreZPPSubscription([FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateAppStoreZPPSubscription(
+            [FromBody] ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
             var result = new InAppPurchaseReceiptValidationResultDto
             {
@@ -208,7 +263,9 @@ namespace MyFoodDoc.App.Api.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(InAppPurchaseReceiptValidationResultDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateGooglePlayStoreZPPSubscription([FromBody] ValidateGooglePlayStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
+        public async Task<ActionResult<InAppPurchaseReceiptValidationResultDto>> ValidateGooglePlayStoreZPPSubscription(
+            [FromBody] ValidateGooglePlayStoreInAppPurchasePayload payload,
+            CancellationToken cancellationToken = default)
         {
             var result = new InAppPurchaseReceiptValidationResultDto
             {

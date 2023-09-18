@@ -20,7 +20,11 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.HasIndex(x => x.PurchaseToken);
             builder.HasIndex(x => x.LastSynchronized);
 
-            builder.HasOne(x => x.User).WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(x => x.User)
+                .WithMany(x => x.GooglePlayStoreSubscriptions)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            
         }
     }
 }
