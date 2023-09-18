@@ -543,10 +543,14 @@ namespace MyFoodDoc.App.Application.Services.V2
             StatisticsUserDto user,
             Dictionary<DateTime, MealNutritionsDto> dailyUserIngredients)
         {
-            foreach (var target in targetList)
+            var distinctTargetList = targetList
+                .GroupBy(x => x.Id)
+                .Select(x => x.FirstOrDefault())
+                .ToList();
+            
+            foreach (var target in distinctTargetList)
             {
-                if (TryGetTriggeredDaysCount(target, dateKey, user, dailyUserIngredients,
-                        out var triggeredDaysCount))
+                if (!TryGetTriggeredDaysCount(target, dateKey, user, dailyUserIngredients, out var triggeredDaysCount))
                 {
                     continue;
                 }
