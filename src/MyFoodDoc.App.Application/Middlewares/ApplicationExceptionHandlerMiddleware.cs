@@ -5,6 +5,7 @@ using MyFoodDoc.App.Application.Exceptions;
 using Newtonsoft.Json;
 using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MyFoodDoc.App.Application.Middlewares
@@ -36,7 +37,7 @@ namespace MyFoodDoc.App.Application.Middlewares
                 if (context.Response.HasStarted)
                 {
                     _logger.LogWarning("The response has already started, the http status code middleware will not be executed.");
-                    throw;
+                    return;
                 }
                 await HandleExceptionAsync(context, ex);
             }
@@ -44,34 +45,38 @@ namespace MyFoodDoc.App.Application.Middlewares
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var code = HttpStatusCode.InternalServerError;
+            var code = (int)HttpStatusCode.InternalServerError;
 
             var result = string.Empty;
 
             switch (exception)
             {
                 case ValidationException validationException:
-                    code = HttpStatusCode.BadRequest;
+                    code = (int)HttpStatusCode.BadRequest;
                     result = JsonConvert.SerializeObject(validationException.Failures);
                     break;
                 case BadRequestException badRequestException:
-                    code = HttpStatusCode.BadRequest;
+                    code = (int)HttpStatusCode.BadRequest;
                     result = badRequestException.Message;
                     break;
                 case ConflictException conflictException:
-                    code = HttpStatusCode.Conflict;
+                    code = (int)HttpStatusCode.Conflict;
                     result = conflictException.Message;
                     break;
                 case NotFoundException _:
-                    code = HttpStatusCode.NotFound;
+                    code = (int)HttpStatusCode.NotFound;
                     break;
                 case DeleteFailureException _:
-                    code = HttpStatusCode.NotFound;
+                    code = (int)HttpStatusCode.NotFound;
+                    break;
+                case TaskCanceledException _:
+                case OperationCanceledException _:
+                    code = 499; //Client closed request
                     break;
             }
 
             context.Response.ContentType = JsonContentType;
-            context.Response.StatusCode = (int)code;
+            context.Response.StatusCode = code;
 
             if (result == string.Empty)
             {

@@ -78,6 +78,7 @@ namespace MyFoodDoc.App.Application.Services.V2
         public async Task<StatisticsUserDto> GetUserWithWeightAsync(string userId,
             CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var result = await _context.Users
                 .Where(x => x.Id == userId)
                 .AsNoTracking()
