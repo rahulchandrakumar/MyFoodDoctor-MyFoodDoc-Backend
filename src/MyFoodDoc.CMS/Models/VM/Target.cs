@@ -16,6 +16,7 @@ namespace MyFoodDoc.CMS.Models.VM
         public int Threshold { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }
+        public bool? ZppSubscription { get; set; }
 
         #region Adjustment target
         public int AdjustmentTargetId { get; set; }
@@ -54,6 +55,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 RecommendedText = model.RecommendedText,
                 TargetText = model.TargetText,
                 RemainText = model.RemainText,
+                ZppSubscription = model.ZppSubscription,
                 Image = Image.FromModel(model.Image),
                 Diets = model.Diets?.ToList(),
                 Indications = model.Indications?.ToList(),
@@ -82,6 +84,7 @@ namespace MyFoodDoc.CMS.Models.VM
                 RecommendedText = this.RecommendedText,
                 TargetText = this.TargetText,
                 RemainText = this.RemainText,
+                ZppSubscription = this.ZppSubscription,
                 Image = this.Image.ToModel(),
                 Diets = this.Diets?.ToList(),
                 Indications = this.Indications?.ToList(),

@@ -38,5 +38,7 @@ namespace MyFoodDoc.Application.Entities.Targets
 
         public ICollection<AdjustmentTarget> AdjustmentTargets { get; set; }
         public Image Image { get; set; }
+
+        public bool? ZppSubscription { get; set; }
     }
 }

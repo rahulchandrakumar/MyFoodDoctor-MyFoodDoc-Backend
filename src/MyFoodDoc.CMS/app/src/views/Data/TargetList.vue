@@ -141,6 +141,10 @@
                                   :checkedItems="item.motivations" />
                 </v-col>
             </v-row>
+            <v-row>
+                <v-switch v-model="item.zppSubscription"
+                          label="ZPP Subscription" />
+            </v-row>
         </template>
     </ColabDataTable>
 </template>

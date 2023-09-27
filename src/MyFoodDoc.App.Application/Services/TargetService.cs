@@ -529,7 +529,8 @@ namespace MyFoodDoc.App.Application.Services
                     return result;
 
                 var targetList = await _context.Targets.Include(x => x.OptimizationArea)
-                    .Where(x => targetIds.Contains(x.Id)).OrderBy(x => x.Priority).ToListAsync(cancellationToken);
+                    .Where(x => targetIds.Contains(x.Id) && (user.HasZPPVersion || !(x.ZppSubscription ?? false)))
+                    .OrderBy(x => x.Priority).ToListAsync(cancellationToken);
                 foreach (var target in targetList)
                 {
                     int triggeredDaysCount = 0;

@@ -21,6 +21,7 @@ namespace MyFoodDoc.CMS.Application.Models
         public int Threshold { get; set; }
         public string Priority { get; set; }
         public string Type { get; set; }
+        public bool? ZppSubscription { get; set; }
 
         #region Adjustment target
         public int AdjustmentTargetId { get; set; }
@@ -56,6 +57,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Threshold = target.Threshold,
                 Priority = target.Priority.ToString(),
                 Type = target.Type.ToString(),
+                ZppSubscription =  target.ZppSubscription,
                 Image = ImageModel.FromEntity(target.Image),
                 Diets = target.Diets?.Select(x => x.DietId).ToList(),
                 Indications = target.Indications?.Select(x => x.IndicationId).ToList(),
@@ -95,6 +97,7 @@ namespace MyFoodDoc.CMS.Application.Models
                 Priority = String.IsNullOrEmpty(this.Priority) ? TargetPriority.High : Enum.Parse<TargetPriority>(this.Priority),
                 Type = this.IsMandatory ? Enums.TargetType.Custom : Enum.Parse<TargetType>(this.Type),
                 ImageId = this.Image.Id,
+                ZppSubscription = this.ZppSubscription
             };
         }
 
