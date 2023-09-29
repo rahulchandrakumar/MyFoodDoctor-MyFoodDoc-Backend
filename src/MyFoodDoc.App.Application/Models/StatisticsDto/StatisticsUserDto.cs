@@ -27,6 +27,8 @@ public class StatisticsUserDto
 
     public bool EatingDisorder { get; set; }
 
+    public bool Diabetes { get; set; }
+
     public IEnumerable<TargetDetailsDto> MotivationTargets { get; set; } = new List<TargetDetailsDto>();
 
     public IEnumerable<TargetDetailsDto> IndicationTargets { get; set; } = new List<TargetDetailsDto>();

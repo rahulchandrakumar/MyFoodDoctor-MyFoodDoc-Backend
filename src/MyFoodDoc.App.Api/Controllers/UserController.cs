@@ -180,7 +180,7 @@ namespace MyFoodDoc.App.Api.Controllers
 
             var result = new UserStatisticsDto
             {
-                IsZPPForbidden = _diaryServiceV2.IsZPPForbidden((double?)user.Height ?? 0, lastWeightValue, user.EatingDisorder),
+                IsZPPForbidden = _diaryServiceV2.IsZPPForbidden((double?)user.Height ?? 0, lastWeightValue, user.EatingDisorder, user.Diabetes),
                 HasSubscription = user.HasSubscription,
                 HasZPPSubscription = user.HasZPPSubscription,
                 IsDiaryFull = _diaryServiceV2.IsDiaryFull(user.Meals, user.Created, DateTime.Today.AddMinutes(-1)),

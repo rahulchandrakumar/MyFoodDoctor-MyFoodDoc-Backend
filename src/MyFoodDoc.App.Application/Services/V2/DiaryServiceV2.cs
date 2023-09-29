@@ -68,14 +68,14 @@ namespace MyFoodDoc.App.Application.Services
                 .Count() >= _statisticsMinimumDays;
         }
 
-        public bool IsZPPForbidden(double? userHeight, decimal? weight, bool eatingDisorder)
+        public bool IsZPPForbidden(double? userHeight, decimal? weight, bool eatingDisorder, bool diabetes)
         {
             if (!userHeight.HasValue)
             {
                 return true;
             }
 
-            if (eatingDisorder)
+            if (eatingDisorder || diabetes)
                 return true;
 
             if (weight is null)

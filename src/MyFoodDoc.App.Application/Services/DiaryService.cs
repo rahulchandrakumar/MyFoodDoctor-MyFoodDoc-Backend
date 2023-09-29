@@ -21,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using MyFoodDoc.Application.EnumEntities;
 
 namespace MyFoodDoc.App.Application.Services
 {
@@ -371,6 +372,12 @@ namespace MyFoodDoc.App.Application.Services
                 .AnyAsync(x => x.UserId == userId && x.IndicationId == 5);
 
             if (eatingDisorder)
+                return true;
+
+            var diabetes = await _context.UserIndications
+                .AnyAsync(x => x.UserId == userId && (x.IndicationId == Indication.DiabetesType1 || x.IndicationId == Indication.DiabetesType2));
+
+            if (diabetes)
                 return true;
 
             var weight = await _context.UserWeights

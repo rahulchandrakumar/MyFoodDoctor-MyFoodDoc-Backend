@@ -19,6 +19,7 @@ using MyFoodDoc.Application.Abstractions;
 using MyFoodDoc.Application.Configuration;
 using MyFoodDoc.Application.Entities;
 using MyFoodDoc.Application.Entities.Subscriptions;
+using MyFoodDoc.Application.EnumEntities;
 using MyFoodDoc.Application.Enums;
 using MyFoodDoc.AppStoreClient.Abstractions;
 using MyFoodDoc.GooglePlayStoreClient.Abstractions;
@@ -176,8 +177,15 @@ namespace MyFoodDoc.App.Application.Services.V2
                         i.Vegetables,
                         i.Amount
                     )).ToList());
+
+                result.EatingDisorder = await _context.UserIndications
+                    .AnyAsync(x => x.UserId == userId && x.IndicationId == Indication.EatingDisorder);
+
+                result.Diabetes = await _context.UserIndications
+                    .AnyAsync(x => x.UserId == userId && (x.IndicationId == Indication.DiabetesType1 || x.IndicationId == Indication.DiabetesType2));
+
             }
-            
+
             return result;
         }
 

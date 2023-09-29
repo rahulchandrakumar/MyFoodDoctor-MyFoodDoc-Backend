@@ -7,6 +7,6 @@ namespace MyFoodDoc.App.Application.Abstractions.V2;
 public interface IDiaryServiceV2
 {
     bool IsDiaryFull(IEnumerable<MealDto> meals, DateTime userCreatedAt, DateTime onDate);
-    bool IsZPPForbidden(double? userHeight, decimal? weight, bool eatingDisorder);
+    bool IsZPPForbidden(double? userHeight, decimal? weight, bool eatingDisorder, bool diabetes);
     decimal GetCorrectedWeight(decimal height, decimal weight);
 }
