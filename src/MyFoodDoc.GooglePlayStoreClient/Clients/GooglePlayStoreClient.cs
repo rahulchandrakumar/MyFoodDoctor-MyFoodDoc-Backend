@@ -8,6 +8,7 @@ using MyFoodDoc.GooglePlayStoreClient.Abstractions;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using Google;
 
 namespace MyFoodDoc.GooglePlayStoreClient.Clients
 {
@@ -47,21 +48,28 @@ namespace MyFoodDoc.GooglePlayStoreClient.Clients
                     purchaseToken
                 );
 
-                var response = await request.ExecuteAsync();
-
-                return new PurchaseValidationResult()
+                try
                 {
-                    StartDate = response.StartTimeMillis == null
-                        ? (DateTime?)null
-                        : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).LocalDateTime,
-                    ExpirationDate = response.ExpiryTimeMillis == null
-                        ? (DateTime?)null
-                        : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).LocalDateTime,
-                    AutoRenewing = response.AutoRenewing,
-                    CancelReason = response.CancelReason,
-                    LinkedPurchaseToken = response.LinkedPurchaseToken
-                };
+                    var response = await request.ExecuteAsync();
 
+                    return new PurchaseValidationResult
+                    {
+                        StartDate = response.StartTimeMillis == null
+                            ? null
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.StartTimeMillis.Value).LocalDateTime,
+                        ExpirationDate = response.ExpiryTimeMillis == null
+                            ? null
+                            : DateTimeOffset.FromUnixTimeMilliseconds(response.ExpiryTimeMillis.Value).LocalDateTime,
+                        AutoRenewing = response.AutoRenewing,
+                        CancelReason = response.CancelReason,
+                        LinkedPurchaseToken = response.LinkedPurchaseToken
+                    };
+                }
+                catch (GoogleApiException ex)
+                {
+                    _logger.LogError("Error: {Message}", ex.Message);
+                    return new PurchaseValidationResult();
+                }
             }
             else
             {

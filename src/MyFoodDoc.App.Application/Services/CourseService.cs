@@ -200,8 +200,8 @@ namespace MyFoodDoc.App.Application.Services
                     if (googlePlayStoreZPPSubscription != null && googlePlayStoreZPPSubscription.IsValid)
                     {
                         var validateReceiptValidationResult = await _googlePlayStoreClient.ValidatePurchase(SubscriptionType.ZPP, googlePlayStoreZPPSubscription.SubscriptionId, googlePlayStoreZPPSubscription.PurchaseToken);
-                        sendEmail = validateReceiptValidationResult.PurchaseDate.Value.AddMonths(6) > DateTime.Now;
-                        purchaseDate = validateReceiptValidationResult.PurchaseDate.Value;
+                        sendEmail = validateReceiptValidationResult.PurchaseDate.HasValue && validateReceiptValidationResult.PurchaseDate.Value.AddMonths(6) > DateTime.Now;
+                        purchaseDate = validateReceiptValidationResult.PurchaseDate.GetValueOrDefault();
                     }
                 }
 
