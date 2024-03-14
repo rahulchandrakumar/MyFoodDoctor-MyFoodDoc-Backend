@@ -13,7 +13,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
             builder.HasKey(o => o.Id);
             builder.Property(o => o.Id).IsRequired().ValueGeneratedOnAdd();
             builder.Property(o => o.FoodId).IsRequired();
-            builder.Property(o => o.FoodName).IsRequired().HasMaxLength(100);
+            builder.Property(o => o.FoodName).IsRequired().HasMaxLength(500);
             builder.Property(o => o.ServingId).IsRequired();
             builder.Property(o => o.ServingDescription).IsRequired().HasMaxLength(100);
             builder.Property(o => o.MetricServingAmount).IsRequired().HasColumnType(NutritionsDecimal);
