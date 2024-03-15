@@ -12,7 +12,7 @@ namespace MyFoodDoc.Infrastructure.Persistence.Database.Configurations
 
             builder.HasKey(o => o.Id);
             builder.Property(o => o.UserId).IsRequired().HasMaxLength(450);
-            builder.Property(o => o.Title).IsRequired().HasMaxLength(100);
+            builder.Property(o => o.Title).IsRequired().HasMaxLength(500);
 
             builder.HasOne(x => x.User).WithMany(x => x.Favourites).HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Cascade);
         }
