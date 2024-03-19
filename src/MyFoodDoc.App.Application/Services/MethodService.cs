@@ -63,6 +63,7 @@ namespace MyFoodDoc.App.Application.Services
                 .Include(x => x.Method)
                 .ThenInclude(x => x.Parent)
                 .Where(x => x.UserId == userId)
+                .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
             //Check history on date
