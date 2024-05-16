@@ -402,7 +402,15 @@ namespace MyFoodDoc.App.Application.Services
                 return weight;
             }
 
-            return height - 100;
+            if (height > 100)
+                return height - 100;
+            
+            // Calculate correction factor based on height deviation from 100cm
+            var correctionFactor = Math.Max(0, (100 - height) / 5);  // Adjust factor as needed
+
+            // Ensure positive corrected weight
+            var correctedWeight = weight - correctionFactor;
+            return correctedWeight;
         }
 
         private decimal GetCaloriesOptimalValue(string userId, int age, decimal height, decimal weight, Gender gender)
