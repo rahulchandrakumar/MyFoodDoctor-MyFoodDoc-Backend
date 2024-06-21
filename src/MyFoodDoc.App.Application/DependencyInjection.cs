@@ -27,6 +27,7 @@ namespace MyFoodDoc.App.Application
             services.AddSharedAokClient(configuration);
 
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddSingleton<IEntityMapper, EntityMapper>();
 
             services.AddScoped<ICommonService, CommonService>();
             services.AddScoped<ICouponService, CouponService>();

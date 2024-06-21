@@ -49,7 +49,7 @@ namespace MyFoodDoc.App.Application.Models
                 .ForMember(x => x.Fat, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Fat ?? x.Ingredient.FatExternal) * x.Amount)))
                 .ForMember(x => x.SaturatedFat, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.SaturatedFat ?? x.Ingredient.SaturatedFatExternal) * x.Amount)))
                 .ForMember(x => x.PolyunsaturatedFat, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.PolyunsaturatedFat ?? x.Ingredient.PolyunsaturatedFatExternal) * x.Amount)))
-                .ForMember(x => x.MonounsaturatedFat, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Calories ?? x.Ingredient.MonounsaturatedFatExternal) * x.Amount)))
+                .ForMember(x => x.MonounsaturatedFat, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.MonounsaturatedFat ?? x.Ingredient.MonounsaturatedFatExternal) * x.Amount)))
                 .ForMember(x => x.Cholesterol, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Cholesterol ?? x.Ingredient.CholesterolExternal) * x.Amount)))
                 .ForMember(x => x.Sodium, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Sodium ?? x.Ingredient.SodiumExternal) * x.Amount)))
                 .ForMember(x => x.Potassium, opt => opt.MapFrom(src => src.Ingredients.Sum(x => (x.Ingredient.Potassium ?? x.Ingredient.PotassiumExternal) * x.Amount)))
