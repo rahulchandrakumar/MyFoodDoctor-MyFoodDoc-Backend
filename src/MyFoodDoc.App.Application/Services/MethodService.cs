@@ -53,11 +53,10 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
-            var hasZPPSubscription = await _userService.HasSubscription(userId, SubscriptionType.ZPP, cancellationToken);
-            var hasSubscription = await _userService.HasSubscription(userId, SubscriptionType.MyFoodDoc, cancellationToken);
-
-            if (!hasZPPSubscription && !hasSubscription)
+            if (!await _userService.HasAnySubscription(userId, new[] { SubscriptionType.ZPP, SubscriptionType.MyFoodDoc }, cancellationToken))
+            {
                 return result;
+            }
 
             var userMethodShowHistory = await _context.UserMethodShowHistory
                 .Include(x => x.Method)
