@@ -318,6 +318,17 @@ namespace MyFoodDoc.App.Application.Services
             return false;
         }
 
+        public async Task<bool> HasAnySubscription(string userId, SubscriptionType[] subscriptionTypes, CancellationToken cancellationToken = default)
+        {
+            return await _context.AppStoreSubscriptions
+                .Where(x => x.UserId == userId && subscriptionTypes.Contains(x.Type) && x.IsValid)
+                .Select(x => x.Type)
+                .Union(_context.GooglePlayStoreSubscriptions
+                    .Where(x => x.UserId == userId && subscriptionTypes.Contains(x.Type) && x.IsValid)
+                    .Select(x => x.Type))
+                .AnyAsync(cancellationToken);
+        }
+
         public async Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload, CancellationToken cancellationToken = default)
         {
             return await ValidateAppStoreInAppPurchase(userId, payload, SubscriptionType.MyFoodDoc, cancellationToken);

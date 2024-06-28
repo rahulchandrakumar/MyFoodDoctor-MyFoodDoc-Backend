@@ -35,6 +35,7 @@ namespace MyFoodDoc.App.Application.Services
         private const decimal SuggestedFiber = 30; // in gram
 
         private readonly IApplicationContext _context;
+        private readonly IEntityMapper _entityMapper;
         private readonly IMapper _mapper;
         private readonly IFatSecretClient _fatSecretClient;
         private readonly IFoodService _foodService;
@@ -45,6 +46,7 @@ namespace MyFoodDoc.App.Application.Services
 
         public DiaryService(
             IApplicationContext context,
+            IEntityMapper entityMapper,
             IMapper mapper,
             IFatSecretClient fatSecretClient,
             IFoodService foodService,
@@ -53,6 +55,7 @@ namespace MyFoodDoc.App.Application.Services
             IOptions<StatisticsOptions> statisticsOptions)
         {
             _context = context;
+            _entityMapper = entityMapper;
             _mapper = mapper;
             _fatSecretClient = fatSecretClient;
             _foodService = foodService;
@@ -71,6 +74,15 @@ namespace MyFoodDoc.App.Application.Services
                 throw new NotFoundException(nameof(User), userId);
             }
 
+            var userWeight = await _context.UserWeights.AsNoTracking()
+                .Where(x => x.UserId == userId && x.Date <= start)
+                .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
+
+            if (userWeight is null)
+            {
+                return new DiaryEntryDto();
+            }
+
             var liquid = await _context.Liquids.AsNoTracking()
                     .Where(x => x.UserId == userId && x.Date == start)
                     .ProjectTo<DiaryEntryDtoLiquid>(_mapper.ConfigurationProvider)
@@ -81,12 +93,11 @@ namespace MyFoodDoc.App.Application.Services
                     .ProjectTo<DiaryEntryDtoExercise>(_mapper.ConfigurationProvider)
                     .SingleOrDefaultAsync(cancellationToken);
 
-            List<DiaryEntryDtoMeal> meals = new List<DiaryEntryDtoMeal>();
-
-            foreach (var meal in await _context.Meals.AsNoTracking().Where(x => x.UserId == userId && x.Date == start).ToListAsync(cancellationToken))
-            {
-                meals.Add(await GetMealAsync(userId, meal.Id, cancellationToken));
-            }
+            var meals = await _context.Meals
+                .AsNoTracking()
+                .Where(x => x.UserId == userId && x.Date == start)
+                .Select(x => _entityMapper.ToDto(x))
+                .ToArrayAsync(cancellationToken);
 
             var aggregation = new DiaryEntryDto
             {
@@ -94,15 +105,6 @@ namespace MyFoodDoc.App.Application.Services
                 Liquid = liquid ?? _liquidDefault,
                 Exercise = exercise ?? _exerciseDefault,
             };
-
-            var userWeight = await _context.UserWeights.AsNoTracking()
-                .Where(x => x.UserId == userId && x.Date <= start)
-                .OrderBy(x => x.Date).LastOrDefaultAsync(cancellationToken);
-
-            if (userWeight is null)
-            {
-                return new DiaryEntryDto();
-            }
 
             aggregation.Liquid.PredefinedAmount = (int)Math.Round(SuggestedLiquidAmountPerKilo * userWeight.Value);
 

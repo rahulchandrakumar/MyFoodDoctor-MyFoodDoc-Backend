@@ -23,6 +23,9 @@ public interface IUserService
 
     Task<bool> HasSubscription(string userId, SubscriptionType subscriptionType, CancellationToken cancellationToken = default);
 
+    Task<bool> HasAnySubscription(string userId, SubscriptionType[] subscriptionTypes, 
+        CancellationToken cancellationToken = default);
+
     Task<bool> ValidateAppStoreInAppPurchase(string userId, ValidateAppStoreInAppPurchasePayload payload,
         CancellationToken cancellationToken = default);
 
