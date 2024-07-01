@@ -95,8 +95,7 @@ namespace MyFoodDoc.App.Application.Services
 
             var meals = await _context.Meals
                 .Include(x => x.Ingredients).ThenInclude(x => x.Ingredient)
-                .Include(x => x.Favourites).ThenInclude(x => x.Favourite)
-                .AsNoTracking()
+                .Include(x => x.Favourites).ThenInclude(x => x.Favourite).ThenInclude(x => x.Ingredients).ThenInclude(x => x.Ingredient)
                 .Where(x => x.UserId == userId && x.Date == start)
                 .Select(x => _entityMapper.ToDto(x))
                 .ToArrayAsync(cancellationToken);
