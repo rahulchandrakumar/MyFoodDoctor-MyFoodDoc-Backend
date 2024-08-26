@@ -56,7 +56,17 @@ namespace MyFoodDoc.App.Application.Services
                 Potassium = entity.Ingredients.Sum(x => (x.Ingredient.Potassium ?? x.Ingredient.PotassiumExternal) * x.Amount),
                 Fiber = entity.Ingredients.Sum(x => (x.Ingredient.Fiber ?? x.Ingredient.FiberExternal) * x.Amount),
                 Sugar = entity.Ingredients.Sum(x => (x.Ingredient.Sugar ?? x.Ingredient.SugarExternal) * x.Amount),
-                Vegetables = entity.Ingredients.Sum(x => (x.Ingredient.Vegetables ?? 0) * x.Amount)
+                Vegetables = entity.Ingredients.Sum(x => (x.Ingredient.Vegetables ?? 0) * x.Amount),
+                Ingredients = entity.Ingredients.Select(ToDto).ToList()
+            };
+        }
+
+        public FavouriteIngredientDto ToDto(FavouriteIngredient entity)
+        {
+            return new FavouriteIngredientDto
+            {
+                Ingredient = ToDto(entity.Ingredient),
+                Amount = entity.Amount
             };
         }
 
