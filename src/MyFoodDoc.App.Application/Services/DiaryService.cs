@@ -80,7 +80,15 @@ namespace MyFoodDoc.App.Application.Services
 
             if (userWeight is null)
             {
-                return new DiaryEntryDto();
+                userWeight = await _context.UserWeights.AsNoTracking()
+                    .Where(x => x.UserId == userId)
+                    .OrderByDescending(x => x.Date)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (userWeight is null)
+                {
+                    return new DiaryEntryDto();
+                }
             }
 
             var liquid = await _context.Liquids.AsNoTracking()
