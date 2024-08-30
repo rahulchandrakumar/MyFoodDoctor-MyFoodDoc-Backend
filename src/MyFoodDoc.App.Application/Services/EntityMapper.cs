@@ -94,6 +94,7 @@ namespace MyFoodDoc.App.Application.Services
                 Potassium = entity.Potassium ?? entity.PotassiumExternal,
                 Fiber = entity.Fiber ?? entity.FiberExternal,
                 Sugar = entity.Sugar ?? entity.SugarExternal,
+                Vegetables = entity.Vegetables ?? 0
             };
         }
     }
